@@ -60,7 +60,7 @@ npx supabase stop
 npm run db:test
 ```
 
-Skrip `supabase/scripts/run-sql-tests.sh` memulakan bekas Docker `pgvector/pgvector:pg16` pada port 55432, kemudian bagi setiap fail dalam `supabase/tests/*.sql` mencipta pangkalan data baharu dan menjalankan:
+Tiga fail ujian: `hrboost_tests_v0.2_approval`, `hrboost_tests_v0.2_platform` dan `hrboost_tests_b_onboarding` (jemputan & orientasi). Skrip `supabase/scripts/run-sql-tests.sh` memulakan bekas Docker `pgvector/pgvector:pg16` pada port 55432, kemudian bagi setiap fail dalam `supabase/tests/*.sql` mencipta pangkalan data baharu dan menjalankan:
 
 1. stub `supabase/tests/local_only/hrboost_tests_stub_local_only.sql`
 2. semua migrasi dalam `supabase/migrations/`
@@ -86,7 +86,7 @@ Nota: dalam ujian platform T7, dua notifikasi dicipta dalam transaksi yang sama,
 
 | Projek | Ref | Kegunaan |
 |---|---|---|
-| `hrboost-staging` | `gldhywelqvfxlsqipnzq` (Singapura, Postgres 17) | Staging: semua migrasi dalam `supabase/migrations` dipasang (sehingga `20261108000000`) |
+| `hrboost-staging` | `gldhywelqvfxlsqipnzq` (Singapura, Postgres 17) | Staging: semua migrasi dalam `supabase/migrations` dipasang (sehingga `20261108000100`), termasuk bucket storan `peribadi` |
 
 Kunci projek tidak disimpan dalam repo.
 
@@ -123,30 +123,47 @@ Nombor lain juga boleh meminta kod: kod disimpan dalam `dev.sms_outbox` (hook "S
 psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -c "select phone, otp from dev.sms_outbox order by id desc limit 5"
 ```
 
-Di staging/produksi, kod OTP dihantar melalui WhatsApp oleh Edge Function `auth-sms-hook` (belum dibina — perlukan butiran API Murpati).
+Di staging/produksi, kod OTP dihantar melalui WhatsApp oleh Edge Function `auth-sms-hook` (sudah ditulis, belum dipasang — lihat bahagian "OTP melalui WhatsApp" di bawah).
 
 ### Laluan skrin (Fasa B)
 
 | Laluan | Skrin reka bentuk |
 |---|---|
 | `/masuk`, `/masuk/kod` | Login, OTP |
+| `/jemputan`, `/jemputan/[token]` | Daftar (aktifkan akaun melalui pautan jemputan + 4 digit IC + OTP) |
+| `/orientasi` | Onboarding (senarai semak 8 langkah) |
+| `/orientasi/nama`, `/swafoto`, `/bank`, `/kad-pengenalan`, `/peribadi`, `/buku-panduan`, `/pasang`, `/selesai` | OnboardingNama, OnboardingSelfie, OnboardingLangkah, OnboardingDokumen, OnboardingPeribadi, OnboardingHandbook, OnboardingPasang, OnboardingSelesai |
 | `/utama` | Main (pekerja) / KetuaUtama (ketua jabatan) |
-| `/mohon`, `/mohon/cuti` | Mohon, MohonCuti |
+| `/mohon`, `/mohon/cuti` | Mohon, MohonCuti (termasuk sijil MC: Ambil gambar / Muat naik) |
 | `/permohonan`, `/permohonan/[id]` | PermohonanSaya, Butiran (paparan pemohon) |
 | `/kelulusan`, `/kelulusan/[id]` | Kelulusan, Butiran (paparan pelulus) |
 | `/saya` | Saya |
+| `/privasi` | Privasi (DRAF — perlu semakan peguam) |
+
+Fail peribadi (swafoto, kad pengenalan, sijil MC) disimpan dalam bucket storan peribadi `peribadi`, folder `<person_id>/`. Gambar dimampatkan di telefon (≤ 1600px, JPEG 0.8) sebelum dimuat naik dan dipaparkan melalui URL bertandatangan 5 minit. Hanya pemilik, HR/Pentadbir syarikat itu dan pelulus permohonan berkaitan boleh membacanya.
 
 Data dimuatkan terus di pelayar dengan kunci anon; RLS pangkalan data mengawal apa yang boleh dilihat. Tindakan (mohon, lulus, tolak, batal) melalui RPC `submit_leave`, `approval_act` dan `approval_cancel`.
 
 ### Ujian hujung-ke-hujung
 
-Selepas `npx supabase db reset` dan dengan aplikasi berjalan di `localhost:3000`:
+Selepas `npx supabase db reset` dan dengan aplikasi berjalan di `localhost:3000` (bina dengan `npm --prefix web run build`, kemudian `npx --prefix web next start`):
 
 ```bash
 node web/e2e/aliran-cuti.cjs
 ```
 
-Amin memohon cuti 23–28 Dis → Zuerin, Lily dan Sadam meluluskan dari telefon masing-masing → baki Amin disemak (8 → 5 hari).
+```bash
+node web/e2e/orientasi.cjs
+```
+
+- `aliran-cuti.cjs`: Amin memohon cuti 23–28 Dis → Zuerin, Lily dan Sadam meluluskan dari telefon masing-masing → baki Amin 8 → 5 hari.
+- `orientasi.cjs`: HR menjemput pekerja baharu → pautan jemputan + 4 digit IC + OTP → 8 langkah orientasi (swafoto, kad pengenalan dan lain-lain) → Amin memohon MC bersama gambar sijil → ketua jabatan membuka sijil itu.
+
+Jalankan `npx supabase db reset` sebelum setiap larian (ujian mencipta data).
+
+### OTP melalui WhatsApp (staging/produksi)
+
+`supabase/functions/auth-sms-hook` menerima kod OTP daripada Supabase Auth dan menghantarnya melalui WhatsApp (Murpati). **Belum dipasang** — butiran API Murpati belum tersedia; laraskan fungsi `hantarWhatsApp` mengikut spesifikasi Murpati. Rahsia (`SEND_SMS_HOOK_SECRETS`, `MURPATI_API_URL`, `MURPATI_API_KEY`) disimpan dalam Supabase secrets sahaja.
 
 Semakan lain:
 

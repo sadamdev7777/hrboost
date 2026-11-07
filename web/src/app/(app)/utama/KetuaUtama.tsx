@@ -7,6 +7,7 @@ import { must, useData } from "@/lib/useData";
 import { getBilanganTugasan } from "@/lib/data";
 import { addDays, dow, hariPendek, masaRingkas, masaTeks, todayISO } from "@/lib/format";
 import { Greeting } from "@/components/Greeting";
+import { OrientasiBanner } from "@/components/OrientasiBanner";
 import { Avatar, ErrorBox } from "@/components/ui";
 
 type Ahli = {
@@ -40,6 +41,7 @@ export function KetuaUtama() {
   return (
     <main className="flex grow flex-col gap-3.5 px-5 pt-6 pb-4">
       <Greeting me={me} />
+      <OrientasiBanner employmentId={emp.id} />
 
       <Link href="/kelulusan" className="flex items-center gap-3.5 rounded-[20px] bg-primary px-5 py-[18px] text-white!">
         <span className="flex grow flex-col gap-1">

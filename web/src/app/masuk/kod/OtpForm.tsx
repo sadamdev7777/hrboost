@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { IconBack } from "@/components/icons";
 import { getSupabase, setKeepSignedIn } from "@/lib/supabase";
 import { paparTelefon } from "@/lib/format";
+import { bacaJemputan, padamJemputan, simpanJemputan } from "@/lib/invite";
 import { PHONE_KEY } from "../LoginForm";
 
 const RESEND_SECONDS = 60;
@@ -56,6 +57,27 @@ export function OtpForm() {
     }
     // Nombor dalam sessionStorage tidak dipadam di sini: memadamnya mencetuskan
     // lencongan ke /masuk sebelum navigasi ke /utama selesai. Ia hilang bila tab ditutup.
+    // Datang daripada pautan jemputan: aktifkan akaun (sahkan 4 digit IC) sekarang.
+    const jemputan = bacaJemputan();
+    if (jemputan) {
+      const { data, error: aErr } = await getSupabase().rpc("accept_invite", {
+        p_token: jemputan.token,
+        p_ic_last4: jemputan.ic4,
+      });
+      const r = data as unknown as { ok?: boolean; error?: string; attempts_left?: number } | null;
+      if (!aErr && r?.ok) {
+        padamJemputan();
+        router.replace("/orientasi");
+        return;
+      }
+      const msg = aErr?.message ?? r?.error ?? "Akaun tidak dapat diaktifkan.";
+      simpanJemputan({
+        ...jemputan,
+        error: r?.attempts_left !== undefined ? `${msg}. Baki cubaan: ${r.attempts_left}.` : msg,
+      });
+      router.replace(`/jemputan/${jemputan.token}`);
+      return;
+    }
     router.replace("/utama");
   }
 

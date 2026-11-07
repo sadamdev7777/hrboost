@@ -17,7 +17,7 @@ Guna: python3 tests_to_supabase.py supabase/tests/<fail>.sql > keluaran.sql
 import re
 import sys
 
-GSET_TYPES = {"tok": "text", "cid": "uuid"}
+GSET_TYPES = {"tok": "text", "cid": "uuid", "eid": "uuid"}
 SHORT = False  # --short: label nombor sahaja (keluaran lebih kecil)
 
 

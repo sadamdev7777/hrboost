@@ -9,6 +9,7 @@ import { hari, julatTarikh, masa, namaPeringkat, ringgit, tarikh, tarikhTempatan
 import { IconCheck, IconSparkle } from "./icons";
 import { Avatar, BackHeader, ErrorBox, Loading, Screen, StatusPill } from "./ui";
 import { ReasonSheet } from "./ReasonSheet";
+import { urlSementara } from "@/lib/upload";
 
 const VIA: Record<string, string> = { web: "aplikasi", whatsapp: "WhatsApp", ai_agent: "pembantu AI", system: "sistem" };
 const TAJUK: Record<string, string> = {
@@ -110,6 +111,7 @@ export function RequestDetail({ mode }: { mode: Mode }) {
           )}
           {x.leave?.reason && <Field label="Sebab" value={x.leave.reason} plain />}
           {x.leave?.cover && <Field label="Pengganti tugas" value={x.leave.cover} plain />}
+          {x.leave?.attachment && <LihatSijil path={x.leave.attachment} />}
 
           {x.claim && (
             <div className="flex flex-col gap-2">
@@ -238,6 +240,32 @@ export function RequestDetail({ mode }: { mode: Mode }) {
   );
 }
 
+function LihatSijil({ path }: { path: string }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="text-xs text-muted">Sijil sokongan</span>
+      <button
+        type="button"
+        disabled={busy}
+        onClick={async () => {
+          setBusy(true);
+          setError(null);
+          const url = await urlSementara(path);
+          setBusy(false);
+          if (url) window.open(url, "_blank", "noopener");
+          else setError("Sijil tidak dapat dibuka.");
+        }}
+        className="self-start text-[15px] font-bold text-primary"
+      >
+        {busy ? "Membuka…" : "Lihat sijil"}
+      </button>
+      {error && <span className="text-xs text-danger">{error}</span>}
+    </div>
+  );
+}
+
 function Done() {
   return (
     <span className="flex size-[26px] shrink-0 items-center justify-center rounded-full bg-primary text-white">
@@ -347,6 +375,7 @@ async function loadDetail(mode: Mode) {
     reason: string | null;
     cover: string | null;
     balanceAfter: number | null;
+    attachment: string | null;
   } = null;
   let claim: null | { title: string; total: number; items: { type: string; description: string | null; date: string; amount: number }[] } = null;
 
@@ -354,7 +383,7 @@ async function loadDetail(mode: Mode) {
     const lr = must(
       await sb
         .from("leave_requests")
-        .select("employment_id, leave_type_id, start_date, end_date, days, reason, cover_person_id, leave_types(name, deduct_balance)")
+        .select("employment_id, leave_type_id, start_date, end_date, days, reason, cover_person_id, attachment_path, leave_types(name, deduct_balance)")
         .eq("id", req.reference_id)
         .maybeSingle(),
     );
@@ -387,6 +416,7 @@ async function loadDetail(mode: Mode) {
         reason: lr.reason,
         cover,
         balanceAfter,
+        attachment: lr.attachment_path,
       };
     }
   } else if (req.request_type === "claim") {

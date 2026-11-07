@@ -1531,6 +1531,9 @@ isOneToOne: false
 "ingest_punch":
 { Args: { "p_checktype"?: number,"p_company": string,"p_device_name"?: string,"p_device_sn"?: string,"p_raw"?: Json,"p_time": string,"p_uuid": string,"p_workno": string }; Returns: boolean
                            },
+"invite_preview":
+{ Args: { "p_token": string }; Returns: Json
+                           },
 "is_approver_of":
 { Args: { "p_request": string }; Returns: boolean
                            },
@@ -1609,6 +1612,9 @@ isOneToOne: false
                            },
 "sa_set_person_active":
 { Args: { "p_active": boolean,"p_person": string,"p_reason"?: string }; Returns: undefined
+                           },
+"save_onboarding_step":
+{ Args: { "p_data"?: Json,"p_employment": string,"p_step": string }; Returns: number
                            },
 "seed_company_defaults":
 { Args: { "p_company": string }; Returns: undefined

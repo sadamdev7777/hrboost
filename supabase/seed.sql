@@ -13,6 +13,7 @@
 --    10 000 0005  Farah  — Kewangan
 --    10 000 0006  Zulfa  — Pekerja, Pelancongan
 --    10 000 0007  Owner  — Pentadbir Platform (bukan pekerja)
+--    10 000 0008/9     — dikhaskan untuk pekerja baharu dalam ujian jemputan (e2e)
 -- =====================================================================
 
 -- Pengguna auth (telefon sahaja). Lajur token mesti '' (bukan NULL) untuk GoTrue.
@@ -63,6 +64,11 @@ insert into user_roles (person_id, company_id, role) values
   ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-0000000000c1', 'admin'),
   ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-0000000000c1', 'hr'),
   ('00000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-0000000000c1', 'finance');
+
+-- Pekerja demo sedia ada dianggap telah melengkapkan orientasi (8 langkah)
+insert into onboarding_progress (employment_id, step)
+select e.id, s from employments e
+ cross join unnest(array['activate','name','selfie','bank','ic','personal','handbook','install']) s;
 
 -- Cuti umum contoh (tarikh sebenar perlu diimport daripada sumber rasmi — lihat CLAUDE.md §8)
 insert into public_holidays (holiday_date, name, is_mandatory) values

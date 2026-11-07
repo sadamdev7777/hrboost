@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
@@ -9,6 +9,7 @@ import { getBaki } from "@/lib/data";
 import { addDays, dow, hari, hariTarikh, masaTeks, namaPeringkat, tarikh, todayISO } from "@/lib/format";
 import { IconChevronRight } from "@/components/icons";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
+import { muatNaikPeribadi } from "@/lib/upload";
 
 // Rujukan reka bentuk: design/MohonCuti.dc.html
 const JENIS = ["AL", "MC", "EL", "UL"] as const;
@@ -31,6 +32,7 @@ export default function MohonCutiPage() {
   const [end, setEnd] = useState(todayISO());
   const [coverPick, setCover] = useState<string | null>(null); // null = belum dipilih (guna lalai)
   const [reason, setReason] = useState("");
+  const [sijil, setSijil] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -66,7 +68,21 @@ export default function MohonCutiPage() {
       setError("Tarikh akhir mesti sama atau selepas tarikh mula.");
       return;
     }
+    if (jenis?.requires_attachment && !sijil) {
+      setError(`${jenis.name} memerlukan sijil sokongan. Sila ambil gambar atau muat naik sijil.`);
+      return;
+    }
     setBusy(true);
+    let lampiran: string | undefined;
+    if (jenis?.requires_attachment && sijil) {
+      try {
+        lampiran = await muatNaikPeribadi(me.personId, `sijil-${code.toLowerCase()}`, sijil);
+      } catch (e) {
+        setBusy(false);
+        setError((e as Error).message);
+        return;
+      }
+    }
     const { error: err } = await getSupabase().rpc("submit_leave", {
       p_employment: emp.id,
       p_leave_code: code,
@@ -74,6 +90,7 @@ export default function MohonCutiPage() {
       p_end: end,
       p_half: "full",
       p_reason: reason.trim() || undefined,
+      p_attachment: lampiran,
       p_via: "web",
       p_cover_person: cover || undefined,
     });
@@ -188,12 +205,7 @@ export default function MohonCutiPage() {
           </div>
         )}
 
-        {perluSijil && (
-          <div className="rounded-xl bg-warning-soft px-3.5 py-2.5 text-[13px] font-semibold text-warning">
-            {jenis?.name} memerlukan sijil sokongan. Muat naik sijil belum tersedia dalam aplikasi; sila serahkan sijil
-            kepada HR.
-          </div>
-        )}
+        {perluSijil && <Sijil name={jenis?.name ?? "Cuti ini"} file={sijil} onFile={setSijil} />}
         {error && <ErrorBox message={error} />}
       </main>
 
@@ -201,7 +213,7 @@ export default function MohonCutiPage() {
         <button
           type="button"
           onClick={hantar}
-          disabled={busy || perluSijil || n === 0}
+          disabled={busy || (perluSijil && !sijil) || n === 0}
           className="flex h-[54px] items-center justify-center rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover disabled:opacity-60"
         >
           {busy ? "Menghantar…" : "Hantar Permohonan"}
@@ -296,4 +308,33 @@ async function kiraHari(employmentId: string, companyId: string, start: string, 
     ? `${parts.join(", ").replace(/, ([^,]*)$/, " dan $1")} tidak dikira.`
     : "Hanya hari bekerja dikira.";
   return { days: n, note: n === 0 ? "Tarikh dipilih bukan hari bekerja." : note };
+}
+
+/** Sijil sokongan (MC dll.): dua butang — Ambil gambar (kamera belakang) & Muat naik (galeri / PDF). */
+function Sijil({ name, file, onFile }: { name: string; file: File | null; onFile: (f: File) => void }) {
+  const kamera = useRef<HTMLInputElement>(null);
+  const fail = useRef<HTMLInputElement>(null);
+  const pilih = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (f) onFile(f);
+    e.target.value = "";
+  };
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="text-sm font-bold">Sijil sokongan</span>
+      <input ref={kamera} type="file" accept="image/*" capture="environment" className="hidden" onChange={pilih} />
+      <input ref={fail} type="file" accept="image/*,application/pdf" className="hidden" onChange={pilih} />
+      <div className="grid grid-cols-2 gap-2">
+        <button type="button" onClick={() => kamera.current?.click()} className="h-12 rounded-xl border-[1.5px] border-primary bg-surface text-sm font-bold text-primary">
+          Ambil gambar
+        </button>
+        <button type="button" onClick={() => fail.current?.click()} className="h-12 rounded-xl border border-line bg-surface text-sm font-bold text-ink">
+          Muat naik
+        </button>
+      </div>
+      <span className={`text-xs ${file ? "font-semibold text-success" : "text-muted"}`}>
+        {file ? `Dilampirkan: ${file.name}` : `${name} memerlukan sijil. Gambar atau PDF, maksimum 10 MB.`}
+      </span>
+    </div>
+  );
 }

@@ -7,6 +7,7 @@ import { getBaki, getKehadiranMinggu, type Baki, getPermohonanSaya, kiniDi, papa
 import { hari, hariPendek, masaRingkas, todayISO } from "@/lib/format";
 import { IconCalendar, IconClock, IconReceipt } from "@/components/icons";
 import { Greeting } from "@/components/Greeting";
+import { OrientasiBanner } from "@/components/OrientasiBanner";
 import { ErrorBox, Screen, StatusPill, StepBar } from "@/components/ui";
 import { TabNav } from "@/components/TabNav";
 import { KetuaUtama } from "./KetuaUtama";
@@ -37,6 +38,7 @@ function StaffUtama({ me }: { me: Me }) {
   return (
     <main className="flex grow flex-col gap-5 px-5 pt-6 pb-4">
       <Greeting me={me} />
+      {emp && <OrientasiBanner employmentId={emp.id} />}
 
       {!emp && <ErrorBox message="Tiada pekerjaan aktif ditemui untuk akaun ini. Sila hubungi HR." />}
 
