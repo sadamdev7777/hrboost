@@ -86,7 +86,7 @@ Nota: dalam ujian platform T7, dua notifikasi dicipta dalam transaksi yang sama,
 
 | Projek | Ref | Kegunaan |
 |---|---|---|
-| `hrboost-staging` | `gldhywelqvfxlsqipnzq` (Singapura, Postgres 17) | Staging Fasa A: migrasi `20261107000000` dan `20261107000100` dipasang |
+| `hrboost-staging` | `gldhywelqvfxlsqipnzq` (Singapura, Postgres 17) | Staging Fasa A: migrasi `20261107000000`, `20261107000100` dan `20261107000200` dipasang |
 
 Kunci projek tidak disimpan dalam repo.
 
