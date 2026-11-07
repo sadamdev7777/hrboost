@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Orientasi — nama dan nama panggilan</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.bar{height:5px;border-radius:3px;background:#DCE3E1}
+.bar.on{background:#0F6B5F}
+.fld{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700}
+.hint{font-size:12px;font-weight:500;color:#5B6B68}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 4px">
+    <a class="back" href="Onboarding.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <span style="font-size: 13px; font-weight: 700; color: #4A5A57">Langkah 2 daripada 8</span>
+  </header>
+  <div style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; padding: 0 20px 8px">
+    <span class="bar on"></span><span class="bar on"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </div>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 18px; padding: 10px 20px 16px">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 24px; font-weight: 800">Nama anda</h1>
+      <span style="font-size: 14px; color: #4A5A57">Nama penuh untuk dokumen rasmi. Nama panggilan untuk semua tempat lain.</span>
+    </div>
+
+    <label class="fld">Nama penuh (seperti dalam kad pengenalan)
+      <input type="text" value="NURIN SYAFIQAH BINTI [ ]" style="height: 50px; box-sizing: border-box; border: 1px solid #D5DEDC; border-radius: 12px; padding: 0 14px; font-family: inherit; font-size: 15px; font-weight: 700; letter-spacing: 0.01em; color: #14211F; background: #FFFFFF">
+      <span class="hint">Untuk slip gaji, Borang EA, KWSP dan surat rasmi. Mesti sama seperti dalam kad pengenalan.</span>
+    </label>
+
+    <label class="fld">Nama panggilan
+      <input type="text" value="{{nickRaw}}" onChange="{{setNick}}" style="height: 56px; box-sizing: border-box; border: 1.5px solid #0F6B5F; border-radius: 12px; padding: 0 14px; font-family: inherit; font-size: 18px; font-weight: 800; color: #14211F; background: #FFFFFF">
+      <span class="hint">Nama yang biasa digunakan oleh rakan sekerja untuk memanggil anda.</span>
+    </label>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 12px; font-weight: 700; color: #4A5A57; letter-spacing: 0.04em">BEGINI NAMA ANDA AKAN DIPAPARKAN</span>
+      <div style="background: #FFFFFF; border-radius: 16px; padding: 4px 16px; display: flex; flex-direction: column">
+        <div style="display: flex; align-items: center; gap: 12px; min-height: 52px; font-size: 14px"><span style="width: 92px; color: #5B6B68; flex-shrink: 0">Skrin Utama</span><b>Selamat pagi, {{nick}}</b></div>
+        <div style="display: flex; align-items: center; gap: 12px; min-height: 52px; font-size: 14px; border-top: 1px solid #EEF2F1"><span style="width: 92px; color: #5B6B68; flex-shrink: 0">WhatsApp</span><b>Assalamualaikum {{nick}}, …</b></div>
+        <div style="display: flex; align-items: center; gap: 12px; min-height: 52px; font-size: 14px; border-top: 1px solid #EEF2F1"><span style="width: 92px; color: #5B6B68; flex-shrink: 0">Kelulusan</span><b>{{nick}} · Cuti Tahunan</b></div>
+        <div style="display: flex; align-items: center; gap: 12px; min-height: 52px; font-size: 14px; border-top: 1px solid #EEF2F1"><span style="width: 92px; color: #5B6B68; flex-shrink: 0">Slip gaji</span><b style="font-size: 13px">NURIN SYAFIQAH BINTI [ ]</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding: 12px 20px 28px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <a href="OnboardingSelfie.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Simpan &amp; seterusnya</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { nick: 'Nurin' }; }
+  renderVals() {
+    const nick = this.state.nick || '…';
+    return {
+      nick: nick,
+      nickRaw: this.state.nick,
+      setNick: (e) => this.setState({ nick: e.target.value })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Tetapan integrasi kehadiran CrossChex</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+.box{background:#FFFFFF;border-radius:16px;padding:4px 16px;display:flex;flex-direction:column}
+.r{display:flex;align-items:center;gap:10px;min-height:46px;border-top:1px solid #EEF2F1;font-size:14px}
+.r:first-child{border-top:none}
+.r .l{color:#5B6B68;flex-grow:1}
+.r .v{font-weight:700;text-align:right}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:13px}
+.lk{font-size:13px;font-weight:700}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Tetapan.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Integrasi Kehadiran</h1>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 4px 20px 16px">
+
+    <div style="background: #FFFFFF; border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="width: 40px; height: 40px; border-radius: 12px; background: #E3F1EE; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F6B5F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+        </span>
+        <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+          <b style="font-size: 15px; font-weight: 800">CrossChex Cloud</b>
+          <span style="font-size: 12px; color: #5B6B68">Anviz · pelayan EU</span>
+        </div>
+        <span style="font-size: 11px; font-weight: 700; color: #166534; background: #E3F5E8; padding: 3px 9px; border-radius: 9px">Bersambung</span>
+      </div>
+      <span style="font-size: 13px; color: #33504B">Tarikan terakhir 3:30 ptg · 12 rekod imbasan baharu · seterusnya 3:35 ptg</span>
+    </div>
+
+    <span class="sec">SAMBUNGAN</span>
+    <div class="box">
+      <div class="r"><span class="l">URL API</span><span class="v mono">api.eu.crosschexcloud.com</span></div>
+      <div class="r"><span class="l">Kunci API</span><span class="v mono">••••••••</span></div>
+      <div class="r"><span class="l">Rahsia API</span><span class="v mono">••••••••</span><a href="#" class="lk">Tukar</a></div>
+      <div class="r"><span class="l">Token</span><span class="v" style="font-weight: 600">Diperbaharui secara automatik</span></div>
+    </div>
+
+    <span class="sec">TARIK DATA</span>
+    <div class="box">
+      <div class="r"><span class="l">Kekerapan</span>
+        <sc-for list="{{freqs}}" as="f" hint-placeholder-count="3">
+          <button onClick="{{f.pick}}" style="{{f.style}}">{{f.label}}</button>
+        </sc-for>
+      </div>
+      <div class="r"><span class="l">Masuk / keluar</span><span class="v" style="font-weight: 600">Imbasan pertama / terakhir</span></div>
+    </div>
+
+    <span class="sec">PADANAN PEKERJA</span>
+    <div class="box">
+      <div class="r"><span class="l">Dipadankan</span><span class="v">16 / 18</span></div>
+      <div class="r" style="background: #FEF3E2; margin: 0 -16px; padding: 0 16px"><span class="mono" style="color: #92400E; font-weight: 700">ID mesin 1023</span><span class="l" style="color: #92400E">belum dipadankan</span><a href="#" class="lk">Pilih pekerja</a></div>
+      <div class="r" style="background: #FEF3E2; margin: 0 -16px; padding: 0 16px; border-radius: 0 0 16px 16px"><span class="mono" style="color: #92400E; font-weight: 700">ID mesin 1031</span><span class="l" style="color: #92400E">belum dipadankan</span><a href="#" class="lk">Pilih pekerja</a></div>
+    </div>
+
+    <span class="sec">LOG TERKINI</span>
+    <div class="box">
+      <div class="r"><span class="l">3:30 ptg</span><span class="v" style="font-weight: 600">12 rekod imbasan baharu</span></div>
+      <div class="r"><span class="l">3:25 ptg</span><span class="v" style="font-weight: 600; color: #5B6B68">Token luput → diperbaharui</span></div>
+    </div>
+  </div>
+
+  <div style="padding: 12px 20px 28px; background: #FFFFFF; border-top: 1px solid #E2E8E6; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+    <button style="height: 52px; border-radius: 16px; border: 1.5px solid #D5DEDC; background: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 700; color: #14211F">Uji sambungan</button>
+    <button style="height: 52px; border-radius: 16px; border: none; background: #0F6B5F; font-family: inherit; font-size: 15px; font-weight: 800; color: #FFFFFF">Tarik sekarang</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { freq: 5 }; }
+  renderVals() {
+    return {
+      freqs: [5, 15, 30].map((m) => ({
+        label: m + ' min',
+        style: 'height: 32px; padding: 0 10px; border-radius: 16px; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; ' +
+          (this.state.freq === m ? 'border: 1px solid #0F6B5F; background: #0F6B5F; color: #FFFFFF;' : 'border: 1px solid #D5DEDC; background: #FFFFFF; color: #14211F;'),
+        pick: () => this.setState({ freq: m })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

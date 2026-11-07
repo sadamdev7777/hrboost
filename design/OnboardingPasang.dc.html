@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Orientasi — pasang aplikasi</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.bar{height:5px;border-radius:3px;background:#0F6B5F}
+.st{display:flex;align-items:center;gap:14px;min-height:56px;border-top:1px solid #EEF2F1;font-size:15px}
+.st:first-child{border-top:none}
+.n{width:30px;height:30px;border-radius:15px;background:#E3F1EE;color:#0F6B5F;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 4px">
+    <a class="back" href="OnboardingHandbook.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <span style="font-size: 13px; font-weight: 700; color: #4A5A57">Langkah 8 daripada 8</span>
+  </header>
+  <div style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; padding: 0 20px 8px">
+    <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </div>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 14px; padding: 10px 20px 14px">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 24px; font-weight: 800">Letak HRBoost di skrin telefon</h1>
+      <span style="font-size: 14px; color: #4A5A57">Buka dengan sekali tekan, seperti aplikasi biasa. Tidak perlu Play Store atau App Store.</span>
+    </div>
+
+    <div role="tablist" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; background: #E4EAE8; border-radius: 14px; padding: 4px">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="2">
+        <button role="tab" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+      </sc-for>
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 16px; padding: 4px 16px; display: flex; flex-direction: column">
+      <sc-for list="{{steps}}" as="s" hint-placeholder-count="3">
+        <div class="st"><span class="n">{{s.n}}</span><span>{{s.t}}</span></div>
+      </sc-for>
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 12px">
+      <span style="width: 40px; height: 40px; border-radius: 12px; background: #E3F1EE; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F6B5F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"></path></svg>
+      </span>
+      <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><b style="font-size: 14px; font-weight: 700">Simpan nombor HRBoost</b><span style="font-size: 12px; color: #5B6B68">Supaya mesej kelulusan &amp; notis tidak dianggap spam</span></span>
+      <a href="#" style="font-size: 13px; font-weight: 700">Simpan</a>
+    </div>
+  </div>
+
+  <div style="padding: 10px 20px 26px; background: #FFFFFF; border-top: 1px solid #E2E8E6; display: flex; flex-direction: column; gap: 4px">
+    <a href="OnboardingSelesai.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Sudah dipasang — selesai</a>
+    <a href="OnboardingSelesai.dc.html" style="height: 40px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700">Langkau buat masa ini</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { os: 'ios' }; }
+  renderVals() {
+    const os = this.state.os;
+    const ios = ['Buka pautan HRBoost dalam Safari', 'Tekan butang Kongsi di bawah', 'Pilih “Tambah ke Skrin Utama”'];
+    const and = ['Buka pautan HRBoost dalam Chrome', 'Tekan menu ⋮ di penjuru kanan atas', 'Pilih “Pasang aplikasi”'];
+    const base = 'height: 40px; border: none; border-radius: 10px; font-family: inherit; font-size: 14px; cursor: pointer; ';
+    return {
+      tabs: [{ id: 'ios', label: 'iPhone' }, { id: 'and', label: 'Android' }].map((t) => ({
+        label: t.label,
+        style: base + (os === t.id ? 'background: #FFFFFF; font-weight: 800; color: #14211F;' : 'background: transparent; font-weight: 600; color: #4A5A57;'),
+        pick: () => this.setState({ os: t.id })
+      })),
+      steps: (os === 'ios' ? ios : and).map((t, i) => ({ n: i + 1, t: t }))
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Orientasi — bank dan waris</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.fld{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700}
+.fld input,.fld select{height:50px;box-sizing:border-box;border:1px solid #D5DEDC;border-radius:12px;padding:0 14px;font-family:inherit;font-size:15px;font-weight:600;color:#14211F;background:#FFFFFF}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 4px">
+    <a class="back" href="OnboardingSelfie.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <span style="font-size: 13px; font-weight: 700; color: #4A5A57; flex-grow: 1">Langkah 4 daripada 8</span>
+  </header>
+  <div style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; padding: 0 20px 8px">
+    <span style="height: 5px; border-radius: 3px; background: #0F6B5F"></span><span style="height: 5px; border-radius: 3px; background: #0F6B5F"></span><span style="height: 5px; border-radius: 3px; background: #0F6B5F"></span><span style="height: 5px; border-radius: 3px; background: #0F6B5F"></span><span style="height: 5px; border-radius: 3px; background: #DCE3E1"></span><span style="height: 5px; border-radius: 3px; background: #DCE3E1"></span><span style="height: 5px; border-radius: 3px; background: #DCE3E1"></span><span style="height: 5px; border-radius: 3px; background: #DCE3E1"></span>
+  </div>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 14px; padding: 12px 20px 16px">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 24px; font-weight: 800">Bank &amp; waris</h1>
+      <span style="font-size: 14px; color: #4A5A57">Untuk bayaran gaji dan kecemasan.</span>
+    </div>
+
+    <span class="sec">AKAUN BANK GAJI</span>
+    <label class="fld">Bank
+      <select><option>[Pilih bank]</option></select>
+    </label>
+    <label class="fld">No. akaun
+      <input type="text" inputmode="numeric" placeholder="Contoh: 1234 5678 9012">
+    </label>
+    <span style="font-size: 12px; color: #5B6B68; margin-top: -6px">Nama akaun mesti sama dengan nama dalam kad pengenalan.</span>
+
+    <span class="sec" style="margin-top: 4px">WARIS UNTUK KECEMASAN</span>
+    <label class="fld">Nama
+      <input type="text" placeholder="Nama penuh waris">
+    </label>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <label class="fld">Hubungan
+        <select><option>Ibu</option><option>Bapa</option><option>Suami / Isteri</option><option>Adik-beradik</option></select>
+      </label>
+      <label class="fld">No. telefon
+        <input type="tel" placeholder="01x-xxx xxxx">
+      </label>
+    </div>
+  </div>
+
+  <div style="padding: 12px 20px 28px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <a href="OnboardingDokumen.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Simpan &amp; seterusnya</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

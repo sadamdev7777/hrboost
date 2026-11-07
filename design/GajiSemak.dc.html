@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Proses gaji — semak kiraan</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.st{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#5B6B68;text-align:center}
+.st i{width:30px;height:30px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:13px;font-weight:800;background:#E4EAE8;color:#4A5A57}
+.st.done i{background:#0F6B5F;color:#FFFFFF}
+.st.now i{background:#FFFFFF;border:3px solid #0F6B5F;color:#0F6B5F;box-sizing:border-box}
+.st.now{color:#0F6B5F}
+.k{background:#FFFFFF;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.k span{font-size:12px;color:#4A5A57}
+.k b{font-size:17px;font-weight:800}
+.box{background:#FFFFFF;border-radius:16px;padding:2px 14px;display:flex;flex-direction:column}
+.r{display:flex;align-items:center;gap:10px;min-height:50px;border-top:1px solid #EEF2F1;font-size:14px}
+.r:first-child{border-top:none}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="ProsesGaji.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800; flex-grow: 1">Gaji Nov 2026</h1>
+    <span style="font-size: 13px; font-weight: 800; color: #0F6B5F; background: #E3F1EE; padding: 4px 10px; border-radius: 9px; margin-right: 8px">MTB</span>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 12px; padding: 4px 20px 14px">
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; background: #FFFFFF; border-radius: 16px; padding: 14px 8px">
+      <div class="st done"><i>✓</i>Semak data</div>
+      <div class="st done"><i>✓</i>Kira</div>
+      <div class="st now"><i>3</i>Kelulusan</div>
+      <div class="st"><i>4</i>Bayar &amp; hantar</div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <div class="k"><span>Jumlah kasar</span><b>RM [ ]</b></div>
+      <div class="k"><span>Jumlah bersih</span><b>RM [ ]</b></div>
+      <div class="k"><span>Caruman majikan</span><b>RM [ ]</b></div>
+      <div class="k"><span>PCB</span><b>RM [ ]</b></div>
+    </div>
+
+    <span class="sec">BERBEZA DARIPADA BULAN LALU</span>
+    <div class="box">
+      <div class="r"><b style="flex-grow: 1">Amin</b><span style="font-size: 12px; color: #4A5A57">+ komisen, + tuntutan RM 131.50</span></div>
+      <div class="r"><b style="flex-grow: 1">Nurin</b><span style="font-size: 12px; color: #4A5A57">Gaji pertama · separuh bulan</span></div>
+      <div class="r"><b style="flex-grow: 1">Zulfa</b><span style="font-size: 12px; color: #4A5A57">− 1 hari cuti tanpa gaji</span></div>
+    </div>
+    <a href="SlipGaji.dc.html" style="font-size: 13px; font-weight: 700">Lihat semua 18 slip (pratonton)</a>
+
+    <div style="background: #FFFFFF; border-radius: 14px; padding: 12px 14px; font-size: 13px; color: #33504B; line-height: 1.5">Aliran kelulusan gaji: <b>Kewangan → CEO</b>. Kedua-duanya akan menerima WhatsApp bersama ringkasan di atas.</div>
+  </div>
+
+  <div style="padding: 10px 20px 26px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <a href="GajiBayar.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Hantar untuk kelulusan</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

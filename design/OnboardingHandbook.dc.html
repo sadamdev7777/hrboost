@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Orientasi — buku panduan syarikat</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.bar{height:5px;border-radius:3px;background:#DCE3E1}
+.bar.on{background:#0F6B5F}
+.pt{background:#FFFFFF;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.pt span{font-size:12px;font-weight:700;color:#4A5A57}
+.pt b{font-size:15px;font-weight:800}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 4px">
+    <a class="back" href="OnboardingPeribadi.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <span style="font-size: 13px; font-weight: 700; color: #4A5A57">Langkah 7 daripada 8</span>
+  </header>
+  <div style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; padding: 0 20px 8px">
+    <span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar"></span>
+  </div>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 12px; padding: 10px 20px 14px">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 24px; font-weight: 800">Perkara penting di MTB</h1>
+      <span style="font-size: 14px; color: #4A5A57">Ringkasan buku panduan syarikat — 3 minit.</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <div class="pt"><span>WAKTU KERJA</span><b>9:00 – 6:00</b><span style="font-weight: 500; color: #5B6B68">Isnin – Jumaat</span></div>
+      <div class="pt"><span>CUTI TAHUNAN</span><b>8 hari</b><span style="font-weight: 500; color: #5B6B68">tahun pertama</span></div>
+      <div class="pt"><span>SAKIT (MC)</span><b>Ambil gambar sijil di aplikasi</b><span style="font-weight: 500; color: #5B6B68">pada hari yang sama</span></div>
+      <div class="pt"><span>TUNTUTAN</span><b>Hantar resit</b><span style="font-weight: 500; color: #5B6B68">dalam [ ] hari</span></div>
+    </div>
+
+    <a href="#" style="background: #FFFFFF; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; color: #14211F">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F6B5F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg>
+      <span style="flex-grow: 1; font-size: 14px; font-weight: 700">Baca buku panduan penuh</span>
+      <span style="font-size: 12px; color: #5B6B68">PDF</span>
+    </a>
+
+    <div style="background: #F3F0FC; border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px">
+      <span style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; color: #4A3B8C">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5 13.8 11.3 12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"></path></svg>
+        Ada soalan? Tanya AI
+      </span>
+      <label style="display: flex">
+        <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Soalan tentang polisi</span>
+        <input type="text" placeholder="Contoh: Bolehkah saya menuntut bayaran letak kereta di KLIA?" style="flex-grow: 1; height: 44px; box-sizing: border-box; border: 1px solid #D9D2F1; border-radius: 12px; padding: 0 12px; font-family: inherit; font-size: 14px; color: #14211F; background: #FFFFFF">
+      </label>
+    </div>
+
+    <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 14px; font-weight: 600; line-height: 1.45; margin-top: 2px">
+      <input type="checkbox" checked="{{ack}}" onChange="{{toggle}}" style="width: 22px; height: 22px; margin-top: 1px; flex-shrink: 0; accent-color: #0F6B5F">
+      Saya telah membaca dan memahami polisi syarikat.
+    </label>
+  </div>
+
+  <div style="padding: 10px 20px 26px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <sc-if value="{{ack}}" hint-placeholder-val="{{ true }}">
+      <a href="OnboardingPasang.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Seterusnya</a>
+    </sc-if>
+    <sc-if value="{{notAck}}" hint-placeholder-val="{{ false }}">
+      <button disabled style="width: 100%; height: 54px; border-radius: 16px; border: none; background: #DCE3E1; color: #4A5A57; font-family: inherit; font-size: 16px; font-weight: 800">Sila tandakan dahulu untuk meneruskan</button>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { ack: false }; }
+  renderVals() {
+    return {
+      ack: this.state.ack,
+      notAck: !this.state.ack,
+      toggle: () => this.setState({ ack: !this.state.ack })
+    };
+  }
+}
+</script>
+</body>
+</html>

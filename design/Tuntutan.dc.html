@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Tuntutan saya</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.card{background:#FFFFFF;border-radius:16px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.t{font-size:15px;font-weight:700}
+.s{font-size:12px;color:#5B6B68}
+.amt{font-size:15px;font-weight:800;text-align:right}
+.pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:9px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Saya.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Tuntutan</h1>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 14px; padding: 4px 20px 16px">
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <div style="background: #FFFFFF; border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 12px; color: #5B6B68">Menunggu</span><b style="font-size: 20px; font-weight: 800">RM 86.50</b>
+      </div>
+      <div style="background: #FFFFFF; border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 12px; color: #5B6B68">Dibayar bersama gaji Nov</span><b style="font-size: 20px; font-weight: 800">RM 45.00</b>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 12px; font-weight: 700; color: #4A5A57; letter-spacing: 0.04em">NOVEMBER</span>
+      <div class="card">
+        <div style="display: flex; flex-direction: column; gap: 3px"><span class="t">Letak kereta KLIA2</span><span class="s">5 Nov · 2 resit</span></div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px"><span class="amt">RM 86.50</span><span class="pill" style="color: #92400E; background: #FEF3E2">Di Kewangan</span></div>
+      </div>
+      <div class="card">
+        <div style="display: flex; flex-direction: column; gap: 3px"><span class="t">Grab ke KLIA</span><span class="s">2 Nov · 1 resit</span></div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px"><span class="amt">RM 45.00</span><span class="pill" style="color: #166534; background: #E3F5E8">Lulus</span></div>
+      </div>
+      <div class="card">
+        <div style="display: flex; flex-direction: column; gap: 3px"><span class="t">Makan luar kawasan</span><span class="s">Draf · belum dihantar</span></div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px"><span class="amt">RM 32.00</span><span class="pill" style="color: #4A5A57; background: #E9EEED">Draf</span></div>
+      </div>
+      <span style="font-size: 12px; font-weight: 700; color: #4A5A57; letter-spacing: 0.04em; margin-top: 6px">OKTOBER</span>
+      <div class="card">
+        <div style="display: flex; flex-direction: column; gap: 3px"><span class="t">Perbatuan Melaka</span><span class="s">18 Okt · 284 km</span></div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px"><span class="amt">RM 170.40</span><span class="pill" style="color: #166534; background: #E3F5E8">Dibayar</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding: 12px 20px 28px; background: #FFFFFF; border-top: 1px solid #E2E8E6; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+    <a href="BuatClaim.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 15px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+      Ambil gambar
+    </a>
+    <a href="BuatClaim.dc.html" style="height: 54px; box-sizing: border-box; border-radius: 16px; border: 2px solid #0F6B5F; background: #FFFFFF; color: #0F6B5F; font-size: 15px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M17 8l-5-5-5 5"></path><path d="M12 3v12"></path></svg>
+      Muat naik
+    </a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

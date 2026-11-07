@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Tetapan — jenis dan kelayakan cuti</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+.box{background:#FFFFFF;border-radius:16px;padding:2px 14px;display:flex;flex-direction:column}
+.r{display:flex;align-items:center;gap:10px;min-height:50px;border-top:1px solid #EEF2F1}
+.r:first-child{border-top:none}
+.t{display:flex;flex-direction:column;gap:1px;flex-grow:1}
+.t b{font-size:14px;font-weight:700}
+.t span{font-size:12px;color:#5B6B68}
+.lk{font-size:11px;font-weight:700;color:#4A5A57;background:#E9EEED;padding:3px 8px;border-radius:8px;white-space:nowrap}
+.tg{width:48px;height:44px;border:none;background:transparent;padding:0;display:flex;align-items:center;justify-content:flex-end;flex-shrink:0;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Tetapan.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Jenis cuti</h1>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 4px 20px 14px">
+    <span class="sec">MENGIKUT AKTA KERJA · MINIMUM</span>
+    <div class="box">
+      <div class="r"><span class="t"><b>Tahunan</b><span>8 / 12 / 16 hari mengikut tempoh perkhidmatan</span></span><span class="lk">Wajib</span></div>
+      <div class="r"><span class="t"><b>Sakit (MC)</b><span>14 / 18 / 22 hari · perlu sijil</span></span><span class="lk">Wajib</span></div>
+      <div class="r"><span class="t"><b>Kemasukan hospital</b><span>60 hari setahun</span></span><span class="lk">Wajib</span></div>
+      <div class="r"><span class="t"><b>Bersalin</b><span>98 hari</span></span><span class="lk">Wajib</span></div>
+      <div class="r"><span class="t"><b>Paterniti</b><span>7 hari</span></span><span class="lk">Wajib</span></div>
+    </div>
+
+    <span class="sec">PILIHAN SYARIKAT</span>
+    <div class="box">
+      <sc-for list="{{opts}}" as="o" hint-placeholder-count="4">
+        <div class="r"><span class="t"><b>{{o.name}}</b><span>{{o.sub}}</span></span>
+          <button class="tg" onClick="{{o.flip}}" aria-label="{{o.label}}"><span style="{{o.track}}"><span style="{{o.knob}}"></span></span></button>
+        </div>
+      </sc-for>
+    </div>
+
+    <div class="box">
+      <div class="r"><span class="t"><b>Bawa ke tahun hadapan</b><span>Baki cuti tahunan</span></span><b style="font-size: 14px">maks 5 hari</b></div>
+    </div>
+    <span style="font-size: 11px; color: #5B6B68">Kelayakan syarikat boleh lebih tinggi daripada minimum, tetapi tidak boleh kurang.</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { on: { el: true, ul: true, kahwin: false, haji: false } }; }
+  renderVals() {
+    const list = [
+      { id: 'el', name: 'Kecemasan', sub: 'Tidak menolak baki · boleh dimohon selepas' },
+      { id: 'ul', name: 'Tanpa gaji', sub: 'Gaji dipotong mengikut hari' },
+      { id: 'kahwin', name: 'Cuti kahwin', sub: '3 hari · sekali sepanjang perkhidmatan' },
+      { id: 'haji', name: 'Cuti haji / umrah', sub: '[ ] hari · sekali sepanjang perkhidmatan' }
+    ];
+    const s = this.state.on;
+    return {
+      opts: list.map((o) => {
+        const on = s[o.id];
+        return {
+          ...o,
+          label: (on ? 'Matikan ' : 'Hidupkan ') + o.name,
+          track: 'width: 46px; height: 28px; border-radius: 14px; position: relative; display: block; background: ' + (on ? '#0F6B5F' : '#C9D3D1'),
+          knob: 'position: absolute; top: 3px; width: 22px; height: 22px; border-radius: 11px; background: #FFFFFF; ' + (on ? 'right: 3px' : 'left: 3px'),
+          flip: () => this.setState({ on: { ...s, [o.id]: !on } })
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Pentadbir Platform — ringkasan platform</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F6F5}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.shell{display:flex;flex-wrap:wrap;width:100%;min-height:900px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#14211F;background:#F4F6F5}
+.side{flex:1 1 220px;background:#14211F;color:#FFFFFF;padding:22px 14px;box-sizing:border-box;display:flex;flex-direction:column;gap:4px}
+.side a{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:0 12px;border-radius:10px;color:#C9D3D1;font-size:14px;font-weight:600}
+.side a:hover{background:#1F3532;color:#FFFFFF}
+.side a.on{background:#2A4743;color:#FFFFFF;font-weight:800}
+.badge{min-width:22px;height:22px;border-radius:11px;background:#F2B266;color:#14211F;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.main{flex:999 1 560px;min-width:0;padding:28px 32px;box-sizing:border-box;display:flex;flex-direction:column;gap:20px}
+.card{background:#FFFFFF;border-radius:16px;padding:18px 20px;box-sizing:border-box}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.kpi span{font-size:13px;color:#4A5A57;font-weight:600}
+.kpi b{display:block;font-size:28px;font-weight:800;margin-top:4px}
+.kpi em{font-style:normal;font-size:12px;color:#4A5A57}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em;padding:10px 12px;border-bottom:1px solid #E2E8E6;white-space:nowrap}
+td{font-size:14px;padding:12px;border-bottom:1px solid #EEF2F1;white-space:nowrap}
+td.n,th.n{text-align:right}
+.pill{font-size:12px;font-weight:700;padding:3px 9px;border-radius:9px;white-space:nowrap}
+.ok{color:#166534;background:#E3F5E8}.warn{color:#92400E;background:#FEF3E2}.bad{color:#B42318;background:#FBE4E2}.mut{color:#4A5A57;background:#E9EEED}
+.h2{margin:0;font-size:17px;font-weight:800}
+.meter{height:8px;border-radius:4px;background:#E4EAE8;overflow:hidden}
+.meter i{display:block;height:100%;border-radius:4px}
+</style>
+</helmet>
+<div class="shell">
+  <nav class="side" aria-label="Menu pentadbir platform">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 18px">
+      <span style="width: 36px; height: 36px; border-radius: 10px; background: #0F6B5F; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center">HR</span>
+      <span style="display: flex; flex-direction: column"><b style="font-size: 15px">HRBoost.io</b><span style="font-size: 12px; color: #C9D3D1">Pentadbir Platform</span></span>
+    </div>
+    <a href="SA_Dashboard.dc.html" class="on">Ringkasan</a>
+    <a href="SA_Syarikat.dc.html">Syarikat</a>
+    <a href="SA_Pengguna.dc.html">Pengguna</a>
+    <a href="SA_Akses.dc.html">Permohonan akses <span class="badge">2</span></a>
+    <a href="SA_Log.dc.html">Log audit</a>
+    <a href="SA_Tetapan.dc.html">Tetapan platform</a>
+  </nav>
+
+  <main class="main">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <h1 style="margin: 0; font-size: 26px; font-weight: 800">Ringkasan platform</h1>
+        <span style="font-size: 14px; color: #4A5A57">Data agregat sahaja. Butiran peribadi pekerja tidak dipaparkan di sini.</span>
+      </div>
+      <span style="font-size: 13px; font-weight: 700; color: #4A5A57">November 2026</span>
+    </div>
+
+    <div class="kpis">
+      <div class="card kpi"><span>Syarikat aktif</span><b>[ ]</b><em>+[ ] minggu ini</em></div>
+      <div class="card kpi"><span>Pekerja aktif</span><b>[ ]</b><em>log masuk dalam 30 hari</em></div>
+      <div class="card kpi"><span>Persediaan belum selesai</span><b>[ ]</b><em>syarikat</em></div>
+      <div class="card kpi"><span>Mesej WhatsApp</span><b>[ ]</b><em>bulan ini</em></div>
+      <div class="card kpi"><span>Panggilan AI</span><b>[ ]</b><em>bulan ini</em></div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 16px">
+      <section class="card" style="flex: 2 1 460px; display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; justify-content: space-between; align-items: center"><h2 class="h2">Perlu perhatian</h2><a href="SA_Syarikat.dc.html" style="font-size: 13px; font-weight: 700">Semua syarikat</a></div>
+        <div class="tw"><table>
+          <thead><tr><th>Syarikat</th><th>Isu</th><th>Sejak</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><b>Syarikat ABC Sdn Bhd</b></td><td><span class="pill warn">WhatsApp 92% daripada had</span></td><td>3 hari</td><td class="n"><a href="SA_SyarikatButiran.dc.html" style="font-weight: 700">Lihat</a></td></tr>
+            <tr><td><b>Kedai XYZ Enterprise</b></td><td><span class="pill mut">Persediaan terhenti di langkah 3</span></td><td>9 hari</td><td class="n"><a href="SA_SyarikatButiran.dc.html" style="font-weight: 700">Lihat</a></td></tr>
+            <tr><td><b>MUSLIMTRAVELBUG</b></td><td><span class="pill bad">Penyegerakan CrossChex gagal</span></td><td>2 jam</td><td class="n"><a href="SA_SyarikatButiran.dc.html" style="font-weight: 700">Lihat</a></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="card" style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 14px">
+        <div style="display: flex; justify-content: space-between; align-items: center"><h2 class="h2">Permohonan akses</h2><a href="SA_Akses.dc.html" style="font-size: 13px; font-weight: 700">Semak</a></div>
+        <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #EEF2F1">
+          <b style="font-size: 14px">Lily (HR, MTB)</b>
+          <span style="font-size: 13px; color: #4A5A57">Mohon akses HR ke DO IT GROUP · 30 hari</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <b style="font-size: 14px">Hasif (CEO, Avenue)</b>
+          <span style="font-size: 13px; color: #4A5A57">Mohon paparan CEO ke MTB · 90 hari</span>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="display: flex; flex-direction: column; gap: 14px">
+      <h2 class="h2">Penggunaan bulan ini — syarikat teratas</h2>
+      <div class="tw"><table>
+        <thead><tr><th>Syarikat</th><th class="n">Pekerja</th><th style="width: 40%">WhatsApp (had)</th><th class="n">AI</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><b>Syarikat ABC Sdn Bhd</b></td><td class="n">18</td><td><div class="meter"><i style="width: 92%; background: #D97706"></i></div></td><td class="n">[ ]</td><td><span class="pill ok">Aktif</span></td></tr>
+          <tr><td><b>MUSLIMTRAVELBUG</b></td><td class="n">[ ]</td><td><div class="meter"><i style="width: 48%; background: #0F6B5F"></i></div></td><td class="n">[ ]</td><td><span class="pill ok">Aktif</span></td></tr>
+          <tr><td><b>Avenue Holidays</b></td><td class="n">[ ]</td><td><div class="meter"><i style="width: 21%; background: #0F6B5F"></i></div></td><td class="n">[ ]</td><td><span class="pill ok">Aktif</span></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

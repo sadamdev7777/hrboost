@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Tetapan — jenis tuntutan dan had</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+.box{background:#FFFFFF;border-radius:16px;padding:2px 14px;display:flex;flex-direction:column}
+.r{display:flex;align-items:center;gap:10px;min-height:56px;border-top:1px solid #EEF2F1}
+.r:first-child{border-top:none}
+.t{display:flex;flex-direction:column;gap:1px;flex-grow:1}
+.t b{font-size:14px;font-weight:700}
+.t span{font-size:12px;color:#5B6B68}
+.in{width:96px;height:40px;box-sizing:border-box;border:1px solid #D5DEDC;border-radius:10px;padding:0 10px;font-family:inherit;font-size:14px;font-weight:700;text-align:right;color:#14211F}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Tetapan.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Jenis tuntutan &amp; had</h1>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 4px 20px 14px">
+    <span class="sec">JENIS TUNTUTAN</span>
+    <div class="box">
+      <label class="r"><span class="t"><b>Perbatuan</b><span>Kadar sekilometer · tanpa resit</span></span><input class="in" type="text" value="RM 0.60"></label>
+      <label class="r"><span class="t"><b>Letak kereta &amp; Tol</b><span>Had setiap item · perlu resit</span></span><input class="in" type="text" value="Tiada had"></label>
+      <label class="r"><span class="t"><b>E-hailing / Teksi</b><span>Had setiap item · perlu resit</span></span><input class="in" type="text" value="Tiada had"></label>
+      <label class="r"><span class="t"><b>Makan luar kawasan</b><span>Had sehari · perlu resit</span></span><input class="in" type="text" value="RM 50"></label>
+      <label class="r"><span class="t"><b>Lain-lain</b><span>Perlu keterangan &amp; resit</span></span><input class="in" type="text" value="Tiada had"></label>
+    </div>
+    <button style="min-height: 48px; border-radius: 16px; border: 2px dashed #C9D3D1; background: transparent; font-family: inherit; font-size: 14px; font-weight: 700; color: #0F6B5F">+ Jenis tuntutan baharu</button>
+
+    <span class="sec">PERATURAN</span>
+    <div class="box">
+      <label class="r"><span class="t"><b>Hantar dalam tempoh</b><span>Selepas tarikh resit</span></span><input class="in" type="text" value="[ ] hari"></label>
+      <label class="r"><span class="t"><b>Perlu kelulusan CEO jika melebihi</b><span>Peringkat tambahan automatik</span></span><input class="in" type="text" value="RM 1,000"></label>
+      <div class="r"><span class="t"><b>Bayar melalui</b><span>Tuntutan yang diluluskan dibayar bersama gaji bulan berikutnya</span></span><b style="font-size: 13px">Gaji</b></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

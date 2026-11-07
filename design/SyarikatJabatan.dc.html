@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Persediaan syarikat — jabatan dan ketua</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.bar{height:5px;border-radius:3px;background:#DCE3E1}
+.bar.on{background:#0F6B5F}
+.dp{background:#FFFFFF;border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:12px}
+.dp .t{display:flex;flex-direction:column;gap:2px;flex-grow:1}
+.dp .t b{font-size:15px;font-weight:800}
+.dp .t span{font-size:12px;color:#5B6B68}
+.hd{display:flex;align-items:center;gap:8px;height:40px;padding:0 10px 0 6px;border-radius:20px;background:#F4F6F5;font-size:13px;font-weight:700;color:#14211F;border:none;font-family:inherit}
+.av{width:28px;height:28px;border-radius:14px;background:#E3F1EE;color:#0F6B5F;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 4px">
+    <a class="back" href="ImportPekerja.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <span style="font-size: 13px; font-weight: 700; color: #4A5A57">Langkah 4 daripada 6</span>
+  </header>
+  <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; padding: 0 20px 8px">
+    <span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar"></span><span class="bar"></span>
+  </div>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 10px 20px 14px">
+    <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px">
+      <h1 style="margin: 0; font-size: 24px; font-weight: 800">Jabatan &amp; ketua</h1>
+      <span style="font-size: 14px; color: #4A5A57">Dicipta daripada fail Excel anda. Ketua jabatan akan menjadi pelulus pertama bagi pasukan mereka.</span>
+    </div>
+
+    <div class="dp"><span class="t"><b>Tour</b><span>6 pekerja</span></span><button class="hd"><span class="av">SA</span>Siti Aminah</button></div>
+    <div class="dp"><span class="t"><b>Akaun</b><span>3 pekerja</span></span><button class="hd"><span class="av">RH</span>Rahim</button></div>
+    <div class="dp"><span class="t"><b>Pentadbiran</b><span>5 pekerja</span></span><button class="hd"><span class="av" style="background: #FDEBD7; color: #92400E">AN</span>Anda</button></div>
+    <div class="dp" style="{{tixStyle}}">
+      <span class="t"><b>Ticketing</b><span>{{tixSub}}</span></span>
+      <sc-if value="{{noHead}}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{pick}}" style="height: 40px; padding: 0 14px; border-radius: 20px; border: 1.5px solid #92400E; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 800; color: #92400E; cursor: pointer">Pilih ketua</button>
+      </sc-if>
+      <sc-if value="{{hasHead}}" hint-placeholder-val="{{ false }}">
+        <button class="hd"><span class="av">KH</span>Kamal Hisham</button>
+      </sc-if>
+    </div>
+
+    <button style="min-height: 48px; border-radius: 16px; border: 2px dashed #C9D3D1; background: transparent; font-family: inherit; font-size: 14px; font-weight: 700; color: #0F6B5F">+ Tambah jabatan</button>
+
+    <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 12px; color: #4A5A57; line-height: 1.5">
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01M11 12h1v5h1"></path></svg>
+      <span>Apabila ketua jabatan sendiri memohon cuti, permohonan akan terus dihantar ke peringkat seterusnya.</span>
+    </div>
+  </div>
+
+  <div style="padding: 10px 20px 26px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <sc-if value="{{hasHead}}" hint-placeholder-val="{{ false }}">
+      <a href="SyarikatPeranan.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Simpan &amp; seterusnya</a>
+    </sc-if>
+    <sc-if value="{{noHead}}" hint-placeholder-val="{{ true }}">
+      <button disabled style="width: 100%; height: 54px; border-radius: 16px; border: none; background: #DCE3E1; color: #4A5A57; font-family: inherit; font-size: 15px; font-weight: 800">1 jabatan belum mempunyai ketua</button>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { head: false }; }
+  renderVals() {
+    const h = this.state.head;
+    return {
+      noHead: !h,
+      hasHead: h,
+      tixSub: h ? '4 pekerja' : '4 pekerja · tiada ketua dalam Excel',
+      tixStyle: h ? '' : 'border: 1.5px solid #F2B266; background: #FFFBF4;',
+      pick: () => this.setState({ head: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

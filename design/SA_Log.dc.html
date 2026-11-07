@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Pentadbir Platform — log audit</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F6F5}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.shell{display:flex;flex-wrap:wrap;width:100%;min-height:900px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#14211F;background:#F4F6F5}
+.side{flex:1 1 220px;background:#14211F;color:#FFFFFF;padding:22px 14px;box-sizing:border-box;display:flex;flex-direction:column;gap:4px}
+.side a{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:0 12px;border-radius:10px;color:#C9D3D1;font-size:14px;font-weight:600}
+.side a:hover{background:#1F3532;color:#FFFFFF}
+.side a.on{background:#2A4743;color:#FFFFFF;font-weight:800}
+.badge{min-width:22px;height:22px;border-radius:11px;background:#F2B266;color:#14211F;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.main{flex:999 1 560px;min-width:0;padding:28px 32px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px}
+.gr{display:grid;grid-template-columns:1fr 1.1fr 1.4fr 1.6fr;gap:12px;align-items:center;min-width:800px;padding:12px;border-bottom:1px solid #EEF2F1;font-size:14px}
+.gr.h{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em;border-bottom:1px solid #E2E8E6}
+.chip{height:38px;padding:0 14px;border-radius:19px;border:1px solid #D5DEDC;background:#FFFFFF;font-family:inherit;font-size:13px;font-weight:600;color:#14211F}
+.t{font-size:12px;font-weight:700;padding:3px 9px;border-radius:9px;white-space:nowrap;justify-self:start}
+</style>
+</helmet>
+<div class="shell">
+  <nav class="side" aria-label="Menu pentadbir platform">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 18px">
+      <span style="width: 36px; height: 36px; border-radius: 10px; background: #0F6B5F; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center">HR</span>
+      <span style="display: flex; flex-direction: column"><b style="font-size: 15px">HRBoost.io</b><span style="font-size: 12px; color: #C9D3D1">Pentadbir Platform</span></span>
+    </div>
+    <a href="SA_Dashboard.dc.html">Ringkasan</a>
+    <a href="SA_Syarikat.dc.html">Syarikat</a>
+    <a href="SA_Pengguna.dc.html">Pengguna</a>
+    <a href="SA_Akses.dc.html">Permohonan akses <span class="badge">2</span></a>
+    <a href="SA_Log.dc.html" class="on">Log audit</a>
+    <a href="SA_Tetapan.dc.html">Tetapan platform</a>
+  </nav>
+
+  <main class="main">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 26px; font-weight: 800">Log audit</h1>
+      <span style="font-size: 14px; color: #4A5A57">Setiap tindakan Pentadbir Platform, kelulusan akses dan akses data sensitif direkod. Log tidak boleh diubah atau dipadam.</span>
+    </div>
+
+    <div style="display: flex; gap: 8px; flex-wrap: wrap">
+      <button class="chip" style="background: #14211F; color: #FFFFFF; border-color: #14211F; font-weight: 700">Semua</button>
+      <button class="chip">Pentadbir Platform</button>
+      <button class="chip">Akses syarikat</button>
+      <button class="chip">Data sensitif</button>
+      <button class="chip">Log masuk</button>
+      <button class="chip" style="margin-left: auto">Eksport CSV</button>
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 16px; padding: 4px 8px; overflow-x: auto">
+      <div class="gr h"><span>MASA</span><span>PELAKU</span><span>TINDAKAN</span><span>SASARAN</span></div>
+      <div class="gr"><span>7 Nov, 3:58 pg</span><b>Sadam (pentadbir platform)</b><span class="t" style="color: #B42318; background: #FBE4E2">Nyahaktifkan syarikat</span><span>Contoh Trading · sebab: melanggar terma</span></div>
+      <div class="gr"><span>7 Nov, 3:41 pg</span><b>Sadam (pentadbir platform)</b><span class="t" style="color: #166534; background: #E3F5E8">Lulus akses</span><span>Hasif → CEO di MUSLIMTRAVELBUG · 90 hari</span></div>
+      <div class="gr"><span>7 Nov, 3:12 pg</span><b>Lily (HR, MTB)</b><span class="t" style="color: #92400E; background: #FEF3E2">Buka data sensitif</span><span>Akaun bank · Amin (MTB)</span></div>
+      <div class="gr"><span>7 Nov, 2:55 pg</span><b>Lily (HR, MTB)</b><span class="t" style="color: #4A3B8C; background: #EDE9F8">Mohon akses</span><span>HR di DO IT GROUP · 30 hari</span></div>
+      <div class="gr"><span>6 Nov, 6:10 ptg</span><b>Faizal (Pentadbir, ABC)</b><span class="t" style="color: #4A5A57; background: #E9EEED">Tukar aliran kelulusan</span><span>Cuti · buang peringkat CEO</span></div>
+      <div class="gr"><span>6 Nov, 9:02 pg</span><b>Sistem</b><span class="t" style="color: #4A5A57; background: #E9EEED">Had WhatsApp 90%</span><span>Syarikat ABC Sdn Bhd</span></div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

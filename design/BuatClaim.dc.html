@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Buat tuntutan — ambil gambar atau muat naik resit</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.fld{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700}
+.fld input,.fld select{height:46px;box-sizing:border-box;border:1px solid #D5DEDC;border-radius:12px;padding:0 14px;font-family:inherit;font-size:15px;font-weight:600;color:#14211F;background:#FFFFFF}
+.src{min-height:108px;border-radius:18px;font-family:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;padding:12px}
+.src b{font-size:15px;font-weight:800}
+.src span{font-size:12px;font-weight:500}
+.mini{height:40px;padding:0 12px;border-radius:12px;border:1px solid #D5DEDC;background:#FFFFFF;font-family:inherit;font-size:13px;font-weight:700;color:#0F6B5F;display:flex;align-items:center;gap:6px;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Tuntutan.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Tuntutan Baharu</h1>
+  </header>
+
+  <sc-if value="{{empty}}" hint-placeholder-val="{{ true }}">
+    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 14px; padding: 8px 20px 16px">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <h2 style="margin: 0; font-size: 22px; font-weight: 800">Tambah resit</h2>
+        <span style="font-size: 14px; color: #4A5A57">AI akan membaca resit dan mengisi borang untuk anda.</span>
+      </div>
+
+      <button class="src" onClick="{{fromCamera}}" style="border: none; background: #0F6B5F; color: #FFFFFF">
+        <svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+        <b>Ambil gambar resit</b>
+        <span style="opacity: 0.9">Buka kamera telefon</span>
+      </button>
+
+      <button class="src" onClick="{{fromGallery}}" style="border: 2px solid #0F6B5F; background: #FFFFFF; color: #0F6B5F">
+        <svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+        <b>Muat naik dari galeri / fail</b>
+        <span style="color: #33504B">Gambar, tangkapan skrin e-resit atau PDF</span>
+      </button>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; background: #FFFFFF; border-radius: 14px; padding: 12px 14px">
+        <span style="font-size: 12px; font-weight: 700; color: #4A5A57; letter-spacing: 0.04em">PANDUAN GAMBAR YANG JELAS</span>
+        <span style="font-size: 13px; color: #33504B; line-height: 1.5">Letakkan resit di atas permukaan rata dengan pencahayaan yang mencukupi, dan pastikan jumlah serta tarikh jelas kelihatan.</span>
+      </div>
+
+      <a href="#" style="font-size: 13px; font-weight: 700; text-align: center; margin-top: auto">Tuntutan perbatuan? Isi tanpa resit</a>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{hasReceipt}}" hint-placeholder-val="{{ false }}">
+    <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 12px; padding: 4px 20px 16px">
+      <div style="display: flex; gap: 12px; align-items: stretch">
+        <div style="width: 92px; height: 120px; flex-shrink: 0; border-radius: 12px; background: #FFFFFF; border: 1px solid #D5DEDC; display: flex; flex-direction: column; gap: 6px; padding: 12px 10px; box-sizing: border-box; position: relative" role="img" aria-label="Gambar resit">
+          <span style="height: 6px; width: 60%; background: #C9D3D1; border-radius: 3px"></span>
+          <span style="height: 4px; width: 90%; background: #E2E8E6; border-radius: 2px"></span>
+          <span style="height: 4px; width: 80%; background: #E2E8E6; border-radius: 2px"></span>
+          <span style="height: 4px; width: 85%; background: #E2E8E6; border-radius: 2px"></span>
+          <span style="height: 6px; width: 50%; background: #C9D3D1; border-radius: 3px; margin-top: auto; align-self: flex-end"></span>
+          <span style="position: absolute; left: 6px; bottom: -10px; font-size: 10px; font-weight: 700; color: #FFFFFF; background: #0F6B5F; padding: 2px 6px; border-radius: 6px">{{srcLabel}}</span>
+        </div>
+        <div style="flex-grow: 1; background: #F3F0FC; border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px">
+          <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 800; color: #4A3B8C">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5 13.8 11.3 12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"></path></svg>
+            AI telah membaca resit
+          </span>
+          <span style="font-size: 13px; color: #2E2650; line-height: 1.45">Letak kereta KLIA2, 5 Nov, RM 43.25. Sila semak dan betulkan jika perlu.</span>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 8px; margin-top: 4px">
+        <button class="mini" onClick="{{fromCamera}}">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+          + Ambil lagi
+        </button>
+        <button class="mini" onClick="{{fromGallery}}">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M21 15l-5-5L5 21"></path></svg>
+          + Dari galeri
+        </button>
+        <button class="mini" onClick="{{reset}}" style="color: #B42318; margin-left: auto">Buang</button>
+      </div>
+
+      <label class="fld">Jenis
+        <select><option>Letak kereta &amp; Tol</option><option>E-hailing / Teksi</option><option>Perbatuan</option><option>Makan (luar kawasan)</option><option>Lain-lain</option></select>
+      </label>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+        <label class="fld">Tarikh<input type="text" value="5 Nov 2026"></label>
+        <label class="fld">Jumlah (RM)<input type="text" value="43.25"></label>
+      </div>
+      <label class="fld">Tujuan
+        <input type="text" value="Menghantar kumpulan umrah ke KLIA2">
+      </label>
+      <span style="font-size: 12px; color: #5B6B68">Akan diluluskan oleh: Ketua Jabatan → Kewangan. Melebihi RM1,000 → CEO juga.</span>
+    </div>
+
+    <div style="padding: 12px 20px 28px; background: #FFFFFF; border-top: 1px solid #E2E8E6; display: grid; grid-template-columns: 1fr 2fr; gap: 10px">
+      <button style="height: 54px; border-radius: 16px; border: 1.5px solid #D5DEDC; background: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 700; color: #14211F">Simpan draf</button>
+      <a href="Tuntutan.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Hantar RM 43.25</a>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { src: null }; }
+  renderVals() {
+    const src = this.state.src;
+    return {
+      empty: !src,
+      hasReceipt: !!src,
+      srcLabel: src === 'camera' ? 'Kamera' : 'Galeri',
+      fromCamera: () => this.setState({ src: 'camera' }),
+      fromGallery: () => this.setState({ src: 'gallery' }),
+      reset: () => this.setState({ src: null })
+    };
+  }
+}
+</script>
+</body>
+</html>

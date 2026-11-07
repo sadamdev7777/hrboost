@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Pembantu AI</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.sug{min-height:44px;padding:8px 14px;border-radius:14px;border:1px solid #D9D2F1;background:#FFFFFF;font-family:inherit;font-size:13px;font-weight:600;color:#2E2650;text-align:left}
+.log{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid #EEF2F1}
+.log:first-child{border-top:none}
+.dot{width:8px;height:8px;border-radius:4px;background:#5B4A9E;margin-top:6px;flex-shrink:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Saya.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Pembantu AI</h1>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 16px; padding: 4px 20px 16px">
+    <div style="background: #F3F0FC; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 6px">
+      <span style="font-size: 17px; font-weight: 800; color: #2E2650">Tanya apa sahaja tentang HR</span>
+      <span style="font-size: 13px; color: #4A3B8C; line-height: 1.5">Sama seperti menghantar WhatsApp ke 01x-xxx xxxx. Ejen hanya boleh melihat data anda sendiri.</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 12px; font-weight: 700; color: #4A5A57; letter-spacing: 0.04em">CUBA TANYA</span>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <button class="sug">Berapakah baki cuti saya?</button>
+        <button class="sug">Adakah tuntutan saya telah diluluskan?</button>
+        <button class="sug">Berapa harikah cuti paterniti?</button>
+        <button class="sug">Saya memerlukan surat pengesahan jawatan</button>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <span style="font-size: 12px; font-weight: 700; color: #4A5A57; letter-spacing: 0.04em">TINDAKAN EJEN UNTUK ANDA</span>
+      <div style="background: #FFFFFF; border-radius: 16px; padding: 4px 16px; display: flex; flex-direction: column">
+        <div class="log"><span class="dot"></span><div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-size: 14px; font-weight: 700">Menghantar permohonan cuti 23–28 Dis</span><span style="font-size: 12px; color: #5B6B68">Hari ini 8:12 · WhatsApp</span></div></div>
+        <div class="log"><span class="dot"></span><div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-size: 14px; font-weight: 700">Merekod sebab lewat 4 Nov</span><span style="font-size: 12px; color: #5B6B68">Rab 9:43 · WhatsApp</span></div></div>
+        <div class="log"><span class="dot"></span><div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-size: 14px; font-weight: 700">Membaca resit letak kereta KLIA2</span><span style="font-size: 12px; color: #5B6B68">5 Nov · Aplikasi</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 8px; align-items: center; padding: 10px 16px 26px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <label style="flex-grow: 1; display: flex">
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Soalan</span>
+      <input type="text" placeholder="Taip soalan…" style="flex-grow: 1; height: 48px; box-sizing: border-box; border: 1px solid #D5DEDC; border-radius: 24px; padding: 0 16px; font-family: inherit; font-size: 15px; color: #14211F; background: #F4F6F5">
+    </label>
+    <button aria-label="Hantar" style="width: 48px; height: 48px; border-radius: 24px; border: none; background: #5B4A9E; display: flex; align-items: center; justify-content: center">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4z"></path></svg>
+    </button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

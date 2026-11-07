@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Tetapan</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+.box{background:#FFFFFF;border-radius:16px;display:flex;flex-direction:column}
+.row{display:flex;align-items:center;gap:12px;min-height:50px;padding:0 16px;border-top:1px solid #EEF2F1;color:#14211F;font-size:15px;font-weight:600}
+.row:first-child{border-top:none}
+.row em{font-style:normal;font-size:12px;font-weight:600;color:#5B6B68;margin-left:auto}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Saya.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800; flex-grow: 1">Tetapan</h1>
+    <span style="font-size: 13px; font-weight: 800; color: #0F6B5F; background: #E3F1EE; padding: 4px 10px; border-radius: 9px; margin-right: 8px">MTB</span>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 4px 20px 16px">
+    <span class="sec">KELULUSAN &amp; AUTOMASI</span>
+    <div class="box">
+      <a class="row" href="AliranApproval.dc.html">Aliran Kelulusan<em>4 jenis</em></a>
+      <a class="row" href="T_WakilKelulusan.dc.html">Wakil Kelulusan<em>1 aktif</em></a>
+      <a class="row" href="Automasi.dc.html">Automasi WhatsApp<em>8 peraturan</em></a>
+    </div>
+
+    <span class="sec">CUTI, TUNTUTAN &amp; KEHADIRAN</span>
+    <div class="box">
+      <a class="row" href="T_JenisCuti.dc.html">Jenis &amp; Kelayakan Cuti</a>
+      <a class="row" href="CutiUmum.dc.html">Cuti Umum<em>11 hari · WP KL</em></a>
+      <a class="row" href="T_JenisClaim.dc.html">Jenis Tuntutan &amp; Had</a>
+      <a class="row" href="T_Syarikat.dc.html">Waktu Kerja<em>9:00 · 10 min</em></a>
+    </div>
+
+    <span class="sec">GAJI &amp; AKAUN</span>
+    <div class="box">
+      <a class="row" href="T_KadarBerkanun.dc.html">Kadar Berkanun<em>KWSP · PERKESO · PCB</em></a>
+      <a class="row" href="T_IntegrasiAkaun.dc.html">Integrasi Akaun<em>QuickBooks</em></a>
+    </div>
+
+    <span class="sec">SISTEM</span>
+    <div class="box">
+      <a class="row" href="T_Syarikat.dc.html">Profil Syarikat<em>MTB</em></a>
+      <a class="row" href="T_Pengguna.dc.html">Pengguna &amp; Peranan</a>
+      <a class="row" href="T_PengetahuanAI.dc.html">Pengetahuan AI<em>Buku panduan, polisi</em></a>
+      <a class="row" href="IntegrasiKehadiran.dc.html">Integrasi Kehadiran<em>CrossChex</em></a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

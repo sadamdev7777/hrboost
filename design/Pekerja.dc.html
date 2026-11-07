@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Senarai pekerja</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.chip{height:36px;padding:0 14px;border-radius:18px;border:1px solid #D5DEDC;background:#FFFFFF;font-family:inherit;font-size:13px;font-weight:600;color:#14211F;white-space:nowrap}
+.box{background:#FFFFFF;border-radius:16px;padding:4px 16px;display:flex;flex-direction:column}
+.r{display:flex;align-items:center;gap:12px;min-height:60px;border-top:1px solid #EEF2F1;color:#14211F}
+.r:first-child{border-top:none}
+.av{width:40px;height:40px;border-radius:20px;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nm{display:flex;flex-direction:column;gap:2px;flex-grow:1}
+.nm b{font-size:15px;font-weight:700}
+.nm span{font-size:12px;color:#5B6B68}
+.tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:8px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Saya.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800; flex-grow: 1">Pekerja <span style="font-size: 13px; font-weight: 700; color: #0F6B5F; background: #E3F1EE; padding: 3px 9px; border-radius: 9px; vertical-align: middle">MTB</span></h1>
+    <a href="TambahPekerja.dc.html" aria-label="Tambah pekerja" style="width: 44px; height: 44px; margin-right: 8px; border-radius: 22px; background: #0F6B5F; color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+    </a>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 12px; padding: 4px 20px 16px">
+    <label style="display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 14px; border-radius: 14px; background: #FFFFFF; border: 1px solid #D5DEDC">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B6B68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cari pekerja</span>
+      <input type="text" placeholder="Cari nama atau no. pekerja" style="flex-grow: 1; border: none; outline: none; font-family: inherit; font-size: 15px; color: #14211F; background: transparent">
+    </label>
+
+    <div style="display: flex; gap: 8px">
+      <button class="chip" style="background: #14211F; color: #FFFFFF; border-color: #14211F; font-weight: 700">Semua · 18</button>
+      <button class="chip">Aktif</button>
+      <button class="chip">Percubaan</button>
+      <button class="chip">Belum aktif</button>
+    </div>
+
+    <span style="font-size: 12px; font-weight: 700; color: #4A5A57; letter-spacing: 0.04em">TOUR</span>
+    <div class="box">
+      <a class="r" href="ProfilPekerja.dc.html"><span class="av" style="background: #E3F1EE; color: #0F6B5F">ZU</span><span class="nm"><b>Zuerin</b><span>Ketua Jabatan · MTB003</span></span></a>
+      <a class="r" href="ProfilPekerja.dc.html"><span class="av" style="background: #E3F1EE; color: #0F6B5F">AM</span><span class="nm"><b>Amin</b><span>Eksekutif Tour · MTB004</span></span></a>
+      <a class="r" href="ProfilPekerja.dc.html"><span class="av" style="background: #E3F1EE; color: #0F6B5F">ZF</span><span class="nm"><b>Zulfa</b><span>Eksekutif Tour · MTB007</span></span></a>
+      <a class="r" href="ProfilPekerja.dc.html"><span class="av" style="background: #E3F1EE; color: #0F6B5F">NU</span><span class="nm"><b>Nurin</b><span>Eksekutif Tour · MTB011</span></span><span class="tag" style="color: #92400E; background: #FEF3E2">Percubaan</span></a>
+    </div>
+
+    <span style="font-size: 12px; font-weight: 700; color: #4A5A57; letter-spacing: 0.04em">CEO OFFICE</span>
+    <div class="box">
+      <a class="r" href="ProfilPekerja.dc.html"><span class="av" style="background: #FDEBD7; color: #92400E">LI</span><span class="nm"><b>Lily</b><span>CEO Office · MTB002</span></span><span class="tag" style="color: #0F6B5F; background: #E3F1EE">HR</span></a>
+      <a class="r" href="ProfilPekerja.dc.html"><span class="av" style="background: #FDEBD7; color: #92400E">AR</span><span class="nm"><b>Arissa</b><span>CEO Office · MTB008</span></span></a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

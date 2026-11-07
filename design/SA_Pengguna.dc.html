@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Pentadbir Platform — pengguna</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F6F5}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.shell{display:flex;flex-wrap:wrap;width:100%;min-height:900px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#14211F;background:#F4F6F5}
+.side{flex:1 1 220px;background:#14211F;color:#FFFFFF;padding:22px 14px;box-sizing:border-box;display:flex;flex-direction:column;gap:4px}
+.side a{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:0 12px;border-radius:10px;color:#C9D3D1;font-size:14px;font-weight:600}
+.side a:hover{background:#1F3532;color:#FFFFFF}
+.side a.on{background:#2A4743;color:#FFFFFF;font-weight:800}
+.badge{min-width:22px;height:22px;border-radius:11px;background:#F2B266;color:#14211F;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.main{flex:999 1 560px;min-width:0;padding:28px 32px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px}
+.gr{display:grid;grid-template-columns:1.3fr 1.1fr 1.5fr 0.9fr 0.8fr 1.3fr;gap:12px;align-items:center;min-width:900px;padding:12px;border-bottom:1px solid #EEF2F1;font-size:14px}
+.gr.h{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em;border-bottom:1px solid #E2E8E6}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:13px}
+.btn{min-height:38px;padding:0 12px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;border:1px solid #D5DEDC;background:#FFFFFF;color:#14211F;cursor:pointer}
+</style>
+</helmet>
+<div class="shell">
+  <nav class="side" aria-label="Menu pentadbir platform">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 18px">
+      <span style="width: 36px; height: 36px; border-radius: 10px; background: #0F6B5F; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center">HR</span>
+      <span style="display: flex; flex-direction: column"><b style="font-size: 15px">HRBoost.io</b><span style="font-size: 12px; color: #C9D3D1">Pentadbir Platform</span></span>
+    </div>
+    <a href="SA_Dashboard.dc.html">Ringkasan</a>
+    <a href="SA_Syarikat.dc.html">Syarikat</a>
+    <a href="SA_Pengguna.dc.html" class="on">Pengguna</a>
+    <a href="SA_Akses.dc.html">Permohonan akses <span class="badge">2</span></a>
+    <a href="SA_Log.dc.html">Log audit</a>
+    <a href="SA_Tetapan.dc.html">Tetapan platform</a>
+  </nav>
+
+  <main class="main">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 26px; font-weight: 800">Pengguna</h1>
+      <span style="font-size: 14px; color: #4A5A57">Cari pengguna untuk menyahaktifkan akaun atau memaksa log keluar. Profil peribadi tidak dipaparkan.</span>
+    </div>
+
+    <label style="display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 14px; border-radius: 12px; background: #FFFFFF; border: 1px solid #D5DEDC; max-width: 520px">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B6B68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cari pengguna</span>
+      <input type="text" placeholder="Cari nama atau no. WhatsApp" style="flex-grow: 1; border: none; outline: none; font-family: inherit; font-size: 14px; background: transparent; color: #14211F">
+    </label>
+
+    <div style="background: #FFFFFF; border-radius: 16px; padding: 4px 8px; overflow-x: auto">
+      <div class="gr h"><span>NAMA</span><span>WHATSAPP</span><span>SYARIKAT · PERANAN</span><span>LOG MASUK</span><span>STATUS</span><span>TINDAKAN</span></div>
+      <sc-for list="{{users}}" as="u" hint-placeholder-count="5">
+        <div class="gr">
+          <b>{{u.name}}</b>
+          <span class="mono">{{u.wa}}</span>
+          <span>{{u.co}}</span>
+          <span>{{u.last}}</span>
+          <span style="{{u.pill}}">{{u.statusLabel}}</span>
+          <span style="display: flex; gap: 6px; flex-wrap: wrap">
+            <button class="btn" onClick="{{u.toggle}}" style="{{u.btnStyle}}">{{u.action}}</button>
+            <button class="btn">Log keluar</button>
+          </span>
+        </div>
+      </sc-for>
+    </div>
+    <span style="font-size: 12px; color: #4A5A57">Pengguna yang dinyahaktifkan tidak boleh log masuk ke mana-mana syarikat. Rekod HR mereka kekal disimpan untuk syarikat.</span>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { off: { u5: true } }; }
+  renderVals() {
+    const list = [
+      { id: 'u1', name: 'Sadam', wa: '+60 1•-•••• 0001', co: 'MTB · Pentadbir, CEO', last: 'Hari ini' },
+      { id: 'u2', name: 'Lily', wa: '+60 1•-•••• 0002', co: 'MTB · HR', last: 'Hari ini' },
+      { id: 'u3', name: 'Amin', wa: '+60 1•-•••• 0004', co: 'MTB, DO IT · Pekerja', last: 'Semalam' },
+      { id: 'u4', name: 'Faizal', wa: '+60 1•-•••• 7781', co: 'Syarikat ABC · Pentadbir', last: 'Hari ini' },
+      { id: 'u5', name: 'Ravi', wa: '+60 1•-•••• 4410', co: 'Contoh Trading · Pentadbir', last: '2 bulan lalu' }
+    ];
+    const off = this.state.off;
+    return {
+      users: list.map((u) => {
+        const o = !!off[u.id];
+        return {
+          ...u,
+          statusLabel: o ? 'Dinyahaktif' : 'Aktif',
+          pill: 'justify-self: start; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 9px; ' + (o ? 'color: #B42318; background: #FBE4E2;' : 'color: #166534; background: #E3F5E8;'),
+          action: o ? 'Aktifkan' : 'Nyahaktifkan',
+          btnStyle: o ? 'border-color: #0F6B5F; color: #0F6B5F;' : 'border-color: #B42318; color: #B42318;',
+          toggle: () => this.setState({ off: { ...off, [u.id]: !o } })
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

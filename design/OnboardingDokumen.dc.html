@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Orientasi — gambar kad pengenalan</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.bar{height:5px;border-radius:3px;background:#DCE3E1}
+.bar.on{background:#0F6B5F}
+.ln{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:6px 0;border-top:1px solid #E6E1F5}
+.ln:first-child{border-top:none}
+.ln span:first-child{color:#4A3B8C}
+.ln b{font-weight:700;color:#2E2650;text-align:right}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 4px">
+    <a class="back" href="OnboardingLangkah.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <span style="font-size: 13px; font-weight: 700; color: #4A5A57">Langkah 5 daripada 8</span>
+  </header>
+  <div style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; padding: 0 20px 8px">
+    <span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </div>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 14px; padding: 10px 20px 16px">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 24px; font-weight: 800">Gambar kad pengenalan</h1>
+      <span style="font-size: 14px; color: #4A5A57">Ambil gambar terus dengan kamera. AI akan membaca dan mengisi maklumat untuk anda.</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <div style="height: 120px; border-radius: 14px; background: #E3F1EE; border: 1.5px solid #0F6B5F; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px" role="img" aria-label="Bahagian hadapan kad pengenalan telah diambil">
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0F6B5F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg>
+        <span style="font-size: 13px; font-weight: 700; color: #0F6B5F">Hadapan</span>
+      </div>
+      <button onClick="{{snapBack}}" style="{{backStyle}}">
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+        <span style="font-size: 13px; font-weight: 700">{{backLabel}}</span>
+      </button>
+    </div>
+
+    <div style="background: #F3F0FC; border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px">
+      <span style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; color: #4A3B8C; padding-bottom: 4px">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5 13.8 11.3 12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"></path></svg>
+        Dibaca oleh AI daripada kad pengenalan
+      </span>
+      <div class="ln"><span>Nama</span><b>NURIN SYAFIQAH BINTI [ ] ✓</b></div>
+      <div class="ln"><span>No. kad pengenalan</span><b>••••••-••-5521 ✓</b></div>
+      <div class="ln"><span>Hari jadi</span><b>28 Nov</b></div>
+      <div class="ln"><span>Alamat</span><b>Diisi pada langkah seterusnya</b></div>
+      <span style="font-size: 12px; color: #4A3B8C; padding-top: 4px">✓ Sepadan dengan rekod HR.</span>
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px">
+      <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><b style="font-size: 14px; font-weight: 700">Sijil &amp; dokumen lain</b><span style="font-size: 12px; color: #5B6B68">Pilihan — boleh ditambah kemudian di Profil</span></span>
+      <a href="#" style="font-size: 13px; font-weight: 700">Tambah</a>
+    </div>
+  </div>
+
+  <div style="padding: 12px 20px 28px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <a href="OnboardingPeribadi.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Simpan &amp; seterusnya</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { back: false }; }
+  renderVals() {
+    const b = this.state.back;
+    return {
+      backLabel: b ? 'Belakang ✓' : 'Ambil bahagian belakang',
+      backStyle: 'height: 120px; border-radius: 14px; font-family: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; ' +
+        (b ? 'background: #E3F1EE; border: 1.5px solid #0F6B5F; color: #0F6B5F;' : 'background: #FFFFFF; border: 2px dashed #C9D3D1; color: #14211F;'),
+      snapBack: () => this.setState({ back: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Slip gaji</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.ln{display:flex;justify-content:space-between;font-size:14px;padding:6px 0}
+.ln span:last-child{font-weight:700}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em;padding-top:6px}
+.chip{height:40px;padding:0 14px;border-radius:20px;border:1px solid #D5DEDC;background:#FFFFFF;font-family:inherit;font-size:13px;font-weight:600;color:#14211F}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Saya.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Slip Gaji</h1>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 14px; padding: 4px 20px 16px">
+    <div style="display: flex; gap: 8px">
+      <button class="chip" style="background: #14211F; color: #FFFFFF; border-color: #14211F; font-weight: 700">Okt 2026</button>
+      <button class="chip">Sep</button>
+      <button class="chip">Ogo</button>
+      <button class="chip">Borang EA</button>
+    </div>
+
+    <div style="background: #0F6B5F; color: #FFFFFF; border-radius: 20px; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <span style="font-size: 13px; opacity: 0.9">Gaji bersih · MTB</span>
+        <span style="font-size: 30px; font-weight: 800; letter-spacing: 0.08em">{{net}}</span>
+        <span style="font-size: 12px; opacity: 0.9">Dibayar 28 Okt</span>
+      </div>
+      <button onClick="{{toggle}}" aria-label="Papar atau sembunyikan jumlah" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      </button>
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 16px; padding: 10px 16px; display: flex; flex-direction: column">
+      <span class="sec">PENDAPATAN</span>
+      <div class="ln"><span>Gaji pokok</span><span>{{v}}</span></div>
+      <div class="ln"><span>Elaun tetap</span><span>{{v}}</span></div>
+      <div class="ln"><span>Komisen</span><span>{{v}}</span></div>
+      <div class="ln"><span>Bayaran balik tuntutan</span><span>{{v}}</span></div>
+      <span class="sec">POTONGAN</span>
+      <div class="ln"><span>KWSP</span><span>{{v}}</span></div>
+      <div class="ln"><span>PERKESO</span><span>{{v}}</span></div>
+      <div class="ln"><span>SIP</span><span>{{v}}</span></div>
+      <div class="ln"><span>PCB</span><span>{{v}}</span></div>
+    </div>
+
+    <span style="font-size: 12px; color: #5B6B68">Jumlah disembunyikan secara lalai. Tekan ikon mata untuk memaparkannya. Ada slip daripada syarikat lain? Tukar syarikat di skrin Utama.</span>
+  </div>
+
+  <div style="padding: 12px 20px 28px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <a href="SlipGaji.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg>
+      Muat turun PDF
+    </a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { show: false }; }
+  renderVals() {
+    const show = this.state.show;
+    return {
+      net: show ? 'RM [bersih]' : 'RM ••••',
+      v: show ? '[RM]' : '••••',
+      toggle: () => this.setState({ show: !show })
+    };
+  }
+}
+</script>
+</body>
+</html>

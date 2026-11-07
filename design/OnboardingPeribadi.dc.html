@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Orientasi — peribadi dan berkanun</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.bar{height:5px;border-radius:3px;background:#DCE3E1}
+.bar.on{background:#0F6B5F}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+.fld{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:700}
+.fld input{height:44px;box-sizing:border-box;border:1px solid #D5DEDC;border-radius:12px;padding:0 12px;font-family:inherit;font-size:14px;font-weight:600;color:#14211F;background:#FFFFFF}
+.sm{font-size:11px;font-weight:500;color:#5B6B68}
+.stp{width:44px;height:44px;border-radius:12px;border:1px solid #D5DEDC;background:#FFFFFF;font-family:inherit;font-size:20px;font-weight:700;color:#14211F;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 4px">
+    <a class="back" href="OnboardingDokumen.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <span style="font-size: 13px; font-weight: 700; color: #4A5A57">Langkah 6 daripada 8</span>
+  </header>
+  <div style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; padding: 0 20px 6px">
+    <span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar"></span><span class="bar"></span>
+  </div>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 6px 20px 12px">
+    <div style="display: flex; flex-direction: column; gap: 2px">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 800">Peribadi, KWSP &amp; cukai</h1>
+      <span style="font-size: 13px; color: #4A5A57">Supaya potongan gaji anda dikira dengan betul.</span>
+    </div>
+
+    <label class="fld">Alamat rumah semasa
+      <input type="text" value="[Alamat daripada kad pengenalan — ubah jika berbeza]">
+    </label>
+
+    <span class="sec">STATUS PERKAHWINAN</span>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+      <sc-for list="{{statuses}}" as="s" hint-placeholder-count="3">
+        <button onClick="{{s.pick}}" style="{{s.style}}">{{s.label}}</button>
+      </sc-for>
+    </div>
+    <sc-if value="{{married}}" hint-placeholder-val="{{ false }}">
+      <div style="background: #FFFFFF; border-radius: 14px; padding: 10px 14px; display: flex; flex-direction: column; gap: 10px">
+        <label style="display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600">
+          <input type="checkbox" style="width: 20px; height: 20px; accent-color: #0F6B5F"> Pasangan tidak bekerja
+        </label>
+        <div style="display: flex; align-items: center; gap: 10px">
+          <span style="font-size: 13px; font-weight: 700; flex-grow: 1">Bilangan anak<br><span class="sm">di bawah 18 tahun, atau masih belajar</span></span>
+          <button class="stp" onClick="{{minus}}" aria-label="Kurangkan anak">−</button>
+          <b style="width: 28px; text-align: center; font-size: 18px">{{kids}}</b>
+          <button class="stp" onClick="{{plus}}" aria-label="Tambah anak">+</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <span class="sec">NO. BERKANUN</span>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <label class="fld">No. KWSP<input type="text" placeholder="Contoh: 12345678"></label>
+      <label class="fld">No. cukai (TIN)<input type="text" placeholder="IG..."></label>
+    </div>
+    <label style="display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600">
+      <input type="checkbox" style="width: 20px; height: 20px; accent-color: #0F6B5F"> Belum ada — minta bantuan HR untuk mendaftar
+    </label>
+    <span class="sm">No. PERKESO menggunakan no. kad pengenalan anda — tiada maklumat perlu diisi.</span>
+  </div>
+
+  <div style="padding: 10px 20px 26px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <a href="OnboardingHandbook.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Simpan &amp; seterusnya</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { st: 'kahwin', kids: 1 }; }
+  renderVals() {
+    const st = this.state.st;
+    return {
+      statuses: [{ id: 'bujang', label: 'Bujang' }, { id: 'kahwin', label: 'Berkahwin' }, { id: 'lain', label: 'Duda / Janda' }].map((s) => ({
+        label: s.label,
+        style: 'height: 44px; border-radius: 12px; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; ' +
+          (st === s.id ? 'border: 1.5px solid #0F6B5F; background: #E3F1EE; color: #0F6B5F;' : 'border: 1px solid #D5DEDC; background: #FFFFFF; color: #14211F;'),
+        pick: () => this.setState({ st: s.id })
+      })),
+      married: st !== 'bujang',
+      kids: this.state.kids,
+      minus: () => this.setState({ kids: Math.max(0, this.state.kids - 1) }),
+      plus: () => this.setState({ kids: this.state.kids + 1 })
+    };
+  }
+}
+</script>
+</body>
+</html>

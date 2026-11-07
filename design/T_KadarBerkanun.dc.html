@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Tetapan — kadar berkanun</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+.box{background:#FFFFFF;border-radius:16px;padding:2px 14px;display:flex;flex-direction:column}
+.r{display:flex;align-items:center;gap:10px;min-height:56px;border-top:1px solid #EEF2F1}
+.r:first-child{border-top:none}
+.t{display:flex;flex-direction:column;gap:1px;flex-grow:1}
+.t b{font-size:14px;font-weight:700}
+.t span{font-size:12px;color:#5B6B68}
+.ok{font-size:11px;font-weight:700;color:#166534;background:#E3F5E8;padding:3px 8px;border-radius:8px;white-space:nowrap}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Tetapan.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Kadar berkanun</h1>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 4px 20px 14px">
+    <div style="display: flex; gap: 10px; align-items: flex-start; background: #E3F1EE; border-radius: 14px; padding: 12px 14px; font-size: 13px; color: #0A4F46; line-height: 1.5">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+      <span>Jadual kadar dikemas kini oleh HRBoost untuk semua syarikat apabila kerajaan mengumumkan perubahan. Anda tidak perlu memasukkan kadar sendiri.</span>
+    </div>
+
+    <span class="sec">JADUAL SEMASA</span>
+    <div class="box">
+      <div class="r"><span class="t"><b>KWSP</b><span>Jadual Ketiga · berkuat kuasa [tarikh]</span></span><span class="ok">Terkini</span></div>
+      <div class="r"><span class="t"><b>PERKESO</b><span>Kategori pertama &amp; kedua</span></span><span class="ok">Terkini</span></div>
+      <div class="r"><span class="t"><b>SIP / EIS</b><span>Jadual caruman</span></span><span class="ok">Terkini</span></div>
+      <div class="r"><span class="t"><b>PCB / MTD</b><span>Kaedah pengiraan berkomputer LHDN</span></span><span class="ok">Terkini</span></div>
+      <div class="r"><span class="t"><b>HRDF</b><span>Levi mengikut tetapan syarikat</span></span><span class="ok">Terkini</span></div>
+    </div>
+
+    <span class="sec">PILIHAN SYARIKAT</span>
+    <div class="box">
+      <label class="r"><span class="t"><b>Caruman KWSP majikan</b><span>Boleh lebih tinggi daripada minimum</span></span>
+        <select style="height: 40px; border: 1px solid #D5DEDC; border-radius: 10px; padding: 0 8px; font-family: inherit; font-size: 13px; font-weight: 700; background: #FFFFFF"><option>Mengikut minimum</option><option>[ ]%</option></select>
+      </label>
+      <div class="r"><span class="t"><b>Kadar levi HRDF</b><span>Daripada Profil syarikat</span></span><b style="font-size: 13px">Mengikut pendaftaran</b></div>
+    </div>
+    <span style="font-size: 11px; color: #5B6B68; line-height: 1.5">Sebelum gaji pertama, bandingkan kiraan sistem dengan kalkulator rasmi selama 2 bulan.</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

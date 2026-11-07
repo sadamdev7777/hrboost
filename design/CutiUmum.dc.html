@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Tetapan cuti umum syarikat</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+.box{background:#FFFFFF;border-radius:16px;padding:2px 14px;display:flex;flex-direction:column}
+.r{display:flex;align-items:center;gap:10px;min-height:38px;border-top:1px solid #EEF2F1;font-size:14px}
+.r:first-child{border-top:none}
+.r .n{flex-grow:1;font-weight:600}
+.r .d{font-size:12px;color:#5B6B68;white-space:nowrap}
+.tg{width:48px;height:38px;border:none;background:transparent;padding:0;display:flex;align-items:center;justify-content:flex-end;flex-shrink:0;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 4px">
+    <a class="back" href="Tetapan.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800; flex-grow: 1">Cuti Umum 2027</h1>
+    <span style="font-size: 13px; font-weight: 700; color: #4A5A57; padding-right: 8px">WP KL</span>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 8px; padding: 4px 20px 12px">
+    <div style="{{countStyle}}">
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <b style="font-size: 22px; font-weight: 800">{{total}} hari dipilih</b>
+        <span style="font-size: 12px">{{countMsg}}</span>
+      </div>
+      <span style="font-size: 12px; font-weight: 700; text-align: right">Minimum<br>11 hari</span>
+    </div>
+
+    <span class="sec">WAJIB · TIDAK BOLEH DIBUANG</span>
+    <div class="box">
+      <sc-for list="{{wajib}}" as="h" hint-placeholder-count="5">
+        <div class="r">
+          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6B68" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+          <span class="n">{{h.name}}</span><span class="d">{{h.date}}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <span class="sec">PILIHAN SYARIKAT</span>
+    <div class="box">
+      <sc-for list="{{pilihan}}" as="h" hint-placeholder-count="8">
+        <div class="r">
+          <span class="n">{{h.name}}</span><span class="d">{{h.date}}</span>
+          <button class="tg" onClick="{{h.flip}}" aria-label="{{h.label}}"><span style="{{h.track}}"><span style="{{h.knob}}"></span></span></button>
+        </div>
+      </sc-for>
+    </div>
+    <span style="font-size: 11px; color: #4A5A57; line-height: 1.45">Cuti umum tambahan yang diumumkan oleh kerajaan akan ditambah secara automatik dan boleh digantikan dengan hari lain.</span>
+  </div>
+
+  <div style="padding: 10px 20px 26px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <button style="{{saveStyle}}">Simpan &amp; maklumkan pekerja</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { on: { tb: true, cny: false, raya: true, haji: true, maulid: true, deepa: false, krismas: false, muharram: true } };
+  }
+  renderVals() {
+    const wajib = [
+      { name: 'Hari Wilayah Persekutuan', date: '1 Feb', days: 1 },
+      { name: 'Hari Pekerja', date: '1 Mei', days: 1 },
+      { name: 'Hari Keputeraan Agong', date: '7 Jun', days: 1 },
+      { name: 'Hari Kebangsaan', date: '31 Ogo', days: 1 },
+      { name: 'Hari Malaysia', date: '16 Sep', days: 1 }
+    ];
+    const pil = [
+      { id: 'tb', name: 'Tahun Baru', date: '1 Jan', days: 1 },
+      { id: 'cny', name: 'Tahun Baru Cina', date: '2 hari', days: 2 },
+      { id: 'raya', name: 'Hari Raya Aidilfitri', date: '2 hari', days: 2 },
+      { id: 'haji', name: 'Hari Raya Haji', date: 'mengikut warta', days: 1 },
+      { id: 'muharram', name: 'Awal Muharram', date: 'mengikut warta', days: 1 },
+      { id: 'maulid', name: 'Maulidur Rasul', date: 'mengikut warta', days: 1 },
+      { id: 'deepa', name: 'Deepavali', date: 'mengikut warta', days: 1 },
+      { id: 'krismas', name: 'Hari Krismas', date: '25 Dis', days: 1 }
+    ];
+    const s = this.state.on;
+    const total = wajib.length + pil.reduce((a, h) => a + (s[h.id] ? h.days : 0), 0);
+    const ok = total >= 11;
+    return {
+      total: total,
+      countMsg: ok ? 'Memenuhi minimum Akta Kerja. Boleh disimpan.' : 'Kurang ' + (11 - total) + ' hari lagi untuk memenuhi minimum.',
+      countStyle: 'border-radius: 16px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; ' +
+        (ok ? 'background: #E3F1EE; color: #0F6B5F;' : 'background: #FBE4E2; color: #B42318;'),
+      saveStyle: 'width: 100%; height: 52px; border-radius: 16px; border: none; font-family: inherit; font-size: 16px; font-weight: 800; ' +
+        (ok ? 'background: #0F6B5F; color: #FFFFFF; cursor: pointer;' : 'background: #DCE3E1; color: #4A5A57;'),
+      wajib: wajib,
+      pilihan: pil.map((h) => {
+        const on = s[h.id];
+        return {
+          ...h,
+          label: (on ? 'Buang ' : 'Pilih ') + h.name,
+          track: 'width: 44px; height: 26px; border-radius: 13px; position: relative; display: block; background: ' + (on ? '#0F6B5F' : '#C9D3D1'),
+          knob: 'position: absolute; top: 3px; width: 20px; height: 20px; border-radius: 10px; background: #FFFFFF; ' + (on ? 'right: 3px' : 'left: 3px'),
+          flip: () => this.setState({ on: { ...s, [h.id]: !on } })
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

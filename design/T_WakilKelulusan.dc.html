@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Tetapan — wakil kelulusan</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+.card{background:#FFFFFF;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.fld{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:700}
+.fld select,.fld input{height:44px;box-sizing:border-box;border:1px solid #D5DEDC;border-radius:12px;padding:0 12px;font-family:inherit;font-size:14px;font-weight:600;color:#14211F;background:#FFFFFF}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Tetapan.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Wakil kelulusan</h1>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 12px; padding: 4px 20px 16px">
+    <span style="font-size: 14px; color: #4A5A57; line-height: 1.5">Apabila pelulus bercuti, tugasan kelulusan akan terus dihantar kepada wakil supaya tidak tertangguh.</span>
+
+    <span class="sec">AKTIF &amp; AKAN DATANG</span>
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center"><b style="font-size: 15px">Zuerin → Amin</b><span style="font-size: 12px; font-weight: 700; color: #92400E; background: #FEF3E2; padding: 3px 9px; border-radius: 9px">Akan datang</span></div>
+      <span style="font-size: 13px; color: #4A5A57">23–28 Dis · Cuti, tuntutan &amp; pembetulan masa</span>
+      <span style="font-size: 12px; color: #5B6B68">Dicipta secara automatik apabila Zuerin memohon cuti</span>
+    </div>
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center"><b style="font-size: 15px">Sadam → Lily</b><span style="font-size: 12px; font-weight: 700; color: #166534; background: #E3F5E8; padding: 3px 9px; border-radius: 9px">Aktif</span></div>
+      <span style="font-size: 13px; color: #4A5A57">6–12 Nov · Semua jenis</span>
+    </div>
+
+    <span class="sec">TAMBAH WAKIL</span>
+    <div class="card" style="gap: 10px">
+      <div class="two">
+        <label class="fld">Pelulus<select><option>Zuerin</option><option>Lily</option><option>Sadam</option></select></label>
+        <label class="fld">Wakil<select><option>Amin</option><option>Zulfa</option></select></label>
+      </div>
+      <div class="two">
+        <label class="fld">Dari<input type="text" value="23 Dis"></label>
+        <label class="fld">Hingga<input type="text" value="28 Dis"></label>
+      </div>
+      <button style="height: 46px; border-radius: 12px; border: none; background: #0F6B5F; color: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 800">Simpan wakil</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

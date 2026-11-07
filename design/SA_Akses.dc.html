@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Pentadbir Platform — permohonan akses syarikat</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F6F5}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.shell{display:flex;flex-wrap:wrap;width:100%;min-height:900px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#14211F;background:#F4F6F5}
+.side{flex:1 1 220px;background:#14211F;color:#FFFFFF;padding:22px 14px;box-sizing:border-box;display:flex;flex-direction:column;gap:4px}
+.side a{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:0 12px;border-radius:10px;color:#C9D3D1;font-size:14px;font-weight:600}
+.side a:hover{background:#1F3532;color:#FFFFFF}
+.side a.on{background:#2A4743;color:#FFFFFF;font-weight:800}
+.badge{min-width:22px;height:22px;border-radius:11px;background:#F2B266;color:#14211F;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.main{flex:999 1 560px;min-width:0;padding:28px 32px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px}
+.card{background:#FFFFFF;border-radius:16px;padding:18px 20px;box-sizing:border-box;display:flex;flex-direction:column;gap:12px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.kv div{display:flex;flex-direction:column;gap:2px}
+.kv span{font-size:12px;color:#4A5A57;font-weight:600}
+.kv b{font-size:14px;font-weight:700}
+.btn{min-height:44px;padding:0 18px;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border:1px solid #D5DEDC;background:#FFFFFF;color:#14211F;cursor:pointer}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+.gr{display:grid;grid-template-columns:1.4fr 1.4fr 1fr 1fr 0.8fr;gap:12px;align-items:center;min-width:720px;padding:14px 12px;border-bottom:1px solid #EEF2F1;font-size:14px}
+.gr.h{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em;border-bottom:1px solid #E2E8E6}
+</style>
+</helmet>
+<div class="shell">
+  <nav class="side" aria-label="Menu pentadbir platform">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 18px">
+      <span style="width: 36px; height: 36px; border-radius: 10px; background: #0F6B5F; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center">HR</span>
+      <span style="display: flex; flex-direction: column"><b style="font-size: 15px">HRBoost.io</b><span style="font-size: 12px; color: #C9D3D1">Pentadbir Platform</span></span>
+    </div>
+    <a href="SA_Dashboard.dc.html">Ringkasan</a>
+    <a href="SA_Syarikat.dc.html">Syarikat</a>
+    <a href="SA_Pengguna.dc.html">Pengguna</a>
+    <a href="SA_Akses.dc.html" class="on">Permohonan akses <span class="badge">{{pending}}</span></a>
+    <a href="SA_Log.dc.html">Log audit</a>
+    <a href="SA_Tetapan.dc.html">Tetapan platform</a>
+  </nav>
+
+  <main class="main">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 26px; font-weight: 800">Permohonan akses syarikat</h1>
+      <span style="font-size: 14px; color: #4A5A57">Sesiapa yang ingin melihat atau mengurus syarikat selain tempat dia bekerja memerlukan kelulusan anda. Akses tamat secara automatik mengikut tempoh.</span>
+    </div>
+
+    <span class="sec">MENUNGGU KELULUSAN</span>
+    <sc-for list="{{reqs}}" as="r" hint-placeholder-count="2">
+      <section class="card">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center">
+          <b style="font-size: 16px">{{r.who}} memohon akses {{r.role}} ke {{r.target}}</b>
+          <span style="{{r.badgeStyle}}">{{r.statusLabel}}</span>
+        </div>
+        <div class="kv">
+          <div><span>Pemohon</span><b>{{r.who}} · {{r.from}}</b></div>
+          <div><span>Akses diminta</span><b>{{r.role}} di {{r.target}}</b></div>
+          <div><span>Tempoh</span><b>{{r.days}} hari</b></div>
+          <div><span>Pentadbir {{r.target}}</span><b>{{r.targetAdmin}} (dimaklumkan)</b></div>
+        </div>
+        <div style="background: #F4F6F5; border-radius: 12px; padding: 10px 14px; font-size: 14px; line-height: 1.5"><b>Sebab:</b> {{r.reason}}</div>
+        <sc-if value="{{r.isPending}}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap">
+            <button onClick="{{r.reject}}" class="btn" style="border-color: #B42318; color: #B42318">Tolak</button>
+            <button onClick="{{r.approve}}" class="btn" style="background: #0F6B5F; border-color: #0F6B5F; color: #FFFFFF">Lulus {{r.days}} hari</button>
+          </div>
+        </sc-if>
+      </section>
+    </sc-for>
+
+    <span class="sec">AKSES AKTIF</span>
+    <div style="background: #FFFFFF; border-radius: 16px; padding: 4px 8px; overflow-x: auto">
+      <div class="gr h"><span>PENGGUNA</span><span>AKSES</span><span>DILULUSKAN</span><span>TAMAT</span><span></span></div>
+      <div class="gr"><span><b>Sadam</b> · MTB</span><span>CEO di Avenue Holidays</span><span>1 Nov 2026</span><span>1 Feb 2027</span><a href="#" style="font-weight: 700; color: #B42318">Tarik balik</a></div>
+      <div class="gr"><span><b>Sadam</b> · MTB</span><span>Pentadbir di DO IT GROUP</span><span>1 Nov 2026</span><span>Tiada had</span><a href="#" style="font-weight: 700; color: #B42318">Tarik balik</a></div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { st: { a: 'pending', b: 'pending' } }; }
+  renderVals() {
+    const list = [
+      { id: 'a', who: 'Lily', from: 'HR, MTB', role: 'HR', target: 'DO IT GROUP', targetAdmin: 'Sadam', days: 30, reason: 'Membantu memproses gaji DO IT bagi bulan Disember semasa HR DO IT bercuti bersalin.' },
+      { id: 'b', who: 'Hasif', from: 'CEO, Avenue Holidays', role: 'paparan CEO', target: 'MUSLIMTRAVELBUG', targetAdmin: 'Sadam', days: 90, reason: 'Pantau kos tuntutan tour bersama untuk projek Sabah.' }
+    ];
+    const s = this.state.st;
+    const lab = { pending: 'Menunggu', approved: 'Diluluskan', rejected: 'Ditolak' };
+    const sty = { pending: 'color: #92400E; background: #FEF3E2;', approved: 'color: #166534; background: #E3F5E8;', rejected: 'color: #B42318; background: #FBE4E2;' };
+    return {
+      pending: list.filter((r) => s[r.id] === 'pending').length,
+      reqs: list.map((r) => ({
+        ...r,
+        isPending: s[r.id] === 'pending',
+        statusLabel: lab[s[r.id]],
+        badgeStyle: 'font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 9px; ' + sty[s[r.id]],
+        approve: () => this.setState({ st: { ...s, [r.id]: 'approved' } }),
+        reject: () => this.setState({ st: { ...s, [r.id]: 'rejected' } })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Ubah profil</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.box{background:#FFFFFF;border-radius:16px;padding:2px 16px;display:flex;flex-direction:column}
+.r{display:flex;align-items:center;gap:10px;min-height:52px;border-top:1px solid #EEF2F1;font-size:14px}
+.r:first-child{border-top:none}
+.r .l{color:#5B6B68;width:110px;flex-shrink:0}
+.r input{flex-grow:1;min-width:0;height:40px;border:1px solid #D5DEDC;border-radius:10px;padding:0 10px;font-family:inherit;font-size:14px;font-weight:600;color:#14211F;background:#FFFFFF}
+.ro{flex-grow:1;font-weight:700}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Profil.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Ubah profil</h1>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 2px 20px 12px">
+    <div style="display: flex; align-items: center; gap: 14px">
+      <span style="width: 64px; height: 64px; border-radius: 32px; background: #0F6B5F; color: #FFFFFF; font-weight: 800; font-size: 22px; display: flex; align-items: center; justify-content: center">AM</span>
+      <a href="OnboardingSelfie.dc.html" style="font-size: 14px; font-weight: 700">Ambil swafoto baharu</a>
+    </div>
+
+    <span class="sec">BOLEH DIUBAH SENDIRI</span>
+    <div class="box">
+      <label class="r"><span class="l">Nama panggilan</span><input type="text" value="Amin"></label>
+      <label class="r"><span class="l">Alamat</span><input type="text" value="[Alamat semasa]"></label>
+      <label class="r"><span class="l">Waris</span><input type="text" value="[Nama] · Ibu"></label>
+      <label class="r"><span class="l">Anak (PCB)</span><input type="text" value="0"></label>
+      <div class="r"><span class="l">Sembunyikan hari jadi</span><span style="flex-grow: 1"></span>
+        <button onClick="{{flip}}" aria-label="{{label}}" style="width: 52px; height: 44px; border: none; background: transparent; padding: 0; display: flex; align-items: center; justify-content: flex-end; cursor: pointer"><span style="{{track}}"><span style="{{knob}}"></span></span></button>
+      </div>
+    </div>
+
+    <span class="sec">PERLU DISAHKAN HR</span>
+    <div class="box">
+      <label class="r"><span class="l">Akaun bank</span><input type="text" value="•••• •••• 5678"></label>
+    </div>
+
+    <span class="sec">HANYA HR BOLEH MENGUBAH</span>
+    <div class="box">
+      <div class="r"><span class="l">Nama penuh</span><span class="ro">AMIN BIN [ ]</span></div>
+      <div class="r"><span class="l">No. kad pengenalan</span><span class="ro">••••••-••-1234</span></div>
+    </div>
+  </div>
+
+  <div style="padding: 10px 20px 26px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <a href="Profil.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Simpan</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { hide: false }; }
+  renderVals() {
+    const on = this.state.hide;
+    return {
+      label: on ? 'Paparkan hari jadi' : 'Sembunyikan hari jadi',
+      track: 'width: 46px; height: 28px; border-radius: 14px; position: relative; display: block; background: ' + (on ? '#0F6B5F' : '#C9D3D1'),
+      knob: 'position: absolute; top: 3px; width: 22px; height: 22px; border-radius: 11px; background: #FFFFFF; ' + (on ? 'right: 3px' : 'left: 3px'),
+      flip: () => this.setState({ hide: !on })
+    };
+  }
+}
+</script>
+</body>
+</html>

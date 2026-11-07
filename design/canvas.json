@@ -1,0 +1,837 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-06T19:00:00Z"
+  },
+  "title": "HRBoost.io — Skrin",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 6808,
+      "w": 390,
+      "h": 844,
+      "title": "4.1 Tab Utama",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "MohonCuti.dc.html": {
+      "x": 940,
+      "y": 6808,
+      "w": 390,
+      "h": 844,
+      "title": "4.3 Mohon cuti",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "Kelulusan.dc.html": {
+      "x": 470,
+      "y": 10255,
+      "w": 390,
+      "h": 844,
+      "title": "6.2 Pusat Kelulusan",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "Butiran.dc.html": {
+      "x": 940,
+      "y": 10255,
+      "w": 390,
+      "h": 844,
+      "title": "6.3 Butiran & keputusan",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "WhatsApp.dc.html": {
+      "x": 2820,
+      "y": 6808,
+      "w": 390,
+      "h": 844,
+      "title": "4.7 Permohonan melalui WhatsApp",
+      "radius": 36
+    },
+    "Saya.dc.html": {
+      "x": 0,
+      "y": 8392,
+      "w": 390,
+      "h": 844,
+      "title": "5.1 Tab Saya · semua menu",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "Cuti.dc.html": {
+      "x": 470,
+      "y": 8392,
+      "w": 390,
+      "h": 844,
+      "title": "5.2 Cuti: baki & kalendar",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "Tuntutan.dc.html": {
+      "x": 940,
+      "y": 8392,
+      "w": 390,
+      "h": 844,
+      "title": "5.3 Tuntutan saya",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "BuatClaim.dc.html": {
+      "x": 1410,
+      "y": 6808,
+      "w": 390,
+      "h": 844,
+      "title": "4.4 Buat tuntutan (gambar / muat naik resit)",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "Kehadiran.dc.html": {
+      "x": 1410,
+      "y": 8392,
+      "w": 390,
+      "h": 844,
+      "title": "5.4 Kehadiran",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "Gaji.dc.html": {
+      "x": 1880,
+      "y": 8392,
+      "w": 390,
+      "h": 844,
+      "title": "5.5 Slip gaji",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "PembantuAI.dc.html": {
+      "x": 3224,
+      "y": 8392,
+      "w": 390,
+      "h": 844,
+      "title": "5.7 Pembantu AI",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "Profil.dc.html": {
+      "x": 4164,
+      "y": 8392,
+      "w": 390,
+      "h": 844,
+      "title": "5.9 Profil saya",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "SlipGaji.dc.html": {
+      "x": 2350,
+      "y": 8392,
+      "w": 794,
+      "h": 1123,
+      "title": "5.6 Slip gaji PDF (A4)",
+      "paper": "a4"
+    },
+    "HariJadi.dc.html": {
+      "x": 3694,
+      "y": 8392,
+      "w": 390,
+      "h": 844,
+      "title": "5.8 Hari jadi",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "DashboardHR.dc.html": {
+      "x": 0,
+      "y": 11839,
+      "w": 390,
+      "h": 844,
+      "title": "7.1 Papan Pemuka HR / CEO",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "Pekerja.dc.html": {
+      "x": 470,
+      "y": 11839,
+      "w": 390,
+      "h": 844,
+      "title": "7.2 Senarai pekerja",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "ProfilPekerja.dc.html": {
+      "x": 1410,
+      "y": 11839,
+      "w": 390,
+      "h": 844,
+      "title": "7.4 Profil pekerja",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "ProsesGaji.dc.html": {
+      "x": 1880,
+      "y": 11839,
+      "w": 390,
+      "h": 844,
+      "title": "7.5 Gaji 1 · Data bulan ini",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "Tetapan.dc.html": {
+      "x": 0,
+      "y": 13423,
+      "w": 390,
+      "h": 844,
+      "title": "8.1 Tetapan · senarai",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "AliranApproval.dc.html": {
+      "x": 470,
+      "y": 13423,
+      "w": 390,
+      "h": 844,
+      "title": "8.2 Aliran kelulusan",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "Automasi.dc.html": {
+      "x": 1410,
+      "y": 13423,
+      "w": 390,
+      "h": 844,
+      "title": "8.4 Automasi WhatsApp",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "IntegrasiKehadiran.dc.html": {
+      "x": 4700,
+      "y": 13423,
+      "w": 390,
+      "h": 844,
+      "title": "8.11 Integrasi kehadiran (CrossChex)",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "CutiUmum.dc.html": {
+      "x": 2350,
+      "y": 13423,
+      "w": 390,
+      "h": 844,
+      "title": "8.6 Cuti umum syarikat",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "Login.dc.html": {
+      "x": 0,
+      "y": 5224,
+      "w": 390,
+      "h": 844,
+      "title": "3.1 Log masuk",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "OTP.dc.html": {
+      "x": 470,
+      "y": 5224,
+      "w": 390,
+      "h": 844,
+      "title": "3.2 Kod OTP",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "Daftar.dc.html": {
+      "x": 940,
+      "y": 5224,
+      "w": 390,
+      "h": 844,
+      "title": "3.3 Aktifkan akaun (jemputan)",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "Onboarding.dc.html": {
+      "x": 1410,
+      "y": 5224,
+      "w": 390,
+      "h": 844,
+      "title": "3.4 Senarai semak orientasi",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "OnboardingNama.dc.html": {
+      "x": 1880,
+      "y": 5224,
+      "w": 390,
+      "h": 844,
+      "title": "3.5 Langkah 2 · Nama & nama panggilan",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "OnboardingSelfie.dc.html": {
+      "x": 2350,
+      "y": 5224,
+      "w": 390,
+      "h": 844,
+      "title": "3.6 Langkah 3 · Swafoto",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "OnboardingLangkah.dc.html": {
+      "x": 2820,
+      "y": 5224,
+      "w": 390,
+      "h": 844,
+      "title": "3.7 Langkah 4 · Bank & waris",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "OnboardingDokumen.dc.html": {
+      "x": 3290,
+      "y": 5224,
+      "w": 390,
+      "h": 844,
+      "title": "3.8 Langkah 5 · Kad pengenalan",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "OnboardingPeribadi.dc.html": {
+      "x": 3760,
+      "y": 5224,
+      "w": 390,
+      "h": 844,
+      "title": "3.9 Langkah 6 · Peribadi & berkanun",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "OnboardingHandbook.dc.html": {
+      "x": 4230,
+      "y": 5224,
+      "w": 390,
+      "h": 844,
+      "title": "3.10 Langkah 7 · Buku panduan",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "OnboardingPasang.dc.html": {
+      "x": 4700,
+      "y": 5224,
+      "w": 390,
+      "h": 844,
+      "title": "3.11 Langkah 8 · Pasang aplikasi",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "OnboardingSelesai.dc.html": {
+      "x": 5170,
+      "y": 5224,
+      "w": 390,
+      "h": 844,
+      "title": "3.12 Berjaya",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "Homepage.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 2900,
+      "title": "1.1 Laman utama",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "DaftarSyarikat.dc.html": {
+      "x": 0,
+      "y": 3640,
+      "w": 390,
+      "h": 844,
+      "title": "2.1 Daftar syarikat",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "OTPSyarikat.dc.html": {
+      "x": 470,
+      "y": 3640,
+      "w": 390,
+      "h": 844,
+      "title": "2.2 Sahkan WhatsApp Pentadbir",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "OnboardingSyarikat.dc.html": {
+      "x": 940,
+      "y": 3640,
+      "w": 390,
+      "h": 844,
+      "title": "2.3 Senarai semak persediaan",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "SyarikatLangkah.dc.html": {
+      "x": 1410,
+      "y": 3640,
+      "w": 390,
+      "h": 844,
+      "title": "2.4 Langkah 2 · Maklumat syarikat",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "ImportPekerja.dc.html": {
+      "x": 1880,
+      "y": 3640,
+      "w": 390,
+      "h": 844,
+      "title": "2.5 Langkah 3 · Import pekerja",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "SyarikatJabatan.dc.html": {
+      "x": 2350,
+      "y": 3640,
+      "w": 390,
+      "h": 844,
+      "title": "2.6 Langkah 4 · Jabatan & ketua",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "SyarikatPeranan.dc.html": {
+      "x": 2820,
+      "y": 3640,
+      "w": 390,
+      "h": 844,
+      "title": "2.7 Langkah 5 · Peranan & kelulusan",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "SyarikatJemput.dc.html": {
+      "x": 3290,
+      "y": 3640,
+      "w": 390,
+      "h": 844,
+      "title": "2.8 Langkah 6 · Jemput pekerja",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "SyarikatSelesai.dc.html": {
+      "x": 3760,
+      "y": 3640,
+      "w": 390,
+      "h": 844,
+      "title": "2.9 Berjaya",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "KetuaUtama.dc.html": {
+      "x": 0,
+      "y": 10255,
+      "w": 390,
+      "h": 844,
+      "title": "6.1 Tab Utama (ketua jabatan)",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "PermohonanSaya.dc.html": {
+      "x": 2350,
+      "y": 6808,
+      "w": 390,
+      "h": 844,
+      "title": "4.6 Status permohonan saya",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "PembetulanMasa.dc.html": {
+      "x": 1880,
+      "y": 6808,
+      "w": 390,
+      "h": 844,
+      "title": "4.5 Pembetulan masa",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "ProfilUbah.dc.html": {
+      "x": 4634,
+      "y": 8392,
+      "w": 390,
+      "h": 844,
+      "title": "5.10 Ubah profil",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "AksesSyarikat.dc.html": {
+      "x": 3290,
+      "y": 11839,
+      "w": 390,
+      "h": 844,
+      "title": "7.8 Mohon akses ke syarikat lain",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "TambahPekerja.dc.html": {
+      "x": 940,
+      "y": 11839,
+      "w": 390,
+      "h": 844,
+      "title": "7.3 Tambah pekerja",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "T_WakilKelulusan.dc.html": {
+      "x": 940,
+      "y": 13423,
+      "w": 390,
+      "h": 844,
+      "title": "8.3 Wakil kelulusan",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "T_JenisCuti.dc.html": {
+      "x": 1880,
+      "y": 13423,
+      "w": 390,
+      "h": 844,
+      "title": "8.5 Jenis & kelayakan cuti",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "T_JenisClaim.dc.html": {
+      "x": 2820,
+      "y": 13423,
+      "w": 390,
+      "h": 844,
+      "title": "8.7 Jenis tuntutan & had",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "T_Syarikat.dc.html": {
+      "x": 3290,
+      "y": 13423,
+      "w": 390,
+      "h": 844,
+      "title": "8.8 Profil syarikat & waktu kerja",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "T_KadarBerkanun.dc.html": {
+      "x": 3760,
+      "y": 13423,
+      "w": 390,
+      "h": 844,
+      "title": "8.9 Kadar berkanun",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "T_IntegrasiAkaun.dc.html": {
+      "x": 4230,
+      "y": 13423,
+      "w": 390,
+      "h": 844,
+      "title": "8.10 Integrasi perakaunan",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "T_Pengguna.dc.html": {
+      "x": 5170,
+      "y": 13423,
+      "w": 390,
+      "h": 844,
+      "title": "8.12 Pengguna & peranan",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "T_PengetahuanAI.dc.html": {
+      "x": 5640,
+      "y": 13423,
+      "w": 390,
+      "h": 844,
+      "title": "8.13 Pengetahuan AI",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "GajiSemak.dc.html": {
+      "x": 2350,
+      "y": 11839,
+      "w": 390,
+      "h": 844,
+      "title": "7.6 Gaji 2 · Semak & hantar kelulusan",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "GajiBayar.dc.html": {
+      "x": 2820,
+      "y": 11839,
+      "w": 390,
+      "h": 844,
+      "title": "7.7 Gaji 3 · Bayar & fail berkanun",
+      "radius": 36,
+      "is_interactive": true
+    },
+    "Privasi.dc.html": {
+      "x": 1360,
+      "y": 0,
+      "w": 1280,
+      "h": 1700,
+      "title": "1.2 Notis privasi & terma (draf)",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SA_Dashboard.dc.html": {
+      "x": 0,
+      "y": 15007,
+      "w": 1280,
+      "h": 900,
+      "title": "9.1 Ringkasan",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SA_Syarikat.dc.html": {
+      "x": 1360,
+      "y": 15007,
+      "w": 1280,
+      "h": 900,
+      "title": "9.2 Senarai syarikat",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SA_SyarikatButiran.dc.html": {
+      "x": 2720,
+      "y": 15007,
+      "w": 1280,
+      "h": 900,
+      "title": "9.3 Butiran syarikat & nyahaktif",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SA_Akses.dc.html": {
+      "x": 4080,
+      "y": 15007,
+      "w": 1280,
+      "h": 900,
+      "title": "9.4 Permohonan akses",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SA_Pengguna.dc.html": {
+      "x": 5440,
+      "y": 15007,
+      "w": 1280,
+      "h": 900,
+      "title": "9.5 Pengguna",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SA_Log.dc.html": {
+      "x": 6800,
+      "y": 15007,
+      "w": 1280,
+      "h": 900,
+      "title": "9.6 Log audit",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SA_Tetapan.dc.html": {
+      "x": 8160,
+      "y": 15007,
+      "w": 1280,
+      "h": 900,
+      "title": "9.7 Tetapan platform",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Mohon.dc.html": {
+      "w": 390,
+      "h": 844,
+      "radius": 36,
+      "is_interactive": true,
+      "x": 470,
+      "y": 6808,
+      "title": "4.2 Tab Mohon · pilih jenis"
+    }
+  },
+  "order": [
+    "Homepage.dc.html",
+    "Privasi.dc.html",
+    "DaftarSyarikat.dc.html",
+    "OTPSyarikat.dc.html",
+    "OnboardingSyarikat.dc.html",
+    "SyarikatLangkah.dc.html",
+    "ImportPekerja.dc.html",
+    "SyarikatJabatan.dc.html",
+    "SyarikatPeranan.dc.html",
+    "SyarikatJemput.dc.html",
+    "SyarikatSelesai.dc.html",
+    "Login.dc.html",
+    "OTP.dc.html",
+    "Daftar.dc.html",
+    "Onboarding.dc.html",
+    "OnboardingNama.dc.html",
+    "OnboardingSelfie.dc.html",
+    "OnboardingLangkah.dc.html",
+    "OnboardingDokumen.dc.html",
+    "OnboardingPeribadi.dc.html",
+    "OnboardingHandbook.dc.html",
+    "OnboardingPasang.dc.html",
+    "OnboardingSelesai.dc.html",
+    "Main.dc.html",
+    "Mohon.dc.html",
+    "MohonCuti.dc.html",
+    "BuatClaim.dc.html",
+    "PembetulanMasa.dc.html",
+    "PermohonanSaya.dc.html",
+    "WhatsApp.dc.html",
+    "Saya.dc.html",
+    "Cuti.dc.html",
+    "Tuntutan.dc.html",
+    "Kehadiran.dc.html",
+    "Gaji.dc.html",
+    "SlipGaji.dc.html",
+    "PembantuAI.dc.html",
+    "HariJadi.dc.html",
+    "Profil.dc.html",
+    "ProfilUbah.dc.html",
+    "KetuaUtama.dc.html",
+    "Kelulusan.dc.html",
+    "Butiran.dc.html",
+    "DashboardHR.dc.html",
+    "Pekerja.dc.html",
+    "TambahPekerja.dc.html",
+    "ProfilPekerja.dc.html",
+    "ProsesGaji.dc.html",
+    "GajiSemak.dc.html",
+    "GajiBayar.dc.html",
+    "AksesSyarikat.dc.html",
+    "Tetapan.dc.html",
+    "AliranApproval.dc.html",
+    "T_WakilKelulusan.dc.html",
+    "Automasi.dc.html",
+    "T_JenisCuti.dc.html",
+    "CutiUmum.dc.html",
+    "T_JenisClaim.dc.html",
+    "T_Syarikat.dc.html",
+    "T_KadarBerkanun.dc.html",
+    "T_IntegrasiAkaun.dc.html",
+    "IntegrasiKehadiran.dc.html",
+    "T_Pengguna.dc.html",
+    "T_PengetahuanAI.dc.html",
+    "SA_Dashboard.dc.html",
+    "SA_Syarikat.dc.html",
+    "SA_SyarikatButiran.dc.html",
+    "SA_Akses.dc.html",
+    "SA_Pengguna.dc.html",
+    "SA_Log.dc.html",
+    "SA_Tetapan.dc.html"
+  ],
+  "notes": {
+    "title": {
+      "x": 0,
+      "y": -1150,
+      "text": "HRBoost.io — semua skrin, disusun mengikut pengguna dan aliran kerja",
+      "kind": "title1",
+      "maxW": 4000
+    },
+    "sec1": {
+      "x": 0,
+      "y": -700,
+      "kind": "title1",
+      "maxW": 3000,
+      "text": "1 · Laman awam — tempat syarikat mengenali dan mendaftar HRBoost (paparan komputer)"
+    },
+    "row5note": {
+      "x": 4230,
+      "y": 3640,
+      "w": 440,
+      "size": "m",
+      "fill": "orange",
+      "text": "Susunan diubah selepas audit: import pekerja dahulu, kemudian jabatan & ketua (ketua ialah pekerja). Langkah baharu: OTP Pentadbir, Peranan (siapa HR / Kewangan / CEO) sebelum aliran kelulusan, Jemput dengan pratonton mesej, dan skrin Berjaya."
+    },
+    "sec2": {
+      "x": 0,
+      "y": 3220,
+      "kind": "title1",
+      "maxW": 4750,
+      "text": "2 · Persediaan syarikat — Pentadbir mendaftar dan menyediakan syarikat (6 langkah → berjaya)"
+    },
+    "row4note": {
+      "x": 5640,
+      "y": 5224,
+      "w": 440,
+      "size": "m",
+      "fill": "teal",
+      "text": "Aliran pekerja: HR mengimport & menjemput → pekerja menerima pautan WhatsApp (pautan itu sendiri membuktikan nombor) → sahkan 4 digit kad pengenalan → 8 langkah → Berjaya. Boleh berhenti dan disambung pada bila-bila masa. HR dapat melihat kemajuan setiap pekerja. Log masuk seterusnya: no. telefon + OTP."
+    },
+    "sec3": {
+      "x": 0,
+      "y": 4804,
+      "kind": "title1",
+      "maxW": 6160,
+      "text": "3 · Pekerja baharu — terima jemputan, log masuk dan orientasi (8 langkah → berjaya)"
+    },
+    "prinsip": {
+      "x": 3290,
+      "y": 6808,
+      "w": 520,
+      "size": "m",
+      "fill": "teal",
+      "text": "Prinsip: 4 tab sahaja (Utama, Mohon, Kelulusan, Saya). Satu skrin untuk satu tugas. Butang besar yang mudah dicapai dengan ibu jari. Semua perkara yang boleh dilakukan dalam aplikasi juga boleh dilakukan melalui WhatsApp."
+    },
+    "sec4": {
+      "x": 0,
+      "y": 6388,
+      "kind": "title1",
+      "maxW": 3890,
+      "text": "4 · Pekerja: tab Utama & Mohon — kerja harian (mohon cuti, tuntutan, pembetulan masa)"
+    },
+    "sec5": {
+      "x": 0,
+      "y": 7972,
+      "kind": "title1",
+      "maxW": 5104,
+      "text": "5 · Pekerja: tab Saya — rekod peribadi (baki cuti, tuntutan, kehadiran, gaji, profil)"
+    },
+    "ai": {
+      "x": 1410,
+      "y": 10255,
+      "w": 520,
+      "size": "m",
+      "fill": "purple",
+      "text": "Kotak ‘Ringkasan AI’ di skrin Kelulusan & Butiran diisi oleh ejen AI: menyemak baki, siapa lagi yang bercuti dan lawatan yang bertembung. Keputusan tetap di tangan pelulus."
+    },
+    "sec6": {
+      "x": 0,
+      "y": 9835,
+      "kind": "title1",
+      "maxW": 3000,
+      "text": "6 · Ketua jabatan: tab Kelulusan — lulus atau tolak permohonan pasukan pada hari yang sama"
+    },
+    "sec7": {
+      "x": 0,
+      "y": 11419,
+      "kind": "title1",
+      "maxW": 3760,
+      "text": "7 · HR & pengurusan — satu syarikat sahaja, mengikut peranan"
+    },
+    "sec8": {
+      "x": 0,
+      "y": 13003,
+      "kind": "title1",
+      "maxW": 6110,
+      "text": "8 · Tetapan syarikat — dibuka oleh HR atau Pentadbir dari tab Saya"
+    },
+    "row6note": {
+      "x": 9520,
+      "y": 15007,
+      "w": 620,
+      "size": "m",
+      "fill": "purple",
+      "text": "Pentadbir Platform tidak dapat melihat kad pengenalan, gaji, sijil cuti sakit atau dokumen pekerja. Akses kepada data peribadi mana-mana syarikat — termasuk oleh Pentadbir Platform sendiri atau HR syarikat lain — memerlukan permohonan akses yang diluluskan, bertempoh dan direkodkan dalam log audit."
+    },
+    "sec9": {
+      "x": 0,
+      "y": 14587,
+      "kind": "title1",
+      "maxW": 10220,
+      "text": "9 · Pentadbir Platform — pemilik HRBoost: data agregat, nyahaktif akaun, kelulusan akses (paparan komputer)"
+    }
+  },
+  "designSystems": []
+}

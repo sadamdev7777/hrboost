@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Pentadbir Platform — tetapan platform</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F6F5}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.shell{display:flex;flex-wrap:wrap;width:100%;min-height:900px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#14211F;background:#F4F6F5}
+.side{flex:1 1 220px;background:#14211F;color:#FFFFFF;padding:22px 14px;box-sizing:border-box;display:flex;flex-direction:column;gap:4px}
+.side a{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:0 12px;border-radius:10px;color:#C9D3D1;font-size:14px;font-weight:600}
+.side a:hover{background:#1F3532;color:#FFFFFF}
+.side a.on{background:#2A4743;color:#FFFFFF;font-weight:800}
+.badge{min-width:22px;height:22px;border-radius:11px;background:#F2B266;color:#14211F;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.main{flex:999 1 560px;min-width:0;padding:28px 32px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px}
+.card{background:#FFFFFF;border-radius:16px;padding:8px 20px;box-sizing:border-box;display:flex;flex-direction:column}
+.r{display:flex;flex-wrap:wrap;align-items:center;gap:12px;min-height:60px;border-top:1px solid #EEF2F1;padding:8px 0}
+.r:first-child{border-top:none}
+.r .l{display:flex;flex-direction:column;gap:2px;flex:1 1 260px}
+.r .l b{font-size:15px;font-weight:700}
+.r .l span{font-size:13px;color:#4A5A57}
+.in{width:120px;height:42px;box-sizing:border-box;border:1px solid #D5DEDC;border-radius:10px;padding:0 12px;font-family:inherit;font-size:14px;font-weight:600}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+.btn{min-height:42px;padding:0 16px;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;border:1px solid #D5DEDC;background:#FFFFFF;color:#14211F;cursor:pointer}
+</style>
+</helmet>
+<div class="shell">
+  <nav class="side" aria-label="Menu pentadbir platform">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 18px">
+      <span style="width: 36px; height: 36px; border-radius: 10px; background: #0F6B5F; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center">HR</span>
+      <span style="display: flex; flex-direction: column"><b style="font-size: 15px">HRBoost.io</b><span style="font-size: 12px; color: #C9D3D1">Pentadbir Platform</span></span>
+    </div>
+    <a href="SA_Dashboard.dc.html">Ringkasan</a>
+    <a href="SA_Syarikat.dc.html">Syarikat</a>
+    <a href="SA_Pengguna.dc.html">Pengguna</a>
+    <a href="SA_Akses.dc.html">Permohonan akses <span class="badge">2</span></a>
+    <a href="SA_Log.dc.html">Log audit</a>
+    <a href="SA_Tetapan.dc.html" class="on">Tetapan platform</a>
+  </nav>
+
+  <main class="main">
+    <h1 style="margin: 0; font-size: 26px; font-weight: 800">Tetapan platform</h1>
+
+    <span class="sec">PENDAFTARAN &amp; HAD</span>
+    <section class="card">
+      <div class="r"><span class="l"><b>Pendaftaran syarikat baharu</b><span>Tutup buat sementara jika berlaku serangan spam</span></span>
+        <button onClick="{{flipReg}}" aria-label="{{regLabel}}" style="width: 52px; height: 44px; border: none; background: transparent; padding: 0; display: flex; align-items: center; justify-content: flex-end; cursor: pointer"><span style="{{regTrack}}"><span style="{{regKnob}}"></span></span></button>
+      </div>
+      <div class="r"><span class="l"><b>Had WhatsApp lalai</b><span>Mesej sebulan bagi setiap syarikat baharu</span></span><input class="in" type="text" value="[ ]" aria-label="Had WhatsApp lalai"></div>
+      <div class="r"><span class="l"><b>Had AI lalai</b><span>Bacaan resit, kad pengenalan &amp; ringkasan sebulan</span></span><input class="in" type="text" value="[ ]" aria-label="Had AI lalai"></div>
+      <div class="r"><span class="l"><b>Amaran kepada Pentadbir syarikat</b><span>Apabila penggunaan mencapai</span></span><input class="in" type="text" value="80%" aria-label="Peratus amaran"></div>
+    </section>
+
+    <span class="sec">WHATSAPP PLATFORM</span>
+    <section class="card">
+      <div class="r"><span class="l"><b>Nombor HRBoost</b><span>Dihantar melalui Murpati · semua pemberitahuan lalai</span></span><span style="font-size: 12px; font-weight: 700; color: #166534; background: #E3F5E8; padding: 4px 10px; border-radius: 9px">Bersambung</span></div>
+      <div class="r"><span class="l"><b>Templat jemputan pekerja</b><span>Mesej pertama yang diterima oleh pekerja</span></span><button class="btn">Ubah templat</button></div>
+    </section>
+
+    <span class="sec">DATA &amp; KESELAMATAN</span>
+    <section class="card">
+      <div class="r"><span class="l"><b>Simpan data syarikat yang dinyahaktifkan</b><span>Selepas tempoh ini, Pentadbir dimaklumkan dan data akan dipadam</span></span><input class="in" type="text" value="90 hari" aria-label="Tempoh simpanan"></div>
+      <div class="r"><span class="l"><b>Pentadbir Platform</b><span>Sadam · log masuk memerlukan OTP setiap kali</span></span><button class="btn">Tambah Pentadbir Platform</button></div>
+      <div class="r"><span class="l"><b>Mod penyelenggaraan</b><span>Papar notis kepada semua pengguna</span></span><button class="btn">Hidupkan</button></div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { reg: true }; }
+  renderVals() {
+    const on = this.state.reg;
+    return {
+      regLabel: on ? 'Tutup pendaftaran' : 'Buka pendaftaran',
+      regTrack: 'width: 46px; height: 28px; border-radius: 14px; position: relative; display: block; background: ' + (on ? '#0F6B5F' : '#C9D3D1'),
+      regKnob: 'position: absolute; top: 3px; width: 22px; height: 22px; border-radius: 11px; background: #FFFFFF; ' + (on ? 'right: 3px' : 'left: 3px'),
+      flipReg: () => this.setState({ reg: !on })
+    };
+  }
+}
+</script>
+</body>
+</html>

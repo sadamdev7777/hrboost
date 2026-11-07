@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Pendaftaran — aktifkan akaun</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.g div{display:flex;flex-direction:column;gap:2px}
+.g span{font-size:12px;color:#5B6B68}
+.g b{font-size:14px;font-weight:700}
+.fld{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700}
+.fld input{height:52px;box-sizing:border-box;border:1px solid #D5DEDC;border-radius:14px;padding:0 16px;font-family:inherit;font-size:16px;font-weight:600;color:#14211F;background:#FFFFFF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+
+  <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 18px; padding: 48px 24px 16px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <span style="font-size: 13px; font-weight: 700; color: #0F6B5F; letter-spacing: 0.04em">JEMPUTAN DARIPADA HR</span>
+      <h1 style="margin: 0; font-size: 26px; font-weight: 800; line-height: 1.2">Selamat datang ke MTB, Nurin</h1>
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 14px">
+      <div class="g">
+        <div><span>Syarikat</span><b>MUSLIMTRAVELBUG</b></div>
+        <div><span>Jawatan</span><b>Eksekutif Tour</b></div>
+        <div><span>Jabatan</span><b>Tour</b></div>
+        <div><span>Ketua</span><b>Zuerin</b></div>
+        <div><span>Tarikh mula</span><b>1 Dis 2026</b></div>
+        <div><span>Status</span><b>Percubaan 3 bulan</b></div>
+      </div>
+      <span style="font-size: 12px; color: #5B6B68">Terdapat kesilapan? Maklumkan kepada HR sebelum meneruskan.</span>
+    </div>
+
+    <label class="fld">Sahkan identiti: 4 digit terakhir no. kad pengenalan
+      <input type="text" inputmode="numeric" placeholder="••••" value="5521" style="letter-spacing: 0.3em; border: 1.5px solid #0F6B5F">
+    </label>
+
+    <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: #33504B; line-height: 1.5">
+      <input type="checkbox" checked style="width: 20px; height: 20px; margin-top: 1px; flex-shrink: 0; accent-color: #0F6B5F">
+      <span>Saya faham bahawa maklumat peribadi saya disimpan untuk urusan HR dan gaji sahaja, mengikut <a href="Privasi.dc.html" style="font-weight: 700">notis privasi</a> syarikat.</span>
+    </label>
+  </div>
+
+  <div style="padding: 12px 24px 32px; display: flex; flex-direction: column; gap: 8px">
+    <a href="Onboarding.dc.html" style="height: 56px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Aktifkan akaun</a>
+    <span style="font-size: 12px; color: #5B6B68; text-align: center">Pautan ini hanya sah untuk +60 11-•••• 7712 dan akan tamat tempoh dalam 7 hari.</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

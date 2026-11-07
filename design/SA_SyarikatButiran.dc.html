@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Pentadbir Platform — butiran syarikat</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F6F5}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.shell{display:flex;flex-wrap:wrap;width:100%;min-height:900px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#14211F;background:#F4F6F5}
+.side{flex:1 1 220px;background:#14211F;color:#FFFFFF;padding:22px 14px;box-sizing:border-box;display:flex;flex-direction:column;gap:4px}
+.side a{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:0 12px;border-radius:10px;color:#C9D3D1;font-size:14px;font-weight:600}
+.side a:hover{background:#1F3532;color:#FFFFFF}
+.side a.on{background:#2A4743;color:#FFFFFF;font-weight:800}
+.badge{min-width:22px;height:22px;border-radius:11px;background:#F2B266;color:#14211F;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.main{flex:999 1 560px;min-width:0;padding:28px 32px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px}
+.card{background:#FFFFFF;border-radius:16px;padding:18px 20px;box-sizing:border-box;display:flex;flex-direction:column;gap:12px}
+.h2{margin:0;font-size:17px;font-weight:800}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.kv div{display:flex;flex-direction:column;gap:2px}
+.kv span{font-size:12px;color:#4A5A57;font-weight:600}
+.kv b{font-size:16px;font-weight:800}
+.meter{height:10px;border-radius:5px;background:#E4EAE8;overflow:hidden}
+.meter i{display:block;height:100%;border-radius:5px}
+.btn{min-height:44px;padding:0 16px;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #D5DEDC;background:#FFFFFF;color:#14211F;cursor:pointer}
+.pill{font-size:12px;font-weight:700;padding:3px 9px;border-radius:9px;white-space:nowrap}
+.row{display:flex;align-items:center;gap:12px;min-height:44px;border-top:1px solid #EEF2F1;font-size:14px}
+.row:first-child{border-top:none}
+</style>
+</helmet>
+<div class="shell">
+  <nav class="side" aria-label="Menu pentadbir platform">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 18px">
+      <span style="width: 36px; height: 36px; border-radius: 10px; background: #0F6B5F; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center">HR</span>
+      <span style="display: flex; flex-direction: column"><b style="font-size: 15px">HRBoost.io</b><span style="font-size: 12px; color: #C9D3D1">Pentadbir Platform</span></span>
+    </div>
+    <a href="SA_Dashboard.dc.html">Ringkasan</a>
+    <a href="SA_Syarikat.dc.html" class="on">Syarikat</a>
+    <a href="SA_Pengguna.dc.html">Pengguna</a>
+    <a href="SA_Akses.dc.html">Permohonan akses <span class="badge">2</span></a>
+    <a href="SA_Log.dc.html">Log audit</a>
+    <a href="SA_Tetapan.dc.html">Tetapan platform</a>
+  </nav>
+
+  <main class="main">
+    <a href="SA_Syarikat.dc.html" style="font-size: 13px; font-weight: 700">← Semua syarikat</a>
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+      <h1 style="margin: 0; font-size: 26px; font-weight: 800">Syarikat ABC Sdn Bhd</h1>
+      <span class="pill" style="{{statusStyle}}">{{statusLabel}}</span>
+    </div>
+
+    <section class="card">
+      <div class="kv">
+        <div><span>Pentadbir</span><b>Faizal</b></div>
+        <div><span>Pekerja aktif</span><b>18 / 18</b></div>
+        <div><span>Jabatan</span><b>4</b></div>
+        <div><span>Daftar</span><b>6 Nov 2026</b></div>
+        <div><span>Persediaan</span><b>Selesai</b></div>
+        <div><span>Log masuk terakhir</span><b>Hari ini</b></div>
+      </div>
+    </section>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 16px">
+      <section class="card" style="flex: 1 1 360px">
+        <h2 class="h2">Penggunaan bulan ini</h2>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <div style="display: flex; justify-content: space-between; font-size: 14px"><span style="font-weight: 700">Mesej WhatsApp</span><span style="color: #92400E; font-weight: 700">92% daripada had</span></div>
+          <div class="meter"><i style="width: 92%; background: #D97706"></i></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <div style="display: flex; justify-content: space-between; font-size: 14px"><span style="font-weight: 700">Panggilan AI</span><span style="color: #4A5A57">41% daripada had</span></div>
+          <div class="meter"><i style="width: 41%; background: #0F6B5F"></i></div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px">
+          <label style="display: flex; align-items: center; gap: 8px; font-weight: 700">Had WhatsApp / bulan
+            <input type="text" value="[ ]" style="width: 90px; height: 40px; box-sizing: border-box; border: 1px solid #D5DEDC; border-radius: 10px; padding: 0 10px; font-family: inherit; font-size: 14px">
+          </label>
+          <button class="btn">Simpan had</button>
+        </div>
+      </section>
+
+      <section class="card" style="flex: 1 1 300px">
+        <h2 class="h2">Pentadbir syarikat</h2>
+        <div style="display: flex; flex-direction: column">
+          <div class="row"><b style="flex-grow: 1">Faizal</b><span style="color: #4A5A57">Pentadbir · HR</span></div>
+          <div class="row"><b style="flex-grow: 1">Rahim</b><span style="color: #4A5A57">Kewangan</span></div>
+        </div>
+        <button class="btn">Hantar mesej kepada Pentadbir</button>
+      </section>
+    </div>
+
+    <section class="card" style="border: 1.5px solid #F2C4BF">
+      <h2 class="h2" style="color: #B42318">Zon bahaya</h2>
+      <sc-if value="{{isActive}}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between">
+          <span style="font-size: 14px; color: #33504B; line-height: 1.55; flex: 1 1 380px">Nyahaktifkan syarikat: semua pengguna tidak boleh log masuk, pemberitahuan WhatsApp berhenti. Data disimpan dan boleh diaktifkan semula.</span>
+          <button onClick="{{openConfirm}}" class="btn" style="border-color: #B42318; color: #B42318">Nyahaktifkan syarikat</button>
+        </div>
+        <sc-if value="{{confirming}}" hint-placeholder-val="{{ false }}">
+          <div style="background: #FBE4E2; border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+            <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 700; color: #7A1B12">Sebab (dimaklumkan kepada Pentadbir)
+              <select style="height: 42px; border: 1px solid #E8A39B; border-radius: 10px; padding: 0 10px; font-family: inherit; font-size: 14px; background: #FFFFFF"><option>Penyalahgunaan / spam</option><option>Permintaan Pentadbir syarikat</option><option>Melanggar terma</option></select>
+            </label>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap">
+              <button onClick="{{cancel}}" class="btn">Batal</button>
+              <button onClick="{{suspend}}" class="btn" style="background: #B42318; border-color: #B42318; color: #FFFFFF">Ya, nyahaktifkan</button>
+            </div>
+          </div>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{isSuspended}}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between">
+          <span style="font-size: 14px; color: #B42318; font-weight: 700">Dinyahaktifkan oleh anda hari ini. Pentadbir telah dimaklumkan.</span>
+          <button onClick="{{restore}}" class="btn" style="background: #0F6B5F; border-color: #0F6B5F; color: #FFFFFF">Aktifkan semula</button>
+        </div>
+      </sc-if>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { st: 'active', confirming: false }; }
+  renderVals() {
+    const act = this.state.st === 'active';
+    return {
+      isActive: act,
+      isSuspended: !act,
+      confirming: this.state.confirming,
+      statusLabel: act ? 'Aktif' : 'Dinyahaktif',
+      statusStyle: act ? 'color: #166534; background: #E3F5E8;' : 'color: #B42318; background: #FBE4E2;',
+      openConfirm: () => this.setState({ confirming: true }),
+      cancel: () => this.setState({ confirming: false }),
+      suspend: () => this.setState({ st: 'suspended', confirming: false }),
+      restore: () => this.setState({ st: 'active' })
+    };
+  }
+}
+</script>
+</body>
+</html>

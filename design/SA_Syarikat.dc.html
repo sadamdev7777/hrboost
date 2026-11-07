@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Pentadbir Platform — senarai syarikat</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F6F5}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.shell{display:flex;flex-wrap:wrap;width:100%;min-height:900px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#14211F;background:#F4F6F5}
+.side{flex:1 1 220px;background:#14211F;color:#FFFFFF;padding:22px 14px;box-sizing:border-box;display:flex;flex-direction:column;gap:4px}
+.side a{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:0 12px;border-radius:10px;color:#C9D3D1;font-size:14px;font-weight:600}
+.side a:hover{background:#1F3532;color:#FFFFFF}
+.side a.on{background:#2A4743;color:#FFFFFF;font-weight:800}
+.badge{min-width:22px;height:22px;border-radius:11px;background:#F2B266;color:#14211F;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.main{flex:999 1 560px;min-width:0;padding:28px 32px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px}
+.card{background:#FFFFFF;border-radius:16px;padding:6px 8px;box-sizing:border-box}
+.tw{overflow-x:auto}
+.gr{display:grid;grid-template-columns:2.4fr 1fr 0.9fr 1.1fr 0.9fr 1fr 0.6fr;gap:12px;align-items:center;min-width:860px;padding:14px 12px;border-bottom:1px solid #EEF2F1;font-size:14px}
+.gr.h{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em;padding:12px;border-bottom:1px solid #E2E8E6}
+.n{text-align:right}
+.pill{font-size:12px;font-weight:700;padding:3px 9px;border-radius:9px;white-space:nowrap}
+.ok{color:#166534;background:#E3F5E8}.warn{color:#92400E;background:#FEF3E2}.bad{color:#B42318;background:#FBE4E2}.mut{color:#4A5A57;background:#E9EEED}
+.sub{display:block;font-size:12px;color:#5B6B68;font-weight:500;margin-top:2px}
+</style>
+</helmet>
+<div class="shell">
+  <nav class="side" aria-label="Menu pentadbir platform">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 18px">
+      <span style="width: 36px; height: 36px; border-radius: 10px; background: #0F6B5F; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center">HR</span>
+      <span style="display: flex; flex-direction: column"><b style="font-size: 15px">HRBoost.io</b><span style="font-size: 12px; color: #C9D3D1">Pentadbir Platform</span></span>
+    </div>
+    <a href="SA_Dashboard.dc.html">Ringkasan</a>
+    <a href="SA_Syarikat.dc.html" class="on">Syarikat</a>
+    <a href="SA_Pengguna.dc.html">Pengguna</a>
+    <a href="SA_Akses.dc.html">Permohonan akses <span class="badge">2</span></a>
+    <a href="SA_Log.dc.html">Log audit</a>
+    <a href="SA_Tetapan.dc.html">Tetapan platform</a>
+  </nav>
+
+  <main class="main">
+    <h1 style="margin: 0; font-size: 26px; font-weight: 800">Syarikat</h1>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+      <label style="flex: 1 1 280px; display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 14px; border-radius: 12px; background: #FFFFFF; border: 1px solid #D5DEDC">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B6B68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+        <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cari syarikat</span>
+        <input type="text" placeholder="Cari nama syarikat, no. SSM atau Pentadbir" style="flex-grow: 1; border: none; outline: none; font-family: inherit; font-size: 14px; background: transparent; color: #14211F">
+      </label>
+      <sc-for list="{{filters}}" as="f" hint-placeholder-count="4">
+        <button onClick="{{f.pick}}" style="{{f.style}}">{{f.label}}</button>
+      </sc-for>
+    </div>
+
+    <div class="card tw">
+      <div role="table" aria-label="Senarai syarikat">
+        <div class="gr h" role="row"><span role="columnheader">SYARIKAT</span><span role="columnheader">PENTADBIR</span><span role="columnheader" class="n">PEKERJA AKTIF</span><span role="columnheader">PERSEDIAAN</span><span role="columnheader">TARIKH DAFTAR</span><span role="columnheader">STATUS</span><span></span></div>
+        <sc-for list="{{rows}}" as="r" hint-placeholder-count="5">
+          <div class="gr" role="row">
+            <span role="cell"><b>{{r.name}}</b><span class="sub">{{r.ssm}}</span></span>
+            <span role="cell">{{r.admin}}</span>
+            <span role="cell" class="n">{{r.staff}}</span>
+            <span role="cell">{{r.onb}}</span>
+            <span role="cell">{{r.since}}</span>
+            <span role="cell"><span class="{{r.pillClass}}">{{r.status}}</span></span>
+            <span role="cell" class="n"><a href="SA_SyarikatButiran.dc.html" style="font-weight: 700">Lihat</a></span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <span style="font-size: 12px; color: #4A5A57">Pentadbir platform hanya melihat bilangan dan status — bukan senarai nama pekerja, gaji atau dokumen.</span>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { f: 'all' }; }
+  renderVals() {
+    const all = [
+      { name: 'MUSLIMTRAVELBUG SDN BHD', ssm: '[No. SSM]', admin: 'Sadam', staff: '[ ]', onb: 'Selesai', since: 'Nov 2026', st: 'active' },
+      { name: 'DO IT GROUP SDN BHD', ssm: '[No. SSM]', admin: 'Sadam', staff: '[ ]', onb: 'Selesai', since: 'Nov 2026', st: 'active' },
+      { name: 'Avenue Holidays', ssm: '[No. SSM]', admin: 'Hasif', staff: '[ ]', onb: 'Langkah 5/6', since: 'Nov 2026', st: 'active' },
+      { name: 'Syarikat ABC Sdn Bhd', ssm: '[No. SSM]', admin: 'Faizal', staff: '18', onb: 'Selesai', since: 'Nov 2026', st: 'active' },
+      { name: 'Kedai XYZ Enterprise', ssm: '[No. SSM]', admin: 'Mei Ling', staff: '0', onb: 'Langkah 3/6', since: 'Okt 2026', st: 'onboarding' },
+      { name: 'Contoh Trading', ssm: '[No. SSM]', admin: 'Ravi', staff: '4', onb: 'Selesai', since: 'Sep 2026', st: 'suspended' }
+    ];
+    const label = { active: 'Aktif', onboarding: 'Persediaan', suspended: 'Dinyahaktif' };
+    const cls = { active: 'pill ok', onboarding: 'pill warn', suspended: 'pill bad' };
+    const f = this.state.f;
+    const base = 'height: 40px; padding: 0 14px; border-radius: 20px; font-family: inherit; font-size: 13px; cursor: pointer; ';
+    return {
+      filters: [{ id: 'all', l: 'Semua' }, { id: 'active', l: 'Aktif' }, { id: 'onboarding', l: 'Persediaan' }, { id: 'suspended', l: 'Dinyahaktif' }].map((x) => ({
+        label: x.l,
+        style: base + (f === x.id ? 'border: 1px solid #14211F; background: #14211F; color: #FFFFFF; font-weight: 700;' : 'border: 1px solid #D5DEDC; background: #FFFFFF; color: #14211F; font-weight: 600;'),
+        pick: () => this.setState({ f: x.id })
+      })),
+      rows: all.filter((r) => f === 'all' || r.st === f).map((r) => ({ ...r, status: label[r.st], pillClass: cls[r.st] }))
+    };
+  }
+}
+</script>
+</body>
+</html>

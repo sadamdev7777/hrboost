@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Mohon akses ke syarikat lain</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.fld{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700}
+.fld input,.fld textarea{box-sizing:border-box;border:1px solid #D5DEDC;border-radius:12px;padding:0 14px;font-family:inherit;font-size:15px;font-weight:600;color:#14211F;background:#FFFFFF}
+.fld input{height:48px}
+.fld textarea{padding:12px 14px;resize:none;font-weight:500}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="DashboardHR.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Mohon akses ke syarikat lain</h1>
+  </header>
+
+  <sc-if value="{{editing}}" hint-placeholder-val="{{ true }}">
+    <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 12px; padding: 4px 20px 16px">
+      <span style="font-size: 14px; color: #4A5A57; line-height: 1.5">Anda hanya boleh mengurus syarikat tempat anda bekerja. Akses ke syarikat lain memerlukan kelulusan Pentadbir Platform HRBoost dan akan tamat secara automatik.</span>
+
+      <label class="fld">Kod syarikat
+        <input type="text" value="DOIT" style="text-transform: uppercase; letter-spacing: 0.06em">
+        <span style="font-size: 12px; font-weight: 500; color: #5B6B68">Dapatkan kod daripada Pentadbir syarikat tersebut.</span>
+      </label>
+
+      <span class="sec">AKSES DIPERLUKAN</span>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+        <sc-for list="{{roles}}" as="r" hint-placeholder-count="3">
+          <button onClick="{{r.pick}}" style="{{r.style}}">{{r.label}}</button>
+        </sc-for>
+      </div>
+
+      <span class="sec">TEMPOH</span>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+        <sc-for list="{{days}}" as="d" hint-placeholder-count="3">
+          <button onClick="{{d.pick}}" style="{{d.style}}">{{d.label}}</button>
+        </sc-for>
+      </div>
+
+      <label class="fld">Sebab
+        <textarea rows="3">Membantu memproses gaji DO IT bagi bulan Disember semasa HR DO IT bercuti bersalin.</textarea>
+      </label>
+    </div>
+    <div style="padding: 12px 20px 28px; background: #FFFFFF; border-top: 1px solid #E2E8E6; display: flex; flex-direction: column; gap: 6px">
+      <button onClick="{{submit}}" style="height: 54px; border-radius: 16px; border: none; background: #0F6B5F; color: #FFFFFF; font-family: inherit; font-size: 16px; font-weight: 800; cursor: pointer">Hantar permohonan</button>
+      <span style="font-size: 12px; color: #5B6B68; text-align: center">Pentadbir syarikat tersebut juga akan dimaklumkan.</span>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{sent}}" hint-placeholder-val="{{ false }}">
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center">
+      <span style="width: 64px; height: 64px; border-radius: 32px; background: #FEF3E2; display: flex; align-items: center; justify-content: center">
+        <svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+      </span>
+      <h2 style="margin: 0; font-size: 22px; font-weight: 800">Menunggu kelulusan</h2>
+      <span style="font-size: 14px; color: #4A5A57; line-height: 1.55">Akses {{roleLabel}} ke DO IT GROUP selama {{dayLabel}}. Anda akan dimaklumkan melalui WhatsApp apabila Pentadbir Platform membuat keputusan.</span>
+      <a href="DashboardHR.dc.html" style="margin-top: 8px; height: 50px; padding: 0 24px; border-radius: 14px; border: 1.5px solid #D5DEDC; background: #FFFFFF; font-size: 15px; font-weight: 700; display: flex; align-items: center">Kembali ke Papan Pemuka</a>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { role: 'hr', d: 30, sent: false }; }
+  chip(on) {
+    return 'height: 46px; border-radius: 12px; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; ' +
+      (on ? 'border: 1.5px solid #0F6B5F; background: #E3F1EE; color: #0F6B5F;' : 'border: 1px solid #D5DEDC; background: #FFFFFF; color: #14211F;');
+  }
+  renderVals() {
+    const s = this.state;
+    const roles = [{ id: 'view', l: 'Lihat sahaja' }, { id: 'hr', l: 'HR' }, { id: 'ceo', l: 'Paparan CEO' }];
+    return {
+      editing: !s.sent,
+      sent: s.sent,
+      roleLabel: roles.find((r) => r.id === s.role).l,
+      dayLabel: s.d + ' hari',
+      roles: roles.map((r) => ({ label: r.l, style: this.chip(s.role === r.id), pick: () => this.setState({ role: r.id }) })),
+      days: [7, 30, 90].map((d) => ({ label: d + ' hari', style: this.chip(s.d === d), pick: () => this.setState({ d: d }) })),
+      submit: () => this.setState({ sent: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

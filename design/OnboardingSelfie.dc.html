@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Orientasi — ambil swafoto</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.bar{height:5px;border-radius:3px;background:#DCE3E1}
+.bar.on{background:#0F6B5F}
+.tip{display:flex;align-items:center;gap:8px;font-size:13px;color:#33504B}
+.tip i{width:20px;height:20px;border-radius:10px;background:#E3F1EE;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-style:normal}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 4px">
+    <a class="back" href="OnboardingNama.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <span style="font-size: 13px; font-weight: 700; color: #4A5A57">Langkah 3 daripada 8</span>
+  </header>
+  <div style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; padding: 0 20px 8px">
+    <span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </div>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 14px; padding: 10px 20px 16px">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 24px; font-weight: 800">Ambil swafoto</h1>
+      <span style="font-size: 14px; color: #4A5A57">Untuk gambar profil. Rakan sekerja dan ketua akan melihat gambar ini.</span>
+    </div>
+
+    <sc-if value="{{notShot}}" hint-placeholder-val="{{ true }}">
+      <div style="height: 360px; border-radius: 24px; background: #1E2B29; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden" role="img" aria-label="Paparan kamera hadapan dengan panduan bujur untuk muka">
+        <div style="width: 200px; height: 260px; border-radius: 50%; border: 3px dashed rgba(255,255,255,0.85); box-sizing: border-box"></div>
+        <span style="position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; color: #FFFFFF; font-size: 14px; font-weight: 600">Letakkan muka dalam bulatan</span>
+        <span style="position: absolute; top: 14px; left: 14px; font-size: 12px; font-weight: 700; color: #FFFFFF; background: rgba(255,255,255,0.18); padding: 4px 10px; border-radius: 10px">Kamera hadapan</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{shot}}" hint-placeholder-val="{{ false }}">
+      <div style="height: 360px; border-radius: 24px; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px">
+        <div style="width: 200px; height: 200px; border-radius: 100px; background: #E3F1EE; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; position: relative" role="img" aria-label="Swafoto yang diambil">
+          <svg aria-hidden="true" width="170" height="170" viewBox="0 0 100 100" fill="#9ED9CE"><circle cx="50" cy="38" r="20"></circle><path d="M12 100c4-22 20-34 38-34s34 12 38 34z"></path></svg>
+        </div>
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: #166534">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg>
+          Muka jelas, gambar sesuai
+        </span>
+      </div>
+    </sc-if>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span class="tip"><i><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0F6B5F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></i>Pencahayaan mencukupi, menghadap tingkap atau lampu</span>
+      <span class="tip"><i><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0F6B5F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></i>Muka penuh, tanpa cermin mata hitam</span>
+    </div>
+  </div>
+
+  <div style="padding: 12px 20px 28px; background: #FFFFFF; border-top: 1px solid #E2E8E6; display: flex; flex-direction: column; gap: 8px">
+    <sc-if value="{{notShot}}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{take}}" style="height: 56px; border-radius: 16px; border: none; background: #0F6B5F; color: #FFFFFF; font-family: inherit; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+        Ambil swafoto
+      </button>
+    </sc-if>
+    <sc-if value="{{shot}}" hint-placeholder-val="{{ false }}">
+      <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px">
+        <button onClick="{{retake}}" style="height: 56px; border-radius: 16px; border: 1.5px solid #D5DEDC; background: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 700; color: #14211F; cursor: pointer">Ambil semula</button>
+        <a href="OnboardingLangkah.dc.html" style="height: 56px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Gunakan gambar ini</a>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { shot: false }; }
+  renderVals() {
+    return {
+      shot: this.state.shot,
+      notShot: !this.state.shot,
+      take: () => this.setState({ shot: true }),
+      retake: () => this.setState({ shot: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

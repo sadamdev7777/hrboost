@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Tetapan — profil syarikat dan waktu kerja</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+.box{background:#FFFFFF;border-radius:16px;padding:2px 14px;display:flex;flex-direction:column}
+.r{display:flex;align-items:center;gap:10px;min-height:46px;border-top:1px solid #EEF2F1;font-size:14px}
+.r:first-child{border-top:none}
+.r .l{color:#5B6B68;flex-grow:1}
+.r input,.r select{width:150px;height:36px;box-sizing:border-box;border:1px solid #D5DEDC;border-radius:10px;padding:0 10px;font-family:inherit;font-size:13px;font-weight:700;color:#14211F;background:#FFFFFF;text-align:right}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 6px">
+    <a class="back" href="Tetapan.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Profil syarikat</h1>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 8px; padding: 2px 20px 10px">
+    <span class="sec">SYARIKAT</span>
+    <div class="box">
+      <label class="r"><span class="l">Nama</span><input type="text" value="MUSLIMTRAVELBUG SDN BHD" style="width: 190px"></label>
+      <label class="r"><span class="l">Kod (untuk akses)</span><input type="text" value="MTB"></label>
+      <label class="r"><span class="l">No. SSM</span><input type="text" value="[ ]"></label>
+      <label class="r"><span class="l">Negeri</span><select><option>WP Kuala Lumpur</option></select></label>
+    </div>
+
+    <span class="sec">WAKTU KERJA</span>
+    <div class="box">
+      <label class="r"><span class="l">Hujung minggu</span><select><option>Sabtu &amp; Ahad</option><option>Jumaat &amp; Sabtu</option></select></label>
+      <label class="r"><span class="l">Masuk / keluar</span><input type="text" value="9:00 – 18:00"></label>
+      <label class="r"><span class="l">Dikira lewat selepas</span><input type="text" value="10 minit"></label>
+      <label class="r"><span class="l">Had masa kelulusan</span><input type="text" value="5:00 ptg"></label>
+    </div>
+
+    <span class="sec">MAJIKAN BERKANUN</span>
+    <div class="box">
+      <label class="r"><span class="l">No. majikan KWSP</span><input type="text" value="[ ]"></label>
+      <label class="r"><span class="l">No. majikan PERKESO</span><input type="text" value="[ ]"></label>
+      <label class="r"><span class="l">No. E (LHDN)</span><input type="text" value="E [ ]"></label>
+      <label class="r"><span class="l">Berdaftar HRDF</span><select><option>Ya</option><option>Tidak</option></select></label>
+    </div>
+  </div>
+
+  <div style="padding: 10px 20px 26px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <a href="Tetapan.dc.html" style="height: 52px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Simpan</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

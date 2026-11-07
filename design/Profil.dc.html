@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Profil saya</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+.box{background:#FFFFFF;border-radius:16px;display:flex;flex-direction:column}
+.f{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:50px;padding:0 16px;border-top:1px solid #EEF2F1;font-size:14px}
+.f:first-child{border-top:none}
+.f span:first-child{color:#5B6B68}
+.f span:last-child{font-weight:700;text-align:right}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Saya.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800; flex-grow: 1">Profil Saya</h1>
+    <a href="ProfilUbah.dc.html" style="font-size: 14px; font-weight: 700; padding: 12px">Ubah</a>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 4px 20px 16px">
+    <span class="sec">PERIBADI</span>
+    <div class="box">
+      <div class="f"><span>Nama penuh (kad pengenalan)</span><span>AMIN BIN [ ]</span></div>
+      <div class="f"><span>Nama panggilan</span><span>Amin</span></div>
+      <div class="f"><span>No. kad pengenalan</span><span>••••••-••-1234</span></div>
+      <div class="f"><span>WhatsApp</span><span>011-•••• 0004</span></div>
+      <div class="f"><span>Alamat</span><span>Kuala Lumpur</span></div>
+    </div>
+
+    <span class="sec">BANK (UNTUK GAJI)</span>
+    <div class="box">
+      <div class="f"><span>Bank</span><span>[Nama bank]</span></div>
+      <div class="f"><span>No. akaun</span><span>•••• •••• 5678</span></div>
+    </div>
+
+    <span class="sec">PEKERJAAN</span>
+    <div class="box">
+      <div class="f"><span>MTB</span><span>Eksekutif Tour · sejak Mac 2025</span></div>
+      <div class="f"><span>DO IT GROUP</span><span>IT · sejak Jan 2026</span></div>
+    </div>
+
+    <span class="sec">WARIS</span>
+    <div class="box">
+      <div class="f"><span>[Nama waris]</span><span>Ibu · 01x-xxx xxxx</span></div>
+    </div>
+
+    <span style="font-size: 12px; color: #5B6B68; line-height: 1.5">Pertukaran akaun bank perlu disahkan oleh HR. Maklumat sensitif disembunyikan dan setiap akses direkodkan.</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

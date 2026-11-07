@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Proses gaji — bayar dan fail berkanun</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.st{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#0F6B5F;text-align:center}
+.st i{width:30px;height:30px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:13px;font-weight:800;background:#0F6B5F;color:#FFFFFF}
+.st.now i{background:#FFFFFF;border:3px solid #0F6B5F;color:#0F6B5F;box-sizing:border-box}
+.box{background:#FFFFFF;border-radius:16px;padding:2px 14px;display:flex;flex-direction:column}
+.r{display:flex;align-items:center;gap:10px;min-height:52px;border-top:1px solid #EEF2F1;font-size:14px}
+.r:first-child{border-top:none}
+.t{display:flex;flex-direction:column;gap:1px;flex-grow:1}
+.t b{font-weight:700}
+.t span{font-size:12px;color:#5B6B68}
+.dl{height:38px;padding:0 12px;border-radius:10px;border:1px solid #D5DEDC;background:#FFFFFF;font-family:inherit;font-size:13px;font-weight:700;color:#0F6B5F;cursor:pointer}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="GajiSemak.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800; flex-grow: 1">Gaji Nov 2026</h1>
+    <span style="font-size: 12px; font-weight: 700; color: #166534; background: #E3F5E8; padding: 4px 10px; border-radius: 9px; margin-right: 8px">Diluluskan</span>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 12px; padding: 4px 20px 14px">
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; background: #FFFFFF; border-radius: 16px; padding: 14px 8px">
+      <div class="st"><i>✓</i>Semak data</div>
+      <div class="st"><i>✓</i>Kira</div>
+      <div class="st"><i>✓</i>Kelulusan</div>
+      <div class="st now"><i>4</i>Bayar &amp; hantar</div>
+    </div>
+    <span style="font-size: 13px; color: #33504B">Diluluskan oleh Kewangan dan Sadam (CEO) hari ini.</span>
+
+    <span class="sec">MUAT TURUN</span>
+    <div class="box">
+      <div class="r"><span class="t"><b>Fail bayaran bank</b><span>Untuk dimuat naik ke perbankan internet</span></span><button class="dl">Muat turun</button></div>
+      <div class="r"><span class="t"><b>Caruman KWSP</b><span>Format i-Akaun Majikan</span></span><button class="dl">Muat turun</button></div>
+      <div class="r"><span class="t"><b>PERKESO &amp; SIP</b><span>Format ASSIST</span></span><button class="dl">Muat turun</button></div>
+      <div class="r"><span class="t"><b>PCB (CP39)</b><span>Format e-PCB LHDN</span></span><button class="dl">Muat turun</button></div>
+    </div>
+
+    <span class="sec">AUTOMATIK APABILA ANDA MENANDAKAN "TELAH DIBAYAR"</span>
+    <div class="box">
+      <div class="r"><span class="t"><b>Slip gaji ke WhatsApp 18 pekerja</b><span>PDF dengan jumlah tersembunyi sehingga dibuka</span></span></div>
+      <div class="r"><span class="t"><b>Jurnal gaji ke QuickBooks</b><span>Mengikut padanan akaun di Tetapan</span></span></div>
+    </div>
+  </div>
+
+  <div style="padding: 10px 20px 26px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <a href="DashboardHR.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Tandakan telah dibayar &amp; hantar slip</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

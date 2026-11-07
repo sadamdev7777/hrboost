@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Cuti — baki dan kalendar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.card{background:#FFFFFF;border-radius:16px;padding:14px 16px}
+.bal{background:#FFFFFF;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.bal b{font-size:22px;font-weight:800}
+.bal span{font-size:12px;color:#5B6B68}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;text-align:center}
+.cal span{height:34px;display:flex;align-items:center;justify-content:center;border-radius:9px;font-size:13px;font-weight:600}
+.cal .h{height:20px;font-size:11px;color:#5B6B68;font-weight:700}
+.cal .w{color:#9AA8A5}
+.cal .me{background:#0F6B5F;color:#FFFFFF}
+.cal .ot{background:#FDEBD7;color:#92400E}
+.cal .ph{background:#FBE4E2;color:#B42318}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Saya.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Cuti</h1>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 14px; padding: 4px 20px 16px">
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <div class="bal"><b>5</b><span>Tahunan</span></div>
+      <div class="bal"><b>14</b><span>Sakit (MC)</span></div>
+      <div class="bal"><b>60</b><span>Hospital</span></div>
+    </div>
+
+    <div class="card" style="display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <h2 style="margin: 0; font-size: 16px; font-weight: 800">Disember 2026</h2>
+        <span style="font-size: 12px; font-weight: 700; color: #5B6B68">Pasukan Tour</span>
+      </div>
+      <div class="cal">
+        <span class="h">I</span><span class="h">S</span><span class="h">R</span><span class="h">K</span><span class="h">J</span><span class="h">S</span><span class="h">A</span>
+        <span class="w"></span><span>1</span><span>2</span><span>3</span><span>4</span><span class="w">5</span><span class="w">6</span>
+        <span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span class="w">12</span><span class="w">13</span>
+        <span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span class="w">19</span><span class="w">20</span>
+        <span>21</span><span>22</span><span class="me">23</span><span class="ot">24</span><span class="ph">25</span><span class="w">26</span><span class="w">27</span>
+        <span class="me">28</span><span>29</span><span>30</span><span>31</span><span></span><span></span><span></span>
+      </div>
+      <div style="display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: #4A5A57">
+        <span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #0F6B5F"></span>Saya</span>
+        <span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #F2B266"></span>Zulfa</span>
+        <span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #E8857C"></span>Cuti umum</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <h2 style="margin: 0; font-size: 16px; font-weight: 800">Sejarah 2026</h2>
+      <div class="card" style="display: flex; justify-content: space-between; align-items: center">
+        <div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">Tahunan · 23–28 Dis</span><span style="font-size: 12px; color: #5B6B68">3 hari</span></div>
+        <span style="font-size: 12px; font-weight: 700; color: #92400E; background: #FEF3E2; padding: 4px 10px; border-radius: 10px">Di peringkat HR</span>
+      </div>
+      <div class="card" style="display: flex; justify-content: space-between; align-items: center">
+        <div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">MC · 14 Ogo</span><span style="font-size: 12px; color: #5B6B68">1 hari</span></div>
+        <span style="font-size: 12px; font-weight: 700; color: #166534; background: #E3F5E8; padding: 4px 10px; border-radius: 10px">Lulus</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding: 12px 20px 28px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <a href="MohonCuti.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Mohon Cuti</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

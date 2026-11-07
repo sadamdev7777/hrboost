@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Mohon Cuti</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a href="Main.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 22px; color: #14211F">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    </a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Mohon Cuti</h1>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 18px; padding: 8px 20px 16px">
+
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <span style="font-size: 14px; font-weight: 700">Jenis cuti</span>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{types}}" as="t" hint-placeholder-count="4">
+          <button onClick="{{t.pick}}" style="{{t.style}}">
+            <span style="font-size: 14px; font-weight: 700">{{t.name}}</span>
+            <span style="font-size: 12px; opacity: 0.85">{{t.sub}}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700">
+        Dari
+        <input type="text" value="Rab, 23 Dis" style="height: 48px; box-sizing: border-box; border: 1px solid #D5DEDC; border-radius: 12px; padding: 0 14px; font-family: inherit; font-size: 15px; font-weight: 600; color: #14211F; background: #FFFFFF">
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700">
+        Hingga
+        <input type="text" value="Isn, 28 Dis" style="height: 48px; box-sizing: border-box; border: 1px solid #D5DEDC; border-radius: 12px; padding: 0 14px; font-family: inherit; font-size: 15px; font-weight: 600; color: #14211F; background: #FFFFFF">
+      </label>
+    </div>
+
+    <div style="background: #E3F1EE; border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <span style="font-size: 22px; font-weight: 800; color: #0F6B5F">3 hari bekerja</span>
+        <span style="font-size: 13px; font-weight: 700; color: #0F6B5F">Baki selepas: 2 hari</span>
+      </div>
+      <span style="font-size: 13px; color: #33504B">Krismas (25 Dis) dan hujung minggu tidak dikira.</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700">
+        Pengganti tugas
+        <select style="height: 48px; box-sizing: border-box; border: 1.5px solid #0F6B5F; border-radius: 12px; padding: 0 12px; font-family: inherit; font-size: 15px; font-weight: 600; color: #14211F; background: #FFFFFF"><option>Zulfa</option><option>Nurin</option><option>Zuerin</option></select>
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700">
+        Sebab (pilihan)
+        <input type="text" value="Pulang ke kampung" style="height: 48px; box-sizing: border-box; border: 1px solid #D5DEDC; border-radius: 12px; padding: 0 14px; font-family: inherit; font-size: 15px; color: #14211F; background: #FFFFFF">
+      </label>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="font-size: 14px; font-weight: 700">Akan diluluskan oleh</span>
+      <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap">
+        <span style="font-size: 13px; font-weight: 600; background: #FFFFFF; border: 1px solid #D5DEDC; padding: 6px 10px; border-radius: 10px">1 · Zuerin</span>
+        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6B68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+        <span style="font-size: 13px; font-weight: 600; background: #FFFFFF; border: 1px solid #D5DEDC; padding: 6px 10px; border-radius: 10px">2 · HR</span>
+        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6B68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+        <span style="font-size: 13px; font-weight: 600; background: #FFFFFF; border: 1px solid #D5DEDC; padding: 6px 10px; border-radius: 10px">3 · CEO</span>
+      </div>
+      <span style="font-size: 12px; color: #5B6B68">Dijangka selesai hari ini sebelum 6:00 petang</span>
+    </div>
+  </div>
+
+  <div style="padding: 12px 20px 28px; background: #FFFFFF; border-top: 1px solid #E2E8E6; display: flex; flex-direction: column; gap: 10px">
+    <a href="Main.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Hantar Permohonan</a>
+    <span style="font-size: 12px; color: #5B6B68; text-align: center">Atau hantar melalui WhatsApp: “Saya ingin memohon cuti 23–28 Dis untuk pulang ke kampung”</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { picked: 'AL' }; }
+  renderVals() {
+    const list = [
+      { id: 'AL', name: 'Tahunan', sub: 'Baki 5 hari' },
+      { id: 'MC', name: 'Sakit (MC)', sub: 'Perlu sijil cuti sakit' },
+      { id: 'EL', name: 'Kecemasan', sub: 'Boleh mohon selepas' },
+      { id: 'UL', name: 'Tanpa Gaji', sub: 'Gaji dipotong' }
+    ];
+    const base = 'min-height: 64px; border-radius: 14px; padding: 10px 14px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; font-family: inherit; text-align: left; cursor: pointer; ';
+    return {
+      types: list.map((t) => ({
+        ...t,
+        style: base + (this.state.picked === t.id
+          ? 'background: #0F6B5F; color: #FFFFFF; border: 2px solid #0F6B5F;'
+          : 'background: #FFFFFF; color: #14211F; border: 2px solid #D5DEDC;'),
+        pick: () => this.setState({ picked: t.id })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

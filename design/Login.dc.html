@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Log masuk</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+
+  <div style="background: #0F6B5F; color: #FFFFFF; padding: 72px 28px 40px; display: flex; flex-direction: column; gap: 14px">
+    <span style="width: 56px; height: 56px; border-radius: 18px; background: #FFFFFF; color: #0F6B5F; font-weight: 800; font-size: 18px; display: flex; align-items: center; justify-content: center">HR</span>
+    <h1 style="margin: 0; font-size: 30px; font-weight: 800; line-height: 1.15">Assalamualaikum.<br>Selamat datang.</h1>
+    <span style="font-size: 15px; opacity: 0.92; line-height: 1.5">Log masuk ke <b>HRBoost.io</b> — HR syarikat anda, terus melalui WhatsApp.</span>
+  </div>
+
+  <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 16px; padding: 32px 24px 16px">
+    <label style="display: flex; flex-direction: column; gap: 8px; font-size: 15px; font-weight: 700">
+      No. telefon WhatsApp
+      <div style="display: flex; gap: 8px">
+        <span style="height: 56px; padding: 0 14px; border: 1px solid #D5DEDC; border-radius: 14px; background: #FFFFFF; display: flex; align-items: center; font-size: 16px; font-weight: 700">+60</span>
+        <input type="tel" placeholder="12 345 6789" value="11 2345 6789" style="flex-grow: 1; height: 56px; box-sizing: border-box; border: 1.5px solid #0F6B5F; border-radius: 14px; padding: 0 16px; font-family: inherit; font-size: 18px; font-weight: 600; letter-spacing: 0.02em; color: #14211F; background: #FFFFFF">
+      </div>
+    </label>
+    <span style="font-size: 13px; color: #5B6B68; line-height: 1.5">Kami akan menghantar kod 6 digit ke WhatsApp anda. Tiada kata laluan yang perlu diingati.</span>
+
+    <a href="OTP.dc.html" style="height: 56px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-top: 8px">Hantar kod</a>
+    <a href="#" style="height: 44px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700">Gunakan e-mel sebagai alternatif</a>
+  </div>
+
+  <div style="padding: 0 24px 32px; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 13px; color: #5B6B68; text-align: center; line-height: 1.5">
+    <span>Pekerja baharu? Semak WhatsApp anda untuk pautan jemputan daripada HR.</span>
+    <a href="Daftar.dc.html" style="font-weight: 700">Saya mempunyai pautan jemputan</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

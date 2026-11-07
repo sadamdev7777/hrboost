@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Tetapan automasi WhatsApp</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.box{background:#FFFFFF;border-radius:16px;padding:4px 16px;display:flex;flex-direction:column}
+.r{display:flex;align-items:center;gap:12px;min-height:54px;border-top:1px solid #EEF2F1}
+.r:first-child{border-top:none}
+.tx{display:flex;flex-direction:column;gap:2px;flex-grow:1;border:none;background:transparent;padding:6px 0;text-align:left;font-family:inherit;color:#14211F;cursor:pointer}
+.tx b{font-size:14px;font-weight:700}
+.tx span{font-size:12px;color:#5B6B68}
+.tg{width:48px;height:44px;border:none;background:transparent;padding:0;display:flex;align-items:center;justify-content:flex-end;flex-shrink:0}
+.k{font-size:11px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Tetapan.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Automasi WhatsApp</h1>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 4px 20px 16px">
+
+    <div style="background: #FFFFFF; border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; border: 2px solid #0F6B5F">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+        <b style="font-size: 15px; font-weight: 800">{{cur.name}}</b>
+        <span style="{{cur.badge}}">{{cur.status}}</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span class="k">APABILA</span>
+        <div class="chips">
+          <sc-for list="{{cur.whenChips}}" as="c" hint-placeholder-count="2">
+            <button onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span class="k">HANTAR KEPADA</span>
+        <div class="chips">
+          <sc-for list="{{cur.toChips}}" as="c" hint-placeholder-count="3">
+            <button onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <span class="k">MESEJ</span>
+        <div style="background: #F4F6F5; border-radius: 12px; padding: 10px 12px; font-size: 13px; line-height: 1.5; color: #33504B; white-space: pre-line">{{cur.msg}}</div>
+      </div>
+      <sc-if value="{{cur.hasNote}}" hint-placeholder-val="{{ true }}">
+        <span style="font-size: 12px; color: #4A3B8C; line-height: 1.45">{{cur.note}}</span>
+      </sc-if>
+    </div>
+
+    <div class="box">
+      <sc-for list="{{rules}}" as="r" hint-placeholder-count="7">
+        <div class="r" style="{{r.rowStyle}}">
+          <button class="tx" onClick="{{r.open}}"><b>{{r.name}}</b><span>{{r.when}}</span></button>
+          <button class="tg" onClick="{{r.flip}}" aria-label="{{r.label}}">
+            <span style="{{r.track}}"><span style="{{r.knob}}"></span></span>
+          </button>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      sel: 'cuti',
+      on: { cuti: true, lewat: true, lewat3: true, tugas: true, ingat: true, keputusan: true, sla: true },
+      when: { cuti: ['Dimohon', 'Diluluskan'] },
+      to: { cuti: ['Pengganti tugas', 'HR'] }
+    };
+  }
+  chip(active) {
+    return 'height: 34px; padding: 0 12px; border-radius: 17px; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; ' +
+      (active ? 'border: 1.5px solid #0F6B5F; background: #E3F1EE; color: #0F6B5F;' : 'border: 1px solid #D5DEDC; background: #FFFFFF; color: #4A5A57;');
+  }
+  toggleIn(key, id, val) {
+    const cur = (this.state[key][id] || []);
+    const next = cur.includes(val) ? cur.filter((v) => v !== val) : cur.concat([val]);
+    this.setState({ [key]: { ...this.state[key], [id]: next } });
+  }
+  renderVals() {
+    const rules = [
+      { id: 'cuti', name: 'Pekerja memohon cuti → maklumkan pengganti tugas', when: 'Semasa dimohon & diluluskan · pengganti tugas, HR',
+        whenOpts: ['Dimohon', 'Diluluskan', 'Dibatalkan'], toOpts: ['Pengganti tugas', 'Rakan sejabatan', 'HR', 'CEO'],
+        msg: 'Assalamualaikum {pic},\n{nama} ({jabatan}) memohon cuti {tarikh} ({hari} hari) dan menamakan anda sebagai pengganti tugas.\nSila uruskan serahan tugas dengan {nama}. Status: {status}.',
+        note: 'Ketua jabatan tidak dihantar mesej ini kerana telah menerima mesej kelulusan — bagi mengelakkan mesej berulang.' },
+      { id: 'lewat', name: 'Pekerja lewat masuk', when: 'Daftar masuk lewat > 10 min · pekerja berkenaan',
+        whenOpts: ['Lewat > 10 min'], toOpts: ['Pekerja berkenaan'],
+        msg: 'Assalamualaikum {nama}, sistem merekodkan anda mendaftar masuk pada pukul {masa} hari ini (lewat {minit} minit). Ini kali ke-{kali} bagi bulan ini. Sekiranya ada sebab, sila balas mesej ini.', note: '' },
+      { id: 'lewat3', name: 'Lewat 3 kali → maklumkan ketua', when: 'Lewat kali ke-3 dalam sebulan · ketua jabatan',
+        whenOpts: ['Lewat kali ke-3'], toOpts: ['Ketua jabatan'],
+        msg: '{nama} lewat masuk kali ke-{kali} bulan ini (hari ini {masa}).', note: '' },
+      { id: 'tugas', name: 'Tugasan kelulusan baharu', when: 'Kepada pelulus · balas LULUS / TOLAK',
+        whenOpts: ['Tiba di peringkat anda'], toOpts: ['Pelulus'],
+        msg: 'Terdapat permohonan yang menunggu kelulusan anda: {tajuk}.\nSila balas LULUS atau TOLAK <sebab>.', note: '' },
+      { id: 'ingat', name: 'Peringatan kelulusan', when: 'Setiap 2 jam selagi belum diluluskan',
+        whenOpts: ['Setiap 2 jam'], toOpts: ['Pelulus'],
+        msg: 'Peringatan: {tajuk} masih menunggu kelulusan anda.', note: '' },
+      { id: 'keputusan', name: 'Keputusan permohonan', when: 'Lulus / tolak / kembalikan · pemohon',
+        whenOpts: ['Lulus', 'Tolak', 'Kembalikan'], toOpts: ['Pemohon'],
+        msg: 'Permohonan anda "{tajuk}" telah {keputusan}.', note: '' },
+      { id: 'sla', name: 'Melepasi tempoh sasaran → maklumkan CEO', when: 'Tidak selesai pada hari yang sama',
+        whenOpts: ['Melepasi tempoh'], toOpts: ['CEO'],
+        msg: 'Permohonan "{tajuk}" tidak selesai dalam tempoh hari yang sama.', note: '' }
+    ];
+    const s = this.state;
+    const r0 = rules.find((r) => r.id === s.sel);
+    const onSel = s.on[r0.id];
+    const whenSel = s.when[r0.id] || r0.whenOpts;
+    const toSel = s.to[r0.id] || r0.toOpts;
+    return {
+      cur: {
+        name: r0.name,
+        status: onSel ? 'Aktif' : 'Tidak aktif',
+        badge: 'font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 8px; white-space: nowrap; ' +
+          (onSel ? 'color: #166534; background: #E3F5E8;' : 'color: #4A5A57; background: #E9EEED;'),
+        msg: r0.msg,
+        hasNote: !!r0.note,
+        note: r0.note,
+        whenChips: r0.whenOpts.map((w) => ({ label: w, style: this.chip(whenSel.includes(w)),
+          pick: () => this.toggleIn('when', r0.id, w) })),
+        toChips: r0.toOpts.map((t) => ({ label: t, style: this.chip(toSel.includes(t)),
+          pick: () => this.toggleIn('to', r0.id, t) }))
+      },
+      rules: rules.map((r) => {
+        const on = s.on[r.id];
+        return {
+          ...r,
+          rowStyle: r.id === s.sel ? 'background: #F2F8F7; margin: 0 -16px; padding: 0 16px;' : '',
+          label: (on ? 'Matikan ' : 'Hidupkan ') + r.name,
+          track: 'width: 46px; height: 28px; border-radius: 14px; position: relative; display: block; background: ' + (on ? '#0F6B5F' : '#C9D3D1'),
+          knob: 'position: absolute; top: 3px; width: 22px; height: 22px; border-radius: 11px; background: #FFFFFF; ' + (on ? 'right: 3px' : 'left: 3px'),
+          open: () => this.setState({ sel: r.id }),
+          flip: () => this.setState({ on: { ...s.on, [r.id]: !on } })
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

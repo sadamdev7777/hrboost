@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Proses gaji</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.st{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#5B6B68;text-align:center}
+.st i{width:30px;height:30px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:13px;font-weight:800;background:#E4EAE8;color:#4A5A57}
+.st.done i{background:#0F6B5F;color:#FFFFFF}
+.st.now i{background:#FFFFFF;border:3px solid #0F6B5F;color:#0F6B5F;box-sizing:border-box}
+.st.now{color:#0F6B5F}
+.box{background:#FFFFFF;border-radius:16px;padding:4px 16px;display:flex;flex-direction:column}
+.r{display:flex;align-items:center;gap:12px;min-height:50px;border-top:1px solid #EEF2F1;font-size:14px}
+.r:first-child{border-top:none}
+.ok{width:22px;height:22px;border-radius:11px;background:#E3F5E8;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Saya.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800; flex-grow: 1">Gaji Nov 2026</h1>
+    <span style="font-size: 13px; font-weight: 800; color: #0F6B5F; background: #E3F1EE; padding: 4px 10px; border-radius: 9px; margin-right: 8px">MTB</span>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 14px; padding: 4px 20px 16px">
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; background: #FFFFFF; border-radius: 16px; padding: 14px 8px">
+      <div class="st done"><i>✓</i>Semak data</div>
+      <div class="st now"><i>2</i>Kira</div>
+      <div class="st"><i>3</i>Kelulusan</div>
+      <div class="st"><i>4</i>Bayar &amp; hantar</div>
+    </div>
+
+    <span class="sec">DATA BULAN INI (AUTOMATIK)</span>
+    <div class="box">
+      <div class="r"><span class="ok"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span style="flex-grow: 1">Pekerja aktif</span><b>18</b></div>
+      <div class="r"><span class="ok"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span style="flex-grow: 1">Tuntutan yang diluluskan untuk dibayar</span><b>7</b></div>
+      <div class="r"><span class="ok"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span style="flex-grow: 1">Cuti tanpa gaji</span><b>1 orang</b></div>
+      <div class="r"><span class="ok"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span style="flex-grow: 1">Komisen jualan (import)</span><b>4 orang</b></div>
+    </div>
+
+    <div style="background: #F3F0FC; border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+      <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: #4A3B8C">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5 13.8 11.3 12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"></path></svg>
+        Semakan AI sebelum kira
+      </span>
+      <ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #2E2650; line-height: 1.45">
+        <li>Nurin: belum mempunyai no. KWSP.</li>
+        <li>Gaji Zulfa meningkat 40% berbanding bulan lalu — adakah ini betul?</li>
+      </ul>
+    </div>
+
+    <span class="sec">SELEPAS DILULUSKAN, SISTEM AKAN MENYEDIAKAN</span>
+    <span style="font-size: 13px; color: #33504B; line-height: 1.6">Slip gaji (WhatsApp ke pekerja) · Fail bank pukal · KWSP · PERKESO/SIP · PCB (CP39) · Jurnal ke QuickBooks</span>
+  </div>
+
+  <div style="padding: 12px 20px 28px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <a href="GajiSemak.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Kira Gaji</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

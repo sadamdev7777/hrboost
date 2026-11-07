@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Hari jadi pekerja</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.box{background:#FFFFFF;border-radius:16px;padding:4px 16px;display:flex;flex-direction:column}
+.r{display:flex;align-items:center;gap:12px;min-height:58px;border-top:1px solid #EEF2F1}
+.r:first-child{border-top:none}
+.dt{width:44px;height:44px;border-radius:12px;background:#F4F6F5;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.dt b{font-size:16px;font-weight:800;line-height:1}
+.dt span{font-size:10px;font-weight:700;color:#4A5A57}
+.nm{display:flex;flex-direction:column;gap:2px;flex-grow:1}
+.nm b{font-size:15px;font-weight:700}
+.nm span{font-size:12px;color:#5B6B68}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Saya.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Hari Jadi</h1>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 14px; padding: 4px 20px 16px">
+
+    <div style="background: #FDEBD7; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; align-items: center; gap: 14px">
+        <span style="width: 56px; height: 56px; border-radius: 28px; background: #FFFFFF; color: #92400E; font-weight: 800; font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0">ZF</span>
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; font-weight: 700; color: #92400E; letter-spacing: 0.04em">HARI INI · 7 NOV</span>
+          <b style="font-size: 20px; font-weight: 800">Zulfa</b>
+          <span style="font-size: 13px; color: #6B3A0B">Tour · MTB</span>
+        </div>
+        <svg aria-hidden="true" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="margin-left: auto"><path d="M4 21h16v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z"></path><path d="M4 16c2 1 3 1 4 0s3-1 4 0 3 1 4 0 3-1 4 0"></path><path d="M12 11V7"></path><path d="M12 4.5c.8-.6.8-1.5 0-2.5-.8 1-.8 1.9 0 2.5z"></path></svg>
+      </div>
+      <a href="WhatsApp.dc.html" style="height: 48px; border-radius: 14px; background: #FFFFFF; color: #92400E; font-size: 15px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"></path></svg>
+        Ucap selamat di WhatsApp
+      </a>
+    </div>
+
+    <div role="tablist" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; background: #E4EAE8; border-radius: 14px; padding: 4px">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="2">
+        <button role="tab" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+      </sc-for>
+    </div>
+
+    <div class="box">
+      <sc-for list="{{people}}" as="p" hint-placeholder-count="3">
+        <div class="r">
+          <span class="dt"><b>{{p.d}}</b><span>{{p.m}}</span></span>
+          <span class="nm"><b>{{p.name}}</b><span>{{p.dept}}</span></span>
+          <span style="font-size: 12px; font-weight: 700; color: #4A5A57">{{p.when}}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <span style="font-size: 12px; color: #5B6B68; line-height: 1.5">Hanya hari dan bulan dipaparkan — tiada tahun atau umur. Diambil secara automatik daripada no. kad pengenalan. Pekerja boleh menyembunyikan hari jadi sendiri di Profil.</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { tab: 'week' }; }
+  renderVals() {
+    const week = [
+      { d: '9', m: 'NOV', name: 'Amin', dept: 'Tour', when: 'Isnin' },
+      { d: '12', m: 'NOV', name: 'Lily', dept: 'CEO Office', when: 'Khamis' }
+    ];
+    const month = week.concat([
+      { d: '21', m: 'NOV', name: 'Arissa', dept: 'CEO Office', when: '2 minggu lagi' },
+      { d: '28', m: 'NOV', name: 'Nurin', dept: 'Tour', when: '3 minggu lagi' }
+    ]);
+    const tab = this.state.tab;
+    const base = 'height: 40px; border: none; border-radius: 10px; font-family: inherit; font-size: 14px; cursor: pointer; ';
+    return {
+      tabs: [{ id: 'week', label: 'Minggu ini' }, { id: 'month', label: 'Bulan ini' }].map((t) => ({
+        label: t.label,
+        style: base + (tab === t.id ? 'background: #FFFFFF; font-weight: 800; color: #14211F;' : 'background: transparent; font-weight: 600; color: #4A5A57;'),
+        pick: () => this.setState({ tab: t.id })
+      })),
+      people: tab === 'week' ? week : month
+    };
+  }
+}
+</script>
+</body>
+</html>

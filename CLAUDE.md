@@ -83,6 +83,8 @@ Rahsia (CrossChex api_key/secret, QuickBooks, Murpati, AI) **hanya** dalam Supab
 
 ## 5. Peta skrin (nama fail kanvas → laluan)
 
+Reka bentuk setiap skrin ada dalam folder `design/` (fail `NamaSkrin.dc.html`). Ikut teks, susun atur, warna dan aliran pautan dalam fail tersebut dengan tepat. `design/canvas.json` menyenaraikan semua skrin mengikut seksyen. Fail `design/Mohon.dc.html` ialah tab Mohon (pilih jenis permohonan).
+
 **Awam:** `Homepage` → `/` · `Privasi` → `/privasi` · `DaftarSyarikat` → `/daftar` · `OTPSyarikat` → `/daftar/sahkan` · `Login` → `/masuk` · `OTP` → `/masuk/kod`
 
 **Onboarding syarikat (Admin):** `OnboardingSyarikat` → `/mula` · langkah: `SyarikatLangkah` (2) → `ImportPekerja` (3) → `SyarikatJabatan` (4) → `SyarikatPeranan` (5) → `SyarikatJemput` (6) → `SyarikatSelesai`. Butang Seterusnya dikunci jika ada jabatan tanpa ketua.

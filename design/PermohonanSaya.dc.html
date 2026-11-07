@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Permohonan saya</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.card{background:#FFFFFF;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.seg{height:6px;flex-grow:1;border-radius:3px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 8px">
+    <a class="back" href="Main.dc.html" aria-label="Kembali"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <h1 style="margin: 0; font-size: 20px; font-weight: 800">Permohonan saya</h1>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 4px 20px 16px">
+    <div role="tablist" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; background: #E4EAE8; border-radius: 14px; padding: 4px">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+        <button role="tab" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+      </sc-for>
+    </div>
+
+    <sc-for list="{{items}}" as="i" hint-placeholder-count="4">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+          <span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 15px">{{i.title}}</b><span style="font-size: 12px; color: #5B6B68">{{i.sub}}</span></span>
+          <span style="{{i.pill}}">{{i.status}}</span>
+        </div>
+        <sc-if value="{{i.showBar}}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; gap: 5px"><span class="seg" style="{{i.s1}}"></span><span class="seg" style="{{i.s2}}"></span><span class="seg" style="{{i.s3}}"></span></div>
+        </sc-if>
+        <sc-if value="{{i.canCancel}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; justify-content: space-between; align-items: center">
+            <span style="font-size: 12px; color: #4A5A57">{{i.where}}</span>
+            <button onClick="{{i.cancel}}" style="height: 38px; padding: 0 14px; border-radius: 10px; border: 1px solid #D5DEDC; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 700; color: #B42318; cursor: pointer">Batal</button>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { tab: 'all', cancelled: {} }; }
+  renderVals() {
+    const base = [
+      { id: 'c1', title: 'Cuti Tahunan 23–28 Dis', sub: '3 hari · dihantar hari ini', st: 'pending', step: 2, where: 'Kini di HR' },
+      { id: 'c2', title: 'Letak kereta KLIA2', sub: 'Tuntutan RM 86.50 · 5 Nov', st: 'pending', step: 2, where: 'Kini di Kewangan' },
+      { id: 'c3', title: 'Grab ke KLIA', sub: 'Tuntutan RM 45.00 · 2 Nov', st: 'approved', step: 3 },
+      { id: 'c4', title: 'Betulkan masa 4 Nov', sub: 'Pembetulan kehadiran', st: 'rejected', step: 1 },
+      { id: 'c5', title: 'MC 14 Ogo', sub: 'Cuti sakit · 1 hari', st: 'approved', step: 3 }
+    ];
+    const c = this.state.cancelled;
+    const tab = this.state.tab;
+    const lab = { pending: 'Menunggu', approved: 'Lulus', rejected: 'Ditolak', cancelled: 'Dibatalkan' };
+    const sty = { pending: 'color: #92400E; background: #FEF3E2;', approved: 'color: #166534; background: #E3F5E8;', rejected: 'color: #B42318; background: #FBE4E2;', cancelled: 'color: #4A5A57; background: #E9EEED;' };
+    const seg = (n, step, st) => 'background: ' + (n < step ? '#0F6B5F' : n === step && st === 'pending' ? '#F2B266' : (st === 'approved' ? '#0F6B5F' : '#DCE3E1')) + ';';
+    const items = base.map((i) => ({ ...i, st: c[i.id] ? 'cancelled' : i.st }))
+      .filter((i) => tab === 'all' || (tab === 'pending' ? i.st === 'pending' : i.st !== 'pending'));
+    const tb = 'height: 40px; border: none; border-radius: 10px; font-family: inherit; font-size: 13px; cursor: pointer; ';
+    return {
+      tabs: [{ id: 'all', l: 'Semua' }, { id: 'pending', l: 'Menunggu' }, { id: 'done', l: 'Selesai' }].map((t) => ({
+        label: t.l,
+        style: tb + (tab === t.id ? 'background: #FFFFFF; font-weight: 800; color: #14211F;' : 'background: transparent; font-weight: 600; color: #4A5A57;'),
+        pick: () => this.setState({ tab: t.id })
+      })),
+      items: items.map((i) => ({
+        ...i,
+        status: lab[i.st],
+        pill: 'font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 10px; white-space: nowrap; ' + sty[i.st],
+        showBar: i.st === 'pending' || i.st === 'approved',
+        canCancel: i.st === 'pending',
+        s1: seg(1, i.step, i.st), s2: seg(2, i.step, i.st), s3: seg(3, i.step, i.st),
+        cancel: () => this.setState({ cancelled: { ...c, [i.id]: true } })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

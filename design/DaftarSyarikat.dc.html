@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Daftar syarikat</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.fld{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700}
+.fld input{height:50px;box-sizing:border-box;border:1px solid #D5DEDC;border-radius:12px;padding:0 14px;font-family:inherit;font-size:15px;font-weight:600;color:#14211F;background:#FFFFFF}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 4px">
+    <a class="back" href="Homepage.dc.html" aria-label="Kembali ke laman utama"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+  </header>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 12px; padding: 4px 24px 16px">
+    <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px">
+      <h1 style="margin: 0; font-size: 26px; font-weight: 800">Daftar syarikat</h1>
+      <span style="font-size: 14px; color: #4A5A57">Percuma dan hanya 2 minit. Anda akan menjadi Pentadbir syarikat ini.</span>
+    </div>
+
+    <span class="sec">SYARIKAT</span>
+    <label class="fld">Nama syarikat
+      <input type="text" placeholder="Contoh: Syarikat ABC Sdn Bhd">
+    </label>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <span style="font-size: 14px; font-weight: 700">Bilangan pekerja</span>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+        <sc-for list="{{sizes}}" as="s" hint-placeholder-count="4">
+          <button onClick="{{s.pick}}" style="{{s.style}}">{{s.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <span class="sec" style="margin-top: 4px">ANDA</span>
+    <label class="fld">Nama penuh
+      <input type="text" placeholder="Nama anda">
+    </label>
+    <label class="fld">No. WhatsApp
+      <input type="tel" placeholder="+60 1x-xxx xxxx">
+    </label>
+    <label class="fld">E-mel
+      <input type="email" placeholder="nama@syarikat.com">
+    </label>
+
+    <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: #33504B; line-height: 1.5; margin-top: 2px">
+      <input type="checkbox" style="width: 20px; height: 20px; margin-top: 1px; flex-shrink: 0; accent-color: #0F6B5F">
+      <span>Saya bersetuju dengan <a href="Privasi.dc.html#terma" style="font-weight: 700">Terma</a> dan <a href="Privasi.dc.html#privasi" style="font-weight: 700">Notis Privasi</a>.</span>
+    </label>
+  </div>
+
+  <div style="padding: 12px 24px 28px; background: #FFFFFF; border-top: 1px solid #E2E8E6; display: flex; flex-direction: column; gap: 6px">
+    <a href="OTPSyarikat.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Daftar &amp; hantar kod WhatsApp</a>
+    <span style="font-size: 13px; color: #5B6B68; text-align: center">Sudah mempunyai akaun? <a href="Login.dc.html" style="font-weight: 700">Log masuk</a></span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { size: '11–50' }; }
+  renderVals() {
+    return {
+      sizes: ['1–10', '11–50', '51–200', '200+'].map((l) => ({
+        label: l,
+        style: 'height: 44px; border-radius: 12px; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; ' +
+          (this.state.size === l ? 'border: 1.5px solid #0F6B5F; background: #E3F1EE; color: #0F6B5F;' : 'border: 1px solid #D5DEDC; background: #FFFFFF; color: #14211F;'),
+        pick: () => this.setState({ size: l })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

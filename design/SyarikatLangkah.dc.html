@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Persediaan syarikat — maklumat syarikat</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;color:#14211F}
+.fld{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700}
+.fld input,.fld select{height:48px;box-sizing:border-box;border:1px solid #D5DEDC;border-radius:12px;padding:0 14px;font-family:inherit;font-size:15px;font-weight:600;color:#14211F;background:#FFFFFF}
+.sec{font-size:12px;font-weight:700;color:#4A5A57;letter-spacing:0.04em}
+.bar{height:5px;border-radius:3px;background:#DCE3E1}
+.bar.on{background:#0F6B5F}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F6F5; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F; overflow: hidden">
+  <header style="display: flex; align-items: center; gap: 8px; padding: 16px 12px 4px">
+    <a class="back" href="OnboardingSyarikat.dc.html" aria-label="Kembali ke senarai semak"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <span style="font-size: 13px; font-weight: 700; color: #4A5A57">Langkah 2 daripada 6</span>
+  </header>
+  <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; padding: 0 20px 8px">
+    <span class="bar on"></span><span class="bar on"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </div>
+
+  <div style="flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 12px; padding: 10px 20px 16px">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 800">Maklumat syarikat</h1>
+
+    <div style="display: flex; gap: 12px; align-items: center">
+      <button aria-label="Muat naik logo" style="width: 64px; height: 64px; flex-shrink: 0; border-radius: 16px; border: 2px dashed #C9D3D1; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #5B6B68">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+      </button>
+      <label class="fld" style="flex-grow: 1">Nama syarikat
+        <input type="text" value="Syarikat ABC Sdn Bhd">
+      </label>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px">
+      <label class="fld">Kod pendek<input type="text" value="ABC"></label>
+      <label class="fld">No. SSM<input type="text" placeholder="2020010xxxxx"></label>
+    </div>
+
+    <span class="sec" style="margin-top: 4px">WAKTU KERJA</span>
+    <label class="fld">Negeri (untuk cuti umum)
+      <select><option>WP Kuala Lumpur</option><option>Selangor</option><option>Sabah</option><option>Johor</option><option>Kedah</option></select>
+    </label>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <span style="font-size: 14px; font-weight: 700">Hujung minggu</span>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{weekends}}" as="w" hint-placeholder-count="2">
+          <button onClick="{{w.pick}}" style="{{w.style}}">{{w.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+      <label class="fld">Masuk<input type="text" value="9:00"></label>
+      <label class="fld">Keluar<input type="text" value="18:00"></label>
+      <label class="fld">Dikira lewat jika<input type="text" value="&gt;10 min"></label>
+    </div>
+  </div>
+
+  <div style="padding: 12px 20px 28px; background: #FFFFFF; border-top: 1px solid #E2E8E6">
+    <a href="ImportPekerja.dc.html" style="height: 54px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center">Simpan &amp; seterusnya</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { wk: 'satsun' }; }
+  renderVals() {
+    return {
+      weekends: [{ id: 'satsun', label: 'Sabtu & Ahad' }, { id: 'frisat', label: 'Jumaat & Sabtu' }].map((w) => ({
+        label: w.label,
+        style: 'height: 46px; border-radius: 12px; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; ' +
+          (this.state.wk === w.id ? 'border: 1.5px solid #0F6B5F; background: #E3F1EE; color: #0F6B5F;' : 'border: 1px solid #D5DEDC; background: #FFFFFF; color: #14211F;'),
+        pick: () => this.setState({ wk: w.id })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>
