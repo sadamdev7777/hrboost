@@ -6,3 +6,8 @@
 
 [build.environment]
   NODE_VERSION = "22"
+
+# Runtime Next.js (SSR, middleware, imej). Dipasang secara jelas kerana projek
+# dipasang melalui API, bukan sambungan Git.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
