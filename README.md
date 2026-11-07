@@ -86,7 +86,7 @@ Nota: dalam ujian platform T7, dua notifikasi dicipta dalam transaksi yang sama,
 
 | Projek | Ref | Kegunaan |
 |---|---|---|
-| `hrboost-staging` | `gldhywelqvfxlsqipnzq` (Singapura, Postgres 17) | Staging Fasa A: migrasi `20261107000000`, `20261107000100` dan `20261107000200` dipasang |
+| `hrboost-staging` | `gldhywelqvfxlsqipnzq` (Singapura, Postgres 17) | Staging: semua migrasi dalam `supabase/migrations` dipasang (sehingga `20261108000000`) |
 
 Kunci projek tidak disimpan dalam repo.
 
@@ -102,7 +102,51 @@ Isi `NEXT_PUBLIC_SUPABASE_ANON_KEY` dengan nilai daripada `npx supabase status` 
 npm run dev
 ```
 
-Buka http://localhost:3000/masuk untuk halaman log masuk (tiruan `design/Login.dc.html`).
+Buka http://localhost:3000/masuk.
+
+### Log masuk tempatan (data demo)
+
+`npx supabase db reset` memasang data demo daripada `supabase/seed.sql` (tempatan sahaja, semua rekaan). Log masuk dengan nombor di bawah dan kod **123456**:
+
+| Nombor (selepas +60) | Nama | Peranan |
+|---|---|---|
+| 10 000 0001 | Sadam | CEO + Pentadbir |
+| 10 000 0002 | Lily | HR |
+| 10 000 0003 | Zuerin | Ketua Jabatan Pelancongan |
+| 10 000 0004 | Amin | Pekerja |
+| 10 000 0005 | Farah | Kewangan |
+| 10 000 0006 | Zulfa | Pekerja |
+
+Nombor lain juga boleh meminta kod: kod disimpan dalam `dev.sms_outbox` (hook "Send SMS" tempatan) dan tiada mesej dihantar:
+
+```bash
+psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -c "select phone, otp from dev.sms_outbox order by id desc limit 5"
+```
+
+Di staging/produksi, kod OTP dihantar melalui WhatsApp oleh Edge Function `auth-sms-hook` (belum dibina — perlukan butiran API Murpati).
+
+### Laluan skrin (Fasa B)
+
+| Laluan | Skrin reka bentuk |
+|---|---|
+| `/masuk`, `/masuk/kod` | Login, OTP |
+| `/utama` | Main (pekerja) / KetuaUtama (ketua jabatan) |
+| `/mohon`, `/mohon/cuti` | Mohon, MohonCuti |
+| `/permohonan`, `/permohonan/[id]` | PermohonanSaya, Butiran (paparan pemohon) |
+| `/kelulusan`, `/kelulusan/[id]` | Kelulusan, Butiran (paparan pelulus) |
+| `/saya` | Saya |
+
+Data dimuatkan terus di pelayar dengan kunci anon; RLS pangkalan data mengawal apa yang boleh dilihat. Tindakan (mohon, lulus, tolak, batal) melalui RPC `submit_leave`, `approval_act` dan `approval_cancel`.
+
+### Ujian hujung-ke-hujung
+
+Selepas `npx supabase db reset` dan dengan aplikasi berjalan di `localhost:3000`:
+
+```bash
+node web/e2e/aliran-cuti.cjs
+```
+
+Amin memohon cuti 23–28 Dis → Zuerin, Lily dan Sadam meluluskan dari telefon masing-masing → baki Amin disemak (8 → 5 hari).
 
 Semakan lain:
 

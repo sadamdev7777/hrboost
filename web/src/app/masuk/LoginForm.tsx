@@ -1,0 +1,86 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { getSupabase } from "@/lib/supabase";
+import { telefonPenuh } from "@/lib/format";
+
+export const PHONE_KEY = "hrb_telefon_otp";
+
+export function LoginForm() {
+  const router = useRouter();
+  const [phone, setPhone] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    const full = telefonPenuh(phone);
+    if (!full) {
+      setError("Sila masukkan nombor telefon bimbit Malaysia yang sah, contohnya 12 345 6789.");
+      return;
+    }
+    setBusy(true);
+    const { error: err } = await getSupabase().auth.signInWithOtp({ phone: full, options: { channel: "sms" } });
+    setBusy(false);
+    if (err) {
+      setError(
+        err.status === 429
+          ? "Terlalu banyak cubaan. Sila tunggu sebentar sebelum meminta kod baharu."
+          : "Kod tidak dapat dihantar. Sila cuba lagi.",
+      );
+      return;
+    }
+    try {
+      sessionStorage.setItem(PHONE_KEY, full);
+    } catch {
+      /* abaikan */
+    }
+    router.push("/masuk/kod");
+  }
+
+  return (
+    <form onSubmit={submit} className="flex grow flex-col gap-4 px-6 pt-8 pb-4" noValidate>
+      <label className="flex flex-col gap-2 text-[15px] leading-[normal] font-bold">
+        No. telefon WhatsApp
+        <div className="flex gap-2">
+          <span className="box-content flex h-14 items-center rounded-field border border-line bg-surface px-[14px] text-base font-bold">
+            +60
+          </span>
+          <input
+            type="tel"
+            name="phone"
+            inputMode="tel"
+            autoComplete="tel-national"
+            placeholder="12 345 6789"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            aria-invalid={error ? true : undefined}
+            className="h-14 min-w-0 grow rounded-field border-[1.5px] border-primary bg-surface px-4 text-lg font-semibold tracking-[0.02em] text-ink outline-none"
+          />
+        </div>
+      </label>
+      <span className="text-[13px] leading-normal text-muted">
+        Kami akan menghantar kod 6 digit ke WhatsApp anda. Tiada kata laluan yang perlu diingati.
+      </span>
+      {error && (
+        <span role="alert" className="text-[13px] font-semibold text-danger">
+          {error}
+        </span>
+      )}
+
+      <button
+        type="submit"
+        disabled={busy}
+        className="mt-2 flex h-14 items-center justify-center rounded-button bg-primary text-base font-extrabold text-on-primary hover:bg-primary-hover disabled:opacity-60"
+      >
+        {busy ? "Menghantar…" : "Hantar kod"}
+      </button>
+      <Link href="/masuk/emel" className="flex h-touch items-center justify-center text-sm font-bold">
+        Gunakan e-mel sebagai alternatif
+      </Link>
+    </form>
+  );
+}

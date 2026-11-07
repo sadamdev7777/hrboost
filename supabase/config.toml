@@ -157,7 +157,7 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "http://127.0.0.1:3000"
+site_url = "http://localhost:3000"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
@@ -259,18 +259,26 @@ otp_expiry = 3600
 [auth.sms]
 # Allow/disallow the phone provider. When false, users can't sign up or sign in with SMS.
 # To block new signups only, set enable_signup = false under [auth] instead.
-enabled = false
+# HRBoost: log masuk guna nombor telefon + OTP (dihantar melalui WhatsApp di staging/produksi).
+enabled = true
 # If enabled, users need to confirm their phone number before signing in.
 enable_confirmations = false
 # Template for sending OTP to users
-template = "Your code is {{ .Code }}"
+template = "Kod log masuk HRBoost anda: {{ .Code }}"
 # Controls the minimum amount of time that must pass before sending another sms otp.
 max_frequency = "5s"
 
 # Use pre-defined map of phone number to OTP for testing.
 # Keys are the phone number with country code and without the + prefix.
-# [auth.sms.test_otp]
-# 14152127777 = "123456"
+# HRBoost (TEMPATAN SAHAJA): nombor demo daripada supabase/seed.sql, kod tetap 123456.
+[auth.sms.test_otp]
+60100000001 = "123456"
+60100000002 = "123456"
+60100000003 = "123456"
+60100000004 = "123456"
+60100000005 = "123456"
+60100000006 = "123456"
+60100000007 = "123456"
 
 # Configure logged in session timeouts.
 # [auth.sessions]
@@ -289,13 +297,22 @@ max_frequency = "5s"
 # enabled = true
 # uri = "pg-functions://<database>/<schema>/<hook_name>"
 
+# HRBoost: OTP dihantar melalui hook "Send SMS".
+# TEMPATAN: fungsi dev.send_sms_hook (dicipta oleh supabase/seed.sql) menyimpan kod dalam dev.sms_outbox.
+# Staging/produksi: tetapkan hook kepada Edge Function auth-sms-hook dalam papan pemuka Supabase.
+[auth.hook.send_sms]
+enabled = true
+uri = "pg-functions://postgres/dev/send_sms_hook"
+
 # Configure one of the supported SMS providers: `twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonage`.
+# HRBoost: Twilio TIDAK digunakan. Supabase CLI hanya menghidupkan log masuk telefon jika ada
+# penyedia SMS aktif, jadi nilai palsu di bawah diperlukan. Penghantaran sebenar melalui
+# [auth.hook.send_sms] di atas (hook mengatasi penyedia). Ini bukan rahsia.
 [auth.sms.twilio]
-enabled = false
-account_sid = ""
-message_service_sid = ""
-# DO NOT commit your Twilio auth token to git. Use environment variable substitution instead:
-auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)"
+enabled = true
+account_sid = "tidak-digunakan"
+message_service_sid = "tidak-digunakan"
+auth_token = "tidak-digunakan"
 
 # Multi-factor-authentication is available to Supabase Pro plan.
 [auth.mfa]
@@ -312,7 +329,7 @@ verify_enabled = false
 enroll_enabled = false
 verify_enabled = false
 otp_length = 6
-template = "Your code is {{ .Code }}"
+template = "Kod log masuk HRBoost anda: {{ .Code }}"
 max_frequency = "5s"
 
 # Configure MFA via WebAuthn

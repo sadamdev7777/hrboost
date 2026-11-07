@@ -1561,6 +1561,11 @@ isOneToOne: false
 "match_attendance_workno":
 { Args: { "p_employment": string,"p_workno": string }; Returns: number
                            },
+"my_colleagues":
+{ Args: { "p_company": string }; Returns: {
+              "department": string,"department_id": string,"name": string,"person_id": string
+            }[]
+                           },
 "next_working_day":
 { Args: { "p_company": string,"p_date": string }; Returns: string
                            },
