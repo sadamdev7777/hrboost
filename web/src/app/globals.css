@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+/*
+ * Tema HRBoost.io — ikut CLAUDE.md §2 dan reka bentuk dalam /design.
+ * Warna asas (CLAUDE.md): utama #0F6B5F, latar #F4F6F5, teks #14211F,
+ * sekunder #5B6B68, amaran #92400E/#FEF3E2, bahaya #B42318, AI #5B4A9E/#F3F0FC.
+ * Warna tambahan diambil daripada fail reka bentuk.
+ */
+@theme {
+  --font-sans: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
+
+  /* Utama */
+  --color-primary: #0f6b5f;
+  --color-primary-hover: #0a4f46;
+  --color-primary-soft: #e3f1ee;
+  --color-on-primary: #ffffff;
+
+  /* Permukaan & teks */
+  --color-page: #f4f6f5;
+  --color-surface: #ffffff;
+  --color-ink: #14211f;
+  --color-muted: #5b6b68;
+  --color-subtle: #4a5a57;
+
+  /* Garisan */
+  --color-line: #d5dedc;
+  --color-line-soft: #e2e8e6;
+  --color-line-strong: #c9d3d1;
+
+  /* Status */
+  --color-warning: #92400e;
+  --color-warning-soft: #fef3e2;
+  --color-danger: #b42318;
+  --color-danger-soft: #fbe4e2;
+  --color-success: #166534;
+  --color-success-soft: #e3f5e8;
+
+  /* AI */
+  --color-ai: #5b4a9e;
+  --color-ai-hover: #4a3b8c;
+  --color-ai-soft: #f3f0fc;
+
+  /* Bentuk (reka bentuk guna 10–18px) */
+  --radius-field: 14px;
+  --radius-button: 16px;
+  --radius-card: 16px;
+  --radius-logo: 18px;
+
+  /* Sasaran sentuh minimum (CLAUDE.md: butang >= 44px) */
+  --spacing-touch: 44px;
+}
+
+body {
+  background: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--color-primary-hover);
+}

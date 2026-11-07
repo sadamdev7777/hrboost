@@ -1,0 +1,16 @@
+{
+  "name": "hrboost",
+  "private": true,
+  "scripts": {
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:types": "supabase gen types typescript --local --schema public > web/src/lib/database.types.ts",
+    "db:test": "bash supabase/scripts/run-sql-tests.sh",
+    "dev": "npm --prefix web run dev",
+    "build": "npm --prefix web run build"
+  },
+  "devDependencies": {
+    "supabase": "3.0.0"
+  }
+}
