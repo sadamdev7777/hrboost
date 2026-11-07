@@ -90,6 +90,19 @@ Nota: dalam ujian platform T7, dua notifikasi dicipta dalam transaksi yang sama,
 
 Kunci projek tidak disimpan dalam repo.
 
+### Aplikasi staging
+
+- Laman: https://hrboost-staging.netlify.app (projek Netlify `hrboost-staging`, binaan daripada `netlify.toml`, folder `web/`)
+- Pemboleh ubah Netlify: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (kunci awam/publishable staging sahaja)
+- Data demo rekaan yang sama seperti `supabase/seed.sql` (syarikat DEMO, 7 orang). Padam sebelum data MTB sebenar diimport.
+- OTP sementara: hook Postgres `staging_dev.send_sms_hook` menyimpan kod dalam `staging_dev.sms_outbox` (skema peribadi, tidak didedahkan API). Nombor demo menggunakan kod ujian tetap yang ditetapkan dalam papan pemuka. Diganti oleh `auth-sms-hook` (WhatsApp) bila Murpati tersedia.
+
+Tetapan papan pemuka Supabase (Authentication) yang diperlukan untuk staging:
+
+1. **Auth Hooks** → Add hook → *Send SMS hook* → Postgres → skema `staging_dev`, fungsi `send_sms_hook`.
+2. **Sign In / Providers → Phone** → hidupkan. Jika diminta penyedia SMS, isi nilai palsu (hook mengatasi penyedia). *Test Phone Numbers and OTPs*: `60100000001=123456, 60100000002=123456, … 60100000007=123456`.
+3. **URL Configuration** → Site URL: `https://hrboost-staging.netlify.app`.
+
 ## Aplikasi web
 
 ```bash
