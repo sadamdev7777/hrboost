@@ -70,6 +70,26 @@ Keputusan `LULUS` / `GAGAL` dipaparkan bagi setiap fail. Ralat yang dijangka (uj
 
 > **Amaran:** fail dalam `supabase/tests/local_only/` hanya untuk ujian tempatan. Jangan sekali-kali jalankannya pada projek Supabase sebenar. Skrip ujian menolak sebarang hos selain `localhost` / `127.0.0.1`. Stub tidak boleh dijalankan pada `supabase start` kerana skema `auth` sebenar sudah wujud di sana.
 
+### Ujian pada Supabase sebenar (staging)
+
+Stub `local_only` tidak boleh dijalankan pada Supabase sebenar. Untuk staging, tukar fail ujian kepada satu blok `DO` yang memakai `auth` sebenar (`request.jwt.claims`):
+
+```bash
+python3 supabase/scripts/tests_to_supabase.py supabase/tests/hrboost_tests_v0.2_approval.sql > /tmp/ujian_staging.sql
+```
+
+Blok itu sentiasa tamat dengan `RAISE EXCEPTION 'HRBOOST_TEST_RESULT:…'` yang membawa hasil ujian dalam JSON. Ralat ini disengajakan: ia memaksa ROLLBACK penuh supaya tiada data ujian tertinggal. Jalankannya dalam SQL Editor projek staging (atau melalui `psql`), kemudian bandingkan hasil dengan larian tempatan.
+
+Nota: dalam ujian platform T7, dua notifikasi dicipta dalam transaksi yang sama, jadi susunan `order by created_at` antara Lily dan Zulfa boleh bertukar. Kandungannya tetap sama.
+
+## Projek Supabase
+
+| Projek | Ref | Kegunaan |
+|---|---|---|
+| `hrboost-staging` | `gldhywelqvfxlsqipnzq` (Singapura, Postgres 17) | Staging Fasa A: migrasi `20261107000000` dan `20261107000100` dipasang |
+
+Kunci projek tidak disimpan dalam repo.
+
 ## Aplikasi web
 
 ```bash
