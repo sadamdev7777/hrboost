@@ -78,6 +78,16 @@ export function OtpForm() {
       router.replace(`/jemputan/${jemputan.token}`);
       return;
     }
+    // Pentadbir Platform tanpa pekerjaan → konsol /admin
+    const sb = getSupabase();
+    const { data: sa } = await sb.from("platform_admins").select("person_id").limit(1);
+    if (sa && sa.length > 0) {
+      const { count } = await sb.from("employments").select("id", { count: "exact", head: true }).eq("person_id", sa[0].person_id).in("status", ["probation", "active"]);
+      if (!count) {
+        router.replace("/admin");
+        return;
+      }
+    }
     router.replace("/utama");
   }
 

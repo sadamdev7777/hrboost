@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, type ReactNode } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState, type ReactNode } from "react";
 import { MeProvider, useMeContext } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { paparTelefon } from "@/lib/format";
@@ -54,7 +55,52 @@ function Guard({ children }: { children: ReactNode }) {
     );
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <Notis />
+      {children}
+    </>
+  );
+}
+
+/** Notis penyelenggaraan platform & peringatan persediaan syarikat (Pentadbir). */
+function Notis() {
+  const { state } = useMeContext();
+  const me = state.status === "ready" ? state.me : null;
+  const cid = me?.active?.companyId;
+  const admin = !!me?.roles.includes("admin");
+  const [n, setN] = useState<{ notis: string | null; mula: boolean }>({ notis: null, mula: false });
+  const path = usePathname();
+  useEffect(() => {
+    let batal = false;
+    (async () => {
+      const sb = getSupabase();
+      const [p, c] = await Promise.all([
+        sb.from("platform_settings").select("value").eq("key", "maintenance_notice").maybeSingle(),
+        admin && cid ? sb.from("companies").select("onboarding_completed_at").eq("id", cid).maybeSingle() : Promise.resolve({ data: null }),
+      ]);
+      if (batal) return;
+      const v = p.data?.value;
+      setN({ notis: typeof v === "string" && v.trim() ? v : null, mula: !!(c.data && !c.data.onboarding_completed_at) });
+    })();
+    return () => {
+      batal = true;
+    };
+  }, [admin, cid]);
+  return (
+    <>
+      {n.notis && (
+        <div role="status" className="bg-warning-soft px-4 py-2 text-center text-[13px] font-semibold text-warning">
+          {n.notis}
+        </div>
+      )}
+      {n.mula && !path.startsWith("/mula") && (
+        <Link href="/mula" className="block bg-[#E3F1EE] px-4 py-2.5 text-center text-[13px] font-bold text-primary!">
+          Persediaan syarikat belum selesai — teruskan
+        </Link>
+      )}
+    </>
+  );
 }
 
 export function AppShell({ children }: { children: ReactNode }) {

@@ -1,0 +1,28 @@
+"use client";
+
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { IconBack } from "./icons";
+import { Screen } from "./ui";
+
+/** Susun atur langkah persediaan syarikat (SyarikatLangkah, ImportPekerja, …). */
+export function MulaLayout({ n, title, back, children, footer }: { n: number; title: string; back: string; children: ReactNode; footer?: ReactNode }) {
+  return (
+    <Screen>
+      <header className="flex items-center gap-2 px-3 pt-4 pb-1">
+        <Link href={back} aria-label="Kembali" className="flex size-11 items-center justify-center rounded-full text-ink!">
+          <IconBack />
+        </Link>
+        <span className="text-[13px] font-bold text-muted">Langkah {n} daripada 6</span>
+      </header>
+      <div className="mx-5 mb-2 h-1.5 rounded-full bg-[#E4EAE8]" aria-hidden="true">
+        <div className="h-full rounded-full bg-primary" style={{ width: `${(n / 6) * 100}%` }} />
+      </div>
+      <main className="flex grow flex-col gap-3.5 px-5 pt-2 pb-4">
+        <h1 className="m-0 text-[24px] font-extrabold">{title}</h1>
+        {children}
+      </main>
+      {footer && <div className="sticky bottom-0 border-t border-line-soft bg-surface px-5 pt-3 pb-7">{footer}</div>}
+    </Screen>
+  );
+}
