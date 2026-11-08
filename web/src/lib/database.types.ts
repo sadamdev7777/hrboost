@@ -445,6 +445,32 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"bank_change_requests": {
+                  Row: {
+                    "bank_account_no": string,"bank_name": string,"decided_at": string | null,"decided_by": string | null,"id": string,"note": string | null,"person_id": string,"requested_at": string,"status": string,"via": Database["public"]['Enums']["action_channel"]
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "bank_account_no": string,"bank_name": string,"decided_at"?: string | null,"decided_by"?: string | null,"id"?: string,"note"?: string | null,"person_id": string,"requested_at"?: string,"status"?: string,"via"?: Database["public"]['Enums']["action_channel"]
+                  }
+                  Update: {
+                    "bank_account_no"?: string,"bank_name"?: string,"decided_at"?: string | null,"decided_by"?: string | null,"id"?: string,"note"?: string | null,"person_id"?: string,"requested_at"?: string,"status"?: string,"via"?: Database["public"]['Enums']["action_channel"]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "bank_change_requests_decided_by_fkey"
+      columns: ["decided_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "bank_change_requests_person_id_fkey"
+      columns: ["person_id"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"claim_items": {
                   Row: {
                     "ai_extracted": Json | null,"ai_flags": (string)[] | null,"amount": number,"claim_id": string,"claim_type_id": string,"description": string | null,"distance_km": number | null,"expense_date": string,"id": string,"receipt_path": string | null,"receipt_paths": (string)[]
@@ -1433,6 +1459,9 @@ isOneToOne: false
 "approval_sla_tick":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
+"birthday_whatsapp":
+{ Args: { "p_company": string,"p_person": string }; Returns: string
+                           },
 "bump_usage":
 { Args: { "p_company": string,"p_kind": string,"p_n"?: number }; Returns: boolean
                            },
@@ -1442,6 +1471,11 @@ isOneToOne: false
 "can_view_request":
 { Args: { "p_request": string }; Returns: boolean
                            },
+"company_holidays":
+{ Args: { "p_company": string,"p_from": string,"p_to": string }; Returns: {
+              "holiday_date": string,"name": string
+            }[]
+                           },
 "complete_onboarding_step":
 { Args: { "p_employment": string,"p_step": string }; Returns: number
                            },
@@ -1450,6 +1484,9 @@ isOneToOne: false
                            },
 "current_person_id":
 { Args: Record<PropertyKey, never>; Returns: string
+                           },
+"decide_bank_change":
+{ Args: { "p_approve": boolean,"p_note"?: string,"p_request": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
                            },
 "decide_company_access":
 { Args: { "p_approve": boolean,"p_grant": string,"p_note"?: string }; Returns: {
@@ -1601,6 +1638,9 @@ isOneToOne: false
 "render_template":
 { Args: { "p_tpl": string,"p_vars": Json }; Returns: string
                            },
+"request_bank_change":
+{ Args: { "p_account_no": string,"p_bank_name": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: string
+                           },
 "request_company_access":
 { Args: { "p_company_code": string,"p_days": number,"p_reason": string,"p_role": Database["public"]['Enums']["app_role"] }; Returns: string
                            },
@@ -1720,6 +1760,14 @@ isOneToOne: false
 { Args: { "p_company": string,"p_from": string,"p_to": string }; Returns: {
               "day": number,"department": string,"month": number,"name": string,"person_id": string
             }[]
+                           },
+"team_leave_calendar":
+{ Args: { "p_company": string,"p_from": string,"p_to": string }; Returns: {
+              "end_date": string,"half_day": Database["public"]['Enums']["leave_half"],"is_me": boolean,"name": string,"person_id": string,"start_date": string,"status": Database["public"]['Enums']["request_status"]
+            }[]
+                           },
+"update_my_profile":
+{ Args: { "p_data": Json,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
                            },
 "whatsapp_handle_reply":
 { Args: { "p_phone": string,"p_text": string }; Returns: Json

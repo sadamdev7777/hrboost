@@ -12,7 +12,7 @@ export function Screen({ children }: { children: ReactNode }) {
 }
 
 /** Pengepala dengan butang kembali (44px) dan tajuk. */
-export function BackHeader({ title, href }: { title?: string; href?: string }) {
+export function BackHeader({ title, href, action }: { title?: string; href?: string; action?: ReactNode }) {
   const router = useRouter();
   const cls = "flex size-11 items-center justify-center rounded-full text-ink!";
   return (
@@ -26,7 +26,8 @@ export function BackHeader({ title, href }: { title?: string; href?: string }) {
           <IconBack />
         </button>
       )}
-      {title && <h1 className="m-0 text-xl font-extrabold">{title}</h1>}
+      {title && <h1 className="m-0 grow text-xl font-extrabold">{title}</h1>}
+      {action}
     </header>
   );
 }
@@ -77,10 +78,10 @@ const PILL: Record<StatusPermohonan, string> = {
   cancelled: "text-subtle bg-[#E9EEED]",
 };
 
-export function StatusPill({ status }: { status: StatusPermohonan }) {
+export function StatusPill({ status, label }: { status: StatusPermohonan; label?: string }) {
   return (
     <span className={`rounded-[10px] px-2.5 py-1 text-xs font-bold whitespace-nowrap ${PILL[status]}`}>
-      {LABEL_STATUS[status]}
+      {label ?? LABEL_STATUS[status]}
     </span>
   );
 }
