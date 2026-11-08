@@ -8,6 +8,7 @@ import { getSupabase, setKeepSignedIn } from "@/lib/supabase";
 import { paparTelefon } from "@/lib/format";
 import { bacaJemputan, padamJemputan, simpanJemputan } from "@/lib/invite";
 import { PHONE_KEY } from "../LoginForm";
+import { destinasiSelepasMasuk } from "@/lib/masuk";
 
 const RESEND_SECONDS = 60;
 
@@ -33,7 +34,7 @@ export function OtpForm() {
   const [focused, setFocused] = useState(true);
 
   useEffect(() => {
-    if (phone === "") router.replace("/masuk");
+    if (phone === "") router.replace("/masuk/telefon");
   }, [phone, router]);
 
   useEffect(() => {
@@ -78,17 +79,7 @@ export function OtpForm() {
       router.replace(`/jemputan/${jemputan.token}`);
       return;
     }
-    // Pentadbir Platform tanpa pekerjaan → konsol /admin
-    const sb = getSupabase();
-    const { data: sa } = await sb.from("platform_admins").select("person_id").limit(1);
-    if (sa && sa.length > 0) {
-      const { count } = await sb.from("employments").select("id", { count: "exact", head: true }).eq("person_id", sa[0].person_id).in("status", ["probation", "active"]);
-      if (!count) {
-        router.replace("/admin");
-        return;
-      }
-    }
-    router.replace("/utama");
+    router.replace(await destinasiSelepasMasuk());
   }
 
   async function resend() {
@@ -110,7 +101,7 @@ export function OtpForm() {
   return (
     <>
       <header className="flex items-center px-3 pt-3 pb-1">
-        <Link href="/masuk" aria-label="Kembali" className="flex size-11 items-center justify-center rounded-full text-ink!">
+        <Link href="/masuk/telefon" aria-label="Kembali" className="flex size-11 items-center justify-center rounded-full text-ink!">
           <IconBack />
         </Link>
       </header>

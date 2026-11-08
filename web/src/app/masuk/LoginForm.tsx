@@ -42,7 +42,7 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={submit} className="flex grow flex-col gap-4 px-6 pt-8 pb-4" noValidate>
+    <form onSubmit={submit} className="flex grow flex-col gap-4 px-6 pt-7 pb-4" noValidate>
       <label className="flex flex-col gap-2 text-sm leading-[normal] font-bold">
         No. telefon WhatsApp
         <div className="flex gap-2">
@@ -63,7 +63,7 @@ export function LoginForm() {
         </div>
       </label>
       <span className="text-[13px] leading-normal text-muted">
-        Kami akan menghantar kod 6 digit ke WhatsApp anda. Tiada kata laluan yang perlu diingati.
+        Kami akan menghantar kod 6 digit ke WhatsApp anda untuk mengesahkan nombor telefon. Selepas itu anda akan menetapkan e-mel dan kata laluan.
       </span>
       {error && (
         <span role="alert" className="text-[13px] font-semibold text-danger">
@@ -78,8 +78,8 @@ export function LoginForm() {
       >
         {busy ? "Menghantar…" : "Hantar kod"}
       </button>
-      <Link href="/masuk/emel" className="flex h-touch items-center justify-center text-sm font-bold">
-        Gunakan e-mel sebagai alternatif
+      <Link href="/masuk" className="flex h-touch items-center justify-center text-sm font-bold">
+        Log masuk dengan e-mel &amp; kata laluan
       </Link>
     </form>
   );

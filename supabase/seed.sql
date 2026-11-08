@@ -5,7 +5,8 @@
 --  nombor IC di bawah ialah rekaan.
 --
 --  Log masuk di http://localhost:3000/masuk dengan nombor di bawah
---  (tanpa 60 di hadapan) dan kod 123456 (lihat [auth.sms.test_otp] dalam config.toml).
+--  (tanpa 60 di hadapan) dan kod 123456 (lihat [auth.sms.test_otp] dalam config.toml),
+--  ATAU dengan e-mel <nama>@demo.hrboost.io (cth. amin@demo.hrboost.io) dan kata laluan Demo1234.
 --    10 000 0001  Sadam  — CEO + Pentadbir
 --    10 000 0002  Lily   — HR
 --    10 000 0003  Zuerin — Ketua Jabatan Pelancongan
@@ -32,6 +33,20 @@ select gen_random_uuid(), u.id, u.id::text, 'phone',
        jsonb_build_object('sub', u.id::text, 'phone', u.phone, 'phone_verified', true), now(), now(), now()
   from auth.users u where u.phone like '6010000000_';
 
+-- E-mel & kata laluan log masuk (Demo1234) — pengguna demo sudah melepasi langkah wajib ini.
+update auth.users u set
+  email = lower(n.nama) || '@demo.hrboost.io',
+  email_confirmed_at = now(),
+  encrypted_password = extensions.crypt('Demo1234', extensions.gen_salt('bf')),
+  raw_app_meta_data = '{"provider":"phone","providers":["phone","email"]}'
+from (values ('1','Sadam'),('2','Lily'),('3','Zuerin'),('4','Amin'),('5','Farah'),('6','Zulfa'),('7','Owner')) n(g, nama)
+where u.id = ('00000000-0000-0000-0000-00000000a00' || n.g)::uuid;
+
+insert into auth.identities (id, user_id, provider_id, provider, identity_data, last_sign_in_at, created_at, updated_at)
+select gen_random_uuid(), u.id, u.id::text, 'email',
+       jsonb_build_object('sub', u.id::text, 'email', u.email, 'email_verified', true), now(), now(), now()
+  from auth.users u where u.email like '%@demo.hrboost.io';
+
 insert into companies (id, code, name, accounting_system) values
   ('00000000-0000-0000-0000-0000000000c1', 'DEMO', 'SYARIKAT DEMO SDN BHD', 'none');
 select seed_company_defaults('00000000-0000-0000-0000-0000000000c1');
@@ -44,6 +59,8 @@ insert into persons (id, auth_user_id, full_name, preferred_name, phone_whatsapp
   ('00000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-00000000a005', 'Farah binti Demo',      'Farah',  '60100000005', '920505-14-5555', 'P'),
   ('00000000-0000-0000-0000-000000000006', '00000000-0000-0000-0000-00000000a006', 'Zulfa binti Demo',      'Zulfa',  '60100000006', '961107-14-6666', 'P'),
   ('00000000-0000-0000-0000-000000000007', '00000000-0000-0000-0000-00000000a007', 'Pemilik Platform Demo', 'Owner',  '60100000007', null,             null);
+
+update persons p set email = u.email from auth.users u where u.id = p.auth_user_id and u.email is not null;
 
 insert into platform_admins values ('00000000-0000-0000-0000-000000000007');
 

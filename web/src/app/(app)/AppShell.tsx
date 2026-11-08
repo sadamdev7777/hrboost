@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useState, type ReactNode } from "react";
 import { MeProvider, useMeContext } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { paparTelefon } from "@/lib/format";
@@ -11,12 +11,20 @@ import { ErrorBox, Loading, Screen } from "@/components/ui";
 function Guard({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { state } = useMeContext();
+  const path = usePathname();
+  const GATE = "/akaun/kata-laluan";
+  const perluKataLaluan = state.status === "ready" && state.me.needsPassword && path !== GATE;
 
   useEffect(() => {
     if (state.status === "signed-out") router.replace("/masuk");
   }, [state.status, router]);
 
-  if (state.status === "loading" || state.status === "signed-out") {
+  // Log masuk pertama melalui OTP WhatsApp: wajib tetapkan e-mel & kata laluan dahulu.
+  useEffect(() => {
+    if (perluKataLaluan) router.replace(`${GATE}?seterusnya=${encodeURIComponent(path)}`);
+  }, [perluKataLaluan, path, router]);
+
+  if (state.status === "loading" || state.status === "signed-out" || perluKataLaluan) {
     return (
       <Screen>
         <Loading />
@@ -106,7 +114,15 @@ function Notis() {
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <MeProvider>
-      <Guard>{children}</Guard>
+      <Suspense
+        fallback={
+          <Screen>
+            <Loading />
+          </Screen>
+        }
+      >
+        <Guard>{children}</Guard>
+      </Suspense>
     </MeProvider>
   );
 }

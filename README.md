@@ -119,7 +119,7 @@ Buka http://localhost:3000/masuk.
 
 ### Log masuk tempatan (data demo)
 
-`npx supabase db reset` memasang data demo daripada `supabase/seed.sql` (tempatan sahaja, semua rekaan). Log masuk dengan nombor di bawah dan kod **123456**:
+`npx supabase db reset` memasang data demo daripada `supabase/seed.sql` (tempatan sahaja, semua rekaan). Log masuk di `/masuk` dengan e-mel `<nama>@demo.hrboost.io` (cth. `amin@demo.hrboost.io`) dan kata laluan **Demo1234**, atau di `/masuk/telefon` dengan nombor di bawah dan kod **123456**:
 
 | Taip (selepas +60, 9 angka) | Nama | Peranan |
 |---|---|---|
@@ -142,7 +142,10 @@ Di staging/produksi, kod OTP dihantar melalui WhatsApp oleh Edge Function `auth-
 
 | Laluan | Skrin reka bentuk |
 |---|---|
-| `/masuk`, `/masuk/kod` | Login, OTP |
+| `/masuk` | Log masuk dengan e-mel & kata laluan |
+| `/masuk/telefon`, `/masuk/kod` | Login, OTP (kali pertama — sahkan nombor telefon) |
+| `/masuk/lupa`, `/masuk/set-semula` | Lupa kata laluan: pautan e-mel + 4 digit akhir kad pengenalan |
+| `/akaun/kata-laluan` | Wajib selepas OTP pertama: tetapkan e-mel & kata laluan; juga dari Profil untuk menukarnya |
 | `/jemputan`, `/jemputan/[token]` | Daftar (aktifkan akaun melalui pautan jemputan + 4 digit IC + OTP) |
 | `/orientasi` | Onboarding (senarai semak 8 langkah) |
 | `/orientasi/nama`, `/swafoto`, `/bank`, `/kad-pengenalan`, `/peribadi`, `/buku-panduan`, `/pasang`, `/selesai` | OnboardingNama, OnboardingSelfie, OnboardingLangkah, OnboardingDokumen, OnboardingPeribadi, OnboardingHandbook, OnboardingPasang, OnboardingSelesai |
@@ -184,7 +187,7 @@ node web/e2e/aliran-cuti.cjs
 node web/e2e/orientasi.cjs
 ```
 
-Ujian lain dalam `web/e2e/`: `tuntutan.cjs` (RM1,250 → Ketua → Kewangan → CEO), `profil-cuti.cjs`, `pengurusan-hr.cjs`, `tetapan.cjs`, `kehadiran.cjs`, `gaji.cjs`, `syarikat-baharu.cjs`, `pembantu-ai.cjs`. Untuk staging: `E2E_BASE=https://hrboost-staging.netlify.app`.
+Ujian lain dalam `web/e2e/`: `tuntutan.cjs` (RM1,250 → Ketua → Kewangan → CEO), `profil-cuti.cjs`, `pengurusan-hr.cjs`, `tetapan.cjs`, `kehadiran.cjs`, `gaji.cjs`, `syarikat-baharu.cjs`, `pembantu-ai.cjs`, `kata-laluan.cjs` (log masuk e-mel, langkah wajib selepas OTP, lupa kata laluan dengan pelayan Resend palsu). Untuk staging: `E2E_BASE=https://hrboost-staging.netlify.app`.
 
 - `aliran-cuti.cjs`: Amin memohon cuti 23–28 Dis → Zuerin, Lily dan Sadam meluluskan dari telefon masing-masing → baki Amin 8 → 5 hari.
 - `orientasi.cjs`: HR menjemput pekerja baharu → pautan jemputan + 4 digit IC + OTP → 8 langkah orientasi (swafoto, kad pengenalan dan lain-lain) → Amin memohon MC bersama gambar sijil → ketua jabatan membuka sijil itu.
@@ -239,6 +242,12 @@ node supabase/scripts/ujian-fungsi-crosschex.cjs
 ```
 
 **Belum dipasang di staging** — kunci CrossChex yang pernah ditampal dalam chat perlu dijana semula dahulu (CLAUDE.md §8). Bila sedia: pasang fungsi `crosschex-sync`, kemudian jadualkan setiap 5 minit dengan pg_cron + pg_net (kunci service role dalam Vault). `CROSSCHEX_URL_OVERRIDE` hanya untuk ujian tempatan — jangan tetapkan di Supabase sebenar.
+
+### Log masuk e-mel & kata laluan
+
+- Kali pertama: OTP WhatsApp untuk mengesahkan nombor telefon. Selepas itu pengguna **wajib** menetapkan e-mel & kata laluan (`/akaun/kata-laluan`) sebelum boleh membuka skrin lain. E-mel tidak perlu disahkan; ia ditulis oleh RPC `set_my_login_email` (unik, huruf kecil) dan kata laluan melalui Supabase Auth (minimum 8 aksara).
+- Lupa kata laluan: Edge Function `password-reset` (`verify_jwt = false`) menghantar pautan melalui **Resend** (sah 1 jam, sekali guna, token disimpan sebagai cincangan SHA-256). Selepas pautan dibuka, pengguna mesti memasukkan 4 digit akhir kad pengenalan (5 cubaan). Semua sesi lama ditamatkan selepas kata laluan ditukar.
+- Penyediaan: daftar di Resend, sahkan domain `hrboost.io` (rekod DNS), kemudian tetapkan rahsia `RESEND_API_KEY` di Supabase → Edge Functions → Secrets. Pilihan: `EMAIL_FROM` (lalai `HRBoost <no-reply@hrboost.io>`), `APP_URL`. Tanpa kunci, skrin Lupa kata laluan meminta pengguna log masuk dengan kod WhatsApp.
 
 ### OTP melalui WhatsApp (staging/produksi)
 

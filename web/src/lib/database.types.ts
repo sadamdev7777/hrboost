@@ -1,4 +1,3 @@
-
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
@@ -1159,6 +1158,20 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"password_resets": {
+                  Row: {
+                    "attempts": number,"created_at": string,"expires_at": string,"id": string,"token_hash": string,"used_at": string | null,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "attempts"?: number,"created_at"?: string,"expires_at": string,"id"?: string,"token_hash": string,"used_at"?: string | null,"user_id": string
+                  }
+                  Update: {
+                    "attempts"?: number,"created_at"?: string,"expires_at"?: string,"id"?: string,"token_hash"?: string,"used_at"?: string | null,"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"pay_components": {
                   Row: {
                     "account_ref": string | null,"code": string,"company_id": string,"epf_applicable": boolean,"id": string,"kind": string,"name": string,"socso_applicable": boolean,"taxable": boolean
@@ -1839,6 +1852,9 @@ isOneToOne: false
               "department": string,"department_id": string,"name": string,"person_id": string
             }[]
                            },
+"my_login_status":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
 "my_payslips":
 { Args: { "p_employment": string }; Returns: {
               "id": string,"net": number,"pay_date": string,"period_month": number,"period_year": number,"status": Database["public"]['Enums']["payroll_status"]
@@ -1860,6 +1876,17 @@ isOneToOne: false
                            },
 "notify_person":
 { Args: { "p_company": string,"p_message": string,"p_person": string }; Returns: undefined
+                           },
+"password_reset_check":
+{ Args: { "p_ic_last4": string,"p_token": string }; Returns: Json
+                           },
+"password_reset_create":
+{ Args: { "p_email": string }; Returns: {
+              "email": string,"name": string,"token": string
+            }[]
+                           },
+"password_reset_finish":
+{ Args: { "p_token": string }; Returns: undefined
                            },
 "payroll_calculate":
 { Args: { "p_run": string }; Returns: Json
@@ -2010,6 +2037,9 @@ isOneToOne: false
                            },
 "set_department_head":
 { Args: { "p_department": string,"p_person": string }; Returns: undefined
+                           },
+"set_my_login_email":
+{ Args: { "p_email": string }; Returns: string
                            },
 "set_payroll_opening":
 { Args: { "p_employment": string,"p_epf": number,"p_gross": number,"p_pcb": number,"p_up_to_month": number,"p_year": number }; Returns: undefined

@@ -14,7 +14,7 @@ async function login(browser, phoneLocal, who) {
   // Lencana Netlify di staging menutup butang bawah
   await p.addInitScript(() => { const st = document.createElement('style'); st.textContent = '#nl-badge-frame{display:none!important}'; document.addEventListener('DOMContentLoaded', () => document.head.appendChild(st)); });
   p.on('pageerror', (e) => log(`  [${who}] ralat halaman:`, e.message));
-  await p.goto(BASE + '/masuk');
+  await p.goto(BASE + '/masuk/telefon');
   await p.fill('input[type=tel]', phoneLocal);
   await p.click('button:has-text("Hantar kod")');
   await p.waitForURL('**/masuk/kod');

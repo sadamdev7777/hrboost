@@ -37,6 +37,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
       const { data } = await sb.rpc("sa_dashboard");
       if (batal) return;
       if (!data) return setK("bukan");
+      const { data: ls } = await sb.rpc("my_login_status");
+      if (batal) return;
+      if (ls && !(ls as { has_password?: boolean }).has_password) {
+        router.replace(`/akaun/kata-laluan?seterusnya=${encodeURIComponent(path)}`);
+        return;
+      }
       setPending(Number((data as { grants_pending?: number }).grants_pending ?? 0));
       setK("ok");
     })();

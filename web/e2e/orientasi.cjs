@@ -31,7 +31,7 @@ async function loginUI(browser, phoneLocal) {
   const p = await ctx.newPage();
   // Lencana Netlify di staging menutup butang bawah
   await p.addInitScript(() => { const st = document.createElement('style'); st.textContent = '#nl-badge-frame{display:none!important}'; document.addEventListener('DOMContentLoaded', () => document.head.appendChild(st)); });
-  await p.goto(BASE + '/masuk');
+  await p.goto(BASE + '/masuk/telefon');
   await p.fill('input[type=tel]', phoneLocal);
   await p.click('button:has-text("Hantar kod")');
   await p.waitForURL('**/masuk/kod');
@@ -73,6 +73,12 @@ async function loginUI(browser, phoneLocal) {
   await p.click('button:has-text("Aktifkan akaun")');
   await p.waitForURL('**/masuk/kod');
   await p.fill('input[autocomplete=one-time-code]', '123456');
+  await p.waitForURL('**/akaun/kata-laluan**', { timeout: 20000 });
+  await p.fill('input[type=email]', 'nurul@contoh.my');
+  await p.locator('input[autocomplete=new-password]').nth(0).fill('Rahsia123');
+  await p.locator('input[autocomplete=new-password]').nth(1).fill('Rahsia123');
+  await p.click('button:has-text("Simpan & teruskan")');
+  expect(true, 'langkah wajib: e-mel & kata laluan ditetapkan selepas OTP pertama');
   await p.waitForURL('**/orientasi', { timeout: 20000 });
   await p.waitForSelector('text=1 daripada 8 selesai');
   await p.screenshot({ path: `${shots}/o2-senarai.png` });

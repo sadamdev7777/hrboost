@@ -32,6 +32,11 @@ export type Me = {
   roles: Role[]; // peranan dalam syarikat aktif
   isHead: boolean; // ketua jabatan dalam syarikat aktif
   headOfDepartmentIds: string[];
+  /** Belum menetapkan e-mel & kata laluan (log masuk pertama melalui OTP WhatsApp). */
+  needsPassword: boolean;
+  loginEmail: string | null;
+  /** E-mel dalam rekod pekerja (cth. diisi semasa pendaftaran syarikat). */
+  personEmail: string | null;
 };
 
 type State =
@@ -45,6 +50,8 @@ type Ctx = {
   state: State;
   reload: () => void;
   setActiveCompany: (companyId: string) => void;
+  /** Kemas kini medan Me serta-merta (tanpa memuat semula). */
+  patchMe: (p: Partial<Me>) => void;
 };
 
 const MeContext = createContext<Ctx | null>(null);
@@ -58,12 +65,13 @@ async function loadMe(preferredCompany: string | null): Promise<State> {
 
   const { data: person, error: pErr } = await sb
     .from("persons")
-    .select("id, full_name, preferred_name, photo_path")
+    .select("id, full_name, preferred_name, photo_path, email")
     .eq("auth_user_id", user.id)
     .maybeSingle();
   if (pErr) return { status: "error", message: pErr.message };
   if (!person) return { status: "no-person", userId: user.id, phone: user.phone ?? null };
 
+  const loginP = sb.rpc("my_login_status");
   const { data: emps, error: eErr } = await sb
     .from("employments")
     .select(
@@ -103,6 +111,9 @@ async function loadMe(preferredCompany: string | null): Promise<State> {
     headOfDepartmentIds = (heads ?? []).map((x) => x.id);
   }
 
+  const { data: login } = await loginP;
+  const ls = (login ?? null) as { has_password?: boolean; email?: string | null } | null;
+
   return {
     status: "ready",
     me: {
@@ -117,6 +128,9 @@ async function loadMe(preferredCompany: string | null): Promise<State> {
       roles,
       isHead: headOfDepartmentIds.length > 0,
       headOfDepartmentIds,
+      needsPassword: ls ? !ls.has_password : false,
+      loginEmail: ls?.email ?? null,
+      personEmail: person.email ?? null,
     },
   };
 }
@@ -158,7 +172,8 @@ export function MeProvider({ children }: { children: ReactNode }) {
     setTick((t) => t + 1);
   }, []);
 
-  const value = useMemo(() => ({ state, reload, setActiveCompany }), [state, reload, setActiveCompany]);
+  const patchMe = useCallback((p: Partial<Me>) => setState((s) => (s.status === "ready" ? { status: "ready", me: { ...s.me, ...p } } : s)), []);
+  const value = useMemo(() => ({ state, reload, setActiveCompany, patchMe }), [state, reload, setActiveCompany, patchMe]);
   return <MeContext value={value}>{children}</MeContext>;
 }
 

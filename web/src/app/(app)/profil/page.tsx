@@ -41,6 +41,14 @@ export default function ProfilPage() {
               <Medan label="Alamat">{d.address || "Belum diisi"}</Medan>
             </Kotak>
 
+            <Seksyen>LOG MASUK</Seksyen>
+            <Kotak>
+              <Link href="/akaun/kata-laluan" className="flex min-h-[50px] items-center justify-between gap-3 px-4 py-2 text-sm text-ink!">
+                <span className="text-muted">E-mel &amp; kata laluan</span>
+                <span className="truncate font-semibold">{me.loginEmail ?? "Belum ditetapkan"} ›</span>
+              </Link>
+            </Kotak>
+
             <Seksyen>BANK (UNTUK GAJI)</Seksyen>
             <Kotak>
               <Medan label="Bank">{d.bankName || "Belum diisi"}</Medan>
