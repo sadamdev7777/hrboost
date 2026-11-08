@@ -188,3 +188,40 @@ export async function getSlip(id: string): Promise<Slip> {
     alBalance: b ? Number(b.available) : null,
   };
 }
+
+// ---------------------------------------------------------------------
+//  Gaji Pekerja: gaji pokok & elaun / potongan tetap
+// ---------------------------------------------------------------------
+export type KomponenTetap = { code: string; name: string; kind: "earning" | "deduction"; epf: boolean; socso: boolean; taxable: boolean };
+export type BarisGaji = {
+  employment_id: string;
+  name: string;
+  employee_no: string;
+  department: string | null;
+  status: string;
+  join_date: string;
+  items: Record<string, number>;
+  effective_from: string | null;
+  upcoming: boolean;
+};
+export type JadualGaji = { on: string; components: KomponenTetap[]; rows: BarisGaji[] };
+
+export async function getJadualGaji(companyId: string, pada?: string): Promise<JadualGaji> {
+  const r = must(await getSupabase().rpc("hr_pay_table", { p_company: companyId, ...(pada ? { p_on: pada } : {}), p_via: "web" })) as unknown as JadualGaji;
+  return { ...r, rows: r.rows.map((x) => ({ ...x, items: Object.fromEntries(Object.entries(x.items).map(([k, v]) => [k, Number(v)])) })) };
+}
+
+export async function setGajiPekerja(employmentId: string, items: Record<string, number>, mulai: string) {
+  must(await getSupabase().rpc("hr_set_pay", { p_employment: employmentId, p_items: items, p_effective_from: mulai, p_via: "web" }));
+}
+
+export async function tambahKomponen(companyId: string, nama: string, jenis: "earning" | "deduction", epf: boolean, socso: boolean, cukai: boolean): Promise<string> {
+  return must(
+    await getSupabase().rpc("hr_add_pay_component", { p_company: companyId, p_name: nama, p_kind: jenis, p_epf: epf, p_socso: socso, p_taxable: cukai }),
+  ) as string;
+}
+
+/** Jumlah bulanan tetap (elaun ditambah, potongan ditolak). */
+export function jumlahTetap(items: Record<string, number>, komponen: KomponenTetap[]): number {
+  return komponen.reduce((s, c) => s + (c.kind === "deduction" ? -1 : 1) * (items[c.code] ?? 0), 0);
+}

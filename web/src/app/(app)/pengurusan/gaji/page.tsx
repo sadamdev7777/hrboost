@@ -20,7 +20,8 @@ import {
 } from "@/lib/gaji";
 import { getSenaraiPekerja } from "@/lib/hr";
 import { namaPeringkat, todayISO } from "@/lib/format";
-import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
+import { ErrorBox, Loading, Screen } from "@/components/ui";
+import { PengepalaAkar } from "@/components/TabNav";
 import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
 
 const rm = (n: number | string | null | undefined) => `RM ${Number(n ?? 0).toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -64,10 +65,10 @@ function ProsesGaji() {
   const langkah = !status ? 0 : status === "draft" ? 1 : status === "calculated" || status === "returned" ? 2 : status === "pending" ? 3 : 4;
 
   return (
-    <Screen>
-      <BackHeader
+    <Screen lebar="sederhana">
+      <PengepalaAkar
+        backHr="/pengurusan"
         title={`Gaji ${BULAN_PENUH[tempoh.m - 1].slice(0, 3)} ${tempoh.y}`}
-        href="/saya"
         action={
           <div className="mr-1 flex items-center gap-1">
             <button type="button" aria-label="Bulan sebelumnya" onClick={() => setTempoh(geser(tempoh.y, tempoh.m, -1))} className="flex size-11 items-center justify-center rounded-full text-lg">
@@ -80,7 +81,11 @@ function ProsesGaji() {
           </div>
         }
       />
-      <ol className="mx-5 grid grid-cols-4 gap-1.5" aria-label="Langkah proses gaji">
+      <Link href="/pengurusan/gaji/pekerja" className="mx-4 mb-3 flex min-h-12 items-center justify-between gap-2 rounded-[14px] bg-surface px-4 text-sm font-bold text-ink! lg:mx-0">
+        <span>Gaji pokok &amp; elaun pekerja</span>
+        <span className="whitespace-nowrap text-primary">Tetapkan ›</span>
+      </Link>
+      <ol className="mx-5 grid grid-cols-4 gap-1.5 lg:mx-0" aria-label="Langkah proses gaji">
         {LANGKAH.map((l, i) => {
           const siap = langkah > i + 1 || status === "paid";
           const kini = langkah === i + 1 && status !== "paid";
@@ -159,7 +164,17 @@ function Langkah1({ data, reload }: { data: Data; reload: () => void }) {
           ) : (
             <ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-[13px]">
               {data.prep.checks.map((c, i) => (
-                <li key={i}>{c}</li>
+                <li key={i}>
+                  {c}
+                  {c.includes("gaji pokok belum ditetapkan") && (
+                    <>
+                      {" "}
+                      <Link href="/pengurusan/gaji/pekerja" className="font-bold">
+                        Tetapkan
+                      </Link>
+                    </>
+                  )}
+                </li>
               ))}
             </ul>
           )}

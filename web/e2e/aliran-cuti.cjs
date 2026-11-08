@@ -19,7 +19,7 @@ async function login(browser, phoneLocal, who) {
   await p.click('button:has-text("Hantar kod")');
   await p.waitForURL('**/masuk/kod');
   await p.fill('input[autocomplete=one-time-code]', '123456');
-  await p.waitForURL('**/utama', { timeout: 15000 });
+  await p.waitForURL(/\/(utama|pengurusan)$/, { timeout: 15000 });
   await p.waitForLoadState('networkidle');
   return { ctx, p };
 }

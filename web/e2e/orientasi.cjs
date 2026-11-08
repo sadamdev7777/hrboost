@@ -36,7 +36,7 @@ async function loginUI(browser, phoneLocal) {
   await p.click('button:has-text("Hantar kod")');
   await p.waitForURL('**/masuk/kod');
   await p.fill('input[autocomplete=one-time-code]', '123456');
-  await p.waitForURL('**/utama', { timeout: 15000 });
+  await p.waitForURL(/\/(utama|pengurusan)$/, { timeout: 15000 });
   return { ctx, p };
 }
 
@@ -139,7 +139,7 @@ async function loginUI(browser, phoneLocal) {
   await p.screenshot({ path: `${shots}/o10-selesai.png` });
   expect(await p.locator('img[alt="Gambar profil Nurin"]').count() === 1, 'orientasi 8/8 selesai, swafoto dipaparkan (URL bertandatangan)');
   await p.click('a:has-text("Masuk ke HRBoost")');
-  await p.waitForURL('**/utama');
+  await p.waitForURL(/\/(utama|pengurusan)$/);
   await p.waitForSelector('text=Baki cuti tahunan');
   expect((await p.locator('text=Lengkapkan akaun anda').count()) === 0, 'tab Utama tanpa peringatan orientasi');
 

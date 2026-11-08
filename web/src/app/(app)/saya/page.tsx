@@ -22,7 +22,7 @@ import {
   IconWallet,
 } from "@/components/icons";
 import { Screen } from "@/components/ui";
-import { TabNav } from "@/components/TabNav";
+import { TabNav, TukarMod } from "@/components/TabNav";
 
 // Rujukan reka bentuk: design/Saya.dc.html
 export default function SayaPage() {
@@ -58,6 +58,7 @@ export default function SayaPage() {
           </div>
           <IconChevronRight size={20} className="text-[#9AA8A5]" />
         </Link>
+        <TukarMod className="lg:hidden" />
 
         <Kumpulan tajuk="MENU SAYA">
           <Baris href="/cuti" icon={<IconCalendar size={18} />} label="Cuti">
@@ -80,7 +81,12 @@ export default function SayaPage() {
           <Kumpulan tajuk="PENGURUSAN · HR / CEO SAHAJA">
             <Baris href="/pengurusan" icon={<IconChart size={18} />} tone="bg-[#FDEBD7] text-warning" label="Papan Pemuka Syarikat" />
             <Baris href="/pengurusan/pekerja" icon={<IconUsers size={18} />} tone="bg-[#FDEBD7] text-warning" label="Pekerja" />
-            <Baris href="/pengurusan/gaji" icon={<IconCard size={18} />} tone="bg-[#FDEBD7] text-warning" label="Proses Gaji" />
+            {hasRole(me, ["hr", "finance", "admin"]) && (
+              <>
+                <Baris href="/pengurusan/gaji" icon={<IconCard size={18} />} tone="bg-[#FDEBD7] text-warning" label="Proses Gaji" />
+                <Baris href="/pengurusan/gaji/pekerja" icon={<IconWallet size={18} />} tone="bg-[#FDEBD7] text-warning" label="Gaji Pekerja" />
+              </>
+            )}
             <Baris href="/pengurusan/tetapan" icon={<IconSettings size={18} />} tone="bg-[#FDEBD7] text-warning" label="Tetapan" />
           </Kumpulan>
         )}

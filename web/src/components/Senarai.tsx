@@ -83,12 +83,12 @@ export function MedanBorang({ label, children, nota }: { label: string; children
 /** Lembaran bawah generik (borang ringkas dalam skrin yang sama). */
 export function Lembaran({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 lg:items-center lg:p-6" onClick={onClose}>
       <div
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="flex max-h-[90dvh] w-full max-w-[480px] flex-col gap-3 overflow-y-auto rounded-t-[20px] bg-surface px-4 pt-5 pb-5"
+        className="flex max-h-[90dvh] w-full max-w-[480px] flex-col gap-3 overflow-y-auto rounded-t-[20px] bg-surface px-4 pt-5 pb-5 lg:max-w-[560px] lg:rounded-[20px] lg:px-6"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="m-0 text-lg font-extrabold">{title}</h2>

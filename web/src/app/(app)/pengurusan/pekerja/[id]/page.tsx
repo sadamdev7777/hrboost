@@ -27,6 +27,8 @@ import {
 import { muatNaikPeribadi, urlSementara } from "@/lib/upload";
 import { hari, julatTarikh, masa, paparTelefon, ringgit, tarikh, todayISO, type StatusPermohonan } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen, StatusPill } from "@/components/ui";
+import { UbahGaji } from "@/components/GajiPekerja";
+import type { KomponenTetap } from "@/lib/gaji";
 import { HadPeranan, Kotak, Lembaran, Medan, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
 
 const TABS = ["Maklumat", "Cuti", "Tuntutan", "Kehadiran", "Gaji", "Dokumen"] as const;
@@ -77,7 +79,7 @@ function Profil() {
         {p.data && tab === "Cuti" && <TabCuti id={id} />}
         {p.data && tab === "Tuntutan" && <TabTuntutan id={id} />}
         {p.data && tab === "Kehadiran" && <TabKehadiran id={id} />}
-        {p.data && tab === "Gaji" && <TabGaji id={id} />}
+        {p.data && tab === "Gaji" && <TabGaji id={id} nama={p.data.name} tarikhMula={p.data.joinDate} />}
         {p.data && tab === "Dokumen" && <TabDokumen p={p.data} bolehUbah={bolehUbah} />}
       </main>
     </Screen>
@@ -584,11 +586,22 @@ function TabKehadiran({ id }: { id: string }) {
   );
 }
 
-function TabGaji({ id }: { id: string }) {
+function TabGaji({ id, nama, tarikhMula }: { id: string; nama: string; tarikhMula: string }) {
   const me = useMe();
   const boleh = me.roles.some((r) => ["hr", "finance", "admin"].includes(r));
   const [buka, setBuka] = useState(false);
+  const [ubah, setUbah] = useState(false);
   const d = useData(() => (buka ? getGajiSemasa(id) : Promise.resolve(null)), [id, buka]);
+  const komp = useData(
+    async () =>
+      buka
+        ? ((must(await getSupabase().from("pay_components").select("code, name, kind, epf_applicable, socso_applicable, taxable").eq("company_id", me.active!.companyId)) ?? [])
+            .filter((c) => !["COMMISSION", "OT", "CLAIM", "UNPAID"].includes(c.code))
+            .sort((a, b) => Number(a.code !== "BASIC") - Number(b.code !== "BASIC") || a.name.localeCompare(b.name))
+            .map((c) => ({ code: c.code, name: c.name, kind: c.kind as "earning" | "deduction", epf: c.epf_applicable, socso: c.socso_applicable, taxable: c.taxable })) as KomponenTetap[])
+        : [],
+    [buka, me.active!.companyId],
+  );
   if (!boleh) return <span className="text-sm text-muted">Maklumat gaji hanya untuk HR dan Kewangan.</span>;
   if (!buka)
     return (
@@ -607,7 +620,24 @@ function TabGaji({ id }: { id: string }) {
           </Medan>
         ))}
       </Senarai>
+      <button type="button" onClick={() => setUbah(true)} disabled={!komp.data} className="min-h-12 rounded-[14px] bg-primary text-sm font-extrabold text-white disabled:opacity-60">
+        Ubah gaji &amp; elaun
+      </button>
       <span className="text-xs text-muted">Akses ini direkodkan. Slip gaji bulanan dijana melalui Proses Gaji.</span>
+      {ubah && komp.data && (
+        <UbahGaji
+          employmentId={id}
+          nama={nama}
+          komponen={komp.data}
+          items={Object.fromEntries(d.data.filter((c) => c.effective_from <= todayISO()).map((c) => [c.code, Number(c.amount)]))}
+          tarikhMula={tarikhMula}
+          onClose={() => setUbah(false)}
+          onDone={() => {
+            setUbah(false);
+            d.reload();
+          }}
+        />
+      )}
       <BakiAwal id={id} />
     </>
   );

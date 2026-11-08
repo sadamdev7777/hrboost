@@ -7,6 +7,8 @@ import { MeProvider, useMeContext } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { paparTelefon } from "@/lib/format";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
+import { MenuSisi } from "@/components/TabNav";
+import { useMod } from "@/lib/mod";
 
 function Guard({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -19,12 +21,19 @@ function Guard({ children }: { children: ReactNode }) {
     if (state.status === "signed-out") router.replace("/masuk");
   }, [state.status, router]);
 
+  // Mod HR: laman utama ialah Papan Pemuka, bukan Utama pekerja.
+  const { mod } = useMod();
+  const keHr = state.status === "ready" && !perluKataLaluan && mod === "hr" && path === "/utama";
+  useEffect(() => {
+    if (keHr) router.replace("/pengurusan");
+  }, [keHr, router]);
+
   // Log masuk pertama melalui OTP WhatsApp: wajib tetapkan e-mel & kata laluan dahulu.
   useEffect(() => {
     if (perluKataLaluan) router.replace(`${GATE}?seterusnya=${encodeURIComponent(path)}`);
   }, [perluKataLaluan, path, router]);
 
-  if (state.status === "loading" || state.status === "signed-out" || perluKataLaluan) {
+  if (state.status === "loading" || state.status === "signed-out" || perluKataLaluan || keHr) {
     return (
       <Screen>
         <Loading />
@@ -65,8 +74,13 @@ function Guard({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <Notis />
-      {children}
+      <div className="lg:flex">
+        <MenuSisi />
+        <div className="min-w-0 lg:flex-1">
+          <Notis />
+          {children}
+        </div>
+      </div>
     </>
   );
 }

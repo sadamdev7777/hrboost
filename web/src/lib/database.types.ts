@@ -1733,6 +1733,9 @@ isOneToOne: false
 "has_role":
 { Args: { "p_company": string,"p_roles": (Database["public"]['Enums']["app_role"])[] }; Returns: boolean
                            },
+"hr_add_pay_component":
+{ Args: { "p_company": string,"p_epf"?: boolean,"p_kind": string,"p_name": string,"p_socso"?: boolean,"p_taxable"?: boolean }; Returns: string
+                           },
 "hr_current_pay":
 { Args: { "p_employment": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: {
               "amount": number,"code": string,"effective_from": string,"name": string
@@ -1740,6 +1743,12 @@ isOneToOne: false
                            },
 "hr_dashboard":
 { Args: { "p_company": string }; Returns: Json
+                           },
+"hr_pay_table":
+{ Args: { "p_company": string,"p_on"?: string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: Json
+                           },
+"hr_set_pay":
+{ Args: { "p_effective_from": string,"p_employment": string,"p_items": Json,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
                            },
 "hr_update_employment":
 { Args: { "p_data": Json,"p_employment": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
@@ -1887,6 +1896,9 @@ isOneToOne: false
                            },
 "password_reset_finish":
 { Args: { "p_token": string }; Returns: undefined
+                           },
+"pay_component_is_fixed":
+{ Args: { "p_code": string }; Returns: boolean
                            },
 "payroll_calculate":
 { Args: { "p_run": string }; Returns: Json

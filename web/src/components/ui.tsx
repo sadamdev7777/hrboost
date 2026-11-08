@@ -1,14 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { IconBack, IconCheckSquare, IconHome, IconPlusCircle, IconUser } from "./icons";
+import { IconBack } from "./icons";
 import { LABEL_STATUS, inisial, type StatusPermohonan } from "@/lib/format";
 
-/** Bingkai skrin telefon: lebar maksimum, latar halaman, tinggi penuh. */
-export function Screen({ children }: { children: ReactNode }) {
-  return <div className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-page text-ink">{children}</div>;
+const LEBAR = {
+  sempit: "lg:max-w-[560px]",
+  sederhana: "lg:max-w-[760px]",
+  lebar: "lg:max-w-[1180px]",
+} as const;
+
+/**
+ * Bingkai skrin: lajur telefon (≤ 480px) pada telefon; pada skrin lebar (≥ 1024px)
+ * lajur dilebarkan mengikut `lebar` (skrin pengurusan guna "lebar").
+ */
+export function Screen({ children, lebar = "sederhana" }: { children: ReactNode; lebar?: keyof typeof LEBAR }) {
+  return <div className={`mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-page text-ink lg:px-6 ${LEBAR[lebar]}`}>{children}</div>;
 }
 
 /** Pengepala dengan butang kembali (44px) dan tajuk. */
@@ -29,43 +38,6 @@ export function BackHeader({ title, href, action }: { title?: string; href?: str
       {title && <h1 className="m-0 grow text-lg font-extrabold">{title}</h1>}
       {action}
     </header>
-  );
-}
-
-const TABS = [
-  { href: "/utama", label: "Utama", Icon: IconHome },
-  { href: "/mohon", label: "Mohon", Icon: IconPlusCircle },
-  { href: "/kelulusan", label: "Kelulusan", Icon: IconCheckSquare },
-  { href: "/saya", label: "Saya", Icon: IconUser },
-];
-
-/** Navigasi bawah 4 tab (CLAUDE.md §1: Utama, Mohon, Kelulusan, Saya). */
-export function BottomNav({ approvals = 0 }: { approvals?: number }) {
-  const path = usePathname();
-  return (
-    <nav className="sticky bottom-0 grid grid-cols-4 border-t border-line-soft bg-surface px-2 pt-2 pb-[max(20px,env(safe-area-inset-bottom))]">
-      {TABS.map(({ href, label, Icon }) => {
-        const on = path === href || path.startsWith(href + "/");
-        return (
-          <Link
-            key={href}
-            href={href}
-            aria-current={on ? "page" : undefined}
-            className={`relative flex flex-col items-center gap-1 py-1.5 text-xs ${
-              on ? "font-bold text-primary!" : "font-semibold text-muted!"
-            }`}
-          >
-            {href === "/kelulusan" && approvals > 0 && (
-              <span className="absolute top-0 left-[54%] flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-danger px-1 text-[11px] font-extrabold text-white">
-                {approvals}
-              </span>
-            )}
-            <Icon />
-            {label}
-          </Link>
-        );
-      })}
-    </nav>
   );
 }
 

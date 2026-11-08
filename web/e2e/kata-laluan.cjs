@@ -97,7 +97,7 @@ async function masukEmel(p, email, pw) {
     await p.screenshot({ path: `${shots}/kl-masuk.png` });
     await p.fill('input[autocomplete=current-password]', 'Demo1234');
     await p.click('button[type=submit]');
-    await p.waitForURL('**/utama', { timeout: 15000 });
+    await p.waitForURL(/\/(utama|pengurusan)$/, { timeout: 15000 });
     expect(true, 'e-mel + kata laluan betul → Utama');
     await ctx.close();
 
@@ -137,7 +137,7 @@ async function masukEmel(p, email, pw) {
     await ctx.close();
     ({ ctx, p } = await halaman(browser));
     await masukEmel(p, 'zulfa@contoh.my', 'Zulfa2026');
-    await p.waitForURL('**/utama', { timeout: 15000 });
+    await p.waitForURL(/\/(utama|pengurusan)$/, { timeout: 15000 });
     expect(true, 'Zulfa log masuk dengan e-mel tanpa kod WhatsApp');
     await ctx.close();
 
@@ -184,14 +184,14 @@ async function masukEmel(p, email, pw) {
     await p.waitForSelector('text=E-mel atau kata laluan tidak betul');
     await p.fill('input[autocomplete=current-password]', 'Baharu2026');
     await p.click('button[type=submit]');
-    await p.waitForURL('**/utama', { timeout: 15000 });
+    await p.waitForURL(/\/(utama|pengurusan)$/, { timeout: 15000 });
     expect(true, 'kata laluan lama tidak sah; kata laluan baharu berfungsi');
     await ctx.close();
 
     log('4. Amin: tukar kata laluan di Profil');
     ({ ctx, p } = await halaman(browser));
     await masukEmel(p, 'amin@demo.hrboost.io', 'Demo1234');
-    await p.waitForURL('**/utama', { timeout: 15000 });
+    await p.waitForURL(/\/(utama|pengurusan)$/, { timeout: 15000 });
     await p.goto(BASE + '/profil');
     await p.click('a:has-text("E-mel & kata laluan")');
     await p.waitForURL('**/akaun/kata-laluan');
