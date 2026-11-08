@@ -37,6 +37,7 @@ async function login(browser, phone) {
   await pg.close();
 
   let ctx, p;
+  let aminSesi = null;
   // E2E_DARI=2 melangkau langkah 1 (contoh: tuntutan sudah dihantar di staging)
   if (Number(process.env.E2E_DARI || 1) <= 1) {
   log('1. Amin: draf, kemudian hantar tuntutan RM1,250');
@@ -80,7 +81,7 @@ async function login(browser, phone) {
   await p.waitForURL('**/tuntutan');
   await p.locator('text=Perbatuan Melaka').first().waitFor({ state: 'detached', timeout: 15000 }).catch(() => {});
   expect((await p.locator('text=Perbatuan Melaka').count()) === 0, 'perbatuan 284 km × RM0.60 = RM170.40; draf boleh dipadam');
-  await ctx.close();
+  aminSesi = { ctx, p }; // dikekalkan untuk langkah 3 (elak had kekerapan OTP)
   }
 
   log('2. Kelulusan: Ketua Jabatan -> Kewangan -> CEO');
@@ -105,7 +106,7 @@ async function login(browser, phone) {
   }
 
   log('3. Amin: tuntutan lulus');
-  ({ ctx, p } = await login(browser, '100000004'));
+  ({ ctx, p } = aminSesi ?? (await login(browser, '100000004')));
   await p.goto(BASE + '/tuntutan');
   await p.waitForSelector('text=Lulus');
   await p.screenshot({ path: `${shots}/t5-lulus.png` });

@@ -7,6 +7,7 @@ import { useData } from "@/lib/useData";
 import { getAliranTuntutan, getJenisTuntutan, hantarTuntutan, padamDraf, simpanDraf, type ItemTuntutan } from "@/lib/claims";
 import { muatNaikPeribadi, urlSementara } from "@/lib/upload";
 import { ringgit, todayISO } from "@/lib/format";
+import { panggilAi, type BacaanResit } from "@/lib/ai";
 import { IconDocument } from "./icons";
 import { BackHeader, ErrorBox, Loading, Screen } from "./ui";
 
@@ -31,6 +32,7 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
   const [tujuan, setTujuan] = useState(initial?.purpose ?? "");
   const [busy, setBusy] = useState<null | "draf" | "hantar" | "padam">(null);
   const [error, setError] = useState<string | null>(null);
+  const [ai, setAi] = useState<null | "baca" | "ok">(null);
 
   const senarai = jenis.data ?? [];
   const perbatuan = senarai.find((j) => j.mileageRate);
@@ -46,7 +48,30 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
     e.target.value = "";
     const besar = files.find((f) => f.size > 10 * 1024 * 1024 && f.type === "application/pdf");
     if (besar) setError(`${besar.name} melebihi 10 MB.`);
-    setResit((r) => [...r, ...files.filter((f) => f !== besar).map((file) => ({ kind: "baru" as const, file, src }))]);
+    const baru = files.filter((f) => f !== besar);
+    setResit((r) => [...r, ...baru.map((file) => ({ kind: "baru" as const, file, src }))]);
+    // AI membaca resit pertama (gambar/PDF) dan mengisi borang jika masih kosong
+    const pertama = baru[0];
+    if (pertama && !initial && !jumlah && !tujuan && resit.length === 0) void bacaResit(pertama);
+  }
+
+  async function bacaResit(file: File) {
+    setAi("baca");
+    try {
+      const path = await muatNaikPeribadi(me.personId, "resit", file);
+      // fail sudah dimuat naik: guna laluan yang sama semasa menyimpan
+      setResit((r) => r.map((x) => (x.kind === "baru" && x.file === file ? { kind: "lama" as const, path } : x)));
+      const h = await panggilAi<BacaanResit & { ok: boolean }>("ai-receipt", { path, company_id: emp.companyId });
+      if (!h.readable) return setAi(null);
+      const jenisAi = h.claim_type ? (jenis.data ?? []).find((x) => x.name === h.claim_type && !x.mileageRate) : undefined;
+      if (jenisAi) setTypeId(jenisAi.id);
+      if (h.amount && h.amount > 0) setJumlah(String(h.amount));
+      if (h.date && /^\d{4}-\d{2}-\d{2}$/.test(h.date) && h.date <= todayISO()) setTarikh(h.date);
+      if (h.purpose) setTujuan((t) => t || h.purpose);
+      setAi("ok");
+    } catch {
+      setAi(null); // AI tidak tersedia — pekerja mengisi sendiri
+    }
   }
 
   async function simpan(hantar: boolean) {
@@ -159,7 +184,12 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
           <Mini onClick={() => galeri.current?.click()}>+ Dari galeri</Mini>
         </div>
 
-        <label className="flex flex-col gap-1.5 text-sm font-bold">
+        {ai && (
+            <div className="rounded-[12px] bg-[#F3F0FC] px-3.5 py-2.5 text-[13px] font-semibold text-[#4A3B8C]">
+              {ai === "baca" ? "AI sedang membaca resit…" : "Diisi oleh AI daripada resit — sila semak sebelum menghantar."}
+            </div>
+          )}
+          <label className="flex flex-col gap-1.5 text-sm font-bold">
           Jenis
           <select value={pilih} onChange={(e) => setTypeId(e.target.value)} className="h-[46px] rounded-xl border border-line bg-surface px-3.5 text-[15px] font-semibold text-ink">
             {senarai.map((x) => (

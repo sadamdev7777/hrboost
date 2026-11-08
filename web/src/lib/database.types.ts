@@ -79,14 +79,14 @@ isOneToOne: false
                   ]
                 },"ai_knowledge_chunks": {
                   Row: {
-                    "content": string,"doc_id": string,"embedding": string | null,"id": number
+                    "chunk_no": number,"content": string,"doc_id": string,"embedding": string | null,"id": number,"tsv": unknown
                   }
                   ComputedFields: never
                   Insert: {
-                    "content": string,"doc_id": string,"embedding"?: string | null,"id"?: never
+                    "chunk_no"?: number,"content": string,"doc_id": string,"embedding"?: string | null,"id"?: never,"tsv"?: never
                   }
                   Update: {
-                    "content"?: string,"doc_id"?: string,"embedding"?: string | null,"id"?: never
+                    "chunk_no"?: number,"content"?: string,"doc_id"?: string,"embedding"?: string | null,"id"?: never,"tsv"?: never
                   }
                   Relationships: [
                     {
@@ -99,14 +99,14 @@ isOneToOne: false
                   ]
                 },"ai_knowledge_docs": {
                   Row: {
-                    "active": boolean,"company_id": string | null,"id": string,"source_path": string | null,"title": string,"updated_at": string
+                    "active": boolean,"chars": number,"company_id": string | null,"id": string,"source_path": string | null,"title": string,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "active"?: boolean,"company_id"?: string | null,"id"?: string,"source_path"?: string | null,"title": string,"updated_at"?: string
+                    "active"?: boolean,"chars"?: number,"company_id"?: string | null,"id"?: string,"source_path"?: string | null,"title": string,"updated_at"?: string
                   }
                   Update: {
-                    "active"?: boolean,"company_id"?: string | null,"id"?: string,"source_path"?: string | null,"title"?: string,"updated_at"?: string
+                    "active"?: boolean,"chars"?: number,"company_id"?: string | null,"id"?: string,"source_path"?: string | null,"title"?: string,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -134,6 +134,32 @@ isOneToOne: false
       columns: ["conversation_id"]
 isOneToOne: false
       referencedRelation: "ai_conversations"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"ai_unanswered": {
+                  Row: {
+                    "company_id": string,"created_at": string,"id": number,"person_id": string | null,"question": string,"resolved": boolean
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "company_id": string,"created_at"?: string,"id"?: never,"person_id"?: string | null,"question": string,"resolved"?: boolean
+                  }
+                  Update: {
+                    "company_id"?: string,"created_at"?: string,"id"?: never,"person_id"?: string | null,"question"?: string,"resolved"?: boolean
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "ai_unanswered_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "ai_unanswered_person_id_fkey"
+      columns: ["person_id"]
+isOneToOne: false
+      referencedRelation: "persons"
       referencedColumns: ["id"]
     }
                   ]
@@ -1762,6 +1788,27 @@ isOneToOne: false
 "is_working_day":
 { Args: { "p_company": string,"p_date": string,"p_state"?: string }; Returns: boolean
                            },
+"kb_documents":
+{ Args: { "p_company": string }; Returns: {
+              "active": boolean,"chars": number,"chunks": number,"global": boolean,"id": string,"title": string,"updated_at": string
+            }[]
+                           },
+"kb_resolve_unanswered":
+{ Args: { "p_id": number }; Returns: undefined
+                           },
+"kb_save_document":
+{ Args: { "p_company": string,"p_doc"?: string,"p_text": string,"p_title": string }; Returns: string
+                           },
+"kb_search":
+{ Args: { "p_company": string,"p_limit"?: number,"p_query": string }; Returns: {
+              "content": string,"rank": number,"title": string
+            }[]
+                           },
+"kb_unanswered":
+{ Args: { "p_company": string }; Returns: {
+              "created_at": string,"id": number,"name": string,"question": string
+            }[]
+                           },
 "leave_count_days":
 { Args: { "p_employment": string,"p_end": string,"p_half": Database["public"]['Enums']["leave_half"],"p_start": string }; Returns: number
                            },
@@ -1780,6 +1827,11 @@ isOneToOne: false
 "my_access_requests":
 { Args: Record<PropertyKey, never>; Returns: {
               "company_code": string,"company_name": string,"created_at": string,"days": number,"decision_note": string,"expires_at": string,"id": string,"role": Database["public"]['Enums']["app_role"],"status": string
+            }[]
+                           },
+"my_ai_actions":
+{ Args: { "p_limit"?: number }; Returns: {
+              "action": string,"channel": Database["public"]['Enums']["action_channel"],"created_at": string,"payload": Json
             }[]
                            },
 "my_colleagues":

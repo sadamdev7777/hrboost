@@ -60,7 +60,7 @@ npx supabase stop
 npm run db:test
 ```
 
-Fail ujian: `hrboost_tests_v0.2_approval`, `hrboost_tests_v0.2_platform`, `hrboost_tests_b_onboarding` (jemputan & orientasi), `hrboost_tests_c_whatsapp` (balasan WhatsApp & giliran notifikasi), `hrboost_tests_d_profil` (kalendar cuti, profil, tukar bank), `hrboost_tests_d_hr` (pengurusan pekerja), `hrboost_tests_d_tetapan` (aliran kelulusan, minimum cuti, tempoh tuntutan, wakil) dan `hrboost_tests_e_kehadiran` (kehadiran & pembetulan masa), `hrboost_tests_f_gaji` (kadar berkanun & larian gaji) dan `hrboost_tests_g_syarikat` (daftar syarikat, persediaan, Pentadbir Platform). Skrip `supabase/scripts/run-sql-tests.sh` memulakan bekas Docker `pgvector/pgvector:pg16` pada port 55432, kemudian bagi setiap fail dalam `supabase/tests/*.sql` mencipta pangkalan data baharu dan menjalankan:
+Fail ujian: `hrboost_tests_v0.2_approval`, `hrboost_tests_v0.2_platform`, `hrboost_tests_b_onboarding` (jemputan & orientasi), `hrboost_tests_c_whatsapp` (balasan WhatsApp & giliran notifikasi), `hrboost_tests_d_profil` (kalendar cuti, profil, tukar bank), `hrboost_tests_d_hr` (pengurusan pekerja), `hrboost_tests_d_tetapan` (aliran kelulusan, minimum cuti, tempoh tuntutan, wakil) dan `hrboost_tests_e_kehadiran` (kehadiran & pembetulan masa), `hrboost_tests_f_gaji` (kadar berkanun & larian gaji) dan `hrboost_tests_g_syarikat` (daftar syarikat, persediaan, Pentadbir Platform) dan `hrboost_tests_h_ai` (pengetahuan AI). Skrip `supabase/scripts/run-sql-tests.sh` memulakan bekas Docker `pgvector/pgvector:pg16` pada port 55432, kemudian bagi setiap fail dalam `supabase/tests/*.sql` mencipta pangkalan data baharu dan menjalankan:
 
 1. stub `supabase/tests/local_only/hrboost_tests_stub_local_only.sql`
 2. semua migrasi dalam `supabase/migrations/`
@@ -164,6 +164,8 @@ Di staging/produksi, kod OTP dihantar melalui WhatsApp oleh Edge Function `auth-
 | `/mula` (+ `/syarikat`, `/import`, `/jabatan`, `/peranan`, `/jemput`, `/selesai`) | OnboardingSyarikat, SyarikatLangkah, ImportPekerja, SyarikatJabatan, SyarikatPeranan, SyarikatJemput, SyarikatSelesai |
 | `/gaji`, `/gaji/[id]` | Gaji, SlipGaji (A4, simpan PDF melalui cetak) |
 | `/pengurusan/gaji` | ProsesGaji → GajiSemak → GajiBayar |
+| `/pembantu-ai` | PembantuAI (dan draf surat HR: `?pekerja=<id>&surat=1`) |
+| `/pengurusan/tetapan/pengetahuan-ai` | T_PengetahuanAI |
 | `/admin` (+ `/syarikat`, `/syarikat/[id]`, `/akses`, `/pengguna`, `/log`, `/tetapan`) | SA_Dashboard, SA_Syarikat, SA_SyarikatButiran, SA_Akses, SA_Pengguna, SA_Log, SA_Tetapan (desktop) |
 
 Fail peribadi (swafoto, kad pengenalan, sijil MC) disimpan dalam bucket storan peribadi `peribadi`, folder `<person_id>/`. Gambar dimampatkan di telefon (≤ 1600px, JPEG 0.8) sebelum dimuat naik dan dipaparkan melalui URL bertandatangan 5 minit. Hanya pemilik, HR/Pentadbir syarikat itu dan pelulus permohonan berkaitan boleh membacanya.
@@ -182,7 +184,7 @@ node web/e2e/aliran-cuti.cjs
 node web/e2e/orientasi.cjs
 ```
 
-Ujian lain dalam `web/e2e/`: `tuntutan.cjs` (RM1,250 → Ketua → Kewangan → CEO), `profil-cuti.cjs`, `pengurusan-hr.cjs`, `tetapan.cjs`, `kehadiran.cjs`, `gaji.cjs`, `syarikat-baharu.cjs`. Untuk staging: `E2E_BASE=https://hrboost-staging.netlify.app`.
+Ujian lain dalam `web/e2e/`: `tuntutan.cjs` (RM1,250 → Ketua → Kewangan → CEO), `profil-cuti.cjs`, `pengurusan-hr.cjs`, `tetapan.cjs`, `kehadiran.cjs`, `gaji.cjs`, `syarikat-baharu.cjs`, `pembantu-ai.cjs`. Untuk staging: `E2E_BASE=https://hrboost-staging.netlify.app`.
 
 - `aliran-cuti.cjs`: Amin memohon cuti 23–28 Dis → Zuerin, Lily dan Sadam meluluskan dari telefon masing-masing → baki Amin 8 → 5 hari.
 - `orientasi.cjs`: HR menjemput pekerja baharu → pautan jemputan + 4 digit IC + OTP → 8 langkah orientasi (swafoto, kad pengenalan dan lain-lain) → Amin memohon MC bersama gambar sijil → ketua jabatan membuka sijil itu.
@@ -211,6 +213,20 @@ Bila Murpati tersedia: tetapkan rahsia `MURPATI_API_URL`, `MURPATI_API_KEY`, `MU
 ### Gaji (Fasa F)
 
 Enjin gaji ialah RPC `payroll_calculate` (SQL) — dipanggil oleh app, agent atau Edge Function `payroll-calc`. Kadar KWSP, PERKESO, SIP, PCB dan HRDF disimpan sebagai **data** dalam `statutory_rates` dan **mesti disahkan dengan kalkulator rasmi (KWSP, PERKESO, LHDN) selama 2 bulan secara selari sebelum gaji sebenar pertama**. Syarikat yang mula pada pertengahan tahun perlu mengisi data terkumpul (Profil Pekerja → Gaji) supaya PCB tepat. Fail eksport (bank, KWSP, PERKESO/SIP, PCB) ialah CSV — format rasmi setiap portal perlu disahkan. Slip gaji A4 disimpan sebagai PDF melalui dialog cetak pelayar.
+
+### AI (Pembantu AI, bacaan resit & kad pengenalan)
+
+Edge Function `pembantu-ai` (ejen dengan alat: baki cuti, permohonan, kehadiran, carian polisi, tetapan syarikat, mohon cuti & minta surat selepas pengesahan pekerja; draf surat untuk HR), `ai-receipt` (resit → borang tuntutan) dan `ai-ic` (MyKad → padanan rekod HR). Semua menggunakan SDK rasmi `@anthropic-ai/sdk` dengan model `claude-opus-5-5` (tukar dengan `HRBOOST_AI_MODEL`), output berstruktur, sandaran pelayan apabila model menolak (`fallbacks: "default"`), dan `bump_usage(company,'ai')` sebelum setiap panggilan. Setiap alat ejen ditapis dalam kod kepada pekerja yang disahkan (JWT atau nombor WhatsApp); tindakan direkod dalam `ai_action_log`. `whatsapp-inbound` menghantar teks bebas kepada ejen yang sama.
+
+Pengetahuan syarikat (Tetapan → Pengetahuan AI) dipecah kepada bahagian dan dicari dengan carian teks penuh Postgres (`kb_search`). Soalan yang tidak dapat dijawab direkod untuk HR.
+
+Ujian integrasi (tempatan, pelayan Claude palsu — tiada kos):
+
+```bash
+node supabase/scripts/ujian-fungsi-ai.cjs
+```
+
+**Belum dipasang** — perlukan kunci AI. Bila sedia: `supabase secrets set ANTHROPIC_API_KEY=...`, kemudian pasang `pembantu-ai`, `ai-receipt`, `ai-ic`. Tanpa kunci, skrin memaparkan "Pembantu AI belum diaktifkan" dan borang berfungsi seperti biasa.
 
 ### Kehadiran CrossChex (Fasa E)
 

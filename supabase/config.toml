@@ -457,3 +457,16 @@ verify_jwt = false
 # HRBoost Fasa E. Menyemak sendiri pemanggil: kunci service role (pg_cron) atau JWT HR/Pentadbir.
 [functions.crosschex-sync]
 verify_jwt = false
+
+# Fungsi AI: JWT pengguna disemak dalam fungsi (penggunaDaripadaJwt).
+[functions.ai-receipt]
+verify_jwt = false
+
+[functions.ai-ic]
+verify_jwt = false
+
+[functions.pembantu-ai]
+verify_jwt = false
+
+[functions.payroll-calc]
+verify_jwt = false

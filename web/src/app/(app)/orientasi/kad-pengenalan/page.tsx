@@ -8,6 +8,7 @@ import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { getKemajuan, langkahSeterusnya, simpanLangkah } from "@/lib/onboarding";
 import { muatNaikPeribadi } from "@/lib/upload";
+import { panggilAi } from "@/lib/ai";
 import { tarikh } from "@/lib/format";
 import { IconCheck, IconDocument } from "@/components/icons";
 import { NextButton, OnboardingLayout } from "@/components/OnboardingLayout";
@@ -21,6 +22,8 @@ export default function OrientasiKadPengenalanPage() {
   const [belakang, setBelakang] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Amaran AI: no. kad pengenalan dalam gambar berbeza daripada rekod HR (pekerja boleh teruskan)
+  const [amaran, setAmaran] = useState<{ paths: { front_path: string; back_path: string } } | null>(null);
   const rekod = useData(async () => {
     return must(await getSupabase().from("persons").select("full_name, ic_no, date_of_birth").eq("id", me.personId).single());
   }, [me.personId]);
@@ -30,11 +33,26 @@ export default function OrientasiKadPengenalanPage() {
     setBusy(true);
     setError(null);
     try {
-      const [front_path, back_path] = await Promise.all([
-        muatNaikPeribadi(me.personId, "ic-hadapan", depan),
-        muatNaikPeribadi(me.personId, "ic-belakang", belakang),
-      ]);
-      await simpanLangkah(emp.id, "ic", { front_path, back_path });
+      const paths = amaran?.paths ?? await (async () => {
+        const [front_path, back_path] = await Promise.all([
+          muatNaikPeribadi(me.personId, "ic-hadapan", depan),
+          muatNaikPeribadi(me.personId, "ic-belakang", belakang),
+        ]);
+        return { front_path, back_path };
+      })();
+      if (!amaran) {
+        // AI membaca bahagian hadapan dan memadankan dengan rekod HR (dilangkau jika AI tidak tersedia)
+        const h = await Promise.race([
+          panggilAi<{ readable: boolean; ic_matches: boolean }>("ai-ic", { path: paths.front_path, company_id: emp.companyId }).catch(() => null),
+          new Promise<null>((r) => setTimeout(() => r(null), 25000)),
+        ]);
+        if (h && h.readable && !h.ic_matches) {
+          setAmaran({ paths });
+          setBusy(false);
+          return;
+        }
+      }
+      await simpanLangkah(emp.id, "ic", paths);
       router.push(langkahSeterusnya(await getKemajuan(emp.id), "ic"));
     } catch (e) {
       setError((e as Error).message);
@@ -61,10 +79,15 @@ export default function OrientasiKadPengenalanPage() {
       footer={<NextButton busy={busy} disabled={!depan || !belakang} onClick={simpan} />}
     >
       <div className="grid grid-cols-2 gap-2.5">
-        <Ambil label="Hadapan" file={depan} onFile={setDepan} />
-        <Ambil label="Belakang" file={belakang} onFile={setBelakang} />
+        <Ambil label="Hadapan" file={depan} onFile={(f) => { setAmaran(null); setDepan(f); }} />
+        <Ambil label="Belakang" file={belakang} onFile={(f) => { setAmaran(null); setBelakang(f); }} />
       </div>
 
+      {amaran && (
+        <div role="alert" className="rounded-[14px] bg-warning-soft px-3.5 py-3 text-[13px] leading-normal text-warning">
+          AI mendapati no. kad pengenalan dalam gambar berbeza daripada rekod HR. Semak gambar anda, atau tekan butang sekali lagi untuk meneruskan — HR akan menyemaknya.
+        </div>
+      )}
       <div className="flex flex-col gap-1 rounded-card bg-surface px-3.5 py-3">
         <span className="pb-1 text-[13px] font-extrabold">Maklumat dalam rekod HR</span>
         <Baris label="Nama" value={r?.full_name ?? "—"} />

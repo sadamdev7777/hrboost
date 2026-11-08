@@ -12,7 +12,7 @@
 //  luar talian), atau 2 hari terakhir pada tarikan pertama. ingest_punch tidak
 //  menggandakan rekod (unik ikut uuid).
 // =====================================================================
-import { createClient } from "npm:@supabase/supabase-js@2.105.0";
+import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.105.0";
 import { CrossChexError, mintaToken, tarikRekod } from "../_shared/crosschex.ts";
 
 type Target = {
@@ -34,7 +34,7 @@ const OVERRIDE = Deno.env.get("CROSSCHEX_URL_OVERRIDE");
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: cors() });
   const auth = req.headers.get("Authorization") ?? "";
-  const sb = createClient(URL, SERVICE, { auth: { persistSession: false } });
+  const sb: SupabaseClient = createClient(URL, SERVICE, { auth: { persistSession: false } });
   let body: { company_id?: string; mode?: "test" | "pull" } = {};
   try {
     body = req.headers.get("content-type")?.includes("json") ? await req.json() : {};
@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
   return json(body.company_id ? hasil[0] : { syarikat: hasil.length, hasil });
 });
 
-async function segerak(sb: ReturnType<typeof createClient>, t: Target, ujiSahaja: boolean) {
+async function segerak(sb: SupabaseClient, t: Target, ujiSahaja: boolean) {
   let token = t.token;
   let tokenBaru: { token: string; expires: Date } | null = null;
   const tamat = t.token_expires_at ? new Date(t.token_expires_at) : null;
@@ -131,7 +131,7 @@ async function segerak(sb: ReturnType<typeof createClient>, t: Target, ujiSahaja
 }
 
 async function tanda(
-  sb: ReturnType<typeof createClient>,
+  sb: SupabaseClient,
   company: string,
   ok: boolean,
   mesej: string,
