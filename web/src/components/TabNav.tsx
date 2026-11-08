@@ -10,6 +10,7 @@ import { useMeContext } from "@/lib/me";
 import { NAV_HR_LAGI, itemAktif, lamanUtama, navUntuk, useMod, type ItemNav, type Mod } from "@/lib/mod";
 import { getSupabase } from "@/lib/supabase";
 import { BackHeader } from "./ui";
+import { useSkrinLebar } from "@/lib/skrin";
 import { hasRole } from "@/lib/me";
 
 const IKON: Record<ItemNav["ikon"], (p: { size?: number }) => ReactNode> = {
@@ -40,7 +41,9 @@ export function TabNav() {
   const { mod } = useMod();
   const items = navUntuk(me, mod);
   const path = usePathname();
+  const lebar = useSkrinLebar();
   const aktif = itemAktif(items, path);
+  if (lebar) return null;
   return (
     <nav
       className="sticky bottom-0 z-10 grid border-t border-line-soft bg-surface px-1 pt-2 pb-[max(16px,env(safe-area-inset-bottom))] lg:hidden"
@@ -97,7 +100,8 @@ export function MenuSisi() {
   const me = state.status === "ready" ? state.me : null;
   const { mod } = useMod();
   const path = usePathname();
-  if (!me) return null;
+  const lebar = useSkrinLebar();
+  if (!me || !lebar) return null;
   const utama = navUntuk(me, mod);
   const lagi = mod === "hr" ? NAV_HR_LAGI.filter((n) => !n.roles || hasRole(me, n.roles as Parameters<typeof hasRole>[1])) : [];
   const semua = [...utama, ...lagi];

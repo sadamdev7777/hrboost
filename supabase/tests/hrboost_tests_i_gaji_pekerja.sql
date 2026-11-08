@@ -47,6 +47,14 @@ select :'kod' as kod;
 select hr_set_pay('00000000-0000-0000-0000-0000000000e4', jsonb_build_object(:'kod', 50), '2026-08-01');
 select (hr_pay_table('00000000-0000-0000-0000-0000000000c1', '2026-08-15')->'rows'->1->'items') as ogos;
 
+\echo '=== G4b: pratonton berkanun (KWSP/PERKESO/SIP/PCB/bersih) sepadan dengan jadual ==='
+select (hr_pay_preview('00000000-0000-0000-0000-0000000000e4', '{"BASIC": 3500, "ALLOWANCE": 250}', '2026-08-15') - 'hrdf_registered') as pratonton;
+select r->'calc'->>'gross' as kasar, r->'calc'->>'epf_employee' as kwsp, r->'calc'->>'net' as bersih,
+       ((r->'calc'->>'gross')::numeric - (r->'calc'->>'epf_employee')::numeric - (r->'calc'->>'socso_employee')::numeric
+         - (r->'calc'->>'eis_employee')::numeric - (r->'calc'->>'pcb')::numeric) = (r->'calc'->>'net')::numeric as bersih_konsisten
+  from jsonb_array_elements(hr_pay_table('00000000-0000-0000-0000-0000000000c1', '2026-08-15')->'rows') r where r->>'name' = 'Amin';
+select (hr_pay_table('00000000-0000-0000-0000-0000000000c1', '2026-08-15')->'totals'->>'gross')::numeric > 0 as ada_jumlah;
+
 \echo '=== G5: ralat yang dijangka ==='
 \set ON_ERROR_STOP 0
 select hr_set_pay('00000000-0000-0000-0000-0000000000e4', '{"BASIC": 0}', '2026-09-01');
@@ -56,6 +64,7 @@ select hr_set_pay('00000000-0000-0000-0000-0000000000e4', '{"BASIC": 3000}', '20
 select hr_add_pay_component('00000000-0000-0000-0000-0000000000c1', 'Elaun Telefon', 'earning');
 \echo '--- HR MTB tidak boleh lihat / ubah gaji DOIT'
 select hr_pay_table('00000000-0000-0000-0000-0000000000c2');
+select hr_pay_preview('00000000-0000-0000-0000-0000000000f5', '{"BASIC": 9999}');
 select hr_set_pay('00000000-0000-0000-0000-0000000000f5', '{"BASIC": 9999}', '2026-09-01');
 \echo '--- pekerja biasa tidak boleh lihat jadual gaji'
 set test.uid='00000000-0000-0000-0000-00000000a004';

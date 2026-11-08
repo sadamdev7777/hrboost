@@ -56,7 +56,7 @@ function Profil() {
   const bolehUbah = me.roles.includes("hr") || me.roles.includes("admin");
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title={p.data?.name ?? ""} href="/pengurusan/pekerja" />
       <div role="tablist" className="flex gap-0.5 overflow-x-auto border-b border-line-soft px-3">
         {TABS.map((t) => (

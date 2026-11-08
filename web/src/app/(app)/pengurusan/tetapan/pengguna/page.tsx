@@ -59,7 +59,7 @@ function Pengguna() {
   }
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title="Pengguna & peranan" href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
         <div className="rounded-[14px] bg-[#E3F1EE] px-4 py-3 text-[13px] leading-normal text-primary">

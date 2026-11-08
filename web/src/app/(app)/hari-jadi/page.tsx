@@ -38,7 +38,7 @@ export default function HariJadiPage() {
   const baki = semua.filter((p) => p.date !== today && p.date <= (tab === "week" ? akhirMinggu : akhirBulan));
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title="Hari Jadi" href="/saya" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         {list.error && <ErrorBox message={list.error} />}

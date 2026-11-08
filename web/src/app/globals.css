@@ -63,3 +63,33 @@ a {
 a:hover {
   color: var(--color-primary-hover);
 }
+
+/* ------------------------------------------------------------------
+   Desktop (≥ 1024px): bar tindakan bawah (butang lebar penuh, melekat)
+   menjadi baris butang biasa di hujung kandungan.
+   ------------------------------------------------------------------ */
+@media (min-width: 1024px) {
+  .bar-bawah {
+    position: static !important;
+    border-top: 0 !important;
+    background: transparent !important;
+    padding: 8px 0 28px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px !important;
+  }
+  .bar-bawah > button,
+  .bar-bawah > a {
+    width: auto !important;
+    min-width: 220px;
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+  .bar-bawah > span,
+  .bar-bawah > p {
+    flex-basis: 100%;
+    text-align: left !important;
+  }
+}

@@ -51,7 +51,7 @@ export default function AksesSyarikatPage() {
   }
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title="Mohon akses ke syarikat lain" href="/pengurusan" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         {dihantar ? (

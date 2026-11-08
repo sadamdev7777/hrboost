@@ -51,7 +51,7 @@ function ProfilSyarikat() {
     [cid],
   );
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title="Profil syarikat" href="/pengurusan/tetapan" />
       {d.error && <ErrorBox message={d.error} />}
       {d.loading && !d.data && <Loading />}
@@ -178,7 +178,7 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
         {ok && <span className="text-sm font-semibold text-success">Profil syarikat disimpan.</span>}
       </main>
       {admin && (
-        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <ButangUtama onClick={simpan} busy={busy}>
             Simpan
           </ButangUtama>

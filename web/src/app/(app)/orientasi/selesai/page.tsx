@@ -36,7 +36,7 @@ export default function OrientasiSelesaiPage() {
   const lengkap = d && belum.length === 0;
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <div className="flex flex-col items-center gap-3 bg-primary px-6 pt-12 pb-5 text-center text-white">
         <div className="relative">
           {d?.photo ? (

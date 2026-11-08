@@ -11,7 +11,7 @@ import { MedanKataLaluan, medanMasuk } from "@/app/masuk/MedanKataLaluan";
 /** Tetapkan (wajib selepas OTP pertama) atau tukar e-mel & kata laluan log masuk. */
 export default function KataLaluanPage() {
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <Suspense fallback={<Loading />}>
         <KataLaluan />
       </Suspense>

@@ -39,7 +39,7 @@ function Pengetahuan() {
   }
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title="Pengetahuan AI" href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
         <div className="rounded-[14px] bg-[#F3F0FC] px-4 py-3 text-[13px] leading-normal text-[#4A3B8C]">

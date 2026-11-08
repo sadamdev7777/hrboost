@@ -89,7 +89,7 @@ function Automasi() {
   const vars = cur ? (PEMBOLEH[cur.event_type] ?? PEMBOLEH.default) : [];
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title="Automasi WhatsApp" href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         {d.error && <ErrorBox message={d.error} />}

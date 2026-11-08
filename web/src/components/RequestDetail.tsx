@@ -34,7 +34,7 @@ export function RequestDetail({ mode }: { mode: Mode }) {
 
   if (d.loading && !d.data) {
     return (
-      <Screen>
+      <Screen lebar="sederhana">
         <BackHeader href={back} />
         <Loading />
       </Screen>
@@ -42,7 +42,7 @@ export function RequestDetail({ mode }: { mode: Mode }) {
   }
   if (d.error || !d.data) {
     return (
-      <Screen>
+      <Screen lebar="sederhana">
         <BackHeader href={back} />
         <div className="p-5">
           <ErrorBox message={d.error ?? "Permohonan tidak dijumpai atau anda tidak mempunyai akses."} />
@@ -85,7 +85,7 @@ export function RequestDetail({ mode }: { mode: Mode }) {
   }
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title={TAJUK[x.req.request_type] ?? "Permohonan"} href={back} />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         <section className="flex flex-col gap-3 rounded-[18px] bg-surface p-4">
@@ -219,7 +219,7 @@ export function RequestDetail({ mode }: { mode: Mode }) {
       </main>
 
       {canAct && (
-        <div className="sticky bottom-0 flex flex-col gap-2 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <div className="bar-bawah sticky bottom-0 flex flex-col gap-2 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <div className="grid grid-cols-2 gap-2.5">
             <button
               type="button"
@@ -250,7 +250,7 @@ export function RequestDetail({ mode }: { mode: Mode }) {
       )}
 
       {canCancel && (
-        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <button
             type="button"
             disabled={busy}

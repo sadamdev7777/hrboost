@@ -107,7 +107,7 @@ function Aliran() {
   }
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title="Aliran Kelulusan" href="/pengurusan/tetapan" />
       <div role="tablist" className="mx-5 grid grid-cols-4 gap-1 rounded-[14px] bg-[#E4EAE8] p-1">
         {JENIS.map((j) => (
@@ -181,7 +181,7 @@ function Aliran() {
         {ok && <span className="text-sm font-semibold text-success">Aliran kelulusan disimpan.</span>}
       </main>
       {draf?.jenis === jenis && (
-        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <ButangUtama onClick={simpan} busy={busy}>
             Simpan aliran
           </ButangUtama>

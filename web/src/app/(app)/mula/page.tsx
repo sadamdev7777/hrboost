@@ -24,7 +24,7 @@ function Senarai() {
   const seterusnya = k ? langkahSeterusnya(k) : "/mula/syarikat";
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <main className="flex grow flex-col gap-4 px-4 pt-8 pb-4">
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !k && <Loading />}
@@ -84,7 +84,7 @@ function Senarai() {
         )}
       </main>
       {k && (
-        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <Link href={seterusnya} className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white!">
             {seterusnya === "/mula/selesai" ? "Lihat ringkasan" : "Teruskan"}
           </Link>

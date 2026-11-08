@@ -54,20 +54,26 @@ const navMobile = async (p) => (await p.locator('nav.sticky >> visible=true').lo
   await p.waitForSelector('[role=dialog] >> text=Gaji Amin');
   await p.fill('[role=dialog] label:has-text("Gaji Pokok") input', '3500');
   await p.fill('[role=dialog] label:has-text("Elaun Tetap") input', '250');
+  await p.waitForSelector('[role=dialog] >> text=3,309.75');
+  const dlg = await p.innerText('[role=dialog]');
+  expect(['KWSP pekerja', '414.00', 'KWSP majikan', '489.00', 'PERKESO pekerja', '18.75', 'SIP pekerja', '7.50', 'Gaji bersih', 'Jumlah kos majikan', '4,312.15', 'Levi HRD Corp'].every((t) => dlg.includes(t)),
+    'pratonton langsung: KWSP 414/489, PERKESO 18.75, SIP 7.50, bersih 3,309.75, kos majikan 4,312.15, HRDF');
   await p.screenshot({ path: `${shots}/hr-ubah-gaji.png` });
   await p.click('[role=dialog] button:has-text("Simpan gaji")');
   await p.waitForSelector('[role=dialog]', { state: 'detached' });
-  await p.waitForSelector(V('tr:has-text("Amin") >> text=RM 3,750.00'));
-  expect(true, 'gaji Amin dikemas kini: pokok 3,500 + elaun 250 = RM 3,750.00');
+  await p.waitForSelector(V('tr:has-text("Amin") >> text=3,750.00'));
+  const baris = await p.locator('tr', { hasText: 'Amin' }).innerText();
+  expect(baris.includes('3,309.75') && baris.includes('414.00') && baris.includes('4,312.15'), 'jadual: kasar 3,750.00, KWSP 414.00, bersih 3,309.75, kos majikan 4,312.15');
+  expect(await p.locator('tfoot').isVisible(), 'baris jumlah syarikat dipaparkan');
 
   await p.click('button:has-text("Ubah ramai sekali gus")');
   await p.fill('input[aria-label="Gaji Pokok Zulfa"]', '3000');
   await p.fill('input[aria-label="Elaun Tetap Farah"]', '150');
   await p.screenshot({ path: `${shots}/hr-ubah-ramai.png` });
   await p.click('button:has-text("Simpan semua")');
-  await p.waitForSelector(V('tr:has-text("Zulfa") >> text=RM 3,000.00'));
-  await p.waitForSelector(V('tr:has-text("Farah") >> text=RM 5,350.00'));
-  expect(true, 'ubah ramai: Zulfa RM 3,000.00, Farah + elaun RM 5,350.00');
+  await p.waitForSelector(V('tr:has-text("Zulfa") >> text=3,000.00'));
+  await p.waitForSelector(V('tr:has-text("Farah") >> text=5,350.00'));
+  expect(true, 'ubah ramai: Zulfa 3,000.00, Farah + elaun 5,350.00');
 
   await p.click('button:has-text("+ Jenis elaun")');
   await p.fill('[role=dialog] input[placeholder="Contoh: Elaun Telefon"]', 'Elaun Telefon');
@@ -88,6 +94,7 @@ const navMobile = async (p) => (await p.locator('nav.sticky >> visible=true').lo
   await p.waitForTimeout(1000);
   const slip = await p.innerText('article');
   expect(slip.includes('3,500.00') && slip.includes('Elaun Tetap') && slip.includes('250.00'), 'slip Amin: gaji pokok 3,500.00 + Elaun Tetap 250.00');
+  expect(slip.includes('3,309.75') && slip.includes('414.00'), 'slip sebenar sepadan dengan pratonton (KWSP 414.00, bersih 3,309.75)');
   await ctx.close();
 
   log('4. Lily — telefon: tab Mod HR & tukar mod');

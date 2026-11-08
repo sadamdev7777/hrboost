@@ -286,3 +286,37 @@ export const JENIS_DOKUMEN = [
 export async function batalPenamatan(employmentId: string) {
   must(await getSupabase().rpc("cancel_employment_end", { p_employment: employmentId, p_via: "web" }));
 }
+
+export type DashboardTambahan = {
+  present_today: number;
+  attendance_connected: boolean;
+  late_names: { name: string; employment_id: string; clock_in: string; late_minutes: number }[];
+  no_salary: number | null;
+  payroll: { year: number; month: number; status: string | null; gross: number | null; net: number | null; employer: number | null };
+  joiners: { employment_id: string; name: string; join_date: string; department: string | null }[];
+};
+
+export async function getDashboardTambahan(companyId: string): Promise<DashboardTambahan> {
+  return must(await getSupabase().rpc("hr_dashboard_extra", { p_company: companyId })) as unknown as DashboardTambahan;
+}
+
+export type TugasSaya = {
+  task_id: string;
+  request_id: string;
+  request_type: string;
+  title: string;
+  requester_nickname: string | null;
+  step_name: string;
+  sla_breached: boolean;
+  submitted_at: string;
+};
+
+export async function getTugasSaya(companyId: string): Promise<TugasSaya[]> {
+  return (must(
+    await getSupabase()
+      .from("v_my_approval_tasks")
+      .select("task_id, request_id, request_type, title, requester_nickname, step_name, sla_breached, submitted_at")
+      .eq("company_id", companyId)
+      .order("submitted_at"),
+  ) ?? []) as TugasSaya[];
+}

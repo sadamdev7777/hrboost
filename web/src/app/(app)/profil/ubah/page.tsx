@@ -17,7 +17,7 @@ export default function ProfilUbahPage() {
   const me = useMe();
   const p = useData(() => getProfil(me.personId), [me.personId]);
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title="Ubah profil" href="/profil" />
       {p.error && <ErrorBox message={p.error} />}
       {p.loading && !p.data && <Loading />}
@@ -161,7 +161,7 @@ function Borang({ profil }: { profil: Profil }) {
         {ralat && <ErrorBox message={ralat} />}
       </main>
 
-      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-2.5 pb-[26px]">
+      <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-2.5 pb-[26px]">
         <button type="button" onClick={simpan} disabled={busy} className="h-12 w-full rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
           {busy ? "Menyimpan…" : "Simpan"}
         </button>

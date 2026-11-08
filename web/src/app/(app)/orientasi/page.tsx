@@ -20,7 +20,7 @@ export default function OrientasiPage() {
 
   if (!done.data) {
     return (
-      <Screen>
+      <Screen lebar="sederhana">
         <Loading />
       </Screen>
     );
@@ -32,7 +32,7 @@ export default function OrientasiPage() {
   const hp = hariPertama.data;
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <main className="flex grow flex-col gap-3 px-4 pt-7 pb-3">
         <div className="flex flex-col gap-1.5">
           <h1 className="m-0 text-2xl font-extrabold">Lengkapkan akaun anda</h1>
@@ -107,7 +107,7 @@ export default function OrientasiPage() {
         )}
       </main>
 
-      <div className="sticky bottom-0 flex flex-col gap-1.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+      <div className="bar-bawah sticky bottom-0 flex flex-col gap-1.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <Link
           href={seterusnya}
           className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white! hover:bg-primary-hover"

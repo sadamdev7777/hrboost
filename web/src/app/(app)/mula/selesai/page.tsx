@@ -34,7 +34,7 @@ function Selesai() {
   const k = d.data;
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <main className="flex grow flex-col gap-4 px-4 pt-10 pb-4">
         {d.error && <ErrorBox message={d.error} />}
         {!k && !d.error && <Loading />}
@@ -90,7 +90,7 @@ function Selesai() {
           </>
         )}
       </main>
-      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+      <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <Link href="/pengurusan" className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white!">
           Pergi ke Papan Pemuka
         </Link>

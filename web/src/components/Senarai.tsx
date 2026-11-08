@@ -58,7 +58,7 @@ export function HadPeranan({ roles, children, back = "/saya" }: { roles: Role[];
   const me = useMe();
   if (!me.active || !hasRole(me, roles)) {
     return (
-      <Screen>
+      <Screen lebar="sederhana">
         <BackHeader title="Tiada akses" href={back} />
         <main className="px-4 pt-2 text-sm text-muted">Skrin ini hanya untuk {roles.map((r) => ({ hr: "HR", finance: "Kewangan", ceo: "CEO", admin: "Pentadbir" })[r as string] ?? r).join(", ")} syarikat ini.</main>
       </Screen>

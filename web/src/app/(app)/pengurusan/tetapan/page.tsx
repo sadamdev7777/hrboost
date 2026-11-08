@@ -51,6 +51,8 @@ function Menu() {
       />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
         {r.error && <ErrorBox message={r.error} />}
+<div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6 lg:gap-y-5">
+<div className="flex flex-col gap-2.5">
         <Seksyen>KELULUSAN &amp; AUTOMASI</Seksyen>
         <Kotak>
           <BarisPautan href="/pengurusan/tetapan/aliran" kanan={em(x && `${x.workflows} jenis`)}>
@@ -63,7 +65,9 @@ function Menu() {
             Automasi WhatsApp
           </BarisPautan>
         </Kotak>
+</div>
 
+<div className="flex flex-col gap-2.5">
         <Seksyen className="pt-1">CUTI, TUNTUTAN &amp; KEHADIRAN</Seksyen>
         <Kotak>
           <BarisPautan href="/pengurusan/tetapan/cuti">Jenis &amp; Kelayakan Cuti</BarisPautan>
@@ -75,7 +79,9 @@ function Menu() {
             Waktu Kerja
           </BarisPautan>
         </Kotak>
+</div>
 
+<div className="flex flex-col gap-2.5">
         <Seksyen className="pt-1">GAJI &amp; AKAUN</Seksyen>
         <Kotak>
           <BarisPautan href="/pengurusan/tetapan/kadar" kanan={em("KWSP · PERKESO · PCB")}>
@@ -85,7 +91,9 @@ function Menu() {
             Integrasi Akaun
           </BarisPautan>
         </Kotak>
+</div>
 
+<div className="flex flex-col gap-2.5">
         <Seksyen className="pt-1">SISTEM</Seksyen>
         <Kotak>
           <BarisPautan href="/pengurusan/tetapan/syarikat" kanan={em(x?.code)}>
@@ -99,6 +107,8 @@ function Menu() {
             Integrasi Kehadiran
           </BarisPautan>
         </Kotak>
+</div>
+</div>
       </main>
     </Screen>
   );

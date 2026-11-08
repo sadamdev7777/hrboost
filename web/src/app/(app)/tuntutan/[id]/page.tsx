@@ -23,7 +23,7 @@ export default function TuntutanPage() {
 
   if (list.data && !t) {
     return (
-      <Screen>
+      <Screen lebar="sederhana">
         <BackHeader title="Tuntutan" href="/tuntutan" />
         <div className="p-5">
           <ErrorBox message="Tuntutan tidak dijumpai." />
@@ -33,7 +33,7 @@ export default function TuntutanPage() {
   }
   if (!t || !bolehUbah || !t.item) {
     return (
-      <Screen>
+      <Screen lebar="sederhana">
         <BackHeader title="Tuntutan" href="/tuntutan" />
         <Loading />
       </Screen>

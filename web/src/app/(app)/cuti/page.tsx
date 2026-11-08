@@ -44,6 +44,8 @@ export default function CutiPage() {
       <BackHeader title="Cuti" href="/saya" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         {baki.error && <ErrorBox message={baki.error} />}
+        <div className="flex flex-col gap-3 lg:grid lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:items-start lg:gap-6">
+        <div className="flex flex-col gap-3">
         <div className="grid grid-cols-3 gap-2">
           {kad.map((b) => (
             <div key={b.code} className="flex flex-col gap-0.5 rounded-[14px] bg-surface px-3.5 py-3">
@@ -98,6 +100,7 @@ export default function CutiPage() {
           </div>
         </div>
 
+        </div>
         <div className="flex flex-col gap-2">
           <h2 className="m-0 text-base font-extrabold whitespace-nowrap">Sejarah {tahun}</h2>
           {sejarah.error && <ErrorBox message={sejarah.error} />}
@@ -129,9 +132,10 @@ export default function CutiPage() {
             );
           })}
         </div>
+        </div>
       </main>
 
-      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+      <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <Link href="/mohon/cuti" className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white!">
           Mohon Cuti
         </Link>

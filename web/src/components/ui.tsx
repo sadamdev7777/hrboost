@@ -9,15 +9,17 @@ import { LABEL_STATUS, inisial, type StatusPermohonan } from "@/lib/format";
 const LEBAR = {
   sempit: "lg:max-w-[560px]",
   sederhana: "lg:max-w-[760px]",
-  lebar: "lg:max-w-[1180px]",
+  lebar: "lg:max-w-[1240px]",
 } as const;
 
 /**
  * Bingkai skrin: lajur telefon (≤ 480px) pada telefon; pada skrin lebar (≥ 1024px)
- * lajur dilebarkan mengikut `lebar` (skrin pengurusan guna "lebar").
+ * kandungan dilebarkan (lalai "lebar") dan dijajarkan ke kiri bersebelahan menu sisi.
  */
-export function Screen({ children, lebar = "sederhana" }: { children: ReactNode; lebar?: keyof typeof LEBAR }) {
-  return <div className={`mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-page text-ink lg:px-6 ${LEBAR[lebar]}`}>{children}</div>;
+export function Screen({ children, lebar = "lebar" }: { children: ReactNode; lebar?: keyof typeof LEBAR }) {
+  // "sempit" = halaman awam / di luar aplikasi (tanpa menu sisi): kekal di tengah.
+  const kiri = lebar === "sempit" ? "" : "lg:mx-0 lg:px-8";
+  return <div className={`mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-page text-ink ${kiri} ${LEBAR[lebar]}`}>{children}</div>;
 }
 
 /** Pengepala dengan butang kembali (44px) dan tajuk. */

@@ -24,7 +24,7 @@ export default function OrientasiBankPage() {
 
   if (!asal.data) {
     return (
-      <Screen>
+      <Screen lebar="sederhana">
         <Loading />
       </Screen>
     );

@@ -23,6 +23,7 @@ import {
 } from "@/components/icons";
 import { Screen } from "@/components/ui";
 import { TabNav, TukarMod } from "@/components/TabNav";
+import { useSkrinLebar } from "@/lib/skrin";
 
 // Rujukan reka bentuk: design/Saya.dc.html
 export default function SayaPage() {
@@ -35,6 +36,7 @@ export default function SayaPage() {
     const t = todayISO();
     return must(await getSupabase().rpc("team_birthdays", { p_company: emp.companyId, p_from: t, p_to: t })) ?? [];
   }, [emp?.companyId]);
+  const lebar = useSkrinLebar();
   const pengurusan = hasRole(me, ["hr", "finance", "ceo", "admin"]);
   const hariIni = (jadi.data ?? []).filter((b) => b.person_id !== me.personId);
 
@@ -58,8 +60,9 @@ export default function SayaPage() {
           </div>
           <IconChevronRight size={20} className="text-[#9AA8A5]" />
         </Link>
-        <TukarMod className="lg:hidden" />
+        {!lebar && <TukarMod />}
 
+        <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
         <Kumpulan tajuk="MENU SAYA">
           <Baris href="/cuti" icon={<IconCalendar size={18} />} label="Cuti">
             {baki.data?.AL && <span className="text-[13px] text-muted">Baki {hari(baki.data.AL.available)}</span>}
@@ -90,11 +93,12 @@ export default function SayaPage() {
             <Baris href="/pengurusan/tetapan" icon={<IconSettings size={18} />} tone="bg-[#FDEBD7] text-warning" label="Tetapan" />
           </Kumpulan>
         )}
+        </div>
 
         <button
           type="button"
           onClick={logKeluar}
-          className="h-12 rounded-[14px] border border-line bg-surface text-sm font-bold text-danger"
+          className="h-12 rounded-[14px] border lg:w-60 border-line bg-surface text-sm font-bold text-danger"
         >
           Log keluar
         </button>

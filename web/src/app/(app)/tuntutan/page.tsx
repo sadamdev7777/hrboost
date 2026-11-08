@@ -67,7 +67,7 @@ export default function TuntutanSayaPage() {
         ))}
       </main>
 
-      <div className="sticky bottom-0 grid grid-cols-2 gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+      <div className="bar-bawah sticky bottom-0 grid grid-cols-2 gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <Link href="/tuntutan/baru" className="flex h-12 items-center justify-center gap-2 rounded-button bg-primary text-sm font-extrabold text-white!">
           Ambil gambar
         </Link>

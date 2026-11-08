@@ -118,7 +118,7 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
 
   if (jenis.loading && !jenis.data) {
     return (
-      <Screen>
+      <Screen lebar="sederhana">
         <BackHeader title="Tuntutan Baharu" href="/tuntutan" />
         <Loading />
       </Screen>
@@ -127,7 +127,7 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
 
   if (!borang) {
     return (
-      <Screen>
+      <Screen lebar="sederhana">
         <BackHeader title="Tuntutan Baharu" href="/tuntutan" />
         {inputs}
         <main className="flex grow flex-col gap-3 px-4 pt-2 pb-4">
@@ -163,7 +163,7 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
   }
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title={claimId ? "Ubah Tuntutan" : "Tuntutan Baharu"} href="/tuntutan" />
       {inputs}
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
@@ -235,7 +235,7 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
         )}
       </main>
 
-      <div className="sticky bottom-0 grid grid-cols-[1fr_2fr] gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+      <div className="bar-bawah sticky bottom-0 grid grid-cols-[1fr_2fr] gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <button type="button" disabled={!!busy} onClick={() => simpan(false)} className="h-12 rounded-button border-[1.5px] border-line bg-surface text-sm font-bold text-ink disabled:opacity-60">
           {busy === "draf" ? "Menyimpan…" : "Simpan draf"}
         </button>

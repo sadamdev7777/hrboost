@@ -104,7 +104,7 @@ export default function MohonCutiPage() {
 
   if (info.loading && !info.data) {
     return (
-      <Screen>
+      <Screen lebar="sederhana">
         <BackHeader title="Mohon Cuti" href="/utama" />
         <Loading />
       </Screen>
@@ -115,14 +115,14 @@ export default function MohonCutiPage() {
   const n = kira.data?.days ?? null;
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title="Mohon Cuti" href="/utama" />
       <main className="flex grow flex-col gap-[18px] px-4 pt-2 pb-4">
         {info.error && <ErrorBox message={info.error} />}
 
         <fieldset className="m-0 flex flex-col gap-2.5 border-0 p-0">
           <legend className="mb-2.5 text-sm font-bold">Jenis cuti</legend>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
             {JENIS.filter((c) => info.data?.types.some((t) => t.code === c)).map((c) => {
               const on = c === code;
               const sub = c === "AL" ? (al ? `Baki ${hari(al.available)} hari` : "Cuti tahunan") : SUB[c];
@@ -209,7 +209,7 @@ export default function MohonCutiPage() {
         {error && <ErrorBox message={error} />}
       </main>
 
-      <div className="sticky bottom-0 flex flex-col gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+      <div className="bar-bawah sticky bottom-0 flex flex-col gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <button
           type="button"
           onClick={hantar}

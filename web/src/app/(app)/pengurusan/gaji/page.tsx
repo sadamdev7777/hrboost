@@ -65,7 +65,7 @@ function ProsesGaji() {
   const langkah = !status ? 0 : status === "draft" ? 1 : status === "calculated" || status === "returned" ? 2 : status === "pending" ? 3 : 4;
 
   return (
-    <Screen lebar="sederhana">
+    <Screen>
       <PengepalaAkar
         backHr="/pengurusan"
         title={`Gaji ${BULAN_PENUH[tempoh.m - 1].slice(0, 3)} ${tempoh.y}`}
@@ -183,7 +183,7 @@ function Langkah1({ data, reload }: { data: Data; reload: () => void }) {
         <span className="text-[13px] leading-normal text-[#4A5A57]">Slip gaji (WhatsApp ke pekerja) · Fail bank pukal · KWSP · PERKESO/SIP · PCB (CP39) · Jurnal ke sistem perakaunan</span>
         {ralat && <ErrorBox message={ralat} />}
       </main>
-      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+      <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <ButangUtama onClick={kira} busy={busy} disabled={!data.prep.statutory_ready}>
           Kira Gaji
         </ButangUtama>
@@ -316,7 +316,7 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
         </span>
         {ralat && <ErrorBox message={ralat} />}
       </main>
-      <div className="sticky bottom-0 grid grid-cols-[auto_1fr] gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+      <div className="bar-bawah sticky bottom-0 grid grid-cols-[auto_1fr] gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <button type="button" disabled={!!busy} onClick={() => buat("kira")} className="h-12 rounded-button border-2 border-primary px-4 text-sm font-extrabold text-primary disabled:opacity-60">
           {busy === "kira" ? "Mengira…" : "Kira semula"}
         </button>
@@ -408,7 +408,7 @@ function Langkah4({ data, reload }: { data: Data; reload: () => void }) {
         {ralat && <ErrorBox message={ralat} />}
       </main>
       {!dibayar && (
-        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <ButangUtama onClick={bayar} busy={busy}>
             Tandakan telah dibayar &amp; hantar slip
           </ButangUtama>

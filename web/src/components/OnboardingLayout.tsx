@@ -24,7 +24,7 @@ export function OnboardingLayout({
   error?: string | null;
 }) {
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <header className="flex items-center gap-2 px-3 pt-4 pb-1">
         <Link href={back} aria-label="Kembali" className="flex size-11 items-center justify-center rounded-full text-ink!">
           <IconBack />
@@ -44,7 +44,7 @@ export function OnboardingLayout({
         {children}
         {error && <ErrorBox message={error} />}
       </main>
-      <div className="sticky bottom-0 flex flex-col gap-2 border-t border-line-soft bg-surface px-4 pt-3 pb-5">{footer}</div>
+      <div className="bar-bawah sticky bottom-0 flex flex-col gap-2 border-t border-line-soft bg-surface px-4 pt-3 pb-5">{footer}</div>
     </Screen>
   );
 }

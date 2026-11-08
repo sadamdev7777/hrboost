@@ -42,98 +42,100 @@ function StaffUtama({ me }: { me: Me }) {
 
       {!emp && <ErrorBox message="Tiada pekerjaan aktif ditemui untuk akaun ini. Sila hubungi HR." />}
 
-      <section className="flex flex-col gap-3 rounded-[20px] bg-primary p-5 text-white">
-        <div className="flex items-start justify-between">
-          <div className="flex flex-col gap-1">
-            <span className="text-[13px] opacity-90">Baki cuti tahunan {year}</span>
-            <span className="text-[40px] leading-none font-extrabold">
-              {al ? hari(al.available) : "–"} <span className="text-lg font-semibold">hari</span>
+      <div className="flex flex-col gap-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
+        <div className="flex flex-col gap-5">
+          <section className="flex flex-col gap-3 rounded-[20px] bg-primary p-5 text-white">
+            <div className="flex items-start justify-between">
+              <div className="flex flex-col gap-1">
+                <span className="text-[13px] opacity-90">Baki cuti tahunan {year}</span>
+                <span className="text-[40px] leading-none font-extrabold">
+                  {al ? hari(al.available) : "–"} <span className="text-lg font-semibold">hari</span>
+                </span>
+              </div>
+              {al && al.pending > 0 && (
+                <span className="rounded-xl bg-white/16 px-2.5 py-1.5 text-xs font-semibold">
+                  {hari(al.pending)} hari menunggu
+                </span>
+              )}
+            </div>
+            <div className="flex h-2 overflow-hidden rounded bg-white/22" aria-hidden="true">
+              <div className="bg-white" style={{ width: `${usedPct}%` }} />
+              <div className="bg-[#9ED9CE]" style={{ width: `${pendPct}%` }} />
+            </div>
+            <span className="text-[13px] opacity-90">
+              {al ? `Kelayakan ${hari(al.entitled)} hari` : "Memuatkan baki…"}
+              {mc ? ` · baki MC ${hari(mc.available)} hari` : ""}
             </span>
+          </section>
+
+          <div className="grid grid-cols-3 gap-2.5">
+            <QuickAction href="/mohon/cuti" label="Mohon Cuti" icon={<IconCalendar size={22} />} />
+            <QuickAction href="/tuntutan/baru" label="Buat Tuntutan" icon={<IconReceipt size={22} />} />
+            <QuickAction href="/kehadiran/betulkan" label="Betulkan Masa" icon={<IconClock size={22} />} />
           </div>
-          {al && al.pending > 0 && (
-            <span className="rounded-xl bg-white/16 px-2.5 py-1.5 text-xs font-semibold">
-              {hari(al.pending)} hari menunggu
-            </span>
+          {emp && (
+            <section className="flex flex-col gap-3 rounded-card bg-surface px-4 py-3">
+              <div className="flex items-center justify-between">
+                <h2 className="m-0 text-base font-extrabold">Kehadiran minggu ini</h2>
+                <span className="text-xs text-muted">Waktu masuk {emp.workStart.replace(/^0/, "")}</span>
+              </div>
+              <div className="grid grid-cols-5 gap-1.5">
+                {(hadir.data ?? []).map((d) => {
+                  const future = d.date > todayISO();
+                  const none = !d.clockIn;
+                  return (
+                    <div
+                      key={d.date}
+                      className={`flex flex-col items-center gap-1 rounded-[10px] py-2 ${
+                        d.late ? "bg-warning-soft" : none ? "border-[1.5px] border-dashed border-line-strong" : "bg-page"
+                      }`}
+                    >
+                      <span className={`text-[11px] ${d.late ? "text-warning" : "text-muted"}`}>{hariPendek(d.date)}</span>
+                      <span className={`text-[13px] font-bold ${d.late ? "text-warning" : none ? "text-muted" : ""}`}>
+                        {d.clockIn ? masaRingkas(d.clockIn) : future ? "—" : "—"}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
           )}
         </div>
-        <div className="flex h-2 overflow-hidden rounded bg-white/22" aria-hidden="true">
-          <div className="bg-white" style={{ width: `${usedPct}%` }} />
-          <div className="bg-[#9ED9CE]" style={{ width: `${pendPct}%` }} />
-        </div>
-        <span className="text-[13px] opacity-90">
-          {al ? `Kelayakan ${hari(al.entitled)} hari` : "Memuatkan baki…"}
-          {mc ? ` · baki MC ${hari(mc.available)} hari` : ""}
-        </span>
-      </section>
-
-      <div className="grid grid-cols-3 gap-2.5">
-        <QuickAction href="/mohon/cuti" label="Mohon Cuti" icon={<IconCalendar size={22} />} />
-        <QuickAction href="/tuntutan/baru" label="Buat Tuntutan" icon={<IconReceipt size={22} />} />
-        <QuickAction href="/kehadiran/betulkan" label="Betulkan Masa" icon={<IconClock size={22} />} />
-      </div>
-
-      <section className="flex flex-col gap-2.5">
-        <div className="flex items-center justify-between">
-          <h2 className="m-0 text-base font-extrabold">Permohonan saya</h2>
-          <Link href="/permohonan" className="text-[13px] font-bold">
-            Lihat semua
-          </Link>
-        </div>
-        {mohon.error && <ErrorBox message={mohon.error} />}
-        {mohon.data?.length === 0 && (
-          <div className="rounded-card bg-surface px-4 py-3 text-[13px] text-muted">Tiada permohonan lagi.</div>
-        )}
-        {mohon.data?.map((p) => {
-          const v = paparPermohonan(p);
-          const where = p.status === "pending" ? kiniDi(p.waitingFor) : null;
-          return (
-            <Link
-              key={p.id}
-              href={`/permohonan/${p.id}`}
-              className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3 text-ink!"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-sm font-bold">{v.title}</span>
-                <StatusPill status={p.status} />
-              </div>
-              {(p.status === "pending" || p.status === "approved") && p.totalSteps > 0 && (
-                <StepBar total={p.totalSteps} current={p.currentStep} status={p.status} />
-              )}
-              <span className="text-[13px] text-muted">
-                {[where, v.sub].filter(Boolean).join(" · ")}
-              </span>
-            </Link>
-          );
-        })}
-      </section>
-
-      {emp && (
-        <section className="flex flex-col gap-3 rounded-card bg-surface px-4 py-3">
-          <div className="flex items-center justify-between">
-            <h2 className="m-0 text-base font-extrabold">Kehadiran minggu ini</h2>
-            <span className="text-xs text-muted">Waktu masuk {emp.workStart.replace(/^0/, "")}</span>
-          </div>
-          <div className="grid grid-cols-5 gap-1.5">
-            {(hadir.data ?? []).map((d) => {
-              const future = d.date > todayISO();
-              const none = !d.clockIn;
+          <section className="flex flex-col gap-2.5">
+            <div className="flex items-center justify-between">
+              <h2 className="m-0 text-base font-extrabold">Permohonan saya</h2>
+              <Link href="/permohonan" className="text-[13px] font-bold">
+                Lihat semua
+              </Link>
+            </div>
+            {mohon.error && <ErrorBox message={mohon.error} />}
+            {mohon.data?.length === 0 && (
+              <div className="rounded-card bg-surface px-4 py-3 text-[13px] text-muted">Tiada permohonan lagi.</div>
+            )}
+            {mohon.data?.map((p) => {
+              const v = paparPermohonan(p);
+              const where = p.status === "pending" ? kiniDi(p.waitingFor) : null;
               return (
-                <div
-                  key={d.date}
-                  className={`flex flex-col items-center gap-1 rounded-[10px] py-2 ${
-                    d.late ? "bg-warning-soft" : none ? "border-[1.5px] border-dashed border-line-strong" : "bg-page"
-                  }`}
+                <Link
+                  key={p.id}
+                  href={`/permohonan/${p.id}`}
+                  className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3 text-ink!"
                 >
-                  <span className={`text-[11px] ${d.late ? "text-warning" : "text-muted"}`}>{hariPendek(d.date)}</span>
-                  <span className={`text-[13px] font-bold ${d.late ? "text-warning" : none ? "text-muted" : ""}`}>
-                    {d.clockIn ? masaRingkas(d.clockIn) : future ? "—" : "—"}
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-bold">{v.title}</span>
+                    <StatusPill status={p.status} />
+                  </div>
+                  {(p.status === "pending" || p.status === "approved") && p.totalSteps > 0 && (
+                    <StepBar total={p.totalSteps} current={p.currentStep} status={p.status} />
+                  )}
+                  <span className="text-[13px] text-muted">
+                    {[where, v.sub].filter(Boolean).join(" · ")}
                   </span>
-                </div>
+                </Link>
               );
             })}
-          </div>
-        </section>
-      )}
+          </section>
+      </div>
     </main>
   );
 }

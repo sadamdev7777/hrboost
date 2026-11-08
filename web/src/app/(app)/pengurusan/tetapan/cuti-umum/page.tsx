@@ -59,7 +59,7 @@ function CutiUmum() {
   }
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader
         title={`Cuti Umum ${tahun}`}
         href="/pengurusan/tetapan"
@@ -134,7 +134,7 @@ function CutiUmum() {
         )}
       </main>
       {d.data && semua.length > 0 && (
-        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <ButangUtama onClick={simpan} busy={busy} disabled={!cukup}>
             Simpan &amp; maklumkan pekerja
           </ButangUtama>

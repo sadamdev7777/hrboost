@@ -73,7 +73,7 @@ function Integrasi() {
   const bersambung = s?.configured && !s.last_error && !!s.last_synced_at;
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title="Integrasi Kehadiran" href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-4">
         {d.error && <ErrorBox message={d.error} />}
@@ -169,7 +169,7 @@ function Integrasi() {
         )}
       </main>
       {s?.configured && (
-        <div className="sticky bottom-0 grid grid-cols-2 gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <div className="bar-bawah sticky bottom-0 grid grid-cols-2 gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <button type="button" disabled={!!busy} onClick={() => panggil("test")} className="h-12 rounded-button border-2 border-primary text-sm font-extrabold text-primary disabled:opacity-60">
             {busy === "test" ? "Menguji…" : "Uji sambungan"}
           </button>

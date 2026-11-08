@@ -76,7 +76,7 @@ function Betulkan() {
   }
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title="Betulkan masa" href="/kehadiran" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         <label className="flex items-center gap-2 text-sm">
@@ -149,7 +149,7 @@ function Betulkan() {
         </span>
         {ralat && <ErrorBox message={ralat} />}
       </main>
-      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+      <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <ButangUtama onClick={hantar} busy={busy} disabled={r?.correction === "pending"}>
           {r?.correction === "pending" ? "Sedang menunggu kelulusan" : "Hantar permohonan"}
         </ButangUtama>

@@ -62,7 +62,7 @@ function Akaun() {
   }
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title="Integrasi perakaunan" href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
         {d.error && <ErrorBox message={d.error} />}

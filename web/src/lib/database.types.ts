@@ -1744,6 +1744,12 @@ isOneToOne: false
 "hr_dashboard":
 { Args: { "p_company": string }; Returns: Json
                            },
+"hr_dashboard_extra":
+{ Args: { "p_company": string }; Returns: Json
+                           },
+"hr_pay_preview":
+{ Args: { "p_employment": string,"p_items": Json,"p_on"?: string }; Returns: Json
+                           },
 "hr_pay_table":
 { Args: { "p_company": string,"p_on"?: string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: Json
                            },
@@ -1899,6 +1905,9 @@ isOneToOne: false
                            },
 "pay_component_is_fixed":
 { Args: { "p_code": string }; Returns: boolean
+                           },
+"pay_estimate":
+{ Args: { "p_employment": string,"p_items": Json,"p_on": string }; Returns: Json
                            },
 "payroll_calculate":
 { Args: { "p_run": string }; Returns: Json

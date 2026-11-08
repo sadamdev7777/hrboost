@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { todayISO } from "@/lib/format";
-import { setGajiPekerja, tambahKomponen, type KomponenTetap } from "@/lib/gaji";
+import { pratontonGaji, setGajiPekerja, tambahKomponen, type Kiraan, type KomponenTetap } from "@/lib/gaji";
 import { ErrorBox } from "./ui";
 import { ButangUtama, Lembaran, MedanBorang, inputKecil } from "./Senarai";
 
@@ -41,6 +41,16 @@ export function UbahGaji({
   const [mulai, setMulai] = useState(mulaiLalai(adaGaji, tarikhMula));
   const [busy, setBusy] = useState(false);
   const [ralat, setRalat] = useState<string | null>(null);
+  const semua: Record<string, number> | null = (() => {
+    const o: Record<string, number> = {};
+    for (const c of komponen) {
+      const n = nilaiInput(nilai[c.code] ?? "");
+      if (n === null) return null;
+      if (n > 0) o[c.code] = n;
+    }
+    return o.BASIC ? o : null;
+  })();
+  const pr = usePratonton(employmentId, semua, mulai || undefined);
 
   async function simpan() {
     setRalat(null);
@@ -81,7 +91,9 @@ export function UbahGaji({
           <input className={inputKecil} type="date" min={tarikhMula} value={mulai} onChange={(e) => setMulai(e.target.value)} />
         </MedanBorang>
       </div>
-      <span className="text-xs leading-normal text-muted">Kosongkan atau isi 0 untuk menghentikan elaun mulai tarikh tersebut. Komisen dan kerja lebih masa dimasukkan setiap bulan dalam Proses Gaji.</span>
+      <RingkasanKiraan k={semua ? pr.k : null} mengira={pr.mengira} padat />
+      {pr.ralat && <ErrorBox message={pr.ralat} />}
+      <span className="text-xs leading-normal text-muted">Kosongkan atau isi 0 untuk menghentikan elaun mulai tarikh tersebut.</span>
       {ralat && <ErrorBox message={ralat} />}
       <ButangUtama onClick={simpan} busy={busy}>
         Simpan gaji
@@ -139,5 +151,78 @@ export function KomponenBaharu({ companyId, onClose, onDone }: { companyId: stri
         Tambah
       </ButangUtama>
     </Lembaran>
+  );
+}
+
+/** Pratonton langsung (dinyahlantun 350 ms) setiap kali amaun berubah. */
+export function usePratonton(employmentId: string, items: Record<string, number> | null, pada?: string) {
+  const kunci = items ? JSON.stringify(items) : "";
+  const [hasil, setHasil] = useState<{ kunci: string; k: Kiraan | null; ralat: string | null } | null>(null);
+  useEffect(() => {
+    if (!kunci) return;
+    let batal = false;
+    const t = setTimeout(() => {
+      pratontonGaji(employmentId, JSON.parse(kunci) as Record<string, number>, pada)
+        .then((k) => !batal && setHasil({ kunci, k, ralat: null }))
+        .catch((e: unknown) => !batal && setHasil({ kunci, k: null, ralat: e instanceof Error ? e.message : "Ralat" }));
+    }, 350);
+    return () => {
+      batal = true;
+      clearTimeout(t);
+    };
+  }, [employmentId, kunci, pada]);
+  return { k: hasil?.k ?? null, ralat: hasil?.ralat ?? null, mengira: !!kunci && hasil?.kunci !== kunci };
+}
+
+const rm2 = (n: number | undefined) => Number(n ?? 0).toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function Baris({ l, v, tebal, tolak }: { l: string; v: number; tebal?: boolean; tolak?: boolean }) {
+  return (
+    <div className={`flex items-center justify-between gap-2 ${tebal ? "font-extrabold" : ""}`}>
+      <span className={tebal ? "" : "text-subtle"}>{l}</span>
+      <span className="tabular-nums">
+        {tolak && v > 0 ? "−" : ""}
+        {rm2(v)}
+      </span>
+    </div>
+  );
+}
+
+/** Pecahan gaji: kasar → potongan pekerja → bersih; caruman majikan → kos majikan. */
+export function RingkasanKiraan({ k, mengira, padat }: { k: Kiraan | null; mengira?: boolean; padat?: boolean }) {
+  if (!k) return <div className="rounded-[14px] bg-[#F7F9F8] px-4 py-3 text-[13px] text-muted">{mengira ? "Mengira…" : "Isi gaji pokok untuk melihat kiraan KWSP, PERKESO, SIP dan PCB."}</div>;
+  if (!k.statutory_ready) return <div className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] text-warning">Jadual kadar berkanun belum dimuatkan untuk tarikh ini.</div>;
+  return (
+    <div className={`grid gap-3 rounded-[14px] bg-[#F7F9F8] px-4 py-3 text-[13px] ${padat ? "" : "lg:grid-cols-2 lg:gap-6"} ${mengira ? "opacity-60" : ""}`} aria-live="polite">
+      <div className="flex flex-col gap-1">
+        <b className="text-xs tracking-[0.04em] text-muted">PEKERJA (SEBULAN)</b>
+        <Baris l="Gaji kasar" v={k.gross} tebal />
+        <Baris l="KWSP pekerja" v={k.epf_employee} tolak />
+        <Baris l="PERKESO pekerja" v={k.socso_employee} tolak />
+        <Baris l="SIP pekerja" v={k.eis_employee} tolak />
+        <Baris l="PCB (anggaran)" v={k.pcb} tolak />
+        {k.fixed_deduction > 0 && <Baris l="Potongan tetap" v={k.fixed_deduction} tolak />}
+        <div className="mt-1 border-t border-line pt-1.5">
+          <Baris l="Gaji bersih" v={k.net} tebal />
+        </div>
+      </div>
+      <div className="flex flex-col gap-1">
+        <b className="text-xs tracking-[0.04em] text-muted">MAJIKAN (SEBULAN)</b>
+        <Baris l="Gaji kasar" v={k.gross} />
+        <Baris l="KWSP majikan" v={k.epf_employer} />
+        <Baris l="PERKESO majikan" v={k.socso_employer} />
+        <Baris l="SIP majikan" v={k.eis_employer} />
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-subtle">Levi HRD Corp</span>
+          <span className="tabular-nums">{k.hrdf_registered ? rm2(k.hrdf) : "Tidak berdaftar"}</span>
+        </div>
+        <div className="mt-1 border-t border-line pt-1.5">
+          <Baris l="Jumlah kos majikan" v={k.employer_cost} tebal />
+        </div>
+      </div>
+      <span className="text-[11px] leading-snug text-muted lg:col-span-2">
+        Anggaran gaji tetap sahaja. Komisen, kerja lebih masa, tuntutan dan cuti tanpa gaji ditambah semasa Proses Gaji. PCB bergantung pada data terkumpul tahun ini.
+      </span>
+    </div>
   );
 }

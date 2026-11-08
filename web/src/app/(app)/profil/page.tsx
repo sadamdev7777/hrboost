@@ -32,6 +32,8 @@ export default function ProfilPage() {
         {p.loading && !d && <Loading />}
         {d && (
           <>
+<div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6 lg:gap-y-5">
+<div className="flex flex-col gap-2.5">
             <Seksyen>PERIBADI</Seksyen>
             <Kotak>
               <Medan label="Nama penuh (kad pengenalan)">{d.fullName}</Medan>
@@ -40,7 +42,8 @@ export default function ProfilPage() {
               <Medan label="WhatsApp">{sorokTelefon(d.phone)}</Medan>
               <Medan label="Alamat">{d.address || "Belum diisi"}</Medan>
             </Kotak>
-
+</div>
+<div className="flex flex-col gap-2.5">
             <Seksyen>LOG MASUK</Seksyen>
             <Kotak>
               <Link href="/akaun/kata-laluan" className="flex min-h-[50px] items-center justify-between gap-3 px-4 py-2 text-sm text-ink!">
@@ -48,7 +51,8 @@ export default function ProfilPage() {
                 <span className="truncate font-semibold">{me.loginEmail ?? "Belum ditetapkan"} ›</span>
               </Link>
             </Kotak>
-
+</div>
+<div className="flex flex-col gap-2.5">
             <Seksyen>BANK (UNTUK GAJI)</Seksyen>
             <Kotak>
               <Medan label="Bank">{d.bankName || "Belum diisi"}</Medan>
@@ -65,7 +69,8 @@ export default function ProfilPage() {
                 {d.bankDitolak.note ? `: ${d.bankDitolak.note}` : "."}
               </div>
             )}
-
+</div>
+<div className="flex flex-col gap-2.5">
             <Seksyen>PEKERJAAN</Seksyen>
             <Kotak>
               {d.pekerjaan.map((e) => (
@@ -74,7 +79,8 @@ export default function ProfilPage() {
                 </Medan>
               ))}
             </Kotak>
-
+</div>
+<div className="flex flex-col gap-2.5">
             <Seksyen>WARIS</Seksyen>
             <Kotak>
               {d.waris ? (
@@ -84,7 +90,9 @@ export default function ProfilPage() {
               )}
             </Kotak>
 
-            <span className="text-xs leading-normal text-muted">
+
+</div>
+</div>            <span className="text-xs leading-normal text-muted">
               Pertukaran akaun bank perlu disahkan oleh HR. Maklumat sensitif disembunyikan dan setiap akses direkodkan.
             </span>
           </>

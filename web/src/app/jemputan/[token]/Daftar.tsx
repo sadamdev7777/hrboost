@@ -114,7 +114,7 @@ export function Daftar() {
 
   if (preview.loading && !p) {
     return (
-      <Screen>
+      <Screen lebar="sempit">
         <Loading />
       </Screen>
     );
@@ -122,7 +122,7 @@ export function Daftar() {
 
   if (!p?.ok) {
     return (
-      <Screen>
+      <Screen lebar="sempit">
         <div className="flex grow flex-col justify-center gap-4 p-6">
           <h1 className="m-0 text-2xl font-extrabold">{p?.accepted ? "Akaun sudah aktif" : "Pautan tidak sah"}</h1>
           <p className="m-0 text-sm leading-normal text-subtle">{p?.error ?? preview.error}</p>
@@ -145,7 +145,7 @@ export function Daftar() {
   const hariLagi = p.days_left ?? 7;
 
   return (
-    <Screen>
+    <Screen lebar="sempit">
       <form onSubmit={submit} className="flex grow flex-col">
         <div className="flex grow flex-col gap-[18px] px-6 pt-12 pb-4">
           <div className="flex flex-col gap-1.5">

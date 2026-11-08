@@ -12,7 +12,7 @@ export default function DaftarPage() {
   return (
     <Suspense
       fallback={
-        <Screen>
+        <Screen lebar="sempit">
           <Loading />
         </Screen>
       }

@@ -12,7 +12,7 @@ export default function JemputanPage() {
   const [error, setError] = useState<string | null>(null);
 
   return (
-    <Screen>
+    <Screen lebar="sempit">
       <BackHeader href="/masuk" />
       <form
         className="flex grow flex-col gap-4 px-6 pt-2"

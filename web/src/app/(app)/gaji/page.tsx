@@ -101,7 +101,7 @@ export default function GajiPage() {
         )}
       </main>
       {!ea && s && (
-        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <Link href={`/gaji/${s.id}`} className="flex h-12 items-center justify-center gap-2 rounded-button border-2 border-primary text-base font-extrabold text-primary!">
             Muat turun PDF
           </Link>

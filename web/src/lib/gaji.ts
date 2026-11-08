@@ -203,12 +203,41 @@ export type BarisGaji = {
   items: Record<string, number>;
   effective_from: string | null;
   upcoming: boolean;
+  calc: Kiraan | null;
 };
-export type JadualGaji = { on: string; components: KomponenTetap[]; rows: BarisGaji[] };
+/** Anggaran gaji sebulan (gaji tetap sahaja) dengan caruman berkanun — sama seperti Proses Gaji. */
+export type Kiraan = {
+  statutory_ready: boolean;
+  gross: number;
+  fixed_deduction: number;
+  epf_employee: number;
+  epf_employer: number;
+  socso_employee: number;
+  socso_employer: number;
+  eis_employee: number;
+  eis_employer: number;
+  pcb: number;
+  hrdf: number;
+  hrdf_registered: boolean;
+  net: number;
+  employer_cost: number;
+};
+export type JadualGaji = { on: string; components: KomponenTetap[]; rows: BarisGaji[]; totals: Partial<Record<keyof Kiraan, number>> | null };
+
+const nombor = (o: Record<string, unknown> | null) =>
+  o ? (Object.fromEntries(Object.entries(o).map(([k, v]) => [k, typeof v === "string" && v !== "" && !isNaN(Number(v)) ? Number(v) : v])) as never) : null;
+
+export async function pratontonGaji(employmentId: string, items: Record<string, number>, pada?: string): Promise<Kiraan | null> {
+  return nombor(must(await getSupabase().rpc("hr_pay_preview", { p_employment: employmentId, p_items: items, ...(pada ? { p_on: pada } : {}) })) as Record<string, unknown> | null);
+}
 
 export async function getJadualGaji(companyId: string, pada?: string): Promise<JadualGaji> {
   const r = must(await getSupabase().rpc("hr_pay_table", { p_company: companyId, ...(pada ? { p_on: pada } : {}), p_via: "web" })) as unknown as JadualGaji;
-  return { ...r, rows: r.rows.map((x) => ({ ...x, items: Object.fromEntries(Object.entries(x.items).map(([k, v]) => [k, Number(v)])) })) };
+  return {
+    ...r,
+    totals: nombor(r.totals as Record<string, unknown> | null),
+    rows: r.rows.map((x) => ({ ...x, calc: nombor(x.calc as Record<string, unknown> | null), items: Object.fromEntries(Object.entries(x.items).map(([k, v]) => [k, Number(v)])) })),
+  };
 }
 
 export async function setGajiPekerja(employmentId: string, items: Record<string, number>, mulai: string) {

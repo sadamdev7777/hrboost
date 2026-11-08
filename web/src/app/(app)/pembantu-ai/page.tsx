@@ -64,7 +64,7 @@ function Sembang() {
   }
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title="Pembantu AI" href="/saya" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         {mesej.length === 0 && (
@@ -167,7 +167,7 @@ function DrafSurat({ employmentId }: { employmentId: string }) {
   }
 
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <BackHeader title={`Draf surat${nama ? ` · ${nama}` : ""}`} href={`/pengurusan/pekerja/${employmentId}`} />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         <label className="flex flex-col gap-1.5 text-[13px] font-bold text-[#4A5A57]">

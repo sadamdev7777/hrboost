@@ -4,14 +4,16 @@ import Link from "next/link";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
-import { getJadualGaji, jumlahTetap, setGajiPekerja, type BarisGaji, type JadualGaji } from "@/lib/gaji";
+import { getJadualGaji, setGajiPekerja, type BarisGaji, type JadualGaji, type Kiraan } from "@/lib/gaji";
 import { inisial, ringgit, tarikh, todayISO } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
 import { HadPeranan, Tag } from "@/components/Senarai";
-import { KomponenBaharu, UbahGaji, nilaiInput } from "@/components/GajiPekerja";
+import { KomponenBaharu, RingkasanKiraan, UbahGaji, nilaiInput, usePratonton } from "@/components/GajiPekerja";
 import { TabNav } from "@/components/TabNav";
+import { useSkrinLebar } from "@/lib/skrin";
 
 const AV = ["bg-[#E3F1EE] text-primary", "bg-[#FDEBD7] text-warning", "bg-[#EDE9F8] text-ai"];
+const rm = (n: number | undefined | null) => Number(n ?? 0).toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export default function GajiPekerjaPage() {
   return (
@@ -27,12 +29,14 @@ function GajiPekerja() {
   const d = useData(() => getJadualGaji(emp.companyId), [emp.companyId]);
   const [tapis, setTapis] = useState<"semua" | "belum">("semua");
   const [ubah, setUbah] = useState<BarisGaji | null>(null);
+  const [lihat, setLihat] = useState<BarisGaji | null>(null);
   const [baru, setBaru] = useState(false);
   const [pukal, setPukal] = useState(false);
+  const lebar = useSkrinLebar();
   const j = d.data;
   const belum = (j?.rows ?? []).filter((r) => !(r.items.BASIC > 0));
   const senarai = tapis === "belum" ? belum : (j?.rows ?? []);
-  const jumlah = (j?.rows ?? []).reduce((s, r) => s + jumlahTetap(r.items, j!.components), 0);
+  const t = j?.totals ?? {};
 
   return (
     <Screen lebar="lebar">
@@ -47,7 +51,7 @@ function GajiPekerja() {
       />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         <span className="text-sm leading-normal text-subtle">
-          Gaji pokok dan elaun / potongan tetap setiap bulan. Komisen, kerja lebih masa dan tuntutan dimasukkan semasa{" "}
+          Gaji pokok dan elaun / potongan tetap. KWSP, PERKESO, SIP, HRDF dan PCB dikira secara automatik. Komisen, kerja lebih masa dan tuntutan ditambah semasa{" "}
           <Link href="/pengurusan/gaji" className="font-bold">
             Proses Gaji
           </Link>
@@ -57,10 +61,12 @@ function GajiPekerja() {
         {d.loading && !j && <Loading />}
         {j && (
           <>
-            <div className="grid grid-cols-3 gap-2 lg:max-w-[720px]">
+            <div className="grid grid-cols-2 gap-2 lg:grid-cols-5 lg:gap-3">
               <Angka n={String(j.rows.length)} label="Pekerja aktif" />
               <Angka n={String(belum.length)} label="Belum ada gaji pokok" tone={belum.length ? "warning" : undefined} />
-              <Angka n={ringgit(jumlah)} label="Jumlah tetap sebulan" kecil />
+              <Angka n={ringgit(t.gross)} label="Jumlah gaji kasar" kecil />
+              <Angka n={ringgit(t.net)} label="Jumlah gaji bersih" kecil />
+              <Angka n={ringgit(t.employer_cost)} label="Kos majikan (termasuk caruman)" kecil />
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {(
@@ -78,44 +84,72 @@ function GajiPekerja() {
                   {l}
                 </button>
               ))}
-              {!pukal && (
-                <button type="button" onClick={() => setPukal(true)} className="ml-auto hidden h-9 rounded-full border border-primary px-4 text-[13px] font-bold text-primary lg:block">
+              {!pukal && lebar && (
+                <button type="button" onClick={() => setPukal(true)} className="ml-auto h-9 rounded-full border border-primary px-4 text-[13px] font-bold text-primary">
                   Ubah ramai sekali gus
                 </button>
               )}
             </div>
-            {senarai.length === 0 && <span className="text-sm text-muted">{tapis === "belum" ? "Semua pekerja sudah mempunyai gaji pokok." : "Tiada pekerja aktif."}</span>}
+            {senarai.length === 0 && (
+              <span className="text-sm text-muted">{tapis === "belum" ? "Semua pekerja sudah mempunyai gaji pokok." : "Tiada pekerja aktif."}</span>
+            )}
 
-            {senarai.length > 0 &&
+            {lebar &&
+              senarai.length > 0 &&
               (pukal ? (
-                <JadualPukal j={j} rows={senarai} onBatal={() => setPukal(false)} onSiap={() => { setPukal(false); d.reload(); }} />
+                <JadualPukal
+                  j={j}
+                  rows={senarai}
+                  onBatal={() => setPukal(false)}
+                  onSiap={() => {
+                    setPukal(false);
+                    d.reload();
+                  }}
+                />
               ) : (
                 <Jadual j={j} rows={senarai} onUbah={setUbah} />
               ))}
 
-            {/* Telefon: kad setiap pekerja */}
-            <div className="flex flex-col rounded-card bg-surface px-4 lg:hidden [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-              {senarai.map((r, i) => (
-                <button key={r.employment_id} type="button" onClick={() => setUbah(r)} className="flex min-h-14 items-center gap-3 py-2.5 text-left">
-                  <span className={`flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-extrabold ${AV[i % 3]}`}>{inisial(r.name)}</span>
-                  <span className="flex min-w-0 grow flex-col gap-0.5">
-                    <b className="text-sm font-bold">{r.name}</b>
-                    <span className="truncate text-xs text-muted">
-                      {j.components
-                        .filter((c) => r.items[c.code])
-                        .map((c) => `${c.code === "BASIC" ? "Pokok" : c.name} ${ringgit(r.items[c.code])}`)
-                        .join(" · ") || r.employee_no}
+            {!lebar && senarai.length > 0 && (
+              <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
+                {senarai.map((r, i) => (
+                  <button key={r.employment_id} type="button" onClick={() => setLihat(r)} className="flex min-h-14 items-center gap-3 py-2.5 text-left">
+                    <span className={`flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-extrabold ${AV[i % 3]}`}>{inisial(r.name)}</span>
+                    <span className="flex min-w-0 grow flex-col gap-0.5">
+                      <b className="text-sm font-bold">{r.name}</b>
+                      <span className="truncate text-xs text-muted">
+                        {r.items.BASIC > 0 ? `Kasar ${ringgit(r.calc?.gross)} · KWSP ${rm(r.calc?.epf_employee)}` : r.employee_no}
+                      </span>
                     </span>
-                  </span>
-                  {r.items.BASIC > 0 ? <b className="text-sm whitespace-nowrap">{ringgit(jumlahTetap(r.items, j.components))}</b> : <Tag tone="warning">Belum ditetapkan</Tag>}
-                </button>
-              ))}
-            </div>
-            <span className="text-xs leading-normal text-muted">Setiap paparan dan perubahan gaji direkodkan dalam log akses data.</span>
+                    {r.items.BASIC > 0 ? (
+                      <span className="flex flex-col items-end">
+                        <b className="text-sm whitespace-nowrap">{ringgit(r.calc?.net)}</b>
+                        <span className="text-[11px] text-muted">bersih</span>
+                      </span>
+                    ) : (
+                      <Tag tone="warning">Belum ditetapkan</Tag>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+            <span className="text-xs leading-normal text-muted">
+              Angka ialah anggaran sebulan bagi gaji tetap; PCB sebenar bergantung pada data terkumpul tahun ini. Setiap paparan dan perubahan gaji direkodkan dalam log akses data.
+            </span>
           </>
         )}
       </main>
       <TabNav />
+      {lihat && j && !ubah && (
+        <ButiranTelefon
+          r={lihat}
+          onClose={() => setLihat(null)}
+          onUbah={() => {
+            setUbah(lihat);
+            setLihat(null);
+          }}
+        />
+      )}
       {ubah && j && (
         <UbahGaji
           employmentId={ubah.employment_id}
@@ -144,63 +178,136 @@ function GajiPekerja() {
   );
 }
 
+function ButiranTelefon({ r, onClose, onUbah }: { r: BarisGaji; onClose: () => void; onUbah: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40" onClick={onClose}>
+      <div role="dialog" aria-modal="true" aria-label={`Gaji ${r.name}`} className="flex max-h-[90dvh] w-full max-w-[480px] flex-col gap-3 overflow-y-auto rounded-t-[20px] bg-surface px-4 pt-5 pb-5" onClick={(e) => e.stopPropagation()}>
+        <h2 className="m-0 text-lg font-extrabold">Gaji {r.name}</h2>
+        {r.effective_from && <span className="-mt-2 text-xs text-muted">Berkuat kuasa mulai {tarikh(r.effective_from)}</span>}
+        <RingkasanKiraan k={r.items.BASIC > 0 ? r.calc : null} padat />
+        <button type="button" onClick={onUbah} className="h-12 rounded-button bg-primary text-base font-extrabold text-white">
+          Ubah gaji
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function Angka({ n, label, tone, kecil }: { n: string; label: string; tone?: "warning"; kecil?: boolean }) {
   return (
     <div className={`flex flex-col gap-0.5 rounded-[14px] px-3.5 py-3 ${tone === "warning" ? "bg-warning-soft text-warning" : "bg-surface"}`}>
-      <b className={`${kecil ? "text-base lg:text-lg" : "text-xl"} font-extrabold`}>{n}</b>
+      <b className={`${kecil ? "text-base lg:text-lg" : "text-xl"} font-extrabold tabular-nums`}>{n}</b>
       <span className={`text-xs ${tone ? "" : "text-muted"}`}>{label}</span>
     </div>
   );
 }
 
-const th = "px-3 py-3 text-xs font-bold tracking-[0.03em] text-muted";
-const td = "px-3 py-2.5";
+const th = "px-2.5 py-3 text-[11px] font-bold tracking-[0.03em] text-muted whitespace-nowrap";
+const td = "px-2.5 py-2.5 tabular-nums whitespace-nowrap";
 
-/** Jadual (desktop). */
-function Jadual({ j, rows, onUbah }: { j: JadualGaji; rows: BarisGaji[]; onUbah: (r: BarisGaji) => void }) {
+/** Dua angka bertindan: pekerja (atas) / majikan (bawah). */
+function PM({ p, m }: { p?: number; m?: number }) {
   return (
-    <div className="hidden overflow-x-auto rounded-card bg-surface lg:block">
-      <table className="w-full border-collapse text-left text-sm">
+    <span className="flex flex-col items-end leading-tight">
+      <span>{rm(p)}</span>
+      <span className="text-[11px] text-muted">{rm(m)}</span>
+    </span>
+  );
+}
+
+function SelKiraan({ k }: { k: Kiraan | null }) {
+  if (!k || !k.statutory_ready)
+    return (
+      <td colSpan={7} className={`${td} text-center text-muted`}>
+        —
+      </td>
+    );
+  return (
+    <>
+      <td className={`${td} text-right font-semibold`}>{rm(k.gross)}</td>
+      <td className={`${td} text-right`}>
+        <PM p={k.epf_employee} m={k.epf_employer} />
+      </td>
+      <td className={`${td} text-right`}>
+        <PM p={k.socso_employee} m={k.socso_employer} />
+      </td>
+      <td className={`${td} text-right`}>
+        <PM p={k.eis_employee} m={k.eis_employer} />
+      </td>
+      <td className={`${td} text-right`}>{rm(k.pcb)}</td>
+      <td className={`${td} text-right font-extrabold text-primary`}>{rm(k.net)}</td>
+      <td className={`${td} text-right`}>{rm(k.employer_cost)}</td>
+    </>
+  );
+}
+
+const KepalaKiraan = () => (
+  <>
+    <th className={`${th} text-right`}>KASAR</th>
+    <th className={`${th} text-right`}>
+      KWSP
+      <br />
+      <span className="font-semibold">pekerja / majikan</span>
+    </th>
+    <th className={`${th} text-right`}>
+      PERKESO
+      <br />
+      <span className="font-semibold">pekerja / majikan</span>
+    </th>
+    <th className={`${th} text-right`}>
+      SIP
+      <br />
+      <span className="font-semibold">pekerja / majikan</span>
+    </th>
+    <th className={`${th} text-right`}>PCB</th>
+    <th className={`${th} text-right`}>BERSIH</th>
+    <th className={`${th} text-right`}>KOS MAJIKAN</th>
+  </>
+);
+
+/** Jadual (desktop): gaji tetap + kiraan berkanun automatik + jumlah. */
+function Jadual({ j, rows, onUbah }: { j: JadualGaji; rows: BarisGaji[]; onUbah: (r: BarisGaji) => void }) {
+  const t = j.totals ?? {};
+  return (
+    <div className="overflow-x-auto rounded-card bg-surface">
+      <table className="w-full border-collapse text-left text-[13px]">
         <thead>
-          <tr className="border-b border-[#EEF2F1]">
-            <th className={th}>PEKERJA</th>
-            <th className={th}>JABATAN</th>
+          <tr className="border-b border-[#EEF2F1] align-bottom">
+            <th className={`${th} pl-4`}>PEKERJA</th>
             {j.components.map((c) => (
               <th key={c.code} className={`${th} text-right`}>
                 {c.name.toUpperCase()}
                 {c.kind === "deduction" ? " (−)" : ""}
               </th>
             ))}
-            <th className={`${th} text-right`}>JUMLAH</th>
-            <th className={th}>BERKUAT KUASA</th>
+            <KepalaKiraan />
             <th className={th} />
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
             <tr key={r.employment_id} className="border-b border-[#EEF2F1] last:border-0 hover:bg-[#F7F9F8]">
-              <td className={td}>
+              <td className="py-2.5 pr-2.5 pl-4">
                 <span className="flex flex-col">
-                  <b>{r.name}</b>
-                  <span className="text-xs text-muted">{r.employee_no}</span>
+                  <b className="text-sm">{r.name}</b>
+                  <span className="text-[11px] whitespace-nowrap text-muted">
+                    {r.employee_no}
+                    {r.effective_from ? ` · mulai ${tarikh(r.effective_from)}` : ""}
+                  </span>
+                  {r.upcoming && (
+                    <span className="mt-0.5">
+                      <Tag tone="ai">Perubahan akan datang</Tag>
+                    </span>
+                  )}
                 </span>
               </td>
-              <td className={td}>{r.department ?? "—"}</td>
               {j.components.map((c) => (
-                <td key={c.code} className={`${td} text-right tabular-nums`}>
-                  {r.items[c.code] ? ringgit(r.items[c.code]).replace("RM ", "") : c.code === "BASIC" ? <Tag tone="warning">Belum</Tag> : <span className="text-muted">—</span>}
+                <td key={c.code} className={`${td} text-right`}>
+                  {r.items[c.code] ? rm(r.items[c.code]) : c.code === "BASIC" ? <Tag tone="warning">Belum</Tag> : <span className="text-muted">—</span>}
                 </td>
               ))}
-              <td className={`${td} text-right font-bold tabular-nums`}>{r.items.BASIC > 0 ? ringgit(jumlahTetap(r.items, j.components)) : "—"}</td>
-              <td className={`${td} text-muted`}>
-                {r.effective_from ? tarikh(r.effective_from) : "—"}
-                {r.upcoming && (
-                  <span className="ml-1">
-                    <Tag tone="ai">Perubahan akan datang</Tag>
-                  </span>
-                )}
-              </td>
-              <td className={`${td} text-right`}>
+              <SelKiraan k={r.items.BASIC > 0 ? r.calc : null} />
+              <td className="py-2.5 pr-3 text-right">
                 <button type="button" onClick={() => onUbah(r)} className="flex min-h-10 items-center px-2 font-bold text-primary">
                   Ubah
                 </button>
@@ -208,8 +315,83 @@ function Jadual({ j, rows, onUbah }: { j: JadualGaji; rows: BarisGaji[]; onUbah:
             </tr>
           ))}
         </tbody>
+        <tfoot>
+          <tr className="border-t-2 border-[#DCE3E1] bg-[#F7F9F8] font-extrabold">
+            <td className="py-3 pr-2.5 pl-4">Jumlah</td>
+            {j.components.map((c) => (
+              <td key={c.code} className={`${td} text-right`}>
+                {rm(rows.reduce((s, r) => s + (r.items[c.code] ?? 0), 0))}
+              </td>
+            ))}
+            <td className={`${td} text-right`}>{rm(t.gross)}</td>
+            <td className={`${td} text-right`}>
+              <PM p={t.epf_employee} m={t.epf_employer} />
+            </td>
+            <td className={`${td} text-right`}>
+              <PM p={t.socso_employee} m={t.socso_employer} />
+            </td>
+            <td className={`${td} text-right`}>
+              <PM p={t.eis_employee} m={t.eis_employer} />
+            </td>
+            <td className={`${td} text-right`}>{rm(t.pcb)}</td>
+            <td className={`${td} text-right text-primary`}>{rm(t.net)}</td>
+            <td className={`${td} text-right`}>{rm(t.employer_cost)}</td>
+            <td />
+          </tr>
+        </tfoot>
       </table>
     </div>
+  );
+}
+
+/** Satu baris mod ubah ramai, dengan kiraan langsung bagi nilai yang sedang ditaip. */
+function BarisPukal({
+  j,
+  r,
+  nilai,
+  mulai,
+  onNilai,
+}: {
+  j: JadualGaji;
+  r: BarisGaji;
+  nilai: Record<string, string>;
+  mulai: string;
+  onNilai: (code: string, v: string) => void;
+}) {
+  const items: Record<string, number> | null = (() => {
+    const o: Record<string, number> = {};
+    for (const c of j.components) {
+      const n = nilaiInput(nilai[c.code] ?? "");
+      if (n === null) return null;
+      if (n > 0) o[c.code] = n;
+    }
+    return o.BASIC ? o : null;
+  })();
+  const berubah = j.components.some((c) => (nilaiInput(nilai[c.code] ?? "") ?? -1) !== (r.items[c.code] ?? 0));
+  const pr = usePratonton(r.employment_id, berubah ? items : null, r.join_date > mulai ? r.join_date : mulai);
+  const k = berubah ? pr.k : r.items.BASIC > 0 ? r.calc : null;
+  return (
+    <tr className={`border-b border-[#EEF2F1] last:border-0 ${berubah ? "bg-[#FFFBEB]" : ""}`}>
+      <td className="py-2 pr-2.5 pl-4">
+        <span className="flex flex-col">
+          <b className="text-sm">{r.name}</b>
+          <span className="text-[11px] text-muted">{r.employee_no}</span>
+        </span>
+      </td>
+      {j.components.map((c) => (
+        <td key={c.code} className="px-1.5 py-1.5 text-right">
+          <input
+            aria-label={`${c.name} ${r.name}`}
+            inputMode="decimal"
+            placeholder="0.00"
+            value={nilai[c.code] ?? ""}
+            onChange={(e) => onNilai(c.code, e.target.value.replace(/[^\d.,]/g, ""))}
+            className="h-10 w-28 rounded-[10px] border border-line bg-surface px-2.5 text-right tabular-nums outline-none focus:border-primary"
+          />
+        </td>
+      ))}
+      <SelKiraan k={berubah && !items ? null : k} />
+    </tr>
   );
 }
 
@@ -260,41 +442,30 @@ function JadualPukal({ j, rows, onBatal, onSiap }: { j: JadualGaji; rows: BarisG
   }
 
   return (
-    <div className="hidden flex-col gap-3 lg:flex">
+    <div className="flex flex-col gap-3">
       <div className="overflow-x-auto rounded-card bg-surface">
-        <table className="w-full border-collapse text-left text-sm">
+        <table className="w-full border-collapse text-left text-[13px]">
           <thead>
-            <tr className="border-b border-[#EEF2F1]">
-              <th className={th}>PEKERJA</th>
+            <tr className="border-b border-[#EEF2F1] align-bottom">
+              <th className={`${th} pl-4`}>PEKERJA</th>
               {j.components.map((c) => (
                 <th key={c.code} className={`${th} text-right`}>
                   {c.name.toUpperCase()} (RM)
                 </th>
               ))}
+              <KepalaKiraan />
             </tr>
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.employment_id} className="border-b border-[#EEF2F1] last:border-0">
-                <td className={td}>
-                  <span className="flex flex-col">
-                    <b>{r.name}</b>
-                    <span className="text-xs text-muted">{r.employee_no}</span>
-                  </span>
-                </td>
-                {j.components.map((c) => (
-                  <td key={c.code} className="px-2 py-1.5 text-right">
-                    <input
-                      aria-label={`${c.name} ${r.name}`}
-                      inputMode="decimal"
-                      placeholder="0.00"
-                      value={nilai[r.employment_id]?.[c.code] ?? ""}
-                      onChange={(e) => setNilai({ ...nilai, [r.employment_id]: { ...nilai[r.employment_id], [c.code]: e.target.value.replace(/[^\d.,]/g, "") } })}
-                      className="h-10 w-32 rounded-[10px] border border-line bg-surface px-3 text-right tabular-nums outline-none focus:border-primary"
-                    />
-                  </td>
-                ))}
-              </tr>
+              <BarisPukal
+                key={r.employment_id}
+                j={j}
+                r={r}
+                mulai={mulai}
+                nilai={nilai[r.employment_id] ?? {}}
+                onNilai={(code, v) => setNilai((s) => ({ ...s, [r.employment_id]: { ...s[r.employment_id], [code]: v } }))}
+              />
             ))}
           </tbody>
         </table>
@@ -304,7 +475,9 @@ function JadualPukal({ j, rows, onBatal, onSiap }: { j: JadualGaji; rows: BarisG
           Berkuat kuasa mulai
           <input type="date" value={mulai} onChange={(e) => setMulai(e.target.value)} className="h-11 rounded-[10px] border border-line bg-surface px-3 text-sm text-ink" />
         </label>
-        <span className="max-w-[420px] text-xs leading-normal text-muted">Hanya baris yang berubah disimpan. Pekerja yang mula bekerja selepas tarikh ini menggunakan tarikh mula bekerja.</span>
+        <span className="max-w-[420px] text-xs leading-normal text-muted">
+          Baris berlatar kuning telah diubah; kiraan dikemas kini semasa anda menaip. Hanya baris yang berubah disimpan. Pekerja yang mula bekerja selepas tarikh ini menggunakan tarikh mula bekerja.
+        </span>
         <span className="grow" />
         <button type="button" onClick={onBatal} disabled={busy} className="h-11 rounded-button border border-line px-5 text-sm font-bold">
           Batal

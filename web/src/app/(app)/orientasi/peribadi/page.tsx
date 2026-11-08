@@ -39,7 +39,7 @@ export default function OrientasiPeribadiPage() {
 
   if (!asal.data) {
     return (
-      <Screen>
+      <Screen lebar="sederhana">
         <Loading />
       </Screen>
     );

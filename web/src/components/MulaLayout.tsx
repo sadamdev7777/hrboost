@@ -8,7 +8,7 @@ import { Screen } from "./ui";
 /** Susun atur langkah persediaan syarikat (SyarikatLangkah, ImportPekerja, …). */
 export function MulaLayout({ n, title, back, children, footer }: { n: number; title: string; back: string; children: ReactNode; footer?: ReactNode }) {
   return (
-    <Screen>
+    <Screen lebar="sederhana">
       <header className="flex items-center gap-2 px-3 pt-4 pb-1">
         <Link href={back} aria-label="Kembali" className="flex size-11 items-center justify-center rounded-full text-ink!">
           <IconBack />
@@ -22,7 +22,7 @@ export function MulaLayout({ n, title, back, children, footer }: { n: number; ti
         <h1 className="m-0 text-xl font-extrabold">{title}</h1>
         {children}
       </main>
-      {footer && <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">{footer}</div>}
+      {footer && <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">{footer}</div>}
     </Screen>
   );
 }
