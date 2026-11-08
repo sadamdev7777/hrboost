@@ -227,15 +227,7 @@ type Tugasan = {
 async function loadPending(): Promise<Tugasan[]> {
   const sb = getSupabase();
   const rows = must(await sb.from("v_my_approval_tasks").select("*").order("assigned_at"));
-  if (rows.length === 0) return [];
-  const reqs = must(
-    await sb.from("approval_requests").select("id, requester_person_id").in("id", rows.map((r) => r.request_id!)),
-  );
-  const pids = [...new Set(reqs.map((r) => r.requester_person_id))];
-  const people = must(await sb.from("persons").select("id, preferred_name, full_name").in("id", pids));
   return rows.map((r) => {
-    const pid = reqs.find((x) => x.id === r.request_id)?.requester_person_id;
-    const p = people.find((x) => x.id === pid);
     const ctx = (r.context as Record<string, unknown>) ?? {};
     const v = paparPermohonan({ type: r.request_type!, title: r.title!, context: ctx, submittedAt: r.submitted_at! });
     const title =
@@ -247,7 +239,7 @@ async function loadPending(): Promise<Tugasan[]> {
     return {
       taskId: r.task_id!,
       type: r.request_type as Tugasan["type"],
-      name: p?.preferred_name || p?.full_name || r.requester_name || "Pemohon",
+      name: r.requester_nickname || r.requester_name || "Pemohon",
       title,
       ai: r.ai_summary,
       assignedAt: r.assigned_at!,

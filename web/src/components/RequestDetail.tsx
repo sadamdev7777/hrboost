@@ -10,6 +10,7 @@ import { IconCheck, IconSparkle } from "./icons";
 import { Avatar, BackHeader, ErrorBox, Loading, Screen, StatusPill } from "./ui";
 import { ReasonSheet } from "./ReasonSheet";
 import { urlSementara } from "@/lib/upload";
+import { namaJenisTuntutan } from "@/lib/claims";
 
 const VIA: Record<string, string> = { web: "aplikasi", whatsapp: "WhatsApp", ai_agent: "pembantu AI", system: "sistem" };
 const TAJUK: Record<string, string> = {
@@ -111,7 +112,12 @@ export function RequestDetail({ mode }: { mode: Mode }) {
           )}
           {x.leave?.reason && <Field label="Sebab" value={x.leave.reason} plain />}
           {x.leave?.cover && <Field label="Pengganti tugas" value={x.leave.cover} plain />}
-          {x.leave?.attachment && <LihatSijil path={x.leave.attachment} />}
+          {x.leave?.attachment && (
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-muted">Sijil sokongan</span>
+              <LihatFail path={x.leave.attachment} label="Lihat sijil" />
+            </div>
+          )}
 
           {x.claim && (
             <div className="flex flex-col gap-2">
@@ -120,12 +126,21 @@ export function RequestDetail({ mode }: { mode: Mode }) {
                 <Field label="Jumlah" value={ringgit(x.claim.total)} />
               </div>
               {x.claim.items.map((it, i) => (
-                <div key={i} className="flex justify-between border-t border-[#EEF2F1] pt-2 text-sm">
-                  <span>
-                    {it.type}
-                    {it.description ? ` · ${it.description}` : ""} · {tarikh(it.date)}
-                  </span>
-                  <b>{ringgit(it.amount)}</b>
+                <div key={i} className="flex flex-col gap-1.5 border-t border-[#EEF2F1] pt-2 text-sm">
+                  <div className="flex justify-between gap-2">
+                    <span>
+                      {it.type} · {tarikh(it.date)}
+                      {it.km ? ` · ${it.km} km` : ""}
+                    </span>
+                    <b>{ringgit(it.amount)}</b>
+                  </div>
+                  {it.receipts.length > 0 && (
+                    <div className="flex flex-wrap gap-x-4 gap-y-1">
+                      {it.receipts.map((r, k) => (
+                        <LihatFail key={r} path={r} label={`Lihat resit${it.receipts.length > 1 ? ` ${k + 1}` : ""}`} />
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -240,12 +255,11 @@ export function RequestDetail({ mode }: { mode: Mode }) {
   );
 }
 
-function LihatSijil({ path }: { path: string }) {
+function LihatFail({ path, label }: { path: string; label: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-xs text-muted">Sijil sokongan</span>
+    <span className="flex flex-col">
       <button
         type="button"
         disabled={busy}
@@ -255,14 +269,14 @@ function LihatSijil({ path }: { path: string }) {
           const url = await urlSementara(path);
           setBusy(false);
           if (url) window.open(url, "_blank", "noopener");
-          else setError("Sijil tidak dapat dibuka.");
+          else setError("Fail tidak dapat dibuka.");
         }}
         className="self-start text-[15px] font-bold text-primary"
       >
-        {busy ? "Membuka…" : "Lihat sijil"}
+        {busy ? "Membuka…" : label}
       </button>
       {error && <span className="text-xs text-danger">{error}</span>}
-    </div>
+    </span>
   );
 }
 
@@ -344,7 +358,11 @@ async function loadDetail(mode: Mode) {
   const acts = must(actions) ?? [];
   const st = (must(steps) ?? []) as { step_order: number; name: string }[];
 
-  const requesterName = p?.preferred_name || p?.full_name || "Pemohon";
+  const requesterName =
+    p?.preferred_name ||
+    p?.full_name ||
+    (await sb.rpc("request_requester_name", { p_request: req.id })).data ||
+    "Pemohon";
   const via = acts.find((a) => a.action === "submitted")?.via ?? null;
 
   // Aliran kelulusan: satu baris setiap peringkat
@@ -377,7 +395,11 @@ async function loadDetail(mode: Mode) {
     balanceAfter: number | null;
     attachment: string | null;
   } = null;
-  let claim: null | { title: string; total: number; items: { type: string; description: string | null; date: string; amount: number }[] } = null;
+  let claim: null | {
+    title: string;
+    total: number;
+    items: { type: string; description: string | null; date: string; amount: number; km: number | null; receipts: string[] }[];
+  } = null;
 
   if (req.request_type === "leave") {
     const lr = must(
@@ -423,7 +445,7 @@ async function loadDetail(mode: Mode) {
     const c = must(
       await sb
         .from("claims")
-        .select("title, total_amount, claim_items(description, expense_date, amount, claim_types(name))")
+        .select("title, total_amount, claim_items(description, expense_date, amount, distance_km, receipt_paths, claim_types(name))")
         .eq("id", req.reference_id)
         .maybeSingle(),
     );
@@ -432,10 +454,12 @@ async function loadDetail(mode: Mode) {
         title: c.title,
         total: Number(c.total_amount),
         items: c.claim_items.map((i) => ({
-          type: i.claim_types?.name ?? "Item",
+          type: namaJenisTuntutan(i.claim_types?.name ?? "Item"),
           description: i.description,
           date: i.expense_date,
           amount: Number(i.amount),
+          km: i.distance_km === null ? null : Number(i.distance_km),
+          receipts: i.receipt_paths ?? [],
         })),
       };
     }

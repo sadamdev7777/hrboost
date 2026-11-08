@@ -447,14 +447,14 @@ isOneToOne: false
                   ]
                 },"claim_items": {
                   Row: {
-                    "ai_extracted": Json | null,"ai_flags": (string)[] | null,"amount": number,"claim_id": string,"claim_type_id": string,"description": string | null,"distance_km": number | null,"expense_date": string,"id": string,"receipt_path": string | null
+                    "ai_extracted": Json | null,"ai_flags": (string)[] | null,"amount": number,"claim_id": string,"claim_type_id": string,"description": string | null,"distance_km": number | null,"expense_date": string,"id": string,"receipt_path": string | null,"receipt_paths": (string)[]
                   }
                   ComputedFields: never
                   Insert: {
-                    "ai_extracted"?: Json | null,"ai_flags"?: (string)[] | null,"amount": number,"claim_id": string,"claim_type_id": string,"description"?: string | null,"distance_km"?: number | null,"expense_date": string,"id"?: string,"receipt_path"?: string | null
+                    "ai_extracted"?: Json | null,"ai_flags"?: (string)[] | null,"amount": number,"claim_id": string,"claim_type_id": string,"description"?: string | null,"distance_km"?: number | null,"expense_date": string,"id"?: string,"receipt_path"?: string | null,"receipt_paths"?: (string)[]
                   }
                   Update: {
-                    "ai_extracted"?: Json | null,"ai_flags"?: (string)[] | null,"amount"?: number,"claim_id"?: string,"claim_type_id"?: string,"description"?: string | null,"distance_km"?: number | null,"expense_date"?: string,"id"?: string,"receipt_path"?: string | null
+                    "ai_extracted"?: Json | null,"ai_flags"?: (string)[] | null,"amount"?: number,"claim_id"?: string,"claim_type_id"?: string,"description"?: string | null,"distance_km"?: number | null,"expense_date"?: string,"id"?: string,"receipt_path"?: string | null,"receipt_paths"?: (string)[]
                   }
                   Relationships: [
                     {
@@ -1350,7 +1350,7 @@ isOneToOne: false
           Views: {
             "v_my_approval_tasks": {
                   Row: {
-                    "ai_summary": string | null,"assigned_at": string,"company_code": string,"company_id": string,"context": NonNullable<Json>,"delegated_from": string | null,"department": string | null,"request_id": string,"request_type": Database["public"]['Enums']["request_type"],"requester_name": string,"requester_photo": string | null,"sla_breached": boolean,"sla_due_at": string | null,"step_name": string,"submitted_at": string,"task_id": string,"title": string
+                    "ai_summary": string | null,"assigned_at": string,"company_code": string,"company_id": string,"context": NonNullable<Json>,"delegated_from": string | null,"department": string | null,"request_id": string,"request_type": Database["public"]['Enums']["request_type"],"requester_name": string | null,"requester_nickname": string | null,"requester_photo": string | null,"sla_breached": boolean,"sla_due_at": string | null,"step_name": string,"submitted_at": string,"task_id": string,"title": string
                   }
                   ComputedFields: never
                   Relationships: [
@@ -1603,6 +1603,9 @@ isOneToOne: false
                            },
 "request_company_access":
 { Args: { "p_company_code": string,"p_days": number,"p_reason": string,"p_role": Database["public"]['Enums']["app_role"] }; Returns: string
+                           },
+"request_requester_name":
+{ Args: { "p_request": string }; Returns: string
                            },
 "resolve_actor":
 { Args: { "p_on_behalf": string }; Returns: string
