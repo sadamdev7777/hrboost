@@ -60,7 +60,7 @@ npx supabase stop
 npm run db:test
 ```
 
-Tiga fail ujian: `hrboost_tests_v0.2_approval`, `hrboost_tests_v0.2_platform` dan `hrboost_tests_b_onboarding` (jemputan & orientasi). Skrip `supabase/scripts/run-sql-tests.sh` memulakan bekas Docker `pgvector/pgvector:pg16` pada port 55432, kemudian bagi setiap fail dalam `supabase/tests/*.sql` mencipta pangkalan data baharu dan menjalankan:
+Empat fail ujian: `hrboost_tests_v0.2_approval`, `hrboost_tests_v0.2_platform`, `hrboost_tests_b_onboarding` (jemputan & orientasi) dan `hrboost_tests_c_whatsapp` (balasan WhatsApp & giliran notifikasi). Skrip `supabase/scripts/run-sql-tests.sh` memulakan bekas Docker `pgvector/pgvector:pg16` pada port 55432, kemudian bagi setiap fail dalam `supabase/tests/*.sql` mencipta pangkalan data baharu dan menjalankan:
 
 1. stub `supabase/tests/local_only/hrboost_tests_stub_local_only.sql`
 2. semua migrasi dalam `supabase/migrations/`
@@ -86,7 +86,7 @@ Nota: dalam ujian platform T7, dua notifikasi dicipta dalam transaksi yang sama,
 
 | Projek | Ref | Kegunaan |
 |---|---|---|
-| `hrboost-staging` | `gldhywelqvfxlsqipnzq` (Singapura, Postgres 17) | Staging: semua migrasi dalam `supabase/migrations` dipasang (sehingga `20261108000100`), termasuk bucket storan `peribadi` |
+| `hrboost-staging` | `gldhywelqvfxlsqipnzq` (Singapura, Postgres 17) | Staging: semua migrasi dalam `supabase/migrations` dipasang (sehingga `20261109000000`), termasuk bucket storan `peribadi` dan jadual pg_cron |
 
 Kunci projek tidak disimpan dalam repo.
 
@@ -121,14 +121,14 @@ Buka http://localhost:3000/masuk.
 
 `npx supabase db reset` memasang data demo daripada `supabase/seed.sql` (tempatan sahaja, semua rekaan). Log masuk dengan nombor di bawah dan kod **123456**:
 
-| Nombor (selepas +60) | Nama | Peranan |
+| Taip (selepas +60, 9 angka) | Nama | Peranan |
 |---|---|---|
-| 10 000 0001 | Sadam | CEO + Pentadbir |
-| 10 000 0002 | Lily | HR |
-| 10 000 0003 | Zuerin | Ketua Jabatan Pelancongan |
-| 10 000 0004 | Amin | Pekerja |
-| 10 000 0005 | Farah | Kewangan |
-| 10 000 0006 | Zulfa | Pekerja |
+| 100000001 | Sadam | CEO + Pentadbir |
+| 100000002 | Lily | HR |
+| 100000003 | Zuerin | Ketua Jabatan Pelancongan |
+| 100000004 | Amin | Pekerja |
+| 100000005 | Farah | Kewangan |
+| 100000006 | Zulfa | Pekerja |
 
 Nombor lain juga boleh meminta kod: kod disimpan dalam `dev.sms_outbox` (hook "Send SMS" tempatan) dan tiada mesej dihantar:
 
@@ -173,6 +173,25 @@ node web/e2e/orientasi.cjs
 - `orientasi.cjs`: HR menjemput pekerja baharu → pautan jemputan + 4 digit IC + OTP → 8 langkah orientasi (swafoto, kad pengenalan dan lain-lain) → Amin memohon MC bersama gambar sijil → ketua jabatan membuka sijil itu.
 
 Jalankan `npx supabase db reset` sebelum setiap larian (ujian mencipta data).
+
+### Automasi & WhatsApp (Fasa C)
+
+| Komponen | Bagaimana | Status |
+|---|---|---|
+| events-worker | pg_cron `hrboost-events-worker` setiap minit → `process_hr_events()` | Berjalan (tempatan & staging) |
+| sla-tick | pg_cron `hrboost-sla-tick` setiap 15 minit → `approval_sla_tick()` | Berjalan (tempatan & staging) |
+| notify-sender | Edge Function → `notify_next()` (semak had, tanda *skipped* + maklum Pentadbir sekali sebulan) → Murpati → `notify_mark()` (cuba semula maksimum 3 kali) | Kod siap & diuji; belum dipasang (perlu Murpati) |
+| whatsapp-inbound | Edge Function (webhook) → `whatsapp_handle_reply()`: `LULUS`, `LULUS 2`, `TOLAK <sebab>`, `TOLAK 2 <sebab>`; lebih daripada satu tugasan → senarai bernombor | Kod siap & diuji; belum dipasang (perlu Murpati) |
+
+Sementara Murpati belum dikonfigurasi, notifikasi kekal dalam jadual `notifications` dengan status `pending`. Semua panggilan Murpati berada dalam `supabase/functions/_shared/murpati.ts` — laraskan fail itu sahaja bila spesifikasi API tersedia.
+
+Ujian integrasi fungsi (tempatan, pelayan Murpati palsu, tiada mesej sebenar):
+
+```bash
+node supabase/scripts/ujian-fungsi-whatsapp.cjs
+```
+
+Bila Murpati tersedia: tetapkan rahsia `MURPATI_API_URL`, `MURPATI_API_KEY`, `MURPATI_WEBHOOK_SECRET`; pasang `notify-sender`, `whatsapp-inbound` dan `auth-sms-hook`; jadualkan `notify-sender` setiap minit dengan pg_cron + pg_net (kunci service role dalam Vault); tetapkan URL webhook Murpati ke `whatsapp-inbound`.
 
 ### OTP melalui WhatsApp (staging/produksi)
 

@@ -1005,14 +1005,14 @@ isOneToOne: false
                   ]
                 },"notifications": {
                   Row: {
-                    "channel": string,"company_id": string | null,"created_at": string,"error": string | null,"event_id": number | null,"id": string,"message": string,"person_id": string,"provider_ref": string | null,"rule_id": string | null,"sent_at": string | null,"status": Database["public"]['Enums']["notify_status"],"to_address": string | null
+                    "attempts": number,"bypass_limit": boolean,"channel": string,"claimed_at": string | null,"company_id": string | null,"created_at": string,"error": string | null,"event_id": number | null,"id": string,"message": string,"person_id": string,"provider_ref": string | null,"rule_id": string | null,"sent_at": string | null,"status": Database["public"]['Enums']["notify_status"],"to_address": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "channel"?: string,"company_id"?: string | null,"created_at"?: string,"error"?: string | null,"event_id"?: number | null,"id"?: string,"message": string,"person_id": string,"provider_ref"?: string | null,"rule_id"?: string | null,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["notify_status"],"to_address"?: string | null
+                    "attempts"?: number,"bypass_limit"?: boolean,"channel"?: string,"claimed_at"?: string | null,"company_id"?: string | null,"created_at"?: string,"error"?: string | null,"event_id"?: number | null,"id"?: string,"message": string,"person_id": string,"provider_ref"?: string | null,"rule_id"?: string | null,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["notify_status"],"to_address"?: string | null
                   }
                   Update: {
-                    "channel"?: string,"company_id"?: string | null,"created_at"?: string,"error"?: string | null,"event_id"?: number | null,"id"?: string,"message"?: string,"person_id"?: string,"provider_ref"?: string | null,"rule_id"?: string | null,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["notify_status"],"to_address"?: string | null
+                    "attempts"?: number,"bypass_limit"?: boolean,"channel"?: string,"claimed_at"?: string | null,"company_id"?: string | null,"created_at"?: string,"error"?: string | null,"event_id"?: number | null,"id"?: string,"message"?: string,"person_id"?: string,"provider_ref"?: string | null,"rule_id"?: string | null,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["notify_status"],"to_address"?: string | null
                   }
                   Relationships: [
                     {
@@ -1301,14 +1301,14 @@ isOneToOne: false
                   ]
                 },"usage_counters": {
                   Row: {
-                    "ai_calls": number,"company_id": string,"month": string,"wa_sent": number
+                    "ai_calls": number,"company_id": string,"month": string,"wa_limit_notified": boolean,"wa_sent": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "ai_calls"?: number,"company_id": string,"month": string,"wa_sent"?: number
+                    "ai_calls"?: number,"company_id": string,"month": string,"wa_limit_notified"?: boolean,"wa_sent"?: number
                   }
                   Update: {
-                    "ai_calls"?: number,"company_id"?: string,"month"?: string,"wa_sent"?: number
+                    "ai_calls"?: number,"company_id"?: string,"month"?: string,"wa_limit_notified"?: boolean,"wa_sent"?: number
                   }
                   Relationships: [
                     {
@@ -1572,6 +1572,17 @@ isOneToOne: false
 "next_working_day":
 { Args: { "p_company": string,"p_date": string }; Returns: string
                            },
+"normalize_msisdn":
+{ Args: { "p_phone": string }; Returns: string
+                           },
+"notify_mark":
+{ Args: { "p_error"?: string,"p_id": string,"p_ok": boolean,"p_provider_ref"?: string }; Returns: undefined
+                           },
+"notify_next":
+{ Args: { "p_limit"?: number }; Returns: {
+              "company_id": string,"id": string,"message": string,"to_address": string
+            }[]
+                           },
 "notify_person":
 { Args: { "p_company": string,"p_message": string,"p_person": string }; Returns: undefined
                            },
@@ -1706,6 +1717,9 @@ isOneToOne: false
 { Args: { "p_company": string,"p_from": string,"p_to": string }; Returns: {
               "day": number,"department": string,"month": number,"name": string,"person_id": string
             }[]
+                           },
+"whatsapp_handle_reply":
+{ Args: { "p_phone": string,"p_text": string }; Returns: Json
                            }
           }
           Enums: {

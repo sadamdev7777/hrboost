@@ -444,3 +444,12 @@ enabled = true
 # tandatangan hook disemak dalam fungsi. Belum dipasang — perlukan butiran API Murpati.
 [functions.auth-sms-hook]
 verify_jwt = false
+
+# HRBoost Fasa C. Kedua-dua fungsi menyemak sendiri pemanggil:
+#  notify-sender    — kunci service role (dipanggil oleh pg_cron/pg_net)
+#  whatsapp-inbound — rahsia webhook Murpati (MURPATI_WEBHOOK_SECRET)
+[functions.notify-sender]
+verify_jwt = false
+
+[functions.whatsapp-inbound]
+verify_jwt = false

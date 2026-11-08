@@ -2,9 +2,8 @@
 //  auth-sms-hook — Supabase Auth "Send SMS" hook (CLAUDE.md §4)
 //  Menghantar kod OTP log masuk melalui WhatsApp (Murpati), bukan SMS.
 //
-//  STATUS: belum dipasang. Butiran API Murpati belum tersedia. Fungsi ini
-//  menghantar POST JSON generik ke MURPATI_API_URL; laraskan `hantarWhatsApp`
-//  mengikut spesifikasi Murpati sebelum dipasang.
+//  STATUS: belum dipasang. Butiran API Murpati belum tersedia. Penghantaran
+//  melalui supabase/functions/_shared/murpati.ts — laraskan fail itu sahaja.
 //
 //  Rahsia (Supabase secrets, BUKAN dalam kod):
 //    SEND_SMS_HOOK_SECRETS  — rahsia hook daripada papan pemuka Auth > Hooks (format "v1,whsec_...")
@@ -15,6 +14,7 @@
 //  Kemudian: Auth > Hooks > Send SMS hook > HTTPS > URL fungsi ini.
 // =====================================================================
 import { Webhook } from "npm:standardwebhooks@1.0.0";
+import { hantarWhatsApp } from "../_shared/murpati.ts";
 
 type HookPayload = {
   user: { id: string; phone: string };
@@ -26,19 +26,6 @@ function ralat(status: number, message: string) {
     status,
     headers: { "Content-Type": "application/json" },
   });
-}
-
-async function hantarWhatsApp(phone: string, message: string): Promise<void> {
-  const url = Deno.env.get("MURPATI_API_URL");
-  const key = Deno.env.get("MURPATI_API_KEY");
-  if (!url || !key) throw new Error("MURPATI_API_URL / MURPATI_API_KEY belum ditetapkan");
-  // TODO(Murpati): sahkan format permintaan sebenar (medan, pengesahan, format nombor).
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-    body: JSON.stringify({ to: phone, message }),
-  });
-  if (!res.ok) throw new Error(`Murpati ${res.status}`);
 }
 
 Deno.serve(async (req) => {
@@ -62,10 +49,9 @@ Deno.serve(async (req) => {
   // Bahasa Melayu rasmi (CLAUDE.md: Bahasa antara muka). Tiada emoji.
   const message = `Kod log masuk HRBoost anda: ${otp}\n\nKod ini sah selama 10 minit. Jangan kongsi kod ini dengan sesiapa, termasuk pihak HR.`;
 
-  try {
-    await hantarWhatsApp(phone, message);
-  } catch (e) {
-    console.error("auth-sms-hook gagal:", (e as Error).message);
+  const r = await hantarWhatsApp(phone, message);
+  if (!r.ok) {
+    console.error("auth-sms-hook gagal:", r.error);
     return ralat(502, "Kod tidak dapat dihantar melalui WhatsApp. Sila cuba lagi.");
   }
   return new Response("{}", { status: 200, headers: { "Content-Type": "application/json" } });
