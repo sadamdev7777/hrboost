@@ -16,7 +16,7 @@ export function BackHeader({ title, href, action }: { title?: string; href?: str
   const router = useRouter();
   const cls = "flex size-11 items-center justify-center rounded-full text-ink!";
   return (
-    <header className="flex items-center gap-2 px-3 pt-4 pb-2">
+    <header className="flex items-center gap-2 px-3 pt-3 pb-1">
       {href ? (
         <Link href={href} aria-label="Kembali" className={cls}>
           <IconBack />
@@ -26,7 +26,7 @@ export function BackHeader({ title, href, action }: { title?: string; href?: str
           <IconBack />
         </button>
       )}
-      {title && <h1 className="m-0 grow text-xl font-extrabold">{title}</h1>}
+      {title && <h1 className="m-0 grow text-lg font-extrabold">{title}</h1>}
       {action}
     </header>
   );
@@ -131,7 +131,7 @@ export function PrimaryButton({
   return (
     <button
       {...rest}
-      className={`flex h-14 items-center justify-center rounded-button bg-primary text-base font-extrabold text-on-primary hover:bg-primary-hover disabled:opacity-60 ${className}`}
+      className={`flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-on-primary hover:bg-primary-hover disabled:opacity-60 ${className}`}
     >
       {children}
     </button>

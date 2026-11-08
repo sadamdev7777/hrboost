@@ -87,8 +87,8 @@ export function RequestDetail({ mode }: { mode: Mode }) {
   return (
     <Screen>
       <BackHeader title={TAJUK[x.req.request_type] ?? "Permohonan"} href={back} />
-      <main className="flex grow flex-col gap-3.5 px-5 pt-1 pb-4">
-        <section className="flex flex-col gap-3.5 rounded-[18px] bg-surface p-4">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
+        <section className="flex flex-col gap-3 rounded-[18px] bg-surface p-4">
           <div className="flex items-center gap-3">
             <Avatar name={x.requesterName} size={48} />
             <div className="flex grow flex-col gap-0.5">
@@ -169,7 +169,7 @@ export function RequestDetail({ mode }: { mode: Mode }) {
         </section>
 
         {x.req.ai_summary && (
-          <section className="flex flex-col gap-2 rounded-[18px] bg-ai-soft px-4 py-3.5">
+          <section className="flex flex-col gap-2 rounded-[18px] bg-ai-soft px-4 py-3">
             <div className="flex items-center gap-2">
               <IconSparkle size={18} className="text-ai" />
               <span className="text-sm font-extrabold text-ai-hover">Ringkasan AI</span>
@@ -219,13 +219,13 @@ export function RequestDetail({ mode }: { mode: Mode }) {
       </main>
 
       {canAct && (
-        <div className="sticky bottom-0 flex flex-col gap-2 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
+        <div className="sticky bottom-0 flex flex-col gap-2 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <div className="grid grid-cols-2 gap-2.5">
             <button
               type="button"
               disabled={busy}
               onClick={() => setSheet("reject")}
-              className="h-[54px] rounded-button border-[1.5px] border-line bg-surface text-base font-bold text-danger disabled:opacity-60"
+              className="h-12 rounded-button border-[1.5px] border-line bg-surface text-base font-bold text-danger disabled:opacity-60"
             >
               Tolak
             </button>
@@ -233,7 +233,7 @@ export function RequestDetail({ mode }: { mode: Mode }) {
               type="button"
               disabled={busy}
               onClick={() => act("approve")}
-              className="h-[54px] rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover disabled:opacity-60"
+              className="h-12 rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover disabled:opacity-60"
             >
               {busy ? "Memproses…" : "Lulus"}
             </button>
@@ -250,12 +250,12 @@ export function RequestDetail({ mode }: { mode: Mode }) {
       )}
 
       {canCancel && (
-        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
+        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <button
             type="button"
             disabled={busy}
             onClick={batal}
-            className="h-12 w-full rounded-[14px] border border-line bg-surface text-[15px] font-bold text-danger disabled:opacity-60"
+            className="h-12 w-full rounded-[14px] border border-line bg-surface text-sm font-bold text-danger disabled:opacity-60"
           >
             Batalkan permohonan
           </button>
@@ -291,7 +291,7 @@ function LihatFail({ path, label }: { path: string; label: string }) {
           if (url) window.open(url, "_blank", "noopener");
           else setError("Fail tidak dapat dibuka.");
         }}
-        className="self-start text-[15px] font-bold text-primary"
+        className="self-start text-sm font-bold text-primary"
       >
         {busy ? "Membuka…" : label}
       </button>
@@ -312,7 +312,7 @@ function Field({ label, value, plain }: { label: string; value: string; plain?: 
   return (
     <div className="flex flex-col gap-0.5">
       <span className="text-xs text-muted">{label}</span>
-      <span className={`text-[15px] ${plain ? "" : "font-bold"}`}>{value}</span>
+      <span className={`text-sm ${plain ? "" : "font-bold"}`}>{value}</span>
     </div>
   );
 }

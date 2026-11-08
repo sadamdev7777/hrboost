@@ -66,7 +66,7 @@ function Sembang() {
   return (
     <Screen>
       <BackHeader title="Pembantu AI" href="/saya" />
-      <main className="flex grow flex-col gap-3 px-5 pt-1 pb-4">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         {mesej.length === 0 && (
           <>
             <div className="flex flex-col gap-1.5 rounded-card bg-[#F3F0FC] px-4 py-4">
@@ -86,7 +86,7 @@ function Sembang() {
                 <Seksyen className="pt-1">TINDAKAN EJEN UNTUK ANDA</Seksyen>
                 <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
                   {tindakan.data!.map((a, i) => (
-                    <div key={i} className="flex min-h-[52px] flex-col justify-center py-2">
+                    <div key={i} className="flex min-h-12 flex-col justify-center py-2">
                       <b>
                         {TINDAKAN[a.action] ?? a.action}
                         {(a.payload as { mula?: string; tamat?: string })?.mula ? ` ${tarikh((a.payload as { mula: string }).mula)}` : ""}
@@ -104,7 +104,7 @@ function Sembang() {
         {mesej.map((m, i) => (
           <div
             key={i}
-            className={`max-w-[88%] rounded-[16px] px-3.5 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap ${m.role === "user" ? "self-end rounded-tr-sm bg-primary text-white" : "self-start rounded-tl-sm bg-surface"}`}
+            className={`max-w-[88%] rounded-[16px] px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap ${m.role === "user" ? "self-end rounded-tr-sm bg-primary text-white" : "self-start rounded-tl-sm bg-surface"}`}
           >
             {m.text}
           </div>
@@ -118,7 +118,7 @@ function Sembang() {
           e.preventDefault();
           void hantar(input);
         }}
-        className="sticky bottom-0 flex items-center gap-2 border-t border-line-soft bg-surface px-4 pt-3 pb-7"
+        className="sticky bottom-0 flex items-center gap-2 border-t border-line-soft bg-surface px-4 pt-3 pb-5"
       >
         <label className="sr-only" htmlFor="soalan">
           Soalan
@@ -129,7 +129,7 @@ function Sembang() {
           onChange={(e) => setInput(e.target.value)}
           placeholder="Taip soalan…"
           maxLength={2000}
-          className="h-12 min-w-0 grow rounded-full border border-line bg-page px-4 text-[15px] outline-none focus:border-primary"
+          className="h-12 min-w-0 grow rounded-full border border-line bg-page px-4 text-sm outline-none focus:border-primary"
         />
         <button type="submit" aria-label="Hantar" disabled={busy || !input.trim()} className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary text-white disabled:opacity-50">
           <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -169,10 +169,10 @@ function DrafSurat({ employmentId }: { employmentId: string }) {
   return (
     <Screen>
       <BackHeader title={`Draf surat${nama ? ` · ${nama}` : ""}`} href={`/pengurusan/pekerja/${employmentId}`} />
-      <main className="flex grow flex-col gap-3 px-5 pt-1 pb-6">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         <label className="flex flex-col gap-1.5 text-[13px] font-bold text-[#4A5A57]">
           Jenis surat
-          <select value={jenis} onChange={(e) => setJenis(e.target.value)} className="h-11 rounded-[12px] border border-line bg-surface px-3 text-[15px] font-semibold text-ink">
+          <select value={jenis} onChange={(e) => setJenis(e.target.value)} className="h-11 rounded-[12px] border border-line bg-surface px-3 text-sm font-semibold text-ink">
             {JENIS_SURAT.map((j) => (
               <option key={j}>{j}</option>
             ))}
@@ -180,9 +180,9 @@ function DrafSurat({ employmentId }: { employmentId: string }) {
         </label>
         <label className="flex flex-col gap-1.5 text-[13px] font-bold text-[#4A5A57]">
           Nota untuk AI (pilihan)
-          <textarea value={nota} onChange={(e) => setNota(e.target.value)} rows={3} placeholder="Contoh: berkuat kuasa 1 Disember, gaji baharu RM3,200" className="rounded-[12px] border border-line bg-surface p-3 text-[15px] text-ink" />
+          <textarea value={nota} onChange={(e) => setNota(e.target.value)} rows={3} placeholder="Contoh: berkuat kuasa 1 Disember, gaji baharu RM3,200" className="rounded-[12px] border border-line bg-surface p-3 text-sm text-ink" />
         </label>
-        <button type="button" onClick={jana} disabled={busy} className="h-12 rounded-[14px] bg-ai text-[15px] font-extrabold text-white disabled:opacity-60">
+        <button type="button" onClick={jana} disabled={busy} className="h-12 rounded-[14px] bg-ai text-sm font-extrabold text-white disabled:opacity-60">
           {busy ? "AI sedang menulis…" : surat ? "Jana semula" : "Jana draf"}
         </button>
         {ralat && <ErrorBox message={ralat} />}

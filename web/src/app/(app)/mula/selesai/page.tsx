@@ -35,15 +35,15 @@ function Selesai() {
 
   return (
     <Screen>
-      <main className="flex grow flex-col gap-4 px-5 pt-10 pb-4">
+      <main className="flex grow flex-col gap-4 px-4 pt-10 pb-4">
         {d.error && <ErrorBox message={d.error} />}
         {!k && !d.error && <Loading />}
         {k && (
           <>
-            <span className="flex size-16 items-center justify-center rounded-full bg-[#E3F1EE] text-3xl text-primary">✓</span>
-            <h1 className="m-0 text-[26px] font-extrabold">{k.name} sudah sedia!</h1>
-            {j && <span className="text-[15px] text-subtle">{j.bila === "mon" ? `${j.n} jemputan dijadualkan pada Isnin, 9:00 pagi.` : `${j.n} jemputan dihantar melalui WhatsApp.`}</span>}
-            <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3.5">
+            <span className="flex size-14 items-center justify-center rounded-full bg-[#E3F1EE] text-3xl text-primary">✓</span>
+            <h1 className="m-0 text-[22px] font-extrabold">{k.name} sudah sedia!</h1>
+            {j && <span className="text-sm text-subtle">{j.bila === "mon" ? `${j.n} jemputan dijadualkan pada Isnin, 9:00 pagi.` : `${j.n} jemputan dihantar melalui WhatsApp.`}</span>}
+            <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3">
               <div className="flex justify-between text-sm">
                 <span className="font-bold">Pekerja yang telah mengaktifkan akaun</span>
                 <b>
@@ -56,7 +56,7 @@ function Selesai() {
               <span className="text-xs text-muted">Anda akan menerima ringkasan melalui WhatsApp setiap petang sehingga semua pekerja aktif.</span>
             </div>
             {(j?.pautan ?? []).length > 0 && (
-              <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3.5 text-sm">
+              <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3 text-sm">
                 <b>Pautan untuk pekerja tanpa WhatsApp</b>
                 {j!.pautan.map((p) => (
                   <div key={p.url} className="flex items-center gap-2">
@@ -90,8 +90,8 @@ function Selesai() {
           </>
         )}
       </main>
-      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
-        <Link href="/pengurusan" className="flex h-[54px] items-center justify-center rounded-button bg-primary text-base font-extrabold text-white!">
+      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <Link href="/pengurusan" className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white!">
           Pergi ke Papan Pemuka
         </Link>
       </div>

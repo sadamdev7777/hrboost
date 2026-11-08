@@ -31,7 +31,7 @@ export function Medan({ label, children }: { label: ReactNode; children: ReactNo
 /** Baris pautan dengan ikon/teks dan anak panah. */
 export function BarisPautan({ href, children, kanan }: { href: string; children: ReactNode; kanan?: ReactNode }) {
   return (
-    <Link href={href} className="flex min-h-[52px] items-center gap-3 py-2 text-[15px] font-semibold text-ink!">
+    <Link href={href} className="flex min-h-12 items-center gap-3 py-2 text-sm font-semibold text-ink!">
       <span className="grow">{children}</span>
       {kanan}
       <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9AA8A5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -60,7 +60,7 @@ export function HadPeranan({ roles, children, back = "/saya" }: { roles: Role[];
     return (
       <Screen>
         <BackHeader title="Tiada akses" href={back} />
-        <main className="px-5 pt-2 text-sm text-muted">Skrin ini hanya untuk {roles.map((r) => ({ hr: "HR", finance: "Kewangan", ceo: "CEO", admin: "Pentadbir" })[r as string] ?? r).join(", ")} syarikat ini.</main>
+        <main className="px-4 pt-2 text-sm text-muted">Skrin ini hanya untuk {roles.map((r) => ({ hr: "HR", finance: "Kewangan", ceo: "CEO", admin: "Pentadbir" })[r as string] ?? r).join(", ")} syarikat ini.</main>
       </Screen>
     );
   }
@@ -68,7 +68,7 @@ export function HadPeranan({ roles, children, back = "/saya" }: { roles: Role[];
 }
 
 export const inputKecil =
-  "h-11 w-full rounded-[12px] border border-[#D5DEDC] bg-surface px-3 text-[15px] font-semibold text-ink outline-none focus:border-primary";
+  "h-11 w-full rounded-[12px] border border-[#D5DEDC] bg-surface px-3 text-sm font-semibold text-ink outline-none focus:border-primary";
 
 export function MedanBorang({ label, children, nota }: { label: string; children: ReactNode; nota?: ReactNode }) {
   return (
@@ -88,7 +88,7 @@ export function Lembaran({ title, onClose, children }: { title: string; onClose:
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="flex max-h-[90dvh] w-full max-w-[480px] flex-col gap-3 overflow-y-auto rounded-t-[20px] bg-surface px-5 pt-5 pb-7"
+        className="flex max-h-[90dvh] w-full max-w-[480px] flex-col gap-3 overflow-y-auto rounded-t-[20px] bg-surface px-4 pt-5 pb-5"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="m-0 text-lg font-extrabold">{title}</h2>
@@ -137,7 +137,7 @@ export function ButangUtama({ children, onClick, busy, disabled, danger }: { chi
       type="button"
       onClick={onClick}
       disabled={busy || disabled}
-      className={`h-[52px] w-full rounded-button text-base font-extrabold text-white disabled:opacity-60 ${danger ? "bg-danger" : "bg-primary"}`}
+      className={`h-12 w-full rounded-button text-base font-extrabold text-white disabled:opacity-60 ${danger ? "bg-danger" : "bg-primary"}`}
     >
       {busy ? "Menyimpan…" : children}
     </button>

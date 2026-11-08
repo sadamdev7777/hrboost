@@ -109,7 +109,7 @@ export function OtpForm() {
 
   return (
     <>
-      <header className="flex items-center px-3 pt-4 pb-2">
+      <header className="flex items-center px-3 pt-3 pb-1">
         <Link href="/masuk" aria-label="Kembali" className="flex size-11 items-center justify-center rounded-full text-ink!">
           <IconBack />
         </Link>
@@ -124,8 +124,8 @@ export function OtpForm() {
       >
         <div className="flex grow flex-col gap-5 px-6 py-4">
           <div className="flex flex-col gap-2">
-            <h1 className="m-0 text-[26px] font-extrabold">Masukkan kod</h1>
-            <span className="text-[15px] leading-normal text-subtle">
+            <h1 className="m-0 text-[22px] font-extrabold">Masukkan kod</h1>
+            <span className="text-sm leading-normal text-subtle">
               Kod 6 digit dihantar ke WhatsApp <b className="text-ink">{phone ? paparTelefon(phone) : ""}</b>
             </span>
           </div>
@@ -151,7 +151,7 @@ export function OtpForm() {
                 return (
                   <span
                     key={i}
-                    className={`flex h-[60px] items-center justify-center rounded-field bg-surface text-[26px] font-extrabold ${
+                    className={`flex h-[60px] items-center justify-center rounded-field bg-surface text-[22px] font-extrabold ${
                       current
                         ? "border-[2.5px] border-primary"
                         : filled
@@ -200,7 +200,7 @@ export function OtpForm() {
           <button
             type="submit"
             disabled={busy || code.length !== 6}
-            className="flex h-14 w-full items-center justify-center rounded-button bg-primary text-base font-extrabold text-on-primary hover:bg-primary-hover disabled:opacity-60"
+            className="flex h-12 w-full items-center justify-center rounded-button bg-primary text-base font-extrabold text-on-primary hover:bg-primary-hover disabled:opacity-60"
           >
             {busy ? "Mengesahkan…" : "Sahkan"}
           </button>

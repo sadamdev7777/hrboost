@@ -25,7 +25,7 @@ const PATUH = ["Akta Kerja 1955", "KWSP", "PERKESO", "SIP", "PCB / MTD", "HRDF",
 export default function Homepage() {
   return (
     <div className="min-h-dvh bg-page text-ink">
-      <nav className="mx-auto flex max-w-[1120px] items-center gap-4 px-5 py-4">
+      <nav className="mx-auto flex max-w-[1120px] items-center gap-4 px-4 py-4">
         <Link href="/" className="flex items-center gap-2 text-ink!">
           <span className="flex size-9 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold text-white">HR</span>
           <b className="text-lg font-extrabold">HRBoost.io</b>
@@ -45,7 +45,7 @@ export default function Homepage() {
         </Link>
       </nav>
 
-      <section className="mx-auto grid max-w-[1120px] items-center gap-10 px-5 pt-6 pb-14 md:grid-cols-[1.1fr_0.9fr] md:pt-14">
+      <section className="mx-auto grid max-w-[1120px] items-center gap-10 px-4 pt-4 pb-14 md:grid-cols-[1.1fr_0.9fr] md:pt-14">
         <div className="flex flex-col gap-5">
           <span className="self-start rounded-full bg-[#E3F1EE] px-3 py-1.5 text-[13px] font-extrabold text-primary">100% percuma · untuk syarikat di Malaysia</span>
           <h1 className="m-0 text-[34px] leading-[1.15] font-extrabold md:text-[48px]">Urus HR syarikat terus melalui WhatsApp.</h1>
@@ -53,10 +53,10 @@ export default function Homepage() {
             Pekerja memohon cuti dan membuat tuntutan melalui telefon. Ketua meluluskan dengan satu balasan. Gaji dikira mengikut KWSP, PERKESO dan PCB. Semuanya dalam satu sistem yang mudah.
           </p>
           <div className="flex flex-col gap-2.5 sm:flex-row">
-            <Link href="/daftar" className="flex h-[54px] items-center justify-center rounded-button bg-primary px-6 text-base font-extrabold text-white!">
+            <Link href="/daftar" className="flex h-12 items-center justify-center rounded-button bg-primary px-6 text-base font-extrabold text-white!">
               Daftar syarikat — percuma
             </Link>
-            <Link href="/masuk" className="flex h-[54px] items-center justify-center rounded-button border-2 border-primary bg-surface px-6 text-base font-extrabold text-primary!">
+            <Link href="/masuk" className="flex h-12 items-center justify-center rounded-button border-2 border-primary bg-surface px-6 text-base font-extrabold text-primary!">
               Saya pekerja — log masuk
             </Link>
           </div>
@@ -77,15 +77,15 @@ export default function Homepage() {
       </section>
 
       <section className="border-y border-line-soft bg-surface">
-        <div className="mx-auto flex max-w-[1120px] flex-wrap justify-center gap-x-6 gap-y-2 px-5 py-5 text-sm font-bold text-[#4A5A57]">
+        <div className="mx-auto flex max-w-[1120px] flex-wrap justify-center gap-x-6 gap-y-2 px-4 py-5 text-sm font-bold text-[#4A5A57]">
           {PATUH.map((p) => (
             <span key={p}>{p}</span>
           ))}
         </div>
       </section>
 
-      <section id="ciri" className="mx-auto max-w-[1120px] px-5 py-14">
-        <h2 className="m-0 max-w-[680px] text-[28px] leading-tight font-extrabold md:text-[34px]">Semua urusan HR, tanpa kertas dan tanpa perlu mengejar sesiapa.</h2>
+      <section id="ciri" className="mx-auto max-w-[1120px] px-4 py-14">
+        <h2 className="m-0 max-w-[680px] text-2xl leading-tight font-extrabold md:text-[34px]">Semua urusan HR, tanpa kertas dan tanpa perlu mengejar sesiapa.</h2>
         <p className="mt-3 mb-8 max-w-[680px] text-base text-[#4A5A57]">Dibina untuk syarikat kecil dan sederhana yang memerlukan sistem yang benar-benar digunakan oleh pekerja.</p>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3">
           {CIRI.map(([t, s]) => (
@@ -98,8 +98,8 @@ export default function Homepage() {
       </section>
 
       <section id="cara" className="bg-surface">
-        <div className="mx-auto max-w-[1120px] px-5 py-14">
-          <h2 className="m-0 mb-8 text-[28px] font-extrabold md:text-[34px]">Mulakan dalam satu petang.</h2>
+        <div className="mx-auto max-w-[1120px] px-4 py-14">
+          <h2 className="m-0 mb-8 text-2xl font-extrabold md:text-[34px]">Mulakan dalam satu petang.</h2>
           <ol className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4 p-0">
             {LANGKAH.map(([t, s], i) => (
               <li key={t} className="flex gap-4">
@@ -114,17 +114,17 @@ export default function Homepage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1120px] px-5 py-14">
+      <section className="mx-auto max-w-[1120px] px-4 py-14">
         <div className="flex flex-col items-center gap-4 rounded-[24px] bg-primary px-6 py-10 text-center text-white">
-          <h2 className="m-0 text-[28px] font-extrabold">Sedia untuk mencuba?</h2>
+          <h2 className="m-0 text-2xl font-extrabold">Sedia untuk mencuba?</h2>
           <p className="m-0 max-w-[560px] text-base opacity-90">Percuma. Tiada kad kredit. Daftar syarikat dan jemput pekerja pertama anda hari ini.</p>
-          <Link href="/daftar" className="flex h-[54px] items-center rounded-button bg-white px-8 text-base font-extrabold text-primary!">
+          <Link href="/daftar" className="flex h-12 items-center rounded-button bg-white px-8 text-base font-extrabold text-primary!">
             Daftar syarikat
           </Link>
         </div>
       </section>
 
-      <footer className="mx-auto flex max-w-[1120px] flex-wrap items-center gap-x-5 gap-y-2 px-5 pt-2 pb-10 text-sm text-muted">
+      <footer className="mx-auto flex max-w-[1120px] flex-wrap items-center gap-x-5 gap-y-2 px-4 pt-2 pb-10 text-sm text-muted">
         <span>© 2026 HRBoost.io</span>
         <span className="grow" />
         <Link href="/privasi#privasi">Notis privasi (PDPA)</Link>

@@ -91,15 +91,15 @@ function Peranan() {
         </ButangUtama>
       }
     >
-      <span className="text-[15px] leading-normal text-subtle">Tetapkan peranan. Aliran kelulusan telah disediakan — anda hanya perlu menyemak.</span>
+      <span className="text-sm leading-normal text-subtle">Tetapkan peranan. Aliran kelulusan telah disediakan — anda hanya perlu menyemak.</span>
       <Seksyen>PERANAN</Seksyen>
       <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
         {PERANAN.map((r) => {
           const orang = d.data!.ppl.filter((p) => p.roles.includes(r.role));
           return (
-            <div key={r.role} className="flex min-h-[64px] items-center gap-2 py-2">
+            <div key={r.role} className="flex min-h-[52px] items-center gap-2 py-2">
               <span className="flex grow flex-col gap-0.5">
-                <b className="text-[15px] font-bold">{r.label}</b>
+                <b className="text-sm font-bold">{r.label}</b>
                 <span className="text-xs text-muted">{r.sub}</span>
               </span>
               <span className="flex flex-wrap justify-end gap-1">
@@ -120,16 +120,16 @@ function Peranan() {
 
       <Seksyen className="pt-1">ALIRAN KELULUSAN</Seksyen>
       <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-        <div className="flex min-h-[56px] items-center gap-2">
+        <div className="flex min-h-12 items-center gap-2">
           <span className="w-[90px] shrink-0 font-bold">Cuti</span>
           <span className="grow text-[13px] text-[#4A5A57]">Ketua → HR{ceo ? " → CEO" : ""}</span>
           <Suis on={ceo} label={ceo ? "Buang peringkat CEO untuk cuti" : "Tambah peringkat CEO untuk cuti"} onChange={togolCeo} />
         </div>
-        <div className="flex min-h-[52px] items-center gap-2">
+        <div className="flex min-h-12 items-center gap-2">
           <span className="w-[90px] shrink-0 font-bold">Tuntutan</span>
           <span className="grow text-[13px] text-[#4A5A57]">Ketua → Kewangan → CEO jika &gt; RM1,000</span>
         </div>
-        <div className="flex min-h-[52px] items-center gap-2">
+        <div className="flex min-h-12 items-center gap-2">
           <span className="w-[90px] shrink-0 font-bold">Betul masa &amp; Gaji</span>
           <span className="grow text-[13px] text-[#4A5A57]">Ketua · Kewangan → CEO</span>
         </div>

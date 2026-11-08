@@ -37,7 +37,7 @@ export default function OrientasiSelesaiPage() {
 
   return (
     <Screen>
-      <div className="flex flex-col items-center gap-3 bg-primary px-6 pt-12 pb-7 text-center text-white">
+      <div className="flex flex-col items-center gap-3 bg-primary px-6 pt-12 pb-5 text-center text-white">
         <div className="relative">
           {d?.photo ? (
             // eslint-disable-next-line @next/next/no-img-element -- URL bertandatangan sementara daripada storan peribadi
@@ -51,7 +51,7 @@ export default function OrientasiSelesaiPage() {
             <IconCheck size={16} />
           </span>
         </div>
-        <h1 className="m-0 text-[26px] leading-[1.2] font-extrabold">
+        <h1 className="m-0 text-[22px] leading-[1.2] font-extrabold">
           {lengkap ? `Selamat datang ke pasukan, ${me.name}!` : `Hampir selesai, ${me.name}`}
         </h1>
         <span className="text-sm opacity-94">
@@ -61,20 +61,20 @@ export default function OrientasiSelesaiPage() {
         </span>
       </div>
 
-      <main className="flex grow flex-col gap-3.5 px-5 pt-[18px] pb-3.5">
+      <main className="flex grow flex-col gap-3 px-4 pt-[18px] pb-3.5">
         {!lengkap && d && (
           <Link
             href="/orientasi"
-            className="flex h-12 items-center justify-center rounded-[14px] border-[1.5px] border-primary bg-surface text-[15px] font-bold"
+            className="flex h-12 items-center justify-center rounded-[14px] border-[1.5px] border-primary bg-surface text-sm font-bold"
           >
             Lengkapkan langkah yang tinggal
           </Link>
         )}
 
         {d && d.joinDate >= todayISO() && (
-          <div className="flex items-center gap-3.5 rounded-card bg-surface px-4 py-3.5">
-            <span className="flex h-14 w-[52px] shrink-0 flex-col items-center justify-center rounded-xl bg-primary-soft text-primary">
-              <b className="text-xl leading-none font-extrabold">{Number(d.joinDate.slice(8, 10))}</b>
+          <div className="flex items-center gap-3 rounded-card bg-surface px-4 py-3">
+            <span className="flex h-12 w-[52px] shrink-0 flex-col items-center justify-center rounded-xl bg-primary-soft text-primary">
+              <b className="text-lg leading-none font-extrabold">{Number(d.joinDate.slice(8, 10))}</b>
               <span className="text-[11px] font-bold">{BULAN[Number(d.joinDate.slice(5, 7)) - 1]}</span>
             </span>
             <div className="flex flex-col gap-[3px] text-sm">
@@ -104,10 +104,10 @@ export default function OrientasiSelesaiPage() {
         </div>
       </main>
 
-      <div className="px-5 pt-2.5 pb-7">
+      <div className="px-4 pt-2.5 pb-5">
         <Link
           href="/utama"
-          className="flex h-14 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white! hover:bg-primary-hover"
+          className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white! hover:bg-primary-hover"
         >
           Masuk ke HRBoost
         </Link>
@@ -118,7 +118,7 @@ export default function OrientasiSelesaiPage() {
 
 function Item({ href, icon, tone = "bg-primary-soft text-primary", children }: { href: string; icon: ReactNode; tone?: string; children: ReactNode }) {
   return (
-    <Link href={href} className="flex min-h-[50px] items-center gap-3 border-t border-[#EEF2F1] text-[15px] font-semibold text-ink! first:border-t-0">
+    <Link href={href} className="flex min-h-[50px] items-center gap-3 border-t border-[#EEF2F1] text-sm font-semibold text-ink! first:border-t-0">
       <span className={`flex size-[34px] shrink-0 items-center justify-center rounded-[10px] ${tone}`}>{icon}</span>
       {children}
     </Link>

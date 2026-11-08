@@ -51,7 +51,7 @@ export default function OrientasiSwafotoPage() {
               type="button"
               disabled={busy}
               onClick={() => input.current?.click()}
-              className="h-14 rounded-button border-[1.5px] border-line bg-surface text-[15px] font-bold text-ink disabled:opacity-60"
+              className="h-12 rounded-button border-[1.5px] border-line bg-surface text-sm font-bold text-ink disabled:opacity-60"
             >
               Ambil semula
             </button>

@@ -22,9 +22,9 @@ export default function MohonPage() {
 
   return (
     <Screen>
-      <main className="flex grow flex-col gap-3 px-5 pt-7 pb-4">
+      <main className="flex grow flex-col gap-3 px-4 pt-7 pb-4">
         <div className="mb-1 flex flex-col gap-1">
-          <h1 className="m-0 text-[26px] font-extrabold">Mohon</h1>
+          <h1 className="m-0 text-[22px] font-extrabold">Mohon</h1>
           <span className="text-sm text-subtle">Apakah yang anda ingin mohon hari ini?</span>
         </div>
 
@@ -60,7 +60,7 @@ export default function MohonPage() {
         {proses && (
           <>
             <div className="mt-2 flex items-center justify-between">
-              <h2 className="m-0 text-[15px] font-extrabold">Sedang diproses</h2>
+              <h2 className="m-0 text-sm font-extrabold">Sedang diproses</h2>
               <Link href="/permohonan" className="text-[13px] font-bold">
                 Lihat semua
               </Link>
@@ -93,7 +93,7 @@ export default function MohonPage() {
 
 function Pilihan({ href, tone, icon, title, sub }: { href: string; tone: string; icon: ReactNode; title: string; sub: string }) {
   return (
-    <Link href={href} className="flex items-center gap-3.5 rounded-[18px] bg-surface p-4 text-ink! hover:bg-[#F9FBFA]">
+    <Link href={href} className="flex items-center gap-3 rounded-[18px] bg-surface p-4 text-ink! hover:bg-[#F9FBFA]">
       <span className={`flex size-12 shrink-0 items-center justify-center rounded-[14px] ${tone}`}>{icon}</span>
       <span className="flex min-w-0 grow flex-col gap-0.5">
         <b className="text-base font-extrabold">{title}</b>

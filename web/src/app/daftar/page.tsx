@@ -9,7 +9,7 @@ import { simpanPendaftaran } from "@/lib/daftar";
 import { IconBack } from "@/components/icons";
 
 const SAIZ = ["1–10", "11–50", "51–200", "200+"];
-const input = "h-[52px] rounded-field border border-line bg-surface px-4 text-base font-semibold text-ink outline-none focus:border-primary";
+const input = "h-12 rounded-field border border-line bg-surface px-4 text-base font-semibold text-ink outline-none focus:border-primary";
 
 // Rujukan reka bentuk: design/DaftarSyarikat.dc.html
 export default function DaftarSyarikatPage() {
@@ -39,15 +39,15 @@ export default function DaftarSyarikatPage() {
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-page text-ink">
-      <header className="flex items-center px-3 pt-4 pb-2">
+      <header className="flex items-center px-3 pt-3 pb-1">
         <Link href="/" aria-label="Kembali ke laman utama" className="flex size-11 items-center justify-center rounded-full text-ink!">
           <IconBack />
         </Link>
       </header>
       <form onSubmit={hantar} className="flex grow flex-col gap-4 px-6 pb-8" noValidate>
         <div className="flex flex-col gap-1.5">
-          <h1 className="m-0 text-[26px] font-extrabold">Daftar syarikat</h1>
-          <span className="text-[15px] text-subtle">Percuma dan hanya 2 minit. Anda akan menjadi Pentadbir syarikat ini.</span>
+          <h1 className="m-0 text-[22px] font-extrabold">Daftar syarikat</h1>
+          <span className="text-sm text-subtle">Percuma dan hanya 2 minit. Anda akan menjadi Pentadbir syarikat ini.</span>
         </div>
         <span className="pt-1 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">SYARIKAT</span>
         <label className="flex flex-col gap-1.5 text-sm font-bold">
@@ -94,7 +94,7 @@ export default function DaftarSyarikatPage() {
             {ralat}
           </span>
         )}
-        <button type="submit" disabled={busy} className="flex h-14 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
+        <button type="submit" disabled={busy} className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
           {busy ? "Menghantar…" : "Daftar & hantar kod WhatsApp"}
         </button>
         <span className="text-center text-sm text-muted">

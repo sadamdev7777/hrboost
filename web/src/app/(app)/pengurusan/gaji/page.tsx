@@ -95,7 +95,7 @@ function ProsesGaji() {
         })}
       </ol>
       {d.error && (
-        <div className="px-5 pt-3">
+        <div className="px-4 pt-3">
           <ErrorBox message={d.error} />
         </div>
       )}
@@ -105,7 +105,7 @@ function ProsesGaji() {
       {d.data && status === "pending" && <Langkah3 data={d.data} />}
       {d.data && (status === "approved" || status === "paid" || status === "locked") && <Langkah4 data={d.data} reload={d.reload} />}
       {d.data && status === "rejected" && (
-        <main className="px-5 pt-4">
+        <main className="px-4 pt-4">
           <ErrorBox message="Gaji bulan ini telah ditolak. Hubungi Kewangan / CEO." />
         </main>
       )}
@@ -137,7 +137,7 @@ function Langkah1({ data, reload }: { data: Data; reload: () => void }) {
 
   return (
     <>
-      <main className="flex grow flex-col gap-3 px-5 pt-4 pb-4">
+      <main className="flex grow flex-col gap-3 px-4 pt-4 pb-4">
         <Seksyen>DATA BULAN INI (AUTOMATIK)</Seksyen>
         <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
           <Baris k="Pekerja aktif" v={s.employees} />
@@ -152,7 +152,7 @@ function Langkah1({ data, reload }: { data: Data; reload: () => void }) {
         </div>
 
         {!data.prep.statutory_ready && <ErrorBox message="Jadual kadar berkanun belum dimuatkan untuk bulan ini. Hubungi Pentadbir Platform." />}
-        <div className="flex flex-col gap-2 rounded-card bg-[#F3F0FC] px-4 py-3.5 text-[#4A3B8C]">
+        <div className="flex flex-col gap-2 rounded-card bg-[#F3F0FC] px-4 py-3 text-[#4A3B8C]">
           <b className="text-sm font-extrabold">Semakan sebelum kira</b>
           {data.prep.checks.length === 0 ? (
             <span className="text-[13px]">Tiada isu ditemui.</span>
@@ -168,7 +168,7 @@ function Langkah1({ data, reload }: { data: Data; reload: () => void }) {
         <span className="text-[13px] leading-normal text-[#4A5A57]">Slip gaji (WhatsApp ke pekerja) · Fail bank pukal · KWSP · PERKESO/SIP · PCB (CP39) · Jurnal ke sistem perakaunan</span>
         {ralat && <ErrorBox message={ralat} />}
       </main>
-      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
+      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <ButangUtama onClick={kira} busy={busy} disabled={!data.prep.statutory_ready}>
           Kira Gaji
         </ButangUtama>
@@ -263,7 +263,7 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
 
   return (
     <>
-      <main className="flex grow flex-col gap-3 px-5 pt-4 pb-4">
+      <main className="flex grow flex-col gap-3 px-4 pt-4 pb-4">
         {data.run.status === "returned" && <span className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] text-warning">Gaji dikembalikan oleh pelulus. Semak, kira semula dan hantar sekali lagi.</span>}
         <div className="grid grid-cols-2 gap-2">
           <Angka k="Jumlah kasar" v={rm(j.gross)} />
@@ -273,7 +273,7 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
         </div>
         <Seksyen className="pt-1">{j.previous_run ? "BERBEZA DARIPADA BULAN LALU" : "PERUBAHAN"}</Seksyen>
         <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-          {(diff.data ?? []).length === 0 && <span className="py-3.5 text-muted">Tiada perubahan berbanding bulan lalu.</span>}
+          {(diff.data ?? []).length === 0 && <span className="py-3 text-muted">Tiada perubahan berbanding bulan lalu.</span>}
           {(diff.data ?? []).slice(0, 8).map((x) => (
             <div key={x.employment_id} className="flex min-h-12 items-center justify-between gap-3 py-2">
               <b>{x.name}</b>
@@ -301,8 +301,8 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
         </span>
         {ralat && <ErrorBox message={ralat} />}
       </main>
-      <div className="sticky bottom-0 grid grid-cols-[auto_1fr] gap-2.5 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
-        <button type="button" disabled={!!busy} onClick={() => buat("kira")} className="h-[52px] rounded-button border-2 border-primary px-4 text-sm font-extrabold text-primary disabled:opacity-60">
+      <div className="sticky bottom-0 grid grid-cols-[auto_1fr] gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <button type="button" disabled={!!busy} onClick={() => buat("kira")} className="h-12 rounded-button border-2 border-primary px-4 text-sm font-extrabold text-primary disabled:opacity-60">
           {busy === "kira" ? "Mengira…" : "Kira semula"}
         </button>
         <ButangUtama onClick={() => buat("hantar")} busy={busy === "hantar"}>
@@ -316,8 +316,8 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
 function Langkah3({ data }: { data: Data }) {
   const j = (data.run.totals ?? {}) as unknown as Jumlah;
   return (
-    <main className="flex grow flex-col gap-3 px-5 pt-4 pb-6">
-      <div className="flex flex-col items-center gap-2 rounded-card bg-surface px-5 py-6 text-center">
+    <main className="flex grow flex-col gap-3 px-4 pt-4 pb-6">
+      <div className="flex flex-col items-center gap-2 rounded-card bg-surface px-4 py-6 text-center">
         <Tag tone="warning">Menunggu kelulusan</Tag>
         <b className="text-lg font-extrabold">{rm(j.net)} bersih · {j.headcount} pekerja</b>
         <span className="text-sm text-muted">Aliran: {data.aliran.join(" → ")}</span>
@@ -362,7 +362,7 @@ function Langkah4({ data, reload }: { data: Data; reload: () => void }) {
 
   return (
     <>
-      <main className="flex grow flex-col gap-3 px-5 pt-4 pb-4">
+      <main className="flex grow flex-col gap-3 px-4 pt-4 pb-4">
         <span className="rounded-[14px] bg-success-soft px-4 py-3 text-[13px] font-semibold text-success">
           {dibayar
             ? `Telah dibayar${data.run.pay_date ? ` pada ${data.run.pay_date.split("-").reverse().join("/")}` : ""}. Slip gaji telah dihantar kepada ${j.headcount} pekerja.`
@@ -393,7 +393,7 @@ function Langkah4({ data, reload }: { data: Data; reload: () => void }) {
         {ralat && <ErrorBox message={ralat} />}
       </main>
       {!dibayar && (
-        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
+        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <ButangUtama onClick={bayar} busy={busy}>
             Tandakan telah dibayar &amp; hantar slip
           </ButangUtama>
@@ -423,7 +423,7 @@ function Angka({ k, v }: { k: string; v: string }) {
 
 function Fail({ t, s, onClick }: { t: string; s: string; onClick: () => void }) {
   return (
-    <div className="flex min-h-[56px] items-center gap-2 py-2">
+    <div className="flex min-h-12 items-center gap-2 py-2">
       <span className="flex grow flex-col">
         <b>{t}</b>
         <span className="text-xs text-muted">{s}</span>

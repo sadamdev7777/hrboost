@@ -28,15 +28,15 @@ export default function TuntutanSayaPage() {
   return (
     <Screen>
       <BackHeader title="Tuntutan" href="/saya" />
-      <main className="flex grow flex-col gap-3.5 px-5 pt-1 pb-4">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         <div className="grid grid-cols-2 gap-2">
           <div className="flex flex-col gap-0.5 rounded-[14px] bg-surface px-3.5 py-3">
             <span className="text-xs text-muted">Menunggu</span>
-            <b className="text-xl font-extrabold">{ringgit(menunggu)}</b>
+            <b className="text-lg font-extrabold">{ringgit(menunggu)}</b>
           </div>
           <div className="flex flex-col gap-0.5 rounded-[14px] bg-surface px-3.5 py-3">
             <span className="text-xs text-muted">Lulus, dibayar bersama gaji</span>
-            <b className="text-xl font-extrabold">{ringgit(lulus)}</b>
+            <b className="text-lg font-extrabold">{ringgit(lulus)}</b>
           </div>
         </div>
 
@@ -51,14 +51,14 @@ export default function TuntutanSayaPage() {
               <Link
                 key={t.id}
                 href={t.status === "draft" || t.status === "returned" || !t.approvalRequestId ? `/tuntutan/${t.id}` : `/permohonan/${t.approvalRequestId}`}
-                className="flex items-center justify-between gap-2.5 rounded-card bg-surface px-4 py-3.5 text-ink!"
+                className="flex items-center justify-between gap-2.5 rounded-card bg-surface px-4 py-3 text-ink!"
               >
                 <div className="flex min-w-0 flex-col gap-[3px]">
-                  <span className="text-[15px] font-bold">{t.title}</span>
+                  <span className="text-sm font-bold">{t.title}</span>
                   <span className="text-xs text-muted">{keterangan(t)}</span>
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
-                  <span className="text-right text-[15px] font-extrabold">{ringgit(t.total)}</span>
+                  <span className="text-right text-sm font-extrabold">{ringgit(t.total)}</span>
                   <Pill t={t} />
                 </div>
               </Link>
@@ -67,11 +67,11 @@ export default function TuntutanSayaPage() {
         ))}
       </main>
 
-      <div className="sticky bottom-0 grid grid-cols-2 gap-2.5 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
-        <Link href="/tuntutan/baru" className="flex h-[54px] items-center justify-center gap-2 rounded-button bg-primary text-[15px] font-extrabold text-white!">
+      <div className="sticky bottom-0 grid grid-cols-2 gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <Link href="/tuntutan/baru" className="flex h-12 items-center justify-center gap-2 rounded-button bg-primary text-sm font-extrabold text-white!">
           Ambil gambar
         </Link>
-        <Link href="/tuntutan/baru" className="flex h-[54px] items-center justify-center gap-2 rounded-button border-2 border-primary bg-surface text-[15px] font-extrabold text-primary!">
+        <Link href="/tuntutan/baru" className="flex h-12 items-center justify-center gap-2 rounded-button border-2 border-primary bg-surface text-sm font-extrabold text-primary!">
           <IconDocument size={18} />
           Muat naik
         </Link>

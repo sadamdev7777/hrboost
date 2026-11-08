@@ -77,7 +77,7 @@ function Jemput() {
         </ButangUtama>
       }
     >
-      <span className="text-[15px] leading-normal text-subtle">Setiap pekerja akan menerima pautan peribadi melalui WhatsApp.</span>
+      <span className="text-sm leading-normal text-subtle">Setiap pekerja akan menerima pautan peribadi melalui WhatsApp.</span>
       <Seksyen>PRATONTON MESEJ</Seksyen>
       <div className="max-w-[92%] rounded-[14px] rounded-tl-sm bg-[#E7DED3] p-3">
         <div className="rounded-[12px] bg-white px-3.5 py-2.5 text-sm leading-snug">

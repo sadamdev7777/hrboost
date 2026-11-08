@@ -74,7 +74,7 @@ function CutiUmum() {
           </button>
         ))}
       </div>
-      <main className="flex grow flex-col gap-2.5 px-5 pt-3 pb-4">
+      <main className="flex grow flex-col gap-2.5 px-4 pt-3 pb-4">
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         {d.data && semua.length === 0 && (
@@ -134,7 +134,7 @@ function CutiUmum() {
         )}
       </main>
       {d.data && semua.length > 0 && (
-        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
+        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <ButangUtama onClick={simpan} busy={busy} disabled={!cukup}>
             Simpan &amp; maklumkan pekerja
           </ButangUtama>

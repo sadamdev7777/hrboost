@@ -70,7 +70,7 @@ function Profil() {
           </button>
         ))}
       </div>
-      <main className="flex grow flex-col gap-3 px-5 py-4">
+      <main className="flex grow flex-col gap-3 px-4 py-4">
         {p.error && <ErrorBox message={p.error} />}
         {p.loading && !p.data && <Loading />}
         {p.data && tab === "Maklumat" && <Maklumat p={p.data} reload={p.reload} bolehUbah={bolehUbah} baru={sp.get("jemput") === "1"} keDokumen={() => setTab("Dokumen")} />}
@@ -157,9 +157,9 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
   return (
     <>
       {baru && <div className="rounded-[14px] bg-success-soft px-4 py-3 text-[13px] font-semibold text-success">Pekerja ditambah. Jemputan WhatsApp telah dimasukkan ke barisan penghantaran.</div>}
-      <div className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3.5">
+      <div className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3">
         <div className="flex items-center justify-between gap-2">
-          <b className="text-[15px] font-extrabold uppercase">{p.companyName}</b>
+          <b className="text-sm font-extrabold uppercase">{p.companyName}</b>
           <Tag tone={status.tone}>{status.label}</Tag>
         </div>
         <div className="grid grid-cols-2 gap-2.5">
@@ -415,7 +415,7 @@ function UbahPekerjaan({ p, onClose, onDone }: { p: ButiranPekerja; onClose: () 
         </MedanBorang>
       </div>
       {ralat && <ErrorBox message={ralat} />}
-      <button type="button" onClick={simpan} disabled={busy} className="h-[52px] rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
+      <button type="button" onClick={simpan} disabled={busy} className="h-12 rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
         {busy ? "Menyimpan…" : "Simpan"}
       </button>
     </Lembaran>
@@ -456,7 +456,7 @@ function Tamatkan({ p, onClose, onDone }: { p: ButiranPekerja; onClose: () => vo
       </MedanBorang>
       <span className="text-xs text-muted">Pekerja kekal aktif hingga hari bekerja terakhir. Selepas itu peranan dan jemputan dalam syarikat ini dibatalkan. Rekod gaji dan cuti kekal untuk audit.</span>
       {ralat && <ErrorBox message={ralat} />}
-      <button type="button" onClick={sahkan} disabled={busy} className="h-[52px] rounded-button bg-danger text-base font-extrabold text-white disabled:opacity-60">
+      <button type="button" onClick={sahkan} disabled={busy} className="h-12 rounded-button bg-danger text-base font-extrabold text-white disabled:opacity-60">
         {busy ? "Memproses…" : "Tamatkan pekerjaan"}
       </button>
     </Lembaran>
@@ -488,7 +488,7 @@ function TabCuti({ id }: { id: string }) {
       <div className="grid grid-cols-3 gap-2">
         {d.data.bal.map((b, i) => (
           <div key={i} className="flex flex-col gap-0.5 rounded-[14px] bg-surface px-3.5 py-3">
-            <b className="text-xl font-extrabold">{Number(b.available)}</b>
+            <b className="text-lg font-extrabold">{Number(b.available)}</b>
             <span className="text-xs text-muted">{b.leave_types?.name}</span>
           </div>
         ))}
@@ -561,11 +561,11 @@ function TabKehadiran({ id }: { id: string }) {
     <>
       <div className="grid grid-cols-2 gap-2">
         <div className="flex flex-col gap-0.5 rounded-[14px] bg-surface px-3.5 py-3">
-          <b className="text-xl font-extrabold">{d.data.length}</b>
+          <b className="text-lg font-extrabold">{d.data.length}</b>
           <span className="text-xs text-muted">Hari hadir bulan ini</span>
         </div>
         <div className={`flex flex-col gap-0.5 rounded-[14px] px-3.5 py-3 ${lewat ? "bg-warning-soft text-warning" : "bg-surface"}`}>
-          <b className="text-xl font-extrabold">{lewat}</b>
+          <b className="text-lg font-extrabold">{lewat}</b>
           <span className="text-xs">Lewat masuk</span>
         </div>
       </div>
@@ -640,7 +640,7 @@ function BakiAwal({ id }: { id: string }) {
     setF({ ...v, [k]: e.target.value.replace(/[^\d.]/g, "") });
   };
   return (
-    <div className="mt-2 flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3.5">
+    <div className="mt-2 flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3">
       <b className="text-sm font-extrabold">Data terkumpul {y} daripada sistem lama</b>
       <span className="text-xs text-muted">Untuk syarikat yang mula menggunakan HRBoost pada pertengahan tahun — diperlukan supaya PCB dikira dengan tepat.</span>
       <div className="grid grid-cols-2 gap-2.5">
@@ -707,7 +707,7 @@ function TabDokumen({ p, bolehUbah }: { p: ButiranPekerja; bolehUbah: boolean })
   return (
     <>
       {bolehUbah && (
-        <div className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3.5">
+        <div className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3">
           <div className="grid grid-cols-2 gap-2.5">
             <MedanBorang label="Jenis dokumen">
               <select className={inputKecil} value={jenis} onChange={(e) => setJenis(e.target.value)}>
@@ -735,7 +735,7 @@ function TabDokumen({ p, bolehUbah }: { p: ButiranPekerja; bolehUbah: boolean })
       ) : (
         <Senarai kosong="Tiada dokumen.">
           {d.data.map((x) => (
-            <button key={x.id} type="button" onClick={() => buka(x.storage_path)} className="flex min-h-[52px] items-center justify-between gap-2 py-2 text-left text-sm">
+            <button key={x.id} type="button" onClick={() => buka(x.storage_path)} className="flex min-h-12 items-center justify-between gap-2 py-2 text-left text-sm">
               <span className="flex flex-col gap-0.5">
                 <b className="font-bold">{x.title}</b>
                 <span className="text-xs text-muted">
@@ -760,17 +760,17 @@ function BarisRekod({ href, tajuk, kecil, status }: { href?: string; tajuk: stri
   const isi = (
     <>
       <span className="flex min-w-0 flex-col gap-0.5">
-        <b className="text-[15px] font-bold">{tajuk}</b>
+        <b className="text-sm font-bold">{tajuk}</b>
         <span className="text-xs text-muted">{kecil}</span>
       </span>
       <StatusPill status={status} />
     </>
   );
   return href ? (
-    <Link href={href} className="flex min-h-[54px] items-center justify-between gap-2 py-2 text-ink!">
+    <Link href={href} className="flex min-h-12 items-center justify-between gap-2 py-2 text-ink!">
       {isi}
     </Link>
   ) : (
-    <div className="flex min-h-[54px] items-center justify-between gap-2 py-2">{isi}</div>
+    <div className="flex min-h-12 items-center justify-between gap-2 py-2">{isi}</div>
   );
 }

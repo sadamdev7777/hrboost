@@ -55,7 +55,7 @@ function Kadar() {
   return (
     <Screen>
       <BackHeader title="Kadar berkanun" href="/pengurusan/tetapan" />
-      <main className="flex grow flex-col gap-2.5 px-5 pt-1 pb-6">
+      <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
         <div className="rounded-[14px] bg-[#E3F1EE] px-4 py-3 text-[13px] leading-normal text-primary">
           Jadual kadar dikemas kini oleh HRBoost untuk semua syarikat apabila kerajaan mengumumkan perubahan. Anda tidak perlu memasukkan kadar sendiri.
         </div>
@@ -66,9 +66,9 @@ function Kadar() {
           {JADUAL.map((j) => {
             const r = d.data?.r.find((x) => x.code === j.code && (!x.effective_to || x.effective_to >= today));
             return (
-              <div key={j.code} className="flex min-h-[56px] items-center gap-2 py-2">
+              <div key={j.code} className="flex min-h-12 items-center gap-2 py-2">
                 <span className="flex grow flex-col gap-0.5">
-                  <b className="text-[15px] font-bold">{j.name}</b>
+                  <b className="text-sm font-bold">{j.name}</b>
                   <span className="text-xs text-muted">
                     {j.sub}
                     {r ? ` · berkuat kuasa ${tarikh(r.effective_from)} ${r.effective_from.slice(0, 4)}` : ""}
@@ -82,9 +82,9 @@ function Kadar() {
 
         <Seksyen className="pt-1">PILIHAN SYARIKAT</Seksyen>
         <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-          <div className="flex min-h-[60px] items-center gap-2 py-2">
+          <div className="flex min-h-[52px] items-center gap-2 py-2">
             <span className="flex grow flex-col gap-0.5">
-              <b className="text-[15px] font-bold">Caruman KWSP majikan</b>
+              <b className="text-sm font-bold">Caruman KWSP majikan</b>
               <span className="text-xs text-muted">Boleh lebih tinggi daripada minimum</span>
             </span>
             <select
@@ -102,9 +102,9 @@ function Kadar() {
               ))}
             </select>
           </div>
-          <div className="flex min-h-[60px] items-center gap-2 py-2">
+          <div className="flex min-h-[52px] items-center gap-2 py-2">
             <span className="flex grow flex-col gap-0.5">
-              <b className="text-[15px] font-bold">Kadar levi HRDF</b>
+              <b className="text-sm font-bold">Kadar levi HRDF</b>
               <span className="text-xs text-muted">Daripada Profil syarikat</span>
             </span>
             <span className="text-sm font-bold">{d.data ? (d.data.c.hrdf_registered ? "Mengikut pendaftaran" : "Tidak berdaftar") : ""}</span>

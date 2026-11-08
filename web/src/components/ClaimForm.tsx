@@ -130,19 +130,19 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
       <Screen>
         <BackHeader title="Tuntutan Baharu" href="/tuntutan" />
         {inputs}
-        <main className="flex grow flex-col gap-3.5 px-5 pt-2 pb-4">
+        <main className="flex grow flex-col gap-3 px-4 pt-2 pb-4">
           <div className="flex flex-col gap-1">
-            <h2 className="m-0 text-[22px] font-extrabold">Tambah resit</h2>
+            <h2 className="m-0 text-xl font-extrabold">Tambah resit</h2>
             <span className="text-sm text-subtle">Ambil gambar resit atau muat naik e-resit, kemudian isi butirannya.</span>
           </div>
           <button type="button" onClick={() => kamera.current?.click()} className="flex min-h-[108px] flex-col items-center justify-center gap-2 rounded-[18px] bg-primary p-3 text-white">
             <CameraIcon />
-            <b className="text-[15px] font-extrabold">Ambil gambar resit</b>
+            <b className="text-sm font-extrabold">Ambil gambar resit</b>
             <span className="text-xs opacity-90">Buka kamera telefon</span>
           </button>
           <button type="button" onClick={() => galeri.current?.click()} className="flex min-h-[108px] flex-col items-center justify-center gap-2 rounded-[18px] border-2 border-primary bg-surface p-3 text-primary">
             <IconDocument size={26} />
-            <b className="text-[15px] font-extrabold">Muat naik dari galeri / fail</b>
+            <b className="text-sm font-extrabold">Muat naik dari galeri / fail</b>
             <span className="text-xs text-[#33504B]">Gambar, tangkapan skrin e-resit atau PDF</span>
           </button>
           <div className="flex flex-col gap-2 rounded-[14px] bg-surface px-3.5 py-3">
@@ -166,7 +166,7 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
     <Screen>
       <BackHeader title={claimId ? "Ubah Tuntutan" : "Tuntutan Baharu"} href="/tuntutan" />
       {inputs}
-      <main className="flex grow flex-col gap-3 px-5 pt-1 pb-4">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         {resit.length > 0 ? (
           <div className="flex gap-2 overflow-x-auto pb-3">
             {resit.map((r, i) => (
@@ -191,7 +191,7 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
           )}
           <label className="flex flex-col gap-1.5 text-sm font-bold">
           Jenis
-          <select value={pilih} onChange={(e) => setTypeId(e.target.value)} className="h-[46px] rounded-xl border border-line bg-surface px-3.5 text-[15px] font-semibold text-ink">
+          <select value={pilih} onChange={(e) => setTypeId(e.target.value)} className="h-[46px] rounded-xl border border-line bg-surface px-3.5 text-sm font-semibold text-ink">
             {senarai.map((x) => (
               <option key={x.id} value={x.id}>
                 {x.label}
@@ -202,17 +202,17 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
         <div className="grid grid-cols-2 gap-2.5">
           <label className="flex flex-col gap-1.5 text-sm font-bold">
             Tarikh
-            <input type="date" value={tarikh} max={todayISO()} onChange={(e) => e.target.value && setTarikh(e.target.value)} className="h-[46px] rounded-xl border border-line bg-surface px-3 text-[15px] font-semibold text-ink" />
+            <input type="date" value={tarikh} max={todayISO()} onChange={(e) => e.target.value && setTarikh(e.target.value)} className="h-[46px] rounded-xl border border-line bg-surface px-3 text-sm font-semibold text-ink" />
           </label>
           {isKm ? (
             <label className="flex flex-col gap-1.5 text-sm font-bold">
               Jarak (km)
-              <input type="text" inputMode="decimal" value={km} onChange={(e) => setKm(e.target.value.replace(/[^\d.]/g, ""))} className="h-[46px] rounded-xl border border-line bg-surface px-3.5 text-[15px] font-semibold text-ink" />
+              <input type="text" inputMode="decimal" value={km} onChange={(e) => setKm(e.target.value.replace(/[^\d.]/g, ""))} className="h-[46px] rounded-xl border border-line bg-surface px-3.5 text-sm font-semibold text-ink" />
             </label>
           ) : (
             <label className="flex flex-col gap-1.5 text-sm font-bold">
               Jumlah (RM)
-              <input type="text" inputMode="decimal" value={jumlah} onChange={(e) => setJumlah(e.target.value.replace(/[^\d.]/g, ""))} className="h-[46px] rounded-xl border border-line bg-surface px-3.5 text-[15px] font-semibold text-ink" />
+              <input type="text" inputMode="decimal" value={jumlah} onChange={(e) => setJumlah(e.target.value.replace(/[^\d.]/g, ""))} className="h-[46px] rounded-xl border border-line bg-surface px-3.5 text-sm font-semibold text-ink" />
             </label>
           )}
         </div>
@@ -223,7 +223,7 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
         )}
         <label className="flex flex-col gap-1.5 text-sm font-bold">
           Tujuan
-          <input type="text" value={tujuan} onChange={(e) => setTujuan(e.target.value)} placeholder="Contoh: Menghantar kumpulan umrah ke KLIA2" className="h-[46px] rounded-xl border border-line bg-surface px-3.5 text-[15px] font-semibold text-ink placeholder:font-normal placeholder:text-muted" />
+          <input type="text" value={tujuan} onChange={(e) => setTujuan(e.target.value)} placeholder="Contoh: Menghantar kumpulan umrah ke KLIA2" className="h-[46px] rounded-xl border border-line bg-surface px-3.5 text-sm font-semibold text-ink placeholder:font-normal placeholder:text-muted" />
         </label>
         {lebihHad && <span className="rounded-xl bg-warning-soft px-3 py-2 text-xs font-semibold text-warning">Melebihi had {j!.label} ({ringgit(j!.limitPerItem)} setiap item). Pelulus akan menyemak.</span>}
         {aliran.data && <span className="text-xs text-muted">{aliran.data}</span>}
@@ -235,11 +235,11 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
         )}
       </main>
 
-      <div className="sticky bottom-0 grid grid-cols-[1fr_2fr] gap-2.5 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
-        <button type="button" disabled={!!busy} onClick={() => simpan(false)} className="h-[54px] rounded-button border-[1.5px] border-line bg-surface text-[15px] font-bold text-ink disabled:opacity-60">
+      <div className="sticky bottom-0 grid grid-cols-[1fr_2fr] gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <button type="button" disabled={!!busy} onClick={() => simpan(false)} className="h-12 rounded-button border-[1.5px] border-line bg-surface text-sm font-bold text-ink disabled:opacity-60">
           {busy === "draf" ? "Menyimpan…" : "Simpan draf"}
         </button>
-        <button type="button" disabled={!!busy} onClick={() => simpan(true)} className="h-[54px] rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover disabled:opacity-60">
+        <button type="button" disabled={!!busy} onClick={() => simpan(true)} className="h-12 rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover disabled:opacity-60">
           {busy === "hantar" ? "Menghantar…" : `Hantar ${ringgit(amaun)}`}
         </button>
       </div>

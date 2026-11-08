@@ -117,7 +117,7 @@ export default function MohonCutiPage() {
   return (
     <Screen>
       <BackHeader title="Mohon Cuti" href="/utama" />
-      <main className="flex grow flex-col gap-[18px] px-5 pt-2 pb-4">
+      <main className="flex grow flex-col gap-[18px] px-4 pt-2 pb-4">
         {info.error && <ErrorBox message={info.error} />}
 
         <fieldset className="m-0 flex flex-col gap-2.5 border-0 p-0">
@@ -149,9 +149,9 @@ export default function MohonCutiPage() {
           <DateField label="Hingga" value={end} min={start} onChange={setEnd} />
         </div>
 
-        <div className="flex flex-col gap-1.5 rounded-card bg-primary-soft px-4 py-3.5">
+        <div className="flex flex-col gap-1.5 rounded-card bg-primary-soft px-4 py-3">
           <div className="flex items-baseline justify-between">
-            <span className="text-[22px] font-extrabold text-primary">
+            <span className="text-xl font-extrabold text-primary">
               {n === null ? "…" : `${hari(n)} hari bekerja`}
             </span>
             {jenis && bakiJenis && n !== null && (
@@ -167,7 +167,7 @@ export default function MohonCutiPage() {
             <select
               value={cover}
               onChange={(e) => setCover(e.target.value)}
-              className="h-12 rounded-xl border-[1.5px] border-primary bg-surface px-3 text-[15px] font-semibold text-ink"
+              className="h-12 rounded-xl border-[1.5px] border-primary bg-surface px-3 text-sm font-semibold text-ink"
             >
               <option value="">Tiada</option>
               {info.data?.colleagues.map((c) => (
@@ -183,7 +183,7 @@ export default function MohonCutiPage() {
               type="text"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="h-12 rounded-xl border border-line bg-surface px-3.5 text-[15px] font-normal text-ink"
+              className="h-12 rounded-xl border border-line bg-surface px-3.5 text-sm font-normal text-ink"
             />
           </label>
         </div>
@@ -209,12 +209,12 @@ export default function MohonCutiPage() {
         {error && <ErrorBox message={error} />}
       </main>
 
-      <div className="sticky bottom-0 flex flex-col gap-2.5 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
+      <div className="sticky bottom-0 flex flex-col gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <button
           type="button"
           onClick={hantar}
           disabled={busy || (perluSijil && !sijil) || n === 0}
-          className="flex h-[54px] items-center justify-center rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover disabled:opacity-60"
+          className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover disabled:opacity-60"
         >
           {busy ? "Menghantar…" : "Hantar Permohonan"}
         </button>
@@ -232,7 +232,7 @@ function DateField({ label, value, min, onChange }: { label: string; value: stri
   return (
     <label className="flex flex-col gap-1.5 text-sm font-bold">
       {label}
-      <span className="relative flex h-12 items-center rounded-xl border border-line bg-surface px-3.5 text-[15px] font-semibold">
+      <span className="relative flex h-12 items-center rounded-xl border border-line bg-surface px-3.5 text-sm font-semibold">
         {hariTarikh(value)}
         <input
           type="date"

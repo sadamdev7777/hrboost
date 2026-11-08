@@ -87,15 +87,15 @@ function JenisTuntutan() {
   return (
     <Screen>
       <BackHeader title="Jenis tuntutan & had" href="/pengurusan/tetapan" />
-      <main className="flex grow flex-col gap-2.5 px-5 pt-1 pb-6">
+      <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         <Seksyen>JENIS TUNTUTAN</Seksyen>
         <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
           {(d.data?.t ?? []).map((t) => (
-            <div key={t.id} className={`flex min-h-[60px] items-center gap-2 py-2 ${t.active ? "" : "opacity-60"}`}>
+            <div key={t.id} className={`flex min-h-[52px] items-center gap-2 py-2 ${t.active ? "" : "opacity-60"}`}>
               <span className="flex grow flex-col gap-0.5">
-                <b className="text-[15px] font-bold">{namaJenisTuntutan(t.name)}</b>
+                <b className="text-sm font-bold">{namaJenisTuntutan(t.name)}</b>
                 <span className="text-xs text-muted">
                   {t.mileage_rate != null ? "Kadar sekilometer · tanpa resit" : `Had setiap item · ${t.requires_receipt ? "perlu resit" : "tanpa resit"}`}
                 </span>
@@ -124,9 +124,9 @@ function JenisTuntutan() {
 
         <Seksyen className="pt-1">PERATURAN</Seksyen>
         <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-          <div className="flex min-h-[60px] items-center gap-2 py-2">
+          <div className="flex min-h-[52px] items-center gap-2 py-2">
             <span className="flex grow flex-col gap-0.5">
-              <b className="text-[15px] font-bold">Hantar dalam tempoh</b>
+              <b className="text-sm font-bold">Hantar dalam tempoh</b>
               <span className="text-xs text-muted">Selepas tarikh resit · kosong = tiada had</span>
             </span>
             <input
@@ -142,9 +142,9 @@ function JenisTuntutan() {
             />
           </div>
           {ceo && (
-            <div className="flex min-h-[60px] items-center gap-2 py-2">
+            <div className="flex min-h-[52px] items-center gap-2 py-2">
               <span className="flex grow flex-col gap-0.5">
-                <b className="text-[15px] font-bold">Perlu kelulusan CEO jika melebihi</b>
+                <b className="text-sm font-bold">Perlu kelulusan CEO jika melebihi</b>
                 <span className="text-xs text-muted">Peringkat tambahan automatik</span>
               </span>
               <input
@@ -161,9 +161,9 @@ function JenisTuntutan() {
               />
             </div>
           )}
-          <div className="flex min-h-[60px] items-center gap-2 py-2">
+          <div className="flex min-h-[52px] items-center gap-2 py-2">
             <span className="flex grow flex-col gap-0.5">
-              <b className="text-[15px] font-bold">Bayar melalui</b>
+              <b className="text-sm font-bold">Bayar melalui</b>
               <span className="text-xs text-muted">Tuntutan yang diluluskan dibayar bersama gaji bulan berikutnya</span>
             </span>
             <b className="text-sm">Gaji</b>

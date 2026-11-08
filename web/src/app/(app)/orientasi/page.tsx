@@ -33,7 +33,7 @@ export default function OrientasiPage() {
 
   return (
     <Screen>
-      <main className="flex grow flex-col gap-3 px-5 pt-7 pb-3">
+      <main className="flex grow flex-col gap-3 px-4 pt-7 pb-3">
         <div className="flex flex-col gap-1.5">
           <h1 className="m-0 text-2xl font-extrabold">Lengkapkan akaun anda</h1>
           <span className="text-sm text-subtle">Lebih kurang 10 minit. Boleh disambung kemudian.</span>
@@ -72,7 +72,7 @@ export default function OrientasiPage() {
                 )}
               </>
             );
-            const cls = `flex min-h-[46px] items-center gap-3 text-[15px] text-ink! ${i ? "border-t border-[#EEF2F1]" : ""} ${
+            const cls = `flex min-h-[46px] items-center gap-3 text-sm text-ink! ${i ? "border-t border-[#EEF2F1]" : ""} ${
               now ? "-mx-4 bg-[#F2F8F7] px-4 font-extrabold" : ""
             }`;
             return l.href ? (
@@ -88,11 +88,11 @@ export default function OrientasiPage() {
         </div>
 
         {hp && hp.joinDate >= todayISO() && (
-          <div className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3.5">
+          <div className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3">
             <span className="text-xs font-bold tracking-[0.04em] text-subtle">HARI PERTAMA ANDA</span>
             <div className="flex items-center gap-3">
-              <span className="flex h-14 w-[52px] shrink-0 flex-col items-center justify-center rounded-xl bg-primary-soft text-primary">
-                <b className="text-xl leading-none font-extrabold">{Number(hp.joinDate.slice(8, 10))}</b>
+              <span className="flex h-12 w-[52px] shrink-0 flex-col items-center justify-center rounded-xl bg-primary-soft text-primary">
+                <b className="text-lg leading-none font-extrabold">{Number(hp.joinDate.slice(8, 10))}</b>
                 <span className="text-[11px] font-bold">{BULAN[Number(hp.joinDate.slice(5, 7)) - 1]}</span>
               </span>
               <div className="flex flex-col gap-0.5 text-sm">
@@ -107,10 +107,10 @@ export default function OrientasiPage() {
         )}
       </main>
 
-      <div className="sticky bottom-0 flex flex-col gap-1.5 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
+      <div className="sticky bottom-0 flex flex-col gap-1.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <Link
           href={seterusnya}
-          className="flex h-[54px] items-center justify-center rounded-button bg-primary text-base font-extrabold text-white! hover:bg-primary-hover"
+          className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white! hover:bg-primary-hover"
         >
           {n === LANGKAH.length ? "Lihat ringkasan" : "Teruskan"}
         </Link>

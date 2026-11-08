@@ -53,10 +53,10 @@ export default function AksesSyarikatPage() {
   return (
     <Screen>
       <BackHeader title="Mohon akses ke syarikat lain" href="/pengurusan" />
-      <main className="flex grow flex-col gap-3 px-5 pt-1 pb-6">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         {dihantar ? (
-          <div className="flex flex-col items-center gap-3 rounded-card bg-surface px-5 py-8 text-center">
-            <span className="flex size-14 items-center justify-center rounded-full bg-warning-soft text-warning">
+          <div className="flex flex-col items-center gap-3 rounded-card bg-surface px-4 py-8 text-center">
+            <span className="flex size-12 items-center justify-center rounded-full bg-warning-soft text-warning">
               <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <circle cx="12" cy="12" r="9" />
                 <path d="M12 7v5l3 2" />
@@ -113,7 +113,7 @@ export default function AksesSyarikatPage() {
             <Seksyen className="pt-2">PERMOHONAN SAYA</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {sejarah.data!.map((g) => (
-                <div key={g.id} className="flex min-h-[54px] items-center justify-between gap-2 py-2 text-sm">
+                <div key={g.id} className="flex min-h-12 items-center justify-between gap-2 py-2 text-sm">
                   <span className="flex flex-col">
                     <b className="font-bold">
                       {g.company_code} · {LABEL_PERANAN[g.role] === "Pekerja" ? "Lihat sahaja" : LABEL_PERANAN[g.role]}

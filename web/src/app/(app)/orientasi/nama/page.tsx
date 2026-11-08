@@ -47,7 +47,7 @@ export default function OrientasiNamaPage() {
           value={full}
           onChange={(e) => setFull(e.target.value)}
           autoComplete="name"
-          className="h-[50px] rounded-xl border border-line bg-surface px-3.5 text-[15px] font-bold tracking-[0.01em] text-ink uppercase"
+          className="h-[50px] rounded-xl border border-line bg-surface px-3.5 text-sm font-bold tracking-[0.01em] text-ink uppercase"
         />
         <span className="text-xs font-medium text-muted">
           Untuk slip gaji, Borang EA, KWSP dan surat rasmi. Mesti sama seperti dalam kad pengenalan.
@@ -61,7 +61,7 @@ export default function OrientasiNamaPage() {
           value={nick}
           onChange={(e) => setNick(e.target.value)}
           autoComplete="nickname"
-          className="h-14 rounded-xl border-[1.5px] border-primary bg-surface px-3.5 text-lg font-extrabold text-ink"
+          className="h-12 rounded-xl border-[1.5px] border-primary bg-surface px-3.5 text-lg font-extrabold text-ink"
         />
         <span className="text-xs font-medium text-muted">Nama yang biasa digunakan oleh rakan sekerja untuk memanggil anda.</span>
       </label>
@@ -83,7 +83,7 @@ export default function OrientasiNamaPage() {
 
 function Contoh({ label, children, small }: { label: string; children: React.ReactNode; small?: boolean }) {
   return (
-    <div className="flex min-h-[52px] items-center gap-3 border-t border-[#EEF2F1] text-sm first:border-t-0">
+    <div className="flex min-h-12 items-center gap-3 border-t border-[#EEF2F1] text-sm first:border-t-0">
       <span className="w-[92px] shrink-0 text-muted">{label}</span>
       <b className={small ? "text-[13px]" : ""}>{children}</b>
     </div>

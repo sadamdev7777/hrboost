@@ -59,7 +59,7 @@ export default function KehadiranPage() {
           </div>
         }
       />
-      <main className="flex grow flex-col gap-3.5 px-5 pt-1 pb-6">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         <div className="grid grid-cols-3 gap-2">
           <Kad n={hadir} label="Hari hadir" />
           <Kad n={lewat} label="Kali lewat" tone={lewat ? "warning" : undefined} />
@@ -76,7 +76,7 @@ export default function KehadiranPage() {
               <span>Keluar</span>
               <span className="w-[70px]" />
             </div>
-            {hari.length === 0 && <span className="border-t border-[#EEF2F1] py-3.5 text-sm text-muted">Tiada rekod bagi bulan ini.</span>}
+            {hari.length === 0 && <span className="border-t border-[#EEF2F1] py-3 text-sm text-muted">Tiada rekod bagi bulan ini.</span>}
             {hari.map((h) => (
               <Baris key={h.date} h={h} today={today} />
             ))}
@@ -127,7 +127,7 @@ function Kad({ n, label, tone }: { n: number; label: string; tone?: "warning" | 
   const c = tone === "warning" ? "bg-warning-soft text-warning" : tone === "danger" ? "bg-danger-soft text-danger" : "bg-surface";
   return (
     <div className={`flex flex-col gap-0.5 rounded-[14px] px-3.5 py-3 ${c}`}>
-      <b className="text-[22px] font-extrabold">{n}</b>
+      <b className="text-xl font-extrabold">{n}</b>
       <span className={`text-xs ${tone ? "" : "text-muted"}`}>{label}</span>
     </div>
   );

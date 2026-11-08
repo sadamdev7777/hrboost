@@ -53,7 +53,7 @@ export default function KelulusanPage() {
 
   return (
     <Screen>
-      <main className="flex grow flex-col gap-3.5 px-5 pt-6 pb-4">
+      <main className="flex grow flex-col gap-3 px-4 pt-4 pb-4">
         <div className="flex items-center justify-between gap-2">
           <h1 className="m-0 text-2xl font-extrabold">Kelulusan</h1>
           <span className="text-right text-[13px] font-semibold text-muted">{labelPeranan(me)}</span>
@@ -106,12 +106,12 @@ export default function KelulusanPage() {
 
             <div className="flex flex-col gap-2.5">
               {shown.map((t, i) => (
-                <div key={t.taskId} className="flex flex-col gap-2.5 rounded-[18px] bg-surface px-4 py-3.5">
+                <div key={t.taskId} className="flex flex-col gap-2.5 rounded-[18px] bg-surface px-4 py-3">
                   <Link href={`/kelulusan/${t.taskId}`} className="flex gap-3 text-ink!">
                     <Avatar name={t.name} index={i} />
                     <div className="flex grow flex-col gap-[3px]">
                       <div className="flex justify-between gap-2">
-                        <span className="text-[15px] font-extrabold">{t.name}</span>
+                        <span className="text-sm font-extrabold">{t.name}</span>
                         <span className="text-xs whitespace-nowrap text-muted">{masa(t.assignedAt)}</span>
                       </div>
                       <span className="text-sm font-semibold">{t.title}</span>
@@ -148,9 +148,9 @@ export default function KelulusanPage() {
             {history.loading && !history.data && <Loading />}
             {history.data && history.data.length === 0 && <Empty>Belum ada keputusan direkodkan.</Empty>}
             {history.data?.map((h) => (
-              <div key={h.taskId} className="flex items-center justify-between gap-2 rounded-card bg-surface px-4 py-3.5">
+              <div key={h.taskId} className="flex items-center justify-between gap-2 rounded-card bg-surface px-4 py-3">
                 <span className="flex flex-col gap-0.5">
-                  <b className="text-[15px]">{h.title}</b>
+                  <b className="text-sm">{h.title}</b>
                   <span className="text-xs text-muted">
                     {h.step} · {h.actedAt ? `${hariTarikh(tarikhTempatan(h.actedAt))}, ${masa(h.actedAt)}` : ""}
                   </span>

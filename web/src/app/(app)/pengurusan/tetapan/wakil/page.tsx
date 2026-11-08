@@ -75,7 +75,7 @@ function Wakil() {
   return (
     <Screen>
       <BackHeader title="Wakil kelulusan" href="/pengurusan/tetapan" />
-      <main className="flex grow flex-col gap-3 px-5 pt-1 pb-6">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         <div className="rounded-[14px] bg-[#E3F1EE] px-4 py-3 text-[13px] leading-normal text-primary">
           Apabila pelulus bercuti, tugasan kelulusan akan terus dihantar kepada wakil supaya tidak tertangguh.
         </div>
@@ -89,7 +89,7 @@ function Wakil() {
           return (
             <div key={x.id} className="flex flex-col gap-1 rounded-card bg-surface px-4 py-3">
               <div className="flex items-center justify-between gap-2">
-                <b className="text-[15px] font-bold">
+                <b className="text-sm font-bold">
                   {nama(x.from_person_id)} → {nama(x.to_person_id)}
                 </b>
                 <Tag tone={aktif ? "success" : "warning"}>{aktif ? "Aktif" : "Akan datang"}</Tag>
@@ -106,7 +106,7 @@ function Wakil() {
         })}
 
         <Seksyen className="pt-1">TAMBAH WAKIL</Seksyen>
-        <div className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3.5">
+        <div className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3">
           <div className="grid grid-cols-2 gap-2.5">
             <MedanBorang label="Pelulus">
               <select className={inputKecil} value={dari} onChange={(e) => setF({ ...f, dari: e.target.value })}>

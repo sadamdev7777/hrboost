@@ -126,14 +126,14 @@ function Aliran() {
           </button>
         ))}
       </div>
-      <main className="flex grow flex-col gap-2.5 px-5 pt-3.5 pb-4">
+      <main className="flex grow flex-col gap-2.5 px-4 pt-3.5 pb-4">
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         {steps.map((s, i) => (
           <div key={i} className="flex items-center gap-3 rounded-card bg-surface px-4 py-3">
             <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#E3F1EE] text-sm font-extrabold text-primary">{i + 1}</span>
             <div className="flex grow flex-col gap-0.5">
-              <b className="text-[15px] font-bold">{namaPeringkat(s.name)}</b>
+              <b className="text-sm font-bold">{namaPeringkat(s.name)}</b>
               <span className="text-xs leading-snug text-muted">{keterangan(s, nama, jenis)}</span>
             </div>
             <button type="button" aria-label={`Ubah peringkat ${i + 1}`} onClick={() => setUbah(i)} className="flex size-11 shrink-0 items-center justify-center rounded-full text-[#4A5A57]">
@@ -181,7 +181,7 @@ function Aliran() {
         {ok && <span className="text-sm font-semibold text-success">Aliran kelulusan disimpan.</span>}
       </main>
       {draf?.jenis === jenis && (
-        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
+        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <ButangUtama onClick={simpan} busy={busy}>
             Simpan aliran
           </ButangUtama>

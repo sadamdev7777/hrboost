@@ -40,7 +40,7 @@ export default function HariJadiPage() {
   return (
     <Screen>
       <BackHeader title="Hari Jadi" href="/saya" />
-      <main className="flex grow flex-col gap-3.5 px-5 pt-1 pb-4">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         {list.error && <ErrorBox message={list.error} />}
         {list.loading && !list.data && <Loading />}
         {hariIni.map((p) => (
@@ -72,13 +72,13 @@ export default function HariJadiPage() {
             <span className="py-4 text-sm text-muted">Tiada hari jadi {tab === "week" ? "lagi minggu ini" : "lagi bulan ini"}.</span>
           )}
           {baki.map((p, i) => (
-            <div key={p.personId} className={`flex min-h-[58px] items-center gap-3 ${i ? "border-t border-[#EEF2F1]" : ""}`}>
+            <div key={p.personId} className={`flex min-h-12 items-center gap-3 ${i ? "border-t border-[#EEF2F1]" : ""}`}>
               <span className="flex size-11 shrink-0 flex-col items-center justify-center rounded-xl bg-page">
                 <b className="text-base leading-none font-extrabold">{Number(p.date.slice(8))}</b>
                 <span className="text-[10px] font-bold text-[#4A5A57]">{BULAN[Number(p.date.slice(5, 7)) - 1]}</span>
               </span>
               <span className="flex grow flex-col gap-0.5">
-                <b className="text-[15px] font-bold">{p.name}</b>
+                <b className="text-sm font-bold">{p.name}</b>
                 {p.department && <span className="text-xs text-muted">{p.department}</span>}
               </span>
               <span className="text-xs font-bold text-[#4A5A57]">{bila(p.date, today)}</span>
@@ -108,19 +108,19 @@ function KadHariIni({ p, companyId, companyCode }: { p: HariJadi; companyId: str
     }
   }
   return (
-    <div className="flex flex-col gap-3.5 rounded-[20px] bg-[#FDEBD7] p-[18px]">
-      <div className="flex items-center gap-3.5">
-        <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-surface text-lg font-extrabold text-warning">{inisial(p.name)}</span>
+    <div className="flex flex-col gap-3 rounded-[20px] bg-[#FDEBD7] p-[18px]">
+      <div className="flex items-center gap-3">
+        <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-surface text-lg font-extrabold text-warning">{inisial(p.name)}</span>
         <div className="flex flex-col gap-0.5">
           <span className="text-xs font-bold tracking-[0.04em] text-warning">
             HARI INI · {Number(p.date.slice(8))} {BULAN[Number(p.date.slice(5, 7)) - 1]}
           </span>
-          <b className="text-xl font-extrabold">{p.name}</b>
+          <b className="text-lg font-extrabold">{p.name}</b>
           <span className="text-[13px] text-[#6B3A0B]">{[p.department, companyCode].filter(Boolean).join(" · ")}</span>
         </div>
         <IconCake size={34} className="ml-auto text-warning" />
       </div>
-      <button type="button" onClick={ucap} className="flex h-12 items-center justify-center gap-2 rounded-[14px] bg-surface text-[15px] font-extrabold text-warning">
+      <button type="button" onClick={ucap} className="flex h-12 items-center justify-center gap-2 rounded-[14px] bg-surface text-sm font-extrabold text-warning">
         <IconChat size={18} />
         Ucap selamat di WhatsApp
       </button>

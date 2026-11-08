@@ -29,7 +29,7 @@ export function ReasonSheet({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="flex w-full max-w-[480px] flex-col gap-3 rounded-t-[20px] bg-surface px-5 pt-5 pb-7"
+        className="flex w-full max-w-[480px] flex-col gap-3 rounded-t-[20px] bg-surface px-4 pt-5 pb-5"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="m-0 text-lg font-extrabold">{title}</h2>
@@ -40,14 +40,14 @@ export function ReasonSheet({
             rows={3}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            className="rounded-xl border border-line bg-surface p-3 text-[15px] font-normal text-ink"
+            className="rounded-xl border border-line bg-surface p-3 text-sm font-normal text-ink"
           />
         </label>
         <div className="grid grid-cols-2 gap-2.5">
           <button
             type="button"
             onClick={onCancel}
-            className="h-12 rounded-[14px] border border-line bg-surface text-[15px] font-bold text-ink"
+            className="h-12 rounded-[14px] border border-line bg-surface text-sm font-bold text-ink"
           >
             Batal
           </button>
@@ -62,7 +62,7 @@ export function ReasonSheet({
                 setBusy(false);
               }
             }}
-            className={`h-12 rounded-[14px] text-[15px] font-extrabold text-white disabled:opacity-60 ${
+            className={`h-12 rounded-[14px] text-sm font-extrabold text-white disabled:opacity-60 ${
               danger ? "bg-danger" : "bg-primary"
             }`}
           >

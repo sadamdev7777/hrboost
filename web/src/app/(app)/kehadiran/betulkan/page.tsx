@@ -78,7 +78,7 @@ function Betulkan() {
   return (
     <Screen>
       <BackHeader title="Betulkan masa" href="/kehadiran" />
-      <main className="flex grow flex-col gap-3 px-5 pt-1 pb-4">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         <label className="flex items-center gap-2 text-sm">
           <span className="font-bold text-[#4A5A57]">Tarikh</span>
           <input
@@ -100,11 +100,11 @@ function Betulkan() {
           <div className="grid grid-cols-2 gap-2">
             <div className="flex flex-col gap-0.5 rounded-[14px] bg-surface px-3.5 py-3">
               <span className="text-xs text-muted">Masuk</span>
-              <b className={`text-xl font-extrabold ${r?.late ? "text-warning" : ""}`}>{r?.clockIn ? jam(r.clockIn) : "Tiada"}</b>
+              <b className={`text-lg font-extrabold ${r?.late ? "text-warning" : ""}`}>{r?.clockIn ? jam(r.clockIn) : "Tiada"}</b>
             </div>
             <div className="flex flex-col gap-0.5 rounded-[14px] bg-surface px-3.5 py-3">
               <span className="text-xs text-muted">Keluar</span>
-              <b className="text-xl font-extrabold">{r?.clockOut ? jam(r.clockOut) : "Tiada"}</b>
+              <b className="text-lg font-extrabold">{r?.clockOut ? jam(r.clockOut) : "Tiada"}</b>
             </div>
           </div>
         )}
@@ -113,11 +113,11 @@ function Betulkan() {
         <div className="grid grid-cols-2 gap-2">
           <label className="flex flex-col gap-1 rounded-[14px] bg-surface px-3.5 py-2.5">
             <span className="text-xs text-muted">Masuk</span>
-            <input value={vMasuk} onChange={(e) => setMasuk({ t: tarikh, v: e.target.value })} inputMode="numeric" placeholder="8:55" className="h-9 text-xl font-extrabold outline-none" />
+            <input value={vMasuk} onChange={(e) => setMasuk({ t: tarikh, v: e.target.value })} inputMode="numeric" placeholder="8:55" className="h-9 text-lg font-extrabold outline-none" />
           </label>
           <label className="flex flex-col gap-1 rounded-[14px] bg-surface px-3.5 py-2.5">
             <span className="text-xs text-muted">Keluar</span>
-            <input value={vKeluar} onChange={(e) => setKeluar({ t: tarikh, v: e.target.value })} inputMode="numeric" placeholder="18:05" className="h-9 text-xl font-extrabold outline-none" />
+            <input value={vKeluar} onChange={(e) => setKeluar({ t: tarikh, v: e.target.value })} inputMode="numeric" placeholder="18:05" className="h-9 text-lg font-extrabold outline-none" />
           </label>
         </div>
 
@@ -141,7 +141,7 @@ function Betulkan() {
             value={ket}
             onChange={(e) => setKet(e.target.value)}
             placeholder="Contoh: berjumpa pelanggan di KLIA terlebih dahulu"
-            className="h-12 rounded-[12px] border border-[#D5DEDC] bg-surface px-3 text-[15px] outline-none focus:border-primary"
+            className="h-12 rounded-[12px] border border-[#D5DEDC] bg-surface px-3 text-sm outline-none focus:border-primary"
           />
         </label>
         <span className="rounded-[14px] bg-[#E3F1EE] px-4 py-3 text-[13px] leading-normal text-primary">
@@ -149,7 +149,7 @@ function Betulkan() {
         </span>
         {ralat && <ErrorBox message={ralat} />}
       </main>
-      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
+      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <ButangUtama onClick={hantar} busy={busy} disabled={r?.correction === "pending"}>
           {r?.correction === "pending" ? "Sedang menunggu kelulusan" : "Hantar permohonan"}
         </ButangUtama>

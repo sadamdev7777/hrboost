@@ -75,15 +75,15 @@ function Integrasi() {
   return (
     <Screen>
       <BackHeader title="Integrasi Kehadiran" href="/pengurusan/tetapan" />
-      <main className="flex grow flex-col gap-2.5 px-5 pt-1 pb-4">
+      <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-4">
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         {s && (
           <>
-            <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3.5">
+            <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3">
               <div className="flex items-center gap-3">
                 <span className="flex grow flex-col gap-0.5">
-                  <b className="text-[15px] font-extrabold">CrossChex Cloud</b>
+                  <b className="text-sm font-extrabold">CrossChex Cloud</b>
                   <span className="text-xs text-muted">Anviz · pelayan {/\.eu\./.test(s.api_url) ? "EU" : "global"}</span>
                 </span>
                 <Tag tone={bersambung ? "success" : s.last_error ? "danger" : "neutral"}>{bersambung ? "Bersambung" : s.last_error ? "Ralat" : s.configured ? "Belum ditarik" : "Belum disambung"}</Tag>
@@ -114,7 +114,7 @@ function Integrasi() {
 
             <Seksyen className="pt-1">TARIK DATA</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-              <div className="flex min-h-[52px] items-center gap-2">
+              <div className="flex min-h-12 items-center gap-2">
                 <span className="grow text-muted">Kekerapan</span>
                 {[5, 15, 30].map((m) => (
                   <button
@@ -137,7 +137,7 @@ function Integrasi() {
                 {s.matched} / {s.employees}
               </Baris>
               {s.unmatched.map((u) => (
-                <div key={u.workno} className="flex min-h-[52px] items-center gap-2">
+                <div key={u.workno} className="flex min-h-12 items-center gap-2">
                   <span className="flex grow flex-col">
                     <b>ID mesin {u.workno}</b>
                     <span className="text-xs text-muted">
@@ -169,11 +169,11 @@ function Integrasi() {
         )}
       </main>
       {s?.configured && (
-        <div className="sticky bottom-0 grid grid-cols-2 gap-2.5 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
-          <button type="button" disabled={!!busy} onClick={() => panggil("test")} className="h-[52px] rounded-button border-2 border-primary text-[15px] font-extrabold text-primary disabled:opacity-60">
+        <div className="sticky bottom-0 grid grid-cols-2 gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+          <button type="button" disabled={!!busy} onClick={() => panggil("test")} className="h-12 rounded-button border-2 border-primary text-sm font-extrabold text-primary disabled:opacity-60">
             {busy === "test" ? "Menguji…" : "Uji sambungan"}
           </button>
-          <button type="button" disabled={!!busy} onClick={() => panggil("pull")} className="h-[52px] rounded-button bg-primary text-[15px] font-extrabold text-white disabled:opacity-60">
+          <button type="button" disabled={!!busy} onClick={() => panggil("pull")} className="h-12 rounded-button bg-primary text-sm font-extrabold text-white disabled:opacity-60">
             {busy === "pull" ? "Menarik…" : "Tarik sekarang"}
           </button>
         </div>

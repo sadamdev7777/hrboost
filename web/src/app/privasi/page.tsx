@@ -11,7 +11,7 @@ export default function PrivasiPage() {
   return (
     <div className="min-h-dvh w-full bg-page text-ink">
       <nav className="border-b border-line-soft bg-surface">
-        <div className="mx-auto flex max-w-[760px] items-center gap-2.5 px-6 py-3.5">
+        <div className="mx-auto flex max-w-[760px] items-center gap-2.5 px-6 py-3">
           <Link href="/" className="flex items-center gap-2.5 text-ink!">
             <span className="flex size-9 items-center justify-center rounded-[10px] bg-primary text-[13px] font-extrabold text-white">
               HR
@@ -128,7 +128,7 @@ export default function PrivasiPage() {
 
 function H2({ children, id }: { children: ReactNode; id?: string }) {
   return (
-    <h2 id={id} className="mt-9 mb-2.5 text-[22px] font-extrabold text-balance">
+    <h2 id={id} className="mt-9 mb-2.5 text-xl font-extrabold text-balance">
       {children}
     </h2>
   );

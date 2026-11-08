@@ -105,7 +105,7 @@ function Import() {
       }
     >
       <button type="button" onClick={() => fail.current?.click()} className="flex min-h-[88px] flex-col items-center justify-center gap-1 rounded-card border-2 border-dashed border-[#C9D3D1] bg-surface px-4 py-4">
-        <b className="text-[15px] font-extrabold">Muat naik Excel sedia ada</b>
+        <b className="text-sm font-extrabold">Muat naik Excel sedia ada</b>
         <span className="text-[13px] text-muted">{namaFail ? `${namaFail} ✓` : ".xlsx atau .csv"}</span>
       </button>
       <input ref={fail} type="file" className="hidden" aria-label="Pilih fail Excel pekerja" accept=".xlsx,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv" onChange={(e) => baca(e.target.files?.[0])} />
@@ -138,7 +138,7 @@ function Import() {
           </div>
           <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
             {papar.map((r, i) => (
-              <div key={i} className="flex min-h-[54px] items-center gap-2 py-2">
+              <div key={i} className="flex min-h-12 items-center gap-2 py-2">
                 <span className="flex grow flex-col gap-0.5">
                   <b className="text-sm font-bold">{r.full_name}</b>
                   <span className="text-xs text-muted">

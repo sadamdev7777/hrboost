@@ -56,7 +56,7 @@ function Jabatan() {
       back="/mula/import"
       footer={
         tanpaKetua.length ? (
-          <button type="button" disabled className="h-[52px] w-full rounded-button bg-[#DCE3E1] text-base font-extrabold text-[#4A5A57]">
+          <button type="button" disabled className="h-12 w-full rounded-button bg-[#DCE3E1] text-base font-extrabold text-[#4A5A57]">
             {tanpaKetua.length} jabatan belum mempunyai ketua
           </button>
         ) : (
@@ -66,13 +66,13 @@ function Jabatan() {
         )
       }
     >
-      <span className="text-[15px] leading-normal text-subtle">Dicipta daripada fail Excel anda. Ketua jabatan akan menjadi pelulus pertama bagi pasukan mereka.</span>
+      <span className="text-sm leading-normal text-subtle">Dicipta daripada fail Excel anda. Ketua jabatan akan menjadi pelulus pertama bagi pasukan mereka.</span>
       <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-        {d.data.jab.length === 0 && <span className="py-3.5 text-sm text-muted">Belum ada jabatan.</span>}
+        {d.data.jab.length === 0 && <span className="py-3 text-sm text-muted">Belum ada jabatan.</span>}
         {d.data.jab.map((j) => (
-          <div key={j.id} className="flex min-h-[60px] items-center gap-3 py-2">
+          <div key={j.id} className="flex min-h-[52px] items-center gap-3 py-2">
             <span className="flex grow flex-col gap-0.5">
-              <b className="text-[15px] font-bold">{j.name}</b>
+              <b className="text-sm font-bold">{j.name}</b>
               <span className={`text-xs ${!j.headPersonId && kira(j.id) ? "text-warning" : "text-muted"}`}>
                 {kira(j.id)} pekerja{!j.headPersonId && kira(j.id) ? " · tiada ketua" : ""}
               </span>

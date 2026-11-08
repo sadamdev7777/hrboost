@@ -61,7 +61,7 @@ function Pengguna() {
   return (
     <Screen>
       <BackHeader title="Pengguna & peranan" href="/pengurusan/tetapan" />
-      <main className="flex grow flex-col gap-2.5 px-5 pt-1 pb-6">
+      <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
         <div className="rounded-[14px] bg-[#E3F1EE] px-4 py-3 text-[13px] leading-normal text-primary">
           Semua pekerja {emp.companyCode} ialah pengguna biasa. Di sini anda boleh memberikan peranan tambahan. Peranan hanya boleh diberikan kepada pekerja syarikat ini.
         </div>
@@ -70,9 +70,9 @@ function Pengguna() {
         <Seksyen>PERANAN KHAS</Seksyen>
         <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
           {khas.map((p) => (
-            <div key={p.id} className="flex min-h-[56px] flex-wrap items-center gap-2 py-2">
+            <div key={p.id} className="flex min-h-12 flex-wrap items-center gap-2 py-2">
               <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#E3F1EE] text-xs font-extrabold text-primary">{inisial(p.name)}</span>
-              <b className="grow text-[15px] font-bold">{p.name}</b>
+              <b className="grow text-sm font-bold">{p.name}</b>
               <span className="flex flex-wrap justify-end gap-1">
                 {p.roles
                   .filter((r) => PERANAN_KHAS.includes(r as Role))
@@ -104,12 +104,12 @@ function Pengguna() {
           <>
             <Seksyen className="pt-1">AKSES DARI LUAR SYARIKAT</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-              {(d.data?.luar ?? []).length === 0 && <span className="py-3.5 text-sm text-muted">Tiada akses dari luar.</span>}
+              {(d.data?.luar ?? []).length === 0 && <span className="py-3 text-sm text-muted">Tiada akses dari luar.</span>}
               {(d.data?.luar ?? []).map((g) => (
-                <div key={g.id} className="flex min-h-[56px] items-center gap-2 py-2">
+                <div key={g.id} className="flex min-h-12 items-center gap-2 py-2">
                   <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#EDE9F8] text-xs font-extrabold text-ai">{inisial(g.name)}</span>
                   <span className="flex grow flex-col gap-0.5">
-                    <b className="text-[15px] font-bold">{g.name}</b>
+                    <b className="text-sm font-bold">{g.name}</b>
                     <span className="text-xs text-muted">
                       {[g.home_company, `paparan ${LABEL_PERANAN[g.role] ?? g.role}`, g.status === "pending" ? "menunggu kelulusan" : g.expires_at ? `tamat ${tarikh(g.expires_at)}` : null]
                         .filter(Boolean)

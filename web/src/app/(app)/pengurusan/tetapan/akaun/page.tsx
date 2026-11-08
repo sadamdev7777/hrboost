@@ -64,14 +64,14 @@ function Akaun() {
   return (
     <Screen>
       <BackHeader title="Integrasi perakaunan" href="/pengurusan/tetapan" />
-      <main className="flex grow flex-col gap-2.5 px-5 pt-1 pb-6">
+      <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         {d.data && (
           <>
-            <div className="flex items-center gap-3 rounded-card bg-surface px-4 py-3.5">
+            <div className="flex items-center gap-3 rounded-card bg-surface px-4 py-3">
               <span className="flex grow flex-col gap-0.5">
-                <b className="text-[15px] font-extrabold">{SISTEM[d.data.c.accounting_system]}</b>
+                <b className="text-sm font-extrabold">{SISTEM[d.data.c.accounting_system]}</b>
                 <span className="text-xs text-muted uppercase">{d.data.c.name}</span>
               </span>
               <Tag tone={sambung ? "success" : "neutral"}>{sambung ? "Bersambung" : "Belum disambung"}</Tag>
@@ -100,7 +100,7 @@ function Akaun() {
             <Seksyen className="pt-1">PADANAN AKAUN TUNTUTAN</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {d.data.t.map((t) => (
-                <label key={t.id} className="flex min-h-[54px] items-center gap-2 py-2 text-sm">
+                <label key={t.id} className="flex min-h-12 items-center gap-2 py-2 text-sm">
                   <span className="grow font-bold">{namaJenisTuntutan(t.name)}</span>
                   <input
                     className="h-10 w-[150px] rounded-[10px] border border-[#D5DEDC] px-2.5 text-sm font-semibold"
@@ -113,7 +113,7 @@ function Akaun() {
             </div>
 
             <Seksyen className="pt-1">GAJI</Seksyen>
-            <label className="flex min-h-[54px] items-center gap-2 rounded-card bg-surface px-4 py-2 text-sm">
+            <label className="flex min-h-12 items-center gap-2 rounded-card bg-surface px-4 py-2 text-sm">
               <span className="grow font-bold">Jurnal gaji bulanan</span>
               <select
                 disabled={!admin}
@@ -128,7 +128,7 @@ function Akaun() {
 
             <Seksyen className="pt-1">TERKINI</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-              {d.data.q.length === 0 && <span className="py-3.5 text-sm text-muted">Belum ada rekod dihantar.</span>}
+              {d.data.q.length === 0 && <span className="py-3 text-sm text-muted">Belum ada rekod dihantar.</span>}
               {d.data.q.map((q) => (
                 <div key={q.id} className="flex min-h-[50px] items-center justify-between gap-2 py-2 text-sm">
                   <span className="flex flex-col">

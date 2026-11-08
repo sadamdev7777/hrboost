@@ -176,7 +176,7 @@ function Stepper({ label, onClick, children }: { label: string; onClick: () => v
       type="button"
       aria-label={label}
       onClick={onClick}
-      className="size-11 rounded-xl border border-line bg-surface text-xl font-bold text-ink"
+      className="size-11 rounded-xl border border-line bg-surface text-lg font-bold text-ink"
     >
       {children}
     </button>

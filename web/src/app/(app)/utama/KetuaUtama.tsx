@@ -39,11 +39,11 @@ export function KetuaUtama() {
   const jabatan = (team.data?.deptName ?? emp.departmentName ?? "").toUpperCase();
 
   return (
-    <main className="flex grow flex-col gap-3.5 px-5 pt-6 pb-4">
+    <main className="flex grow flex-col gap-3 px-4 pt-4 pb-4">
       <Greeting me={me} />
       <OrientasiBanner employmentId={emp.id} />
 
-      <Link href="/kelulusan" className="flex items-center gap-3.5 rounded-[20px] bg-primary px-5 py-[18px] text-white!">
+      <Link href="/kelulusan" className="flex items-center gap-3 rounded-[20px] bg-primary px-4 py-[18px] text-white!">
         <span className="flex grow flex-col gap-1">
           <span className="text-[13px] opacity-92">Menunggu kelulusan anda</span>
           <b className="text-[34px] leading-none font-extrabold">{pending.data ?? "–"}</b>
@@ -99,7 +99,7 @@ export function KetuaUtama() {
 function Kotak({ n, label, warn }: { n: number; label: string; warn?: boolean }) {
   return (
     <div className={`flex flex-col gap-0.5 rounded-[14px] p-3 ${warn ? "bg-warning-soft" : "bg-surface"}`}>
-      <b className={`text-[22px] font-extrabold ${warn ? "text-warning" : ""}`}>{n}</b>
+      <b className={`text-xl font-extrabold ${warn ? "text-warning" : ""}`}>{n}</b>
       <span className={`text-xs ${warn ? "text-warning" : "text-muted"}`}>{label}</span>
     </div>
   );

@@ -49,7 +49,7 @@ function Menu() {
         href="/saya"
         action={<span className="mr-2 flex h-9 items-center rounded-full bg-[#E3F1EE] px-3 text-[13px] font-extrabold text-primary">{emp.companyCode}</span>}
       />
-      <main className="flex grow flex-col gap-2.5 px-5 pt-1 pb-6">
+      <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
         {r.error && <ErrorBox message={r.error} />}
         <Seksyen>KELULUSAN &amp; AUTOMASI</Seksyen>
         <Kotak>

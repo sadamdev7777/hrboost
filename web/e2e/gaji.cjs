@@ -51,7 +51,7 @@ async function login(browser, phone) {
   await p.click('button:has-text("Lihat semua")');
   await p.click('a:has-text("Amin · DEMO004")');
   await p.waitForSelector('text=SLIP GAJI');
-  const slipHr = await p.innerText('article');
+  await p.waitForTimeout(1500); const slipHr = await p.innerText("article"); if (!slipHr.includes("3,700.00")) console.log(slipHr.slice(0,800));
   expect(slipHr.includes('Komisen') && slipHr.includes('3,700.00'), 'pratonton slip Amin: komisen RM500, jumlah pendapatan RM3,700');
   await p.goBack();
   await p.waitForSelector('button:has-text("Hantar untuk kelulusan")');

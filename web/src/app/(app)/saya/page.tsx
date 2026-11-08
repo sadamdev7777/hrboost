@@ -45,13 +45,13 @@ export default function SayaPage() {
 
   return (
     <Screen>
-      <main className="flex grow flex-col gap-4 px-5 pt-6 pb-4">
-        <Link href="/profil" className="flex items-center gap-3.5 text-ink!">
-          <span className="flex size-14 items-center justify-center rounded-full bg-primary text-xl font-extrabold text-white">
+      <main className="flex grow flex-col gap-4 px-4 pt-4 pb-4">
+        <Link href="/profil" className="flex items-center gap-3 text-ink!">
+          <span className="flex size-12 items-center justify-center rounded-full bg-primary text-lg font-extrabold text-white">
             {inisial(me.name)}
           </span>
           <div className="flex grow flex-col gap-0.5">
-            <span className="text-xl font-extrabold">{me.name}</span>
+            <span className="text-lg font-extrabold">{me.name}</span>
             <span className="text-[13px] text-muted">
               {[emp?.position, emp?.employeeNo].filter(Boolean).join(" · ")}
             </span>
@@ -88,7 +88,7 @@ export default function SayaPage() {
         <button
           type="button"
           onClick={logKeluar}
-          className="h-12 rounded-[14px] border border-line bg-surface text-[15px] font-bold text-danger"
+          className="h-12 rounded-[14px] border border-line bg-surface text-sm font-bold text-danger"
         >
           Log keluar
         </button>
@@ -121,7 +121,7 @@ function Baris({
   children?: ReactNode;
 }) {
   return (
-    <Link href={href} className="flex min-h-12 items-center gap-3.5 px-4 text-[15px] font-semibold text-ink!">
+    <Link href={href} className="flex min-h-12 items-center gap-3 px-4 text-sm font-semibold text-ink!">
       <span className={`flex size-9 shrink-0 items-center justify-center rounded-[11px] ${tone}`}>{icon}</span>
       <span className="grow">{label}</span>
       {children}

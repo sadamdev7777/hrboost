@@ -13,7 +13,7 @@ export function SlipGajiCetak({ d, back }: { d: { data: Slip | null; error: stri
         <BackHeader title="Slip gaji" href={back} />
       </div>
       {d.error && (
-        <div className="px-5">
+        <div className="px-4">
           <ErrorBox message={d.error} />
         </div>
       )}
@@ -23,8 +23,8 @@ export function SlipGajiCetak({ d, back }: { d: { data: Slip | null; error: stri
           <div className="px-2 pb-28 sm:px-5 print:p-0">
             <SlipGaji s={d.data} />
           </div>
-          <div className="no-print fixed inset-x-0 bottom-0 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
-            <button type="button" onClick={() => window.print()} className="mx-auto block h-[54px] w-full max-w-[440px] rounded-button bg-primary text-base font-extrabold text-white">
+          <div className="no-print fixed inset-x-0 bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+            <button type="button" onClick={() => window.print()} className="mx-auto block h-12 w-full max-w-[440px] rounded-button bg-primary text-base font-extrabold text-white">
               Simpan sebagai PDF / Cetak
             </button>
           </div>

@@ -42,18 +42,18 @@ export default function CutiPage() {
   return (
     <Screen>
       <BackHeader title="Cuti" href="/saya" />
-      <main className="flex grow flex-col gap-3.5 px-5 pt-1 pb-4">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         {baki.error && <ErrorBox message={baki.error} />}
         <div className="grid grid-cols-3 gap-2">
           {kad.map((b) => (
             <div key={b.code} className="flex flex-col gap-0.5 rounded-[14px] bg-surface px-3.5 py-3">
-              <b className="text-[22px] font-extrabold">{Number.isInteger(b.available) ? b.available : b.available.toFixed(1)}</b>
+              <b className="text-xl font-extrabold">{Number.isInteger(b.available) ? b.available : b.available.toFixed(1)}</b>
               <span className="text-xs text-muted">{namaCutiRingkas(b.code, b.name)}</span>
             </div>
           ))}
         </div>
 
-        <div className="flex flex-col gap-3 rounded-card bg-surface px-4 py-3.5">
+        <div className="flex flex-col gap-3 rounded-card bg-surface px-4 py-3">
           <div className="flex items-center justify-between gap-2">
             <div className="-ml-3 flex shrink-0 items-center">
               <button type="button" aria-label="Bulan sebelumnya" onClick={() => setBulan(geserBulan(bulan, -1))} className="flex size-11 items-center justify-center rounded-full text-ink">
@@ -91,7 +91,7 @@ export default function CutiPage() {
             ))}
           </div>
           {kal.loading && !kal.data && <Loading />}
-          <div className="flex flex-wrap gap-3.5 text-xs text-[#4A5A57]">
+          <div className="flex flex-wrap gap-3 text-xs text-[#4A5A57]">
             <Petunjuk warna="bg-primary">Saya</Petunjuk>
             {(kal.data?.rakan ?? []).length > 0 && <Petunjuk warna="bg-[#F2B266]">{kal.data!.rakan.join(", ")}</Petunjuk>}
             <Petunjuk warna="bg-[#E8857C]">Cuti umum</Petunjuk>
@@ -107,7 +107,7 @@ export default function CutiPage() {
             const isi = (
               <>
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-[15px] font-bold">
+                  <span className="text-sm font-bold">
                     {s.jenis} · {julatTarikh(s.start, s.end)}
                   </span>
                   <span className="text-xs text-muted">{hari(s.days)} hari</span>
@@ -119,11 +119,11 @@ export default function CutiPage() {
               </>
             );
             return s.approvalRequestId ? (
-              <Link key={s.id} href={`/permohonan/${s.approvalRequestId}`} className="flex items-center justify-between gap-2 rounded-card bg-surface px-4 py-3.5 text-ink!">
+              <Link key={s.id} href={`/permohonan/${s.approvalRequestId}`} className="flex items-center justify-between gap-2 rounded-card bg-surface px-4 py-3 text-ink!">
                 {isi}
               </Link>
             ) : (
-              <div key={s.id} className="flex items-center justify-between gap-2 rounded-card bg-surface px-4 py-3.5">
+              <div key={s.id} className="flex items-center justify-between gap-2 rounded-card bg-surface px-4 py-3">
                 {isi}
               </div>
             );
@@ -131,8 +131,8 @@ export default function CutiPage() {
         </div>
       </main>
 
-      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
-        <Link href="/mohon/cuti" className="flex h-[54px] items-center justify-center rounded-button bg-primary text-base font-extrabold text-white!">
+      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <Link href="/mohon/cuti" className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white!">
           Mohon Cuti
         </Link>
       </div>

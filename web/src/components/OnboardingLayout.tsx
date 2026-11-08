@@ -31,12 +31,12 @@ export function OnboardingLayout({
         </Link>
         <span className="text-[13px] font-bold text-subtle">Langkah {step} daripada 8</span>
       </header>
-      <div className="grid grid-cols-8 gap-1 px-5 pb-2" aria-hidden="true">
+      <div className="grid grid-cols-8 gap-1 px-4 pb-2" aria-hidden="true">
         {Array.from({ length: 8 }, (_, i) => (
           <span key={i} className={`h-[5px] rounded-[3px] ${i < step ? "bg-primary" : "bg-[#DCE3E1]"}`} />
         ))}
       </div>
-      <main className="flex grow flex-col gap-3.5 px-5 pt-2.5 pb-4">
+      <main className="flex grow flex-col gap-3 px-4 pt-2.5 pb-4">
         <div className="flex flex-col gap-1">
           <h1 className="m-0 text-2xl font-extrabold">{title}</h1>
           {sub && <span className="text-sm text-subtle">{sub}</span>}
@@ -44,7 +44,7 @@ export function OnboardingLayout({
         {children}
         {error && <ErrorBox message={error} />}
       </main>
-      <div className="sticky bottom-0 flex flex-col gap-2 border-t border-line-soft bg-surface px-5 pt-3 pb-7">{footer}</div>
+      <div className="sticky bottom-0 flex flex-col gap-2 border-t border-line-soft bg-surface px-4 pt-3 pb-5">{footer}</div>
     </Screen>
   );
 }
@@ -67,7 +67,7 @@ export function NextButton({
       type={type}
       onClick={onClick}
       disabled={busy || disabled}
-      className="flex h-[54px] w-full items-center justify-center rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover disabled:bg-[#DCE3E1] disabled:text-subtle"
+      className="flex h-12 w-full items-center justify-center rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover disabled:bg-[#DCE3E1] disabled:text-subtle"
     >
       {busy ? "Menyimpan…" : children}
     </button>
@@ -79,4 +79,4 @@ export function Seksyen({ children, className = "" }: { children: ReactNode; cla
 }
 
 export const inputCls =
-  "h-[50px] rounded-xl border border-line bg-surface px-3.5 text-[15px] font-semibold text-ink placeholder:font-normal placeholder:text-muted";
+  "h-[50px] rounded-xl border border-line bg-surface px-3.5 text-sm font-semibold text-ink placeholder:font-normal placeholder:text-muted";

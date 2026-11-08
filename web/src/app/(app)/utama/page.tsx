@@ -36,13 +36,13 @@ function StaffUtama({ me }: { me: Me }) {
   const pendPct = al && al.entitled > 0 ? Math.min(100 - usedPct, (al.pending / al.entitled) * 100) : 0;
 
   return (
-    <main className="flex grow flex-col gap-5 px-5 pt-6 pb-4">
+    <main className="flex grow flex-col gap-5 px-4 pt-4 pb-4">
       <Greeting me={me} />
       {emp && <OrientasiBanner employmentId={emp.id} />}
 
       {!emp && <ErrorBox message="Tiada pekerjaan aktif ditemui untuk akaun ini. Sila hubungi HR." />}
 
-      <section className="flex flex-col gap-3.5 rounded-[20px] bg-primary p-5 text-white">
+      <section className="flex flex-col gap-3 rounded-[20px] bg-primary p-5 text-white">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-1">
             <span className="text-[13px] opacity-90">Baki cuti tahunan {year}</span>
@@ -81,7 +81,7 @@ function StaffUtama({ me }: { me: Me }) {
         </div>
         {mohon.error && <ErrorBox message={mohon.error} />}
         {mohon.data?.length === 0 && (
-          <div className="rounded-card bg-surface px-4 py-3.5 text-[13px] text-muted">Tiada permohonan lagi.</div>
+          <div className="rounded-card bg-surface px-4 py-3 text-[13px] text-muted">Tiada permohonan lagi.</div>
         )}
         {mohon.data?.map((p) => {
           const v = paparPermohonan(p);
@@ -90,10 +90,10 @@ function StaffUtama({ me }: { me: Me }) {
             <Link
               key={p.id}
               href={`/permohonan/${p.id}`}
-              className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3.5 text-ink!"
+              className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3 text-ink!"
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[15px] font-bold">{v.title}</span>
+                <span className="text-sm font-bold">{v.title}</span>
                 <StatusPill status={p.status} />
               </div>
               {(p.status === "pending" || p.status === "approved") && p.totalSteps > 0 && (
@@ -108,7 +108,7 @@ function StaffUtama({ me }: { me: Me }) {
       </section>
 
       {emp && (
-        <section className="flex flex-col gap-3 rounded-card bg-surface px-4 py-3.5">
+        <section className="flex flex-col gap-3 rounded-card bg-surface px-4 py-3">
           <div className="flex items-center justify-between">
             <h2 className="m-0 text-base font-extrabold">Kehadiran minggu ini</h2>
             <span className="text-xs text-muted">Waktu masuk {emp.workStart.replace(/^0/, "")}</span>

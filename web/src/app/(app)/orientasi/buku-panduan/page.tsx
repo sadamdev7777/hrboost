@@ -131,7 +131,7 @@ function Perkara({ tajuk, isi, nota }: { tajuk: string; isi: string; nota: strin
   return (
     <div className="flex flex-col gap-0.5 rounded-[14px] bg-surface px-3.5 py-3">
       <span className="text-xs font-bold text-subtle">{tajuk}</span>
-      <b className="text-[15px] font-extrabold">{isi}</b>
+      <b className="text-sm font-extrabold">{isi}</b>
       <span className="text-xs font-medium text-muted">{nota}</span>
     </div>
   );

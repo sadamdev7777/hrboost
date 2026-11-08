@@ -61,7 +61,7 @@ export default function SahkanSyarikatPage() {
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-page text-ink">
-      <header className="flex items-center px-3 pt-4 pb-2">
+      <header className="flex items-center px-3 pt-3 pb-1">
         <Link href="/daftar" aria-label="Kembali" className="flex size-11 items-center justify-center rounded-full text-ink!">
           <IconBack />
         </Link>
@@ -74,8 +74,8 @@ export default function SahkanSyarikatPage() {
         }}
       >
         <div className="flex flex-col gap-2">
-          <h1 className="m-0 text-[26px] font-extrabold">Sahkan nombor anda</h1>
-          <span className="text-[15px] leading-normal text-subtle">
+          <h1 className="m-0 text-[22px] font-extrabold">Sahkan nombor anda</h1>
+          <span className="text-sm leading-normal text-subtle">
             Kod 6 digit dihantar ke WhatsApp <b className="text-ink">{p ? paparTelefon(p.phone) : ""}</b>. Ini memastikan hanya anda yang boleh mengurus {p?.company}.
           </span>
         </div>
@@ -90,7 +90,7 @@ export default function SahkanSyarikatPage() {
             const d = e.target.value.replace(/\D/g, "").slice(0, 6);
             setKod(d);
           }}
-          className="h-16 rounded-field border-[1.5px] border-primary bg-surface text-center text-[28px] font-extrabold tracking-[0.5em] outline-none"
+          className="h-16 rounded-field border-[1.5px] border-primary bg-surface text-center text-2xl font-extrabold tracking-[0.5em] outline-none"
         />
         {ralat && (
           <span role="alert" className="text-[13px] font-semibold text-danger">
@@ -105,7 +105,7 @@ export default function SahkanSyarikatPage() {
           · <Link href="/daftar">Tukar nombor</Link>
         </span>
         <span className="grow" />
-        <button type="submit" disabled={busy || kod.length !== 6} className="flex h-14 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
+        <button type="submit" disabled={busy || kod.length !== 6} className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
           {busy ? "Mencipta syarikat…" : "Sahkan & cipta syarikat"}
         </button>
       </form>

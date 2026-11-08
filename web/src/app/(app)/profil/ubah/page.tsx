@@ -82,9 +82,9 @@ function Borang({ profil }: { profil: Profil }) {
 
   return (
     <>
-      <main className="flex grow flex-col gap-2.5 px-5 pt-0.5 pb-3">
-        <div className="flex items-center gap-3.5">
-          <span className="flex size-16 items-center justify-center rounded-full bg-primary text-[22px] font-extrabold text-white">{inisial(f.preferred_name || profil.fullName)}</span>
+      <main className="flex grow flex-col gap-2.5 px-4 pt-0.5 pb-3">
+        <div className="flex items-center gap-3">
+          <span className="flex size-14 items-center justify-center rounded-full bg-primary text-xl font-extrabold text-white">{inisial(f.preferred_name || profil.fullName)}</span>
           <button type="button" onClick={() => fail.current?.click()} disabled={foto === "upload"} className="py-3 text-sm font-bold text-primary">
             {foto === "upload" ? "Memuat naik…" : foto === "ok" ? "Swafoto dikemas kini" : "Ambil swafoto baharu"}
           </button>
@@ -116,7 +116,7 @@ function Borang({ profil }: { profil: Profil }) {
           <Baris label="Anak (PCB)">
             <input className={inputCls} value={f.children_count} onChange={set("children_count")} inputMode="numeric" />
           </Baris>
-          <div className="flex min-h-[52px] items-center gap-2.5 text-sm">
+          <div className="flex min-h-12 items-center gap-2.5 text-sm">
             <span className="grow text-muted">Sembunyikan hari jadi</span>
             <button
               type="button"
@@ -161,8 +161,8 @@ function Borang({ profil }: { profil: Profil }) {
         {ralat && <ErrorBox message={ralat} />}
       </main>
 
-      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-5 pt-2.5 pb-[26px]">
-        <button type="button" onClick={simpan} disabled={busy} className="h-[54px] w-full rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
+      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-2.5 pb-[26px]">
+        <button type="button" onClick={simpan} disabled={busy} className="h-12 w-full rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
           {busy ? "Menyimpan…" : "Simpan"}
         </button>
       </div>
@@ -180,7 +180,7 @@ function Kotak({ children }: { children: ReactNode }) {
 
 function Baris({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <label className="flex min-h-[52px] items-center gap-2.5 text-sm">
+    <label className="flex min-h-12 items-center gap-2.5 text-sm">
       <span className="w-[110px] shrink-0 text-muted">{label}</span>
       {children}
     </label>

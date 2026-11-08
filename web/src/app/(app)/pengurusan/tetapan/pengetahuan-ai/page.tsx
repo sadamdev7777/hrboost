@@ -41,7 +41,7 @@ function Pengetahuan() {
   return (
     <Screen>
       <BackHeader title="Pengetahuan AI" href="/pengurusan/tetapan" />
-      <main className="flex grow flex-col gap-2.5 px-5 pt-1 pb-6">
+      <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
         <div className="rounded-[14px] bg-[#F3F0FC] px-4 py-3 text-[13px] leading-normal text-[#4A3B8C]">
           Pembantu AI menjawab soalan pekerja berdasarkan dokumen di sini sahaja. Ia tidak meneka polisi.
         </div>
@@ -50,9 +50,9 @@ function Pengetahuan() {
         <Seksyen>DOKUMEN</Seksyen>
         <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
           {(d.data?.docs ?? []).map((x) => (
-            <div key={x.id} className="flex min-h-[58px] items-center gap-2 py-2">
+            <div key={x.id} className="flex min-h-12 items-center gap-2 py-2">
               <span className="flex grow flex-col gap-0.5">
-                <b className="text-[15px] font-bold">{x.title}</b>
+                <b className="text-sm font-bold">{x.title}</b>
                 <span className="text-xs text-muted">
                   {x.global ? "Platform HRBoost" : `${x.chunks} bahagian · dikemas kini ${tarikh(x.updated_at)}`}
                 </span>
@@ -60,9 +60,9 @@ function Pengetahuan() {
               {x.global ? <Tag tone="neutral">Platform</Tag> : <Suis on={x.active} label={`${x.active ? "Nyahaktifkan" : "Aktifkan"} ${x.title}`} onChange={(v) => togol(x.id, v)} />}
             </div>
           ))}
-          <div className="flex min-h-[58px] items-center gap-2 py-2">
+          <div className="flex min-h-12 items-center gap-2 py-2">
             <span className="flex grow flex-col gap-0.5">
-              <b className="text-[15px] font-bold">Tetapan sistem</b>
+              <b className="text-sm font-bold">Tetapan sistem</b>
               <span className="text-xs text-muted">Jenis cuti, tuntutan, waktu kerja — automatik</span>
             </span>
             <Tag tone="primary">Automatik</Tag>
@@ -75,9 +75,9 @@ function Pengetahuan() {
 
         <Seksyen className="pt-2">SOALAN PEKERJA YANG TIDAK DAPAT DIJAWAB OLEH AI</Seksyen>
         <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-          {(d.data?.soalan ?? []).length === 0 && <span className="py-3.5 text-sm text-muted">Tiada soalan tertunggak.</span>}
+          {(d.data?.soalan ?? []).length === 0 && <span className="py-3 text-sm text-muted">Tiada soalan tertunggak.</span>}
           {(d.data?.soalan ?? []).map((q) => (
-            <div key={q.id} className="flex min-h-[58px] items-center gap-2 py-2">
+            <div key={q.id} className="flex min-h-12 items-center gap-2 py-2">
               <span className="flex grow flex-col gap-0.5">
                 <b className="text-sm font-semibold">“{q.question}”</b>
                 <span className="text-xs text-muted">

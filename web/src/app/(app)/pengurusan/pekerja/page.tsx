@@ -65,7 +65,7 @@ function Senarai() {
           )
         }
       />
-      <main className="flex grow flex-col gap-3 px-5 pt-1 pb-6">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         <label className="flex h-12 items-center gap-2.5 rounded-[14px] bg-surface px-3.5">
           <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B6B68" strokeWidth="2" strokeLinecap="round">
             <circle cx="11" cy="11" r="7" />
@@ -77,7 +77,7 @@ function Senarai() {
             value={cari}
             onChange={(e) => setCari(e.target.value)}
             placeholder="Cari nama atau no. pekerja"
-            className="h-full grow bg-transparent text-[15px] outline-none"
+            className="h-full grow bg-transparent text-sm outline-none"
           />
         </label>
         <div className="flex gap-2 overflow-x-auto pb-1">
@@ -103,10 +103,10 @@ function Senarai() {
             <Seksyen>{jab}</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {ppl.map((p, i) => (
-                <Link key={p.id} href={`/pengurusan/pekerja/${p.id}`} className="flex min-h-[58px] items-center gap-3 py-2 text-ink!">
+                <Link key={p.id} href={`/pengurusan/pekerja/${p.id}`} className="flex min-h-12 items-center gap-3 py-2 text-ink!">
                   <span className={`flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-extrabold ${AV[i % 3]}`}>{inisial(p.name)}</span>
                   <span className="flex grow flex-col gap-0.5">
-                    <b className="text-[15px] font-bold">{p.name}</b>
+                    <b className="text-sm font-bold">{p.name}</b>
                     <span className="text-xs text-muted">{[p.isHead ? "Ketua Jabatan" : p.position, p.employeeNo].filter(Boolean).join(" · ")}</span>
                   </span>
                   {!p.activated ? (

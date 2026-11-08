@@ -18,11 +18,11 @@ export function MulaLayout({ n, title, back, children, footer }: { n: number; ti
       <div className="mx-5 mb-2 h-1.5 rounded-full bg-[#E4EAE8]" aria-hidden="true">
         <div className="h-full rounded-full bg-primary" style={{ width: `${(n / 6) * 100}%` }} />
       </div>
-      <main className="flex grow flex-col gap-3.5 px-5 pt-2 pb-4">
-        <h1 className="m-0 text-[24px] font-extrabold">{title}</h1>
+      <main className="flex grow flex-col gap-3 px-4 pt-2 pb-4">
+        <h1 className="m-0 text-xl font-extrabold">{title}</h1>
         {children}
       </main>
-      {footer && <div className="sticky bottom-0 border-t border-line-soft bg-surface px-5 pt-3 pb-7">{footer}</div>}
+      {footer && <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">{footer}</div>}
     </Screen>
   );
 }

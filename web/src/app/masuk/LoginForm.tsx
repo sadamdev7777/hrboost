@@ -43,10 +43,10 @@ export function LoginForm() {
 
   return (
     <form onSubmit={submit} className="flex grow flex-col gap-4 px-6 pt-8 pb-4" noValidate>
-      <label className="flex flex-col gap-2 text-[15px] leading-[normal] font-bold">
+      <label className="flex flex-col gap-2 text-sm leading-[normal] font-bold">
         No. telefon WhatsApp
         <div className="flex gap-2">
-          <span className="box-content flex h-14 items-center rounded-field border border-line bg-surface px-[14px] text-base font-bold">
+          <span className="box-content flex h-12 items-center rounded-field border border-line bg-surface px-[14px] text-base font-bold">
             +60
           </span>
           <input
@@ -58,7 +58,7 @@ export function LoginForm() {
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             aria-invalid={error ? true : undefined}
-            className="h-14 min-w-0 grow rounded-field border-[1.5px] border-primary bg-surface px-4 text-lg font-semibold tracking-[0.02em] text-ink outline-none"
+            className="h-12 min-w-0 grow rounded-field border-[1.5px] border-primary bg-surface px-4 text-lg font-semibold tracking-[0.02em] text-ink outline-none"
           />
         </div>
       </label>
@@ -74,7 +74,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={busy}
-        className="mt-2 flex h-14 items-center justify-center rounded-button bg-primary text-base font-extrabold text-on-primary hover:bg-primary-hover disabled:opacity-60"
+        className="mt-2 flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-on-primary hover:bg-primary-hover disabled:opacity-60"
       >
         {busy ? "Menghantar…" : "Hantar kod"}
       </button>

@@ -96,7 +96,7 @@ function JenisCuti() {
   return (
     <Screen>
       <BackHeader title="Jenis cuti" href="/pengurusan/tetapan" />
-      <main className="flex grow flex-col gap-2.5 px-5 pt-1 pb-6">
+      <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         <Seksyen>MENGIKUT AKTA KERJA · MINIMUM</Seksyen>
@@ -104,9 +104,9 @@ function JenisCuti() {
           {WAJIB.map((c) => jenis.find((j) => j.code === c))
             .filter(Boolean)
             .map((j) => (
-              <button key={j!.id} type="button" onClick={() => setUbah(j!)} className="flex min-h-[56px] items-center gap-2 py-2 text-left">
+              <button key={j!.id} type="button" onClick={() => setUbah(j!)} className="flex min-h-12 items-center gap-2 py-2 text-left">
                 <span className="flex grow flex-col gap-0.5">
-                  <b className="text-[15px] font-bold">{NAMA[j!.code]}</b>
+                  <b className="text-sm font-bold">{NAMA[j!.code]}</b>
                   <span className="text-xs text-muted">
                     {ringkas(j!)}
                     {j!.requires_attachment ? " · perlu sijil" : ""}
@@ -123,9 +123,9 @@ function JenisCuti() {
             const j = jenis.find((x) => x.code === p.code);
             const on = !!j?.active;
             return (
-              <div key={p.code} className="flex min-h-[56px] items-center gap-2 py-2">
+              <div key={p.code} className="flex min-h-12 items-center gap-2 py-2">
                 <span className="flex grow flex-col gap-0.5">
-                  <b className="text-[15px] font-bold">{p.label}</b>
+                  <b className="text-sm font-bold">{p.label}</b>
                   <span className="text-xs text-muted">{j && j.leave_entitlement_rules.length ? `${ringkas(j)} · sekali sepanjang perkhidmatan` : p.sub}</span>
                   {p.code === "HJ" && !j && (
                     <input className={`${inputSempit} mt-1 h-9 w-32`} inputMode="numeric" placeholder="Bilangan hari" value={haji} onChange={(e) => setHaji(e.target.value.replace(/\D/g, ""))} aria-label="Bilangan hari cuti haji" />
@@ -140,7 +140,7 @@ function JenisCuti() {
         {al && (
           <div className="flex items-center gap-2 rounded-card bg-surface px-4 py-3">
             <span className="flex grow flex-col gap-0.5">
-              <b className="text-[15px] font-bold">Bawa ke tahun hadapan</b>
+              <b className="text-sm font-bold">Bawa ke tahun hadapan</b>
               <span className="text-xs text-muted">Baki cuti tahunan</span>
             </span>
             <label className="flex items-center gap-1.5 text-sm font-bold">

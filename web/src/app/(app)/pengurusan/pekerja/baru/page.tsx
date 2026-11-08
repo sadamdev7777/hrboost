@@ -79,7 +79,7 @@ function Borang() {
           </Link>
         }
       />
-      <main className="flex grow flex-col gap-3 px-5 pt-1 pb-4">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         <Seksyen>MAKLUMAT PERIBADI</Seksyen>
         <MedanBorang label="Nama penuh (seperti dalam kad pengenalan)">
           <input className={inputKecil} value={f.fullName} onChange={(e) => set("fullName", e.target.value)} placeholder="Nama seperti dalam kad pengenalan" />
@@ -136,14 +136,14 @@ function Borang() {
         <div className="rounded-[14px] bg-surface px-4 py-3 text-[13px] text-[#4A5A57]">
           <b className="text-ink">Ketua: {ketua?.headName ?? "Belum ditetapkan"}</b> (ketua jabatan {ketua?.name ?? "-"}) · boleh ditukar kemudian
         </div>
-        <label className="flex min-h-11 items-center gap-3 text-[15px] font-semibold">
+        <label className="flex min-h-11 items-center gap-3 text-sm font-semibold">
           <input type="checkbox" checked={jemput} onChange={(e) => setJemput(e.target.checked)} className="size-5 accent-primary" />
           Hantar jemputan WhatsApp sekarang
         </label>
         {ralat && <ErrorBox message={ralat} />}
       </main>
-      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
-        <button type="button" onClick={simpan} disabled={busy} className="h-[54px] w-full rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
+      <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <button type="button" onClick={simpan} disabled={busy} className="h-12 w-full rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
           {busy ? "Menyimpan…" : jemput ? "Simpan & jemput" : "Simpan"}
         </button>
       </div>

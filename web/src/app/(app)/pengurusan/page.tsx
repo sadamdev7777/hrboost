@@ -40,7 +40,7 @@ function Kandungan() {
           <span className="mr-2 flex h-9 items-center gap-1.5 rounded-full bg-[#E3F1EE] px-3 text-[13px] font-extrabold text-primary">{emp.companyCode}</span>
         }
       />
-      <main className="flex grow flex-col gap-3 px-5 pt-1 pb-4">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !x && <Loading />}
         {x && (
@@ -53,7 +53,7 @@ function Kandungan() {
 
             <Seksyen>PERLU PERHATIAN</Seksyen>
             <Kotak>
-              {x.attention.length === 0 && <span className="py-3.5 text-sm text-muted">Tiada perkara yang perlu perhatian.</span>}
+              {x.attention.length === 0 && <span className="py-3 text-sm text-muted">Tiada perkara yang perlu perhatian.</span>}
               {x.attention.map((a, i) => (
                 <div key={i} className="flex min-h-[50px] items-center gap-3 py-2 text-sm">
                   <Tag tone={TAG[a.kind].tone}>{TAG[a.kind].label}</Tag>
@@ -70,7 +70,7 @@ function Kandungan() {
 
             <Seksyen>SIAPA BERCUTI HARI INI</Seksyen>
             <Kotak>
-              {x.on_leave.length === 0 && <span className="py-3.5 text-sm text-muted">Semua pekerja bertugas hari ini.</span>}
+              {x.on_leave.length === 0 && <span className="py-3 text-sm text-muted">Semua pekerja bertugas hari ini.</span>}
               {x.on_leave.map((c, i) => (
                 <Link key={c.employment_id + i} href={`/pengurusan/pekerja/${c.employment_id}`} className="flex min-h-[50px] items-center gap-3 py-2 text-sm text-ink!">
                   <span className={`flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-extrabold ${AV[i % 3]}`}>{inisial(c.name)}</span>
@@ -102,7 +102,7 @@ function Angka({ n, label, tone, kecil }: { n: number | string; label: string; t
   const bg = tone === "warning" ? "bg-warning-soft text-warning" : tone === "danger" ? "bg-danger-soft text-danger" : "bg-surface";
   return (
     <div className={`flex flex-col gap-0.5 rounded-[14px] px-3.5 py-3 ${bg}`}>
-      <b className={`${kecil ? "text-lg" : "text-[22px]"} font-extrabold`}>{n}</b>
+      <b className={`${kecil ? "text-lg" : "text-xl"} font-extrabold`}>{n}</b>
       <span className={`text-xs ${tone ? "" : "text-muted"}`}>{label}</span>
     </div>
   );

@@ -34,7 +34,7 @@ export default function PermohonanSayaPage() {
   return (
     <Screen>
       <BackHeader title="Permohonan saya" href="/utama" />
-      <main className="flex grow flex-col gap-2.5 px-5 pt-1 pb-4">
+      <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-4">
         <div role="tablist" className="grid grid-cols-3 gap-1 rounded-[14px] bg-[#E4EAE8] p-1">
           {TABS.map((t) => (
             <button
@@ -59,10 +59,10 @@ export default function PermohonanSayaPage() {
         {items.map((p) => {
           const v = paparPermohonan(p);
           return (
-            <div key={p.id} className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3.5">
+            <div key={p.id} className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3">
               <Link href={`/permohonan/${p.id}`} className="flex items-center justify-between gap-2 text-ink!">
                 <span className="flex flex-col gap-0.5">
-                  <b className="text-[15px]">{v.title}</b>
+                  <b className="text-sm">{v.title}</b>
                   <span className="text-xs text-muted">{v.sub}</span>
                 </span>
                 <StatusPill status={p.status} />

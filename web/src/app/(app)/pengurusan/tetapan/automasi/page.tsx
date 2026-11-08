@@ -91,13 +91,13 @@ function Automasi() {
   return (
     <Screen>
       <BackHeader title="Automasi WhatsApp" href="/pengurusan/tetapan" />
-      <main className="flex grow flex-col gap-3 px-5 pt-1 pb-6">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         {cur && (
-          <div className="flex flex-col gap-3 rounded-card bg-surface px-4 py-3.5">
+          <div className="flex flex-col gap-3 rounded-card bg-surface px-4 py-3">
             <div className="flex items-start justify-between gap-2">
-              <b className="text-[15px] font-extrabold">{cur.name}</b>
+              <b className="text-sm font-extrabold">{cur.name}</b>
               <Tag tone={cur.active ? "success" : "neutral"}>{cur.active ? "Aktif" : "Tidak aktif"}</Tag>
             </div>
             <Seksyen>APABILA</Seksyen>
@@ -151,7 +151,7 @@ function Automasi() {
                   setDraf(null);
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
-                className={`flex min-h-[56px] grow flex-col justify-center gap-0.5 py-2 text-left ${cur?.id === r.id ? "text-primary" : ""}`}
+                className={`flex min-h-12 grow flex-col justify-center gap-0.5 py-2 text-left ${cur?.id === r.id ? "text-primary" : ""}`}
               >
                 <b className="text-sm font-bold">{r.name}</b>
                 <span className="text-xs text-muted">

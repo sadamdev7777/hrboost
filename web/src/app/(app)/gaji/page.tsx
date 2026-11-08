@@ -29,7 +29,7 @@ export default function GajiPage() {
   return (
     <Screen>
       <BackHeader title="Slip Gaji" href="/saya" />
-      <main className="flex grow flex-col gap-3 px-5 pt-1 pb-6">
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         {senarai.error && <ErrorBox message={senarai.error} />}
         {senarai.loading && !senarai.data && <Loading />}
         {senarai.data && list.length === 0 && <span className="text-sm text-muted">Belum ada slip gaji untuk {emp.companyCode}.</span>}
@@ -56,8 +56,8 @@ export default function GajiPage() {
         )}
 
         {ea && tahun && (
-          <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3.5 text-sm">
-            <b className="text-[15px] font-extrabold">Ringkasan saraan {tahun}</b>
+          <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3 text-sm">
+            <b className="text-sm font-extrabold">Ringkasan saraan {tahun}</b>
             <span className="text-muted">
               {list.filter((x) => x.year === tahun).length} slip dibayar. Borang EA rasmi disediakan oleh HR selepas akhir tahun (sebelum 28 Februari) daripada data yang sama.
             </span>
@@ -68,10 +68,10 @@ export default function GajiPage() {
         {!ea && id && !s && <Loading />}
         {!ea && s && (
           <>
-            <div className="flex items-center gap-3 rounded-[20px] bg-primary px-5 py-4 text-white">
+            <div className="flex items-center gap-3 rounded-[20px] bg-primary px-4 py-4 text-white">
               <div className="flex grow flex-col gap-0.5">
                 <span className="text-xs opacity-80">Gaji bersih · {s.company.code}</span>
-                <b className="text-[28px] font-extrabold tracking-wide">RM {sorok(s.net)}</b>
+                <b className="text-2xl font-extrabold tracking-wide">RM {sorok(s.net)}</b>
                 {s.payDate && (
                   <span className="text-xs opacity-80">
                     Dibayar {tarikh(s.payDate)}
@@ -101,8 +101,8 @@ export default function GajiPage() {
         )}
       </main>
       {!ea && s && (
-        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
-          <Link href={`/gaji/${s.id}`} className="flex h-[54px] items-center justify-center gap-2 rounded-button border-2 border-primary text-base font-extrabold text-primary!">
+        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+          <Link href={`/gaji/${s.id}`} className="flex h-12 items-center justify-center gap-2 rounded-button border-2 border-primary text-base font-extrabold text-primary!">
             Muat turun PDF
           </Link>
         </div>

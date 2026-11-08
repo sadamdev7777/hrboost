@@ -11,7 +11,7 @@ export default function LoginPage() {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-page text-ink">
       <header className="flex flex-col gap-[14px] bg-primary px-7 pt-[72px] pb-10 text-on-primary">
-        <span className="flex size-14 items-center justify-center rounded-logo bg-surface text-lg font-extrabold text-primary">
+        <span className="flex size-12 items-center justify-center rounded-logo bg-surface text-lg font-extrabold text-primary">
           HR
         </span>
         <h1 className="m-0 text-[30px] font-extrabold leading-[1.15]">
@@ -19,7 +19,7 @@ export default function LoginPage() {
           <br />
           Selamat datang.
         </h1>
-        <span className="text-[15px] leading-normal opacity-[0.92]">
+        <span className="text-sm leading-normal opacity-[0.92]">
           Log masuk ke <b>HRBoost.io</b> — HR syarikat anda, terus melalui WhatsApp.
         </span>
       </header>

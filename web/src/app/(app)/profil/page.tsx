@@ -27,7 +27,7 @@ export default function ProfilPage() {
           </Link>
         }
       />
-      <main className="flex grow flex-col gap-2.5 px-5 pt-1 pb-6">
+      <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
         {p.error && <ErrorBox message={p.error} />}
         {p.loading && !d && <Loading />}
         {d && (

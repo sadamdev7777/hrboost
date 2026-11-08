@@ -97,7 +97,7 @@ export default function OrientasiPasangPage() {
 
       <div className="flex flex-col rounded-card bg-surface px-4 py-1">
         {LANGKAH[os].map((t, i) => (
-          <div key={t} className={`flex min-h-14 items-center gap-3.5 text-[15px] ${i ? "border-t border-[#EEF2F1]" : ""}`}>
+          <div key={t} className={`flex min-h-14 items-center gap-3 text-sm ${i ? "border-t border-[#EEF2F1]" : ""}`}>
             <span className="flex size-[30px] shrink-0 items-center justify-center rounded-full bg-primary-soft text-sm font-extrabold text-primary">
               {i + 1}
             </span>
@@ -113,14 +113,14 @@ export default function OrientasiPasangPage() {
             await installEvt.prompt();
             setInstallEvt(null);
           }}
-          className="h-12 rounded-[14px] border-[1.5px] border-primary bg-surface text-[15px] font-bold text-primary"
+          className="h-12 rounded-[14px] border-[1.5px] border-primary bg-surface text-sm font-bold text-primary"
         >
           Pasang sekarang
         </button>
       )}
 
       {vcf && (
-        <div className="flex items-center gap-3 rounded-card bg-surface px-4 py-3.5">
+        <div className="flex items-center gap-3 rounded-card bg-surface px-4 py-3">
           <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
             <IconChat size={20} />
           </span>

@@ -113,7 +113,7 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
 
   return (
     <>
-      <main className="flex grow flex-col gap-2.5 px-5 pt-1 pb-4">
+      <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-4">
         {!admin && <span className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] text-warning">Hanya Pentadbir syarikat boleh mengubah maklumat ini.</span>}
         <Seksyen>SYARIKAT</Seksyen>
         <Kotak>
@@ -178,7 +178,7 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
         {ok && <span className="text-sm font-semibold text-success">Profil syarikat disimpan.</span>}
       </main>
       {admin && (
-        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-5 pt-3 pb-7">
+        <div className="sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <ButangUtama onClick={simpan} busy={busy}>
             Simpan
           </ButangUtama>
@@ -194,7 +194,7 @@ function Kotak({ children }: { children: React.ReactNode }) {
 
 function Baris({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="flex min-h-[52px] items-center gap-2.5 text-sm">
+    <label className="flex min-h-12 items-center gap-2.5 text-sm">
       <span className="w-[120px] shrink-0 text-muted">{label}</span>
       {children}
     </label>

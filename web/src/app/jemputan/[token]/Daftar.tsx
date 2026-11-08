@@ -125,10 +125,10 @@ export function Daftar() {
       <Screen>
         <div className="flex grow flex-col justify-center gap-4 p-6">
           <h1 className="m-0 text-2xl font-extrabold">{p?.accepted ? "Akaun sudah aktif" : "Pautan tidak sah"}</h1>
-          <p className="m-0 text-[15px] leading-normal text-subtle">{p?.error ?? preview.error}</p>
+          <p className="m-0 text-sm leading-normal text-subtle">{p?.error ?? preview.error}</p>
           <Link
             href="/masuk"
-            className="flex h-12 items-center justify-center rounded-[14px] bg-primary text-[15px] font-bold text-white!"
+            className="flex h-12 items-center justify-center rounded-[14px] bg-primary text-sm font-bold text-white!"
           >
             Log masuk
           </Link>
@@ -150,12 +150,12 @@ export function Daftar() {
         <div className="flex grow flex-col gap-[18px] px-6 pt-12 pb-4">
           <div className="flex flex-col gap-1.5">
             <span className="text-[13px] font-bold tracking-[0.04em] text-primary">JEMPUTAN DARIPADA HR</span>
-            <h1 className="m-0 text-[26px] leading-[1.2] font-extrabold">
+            <h1 className="m-0 text-[22px] leading-[1.2] font-extrabold">
               Selamat datang ke {p.company_code}, {p.name}
             </h1>
           </div>
 
-          <div className="flex flex-col gap-3.5 rounded-[18px] bg-surface p-4">
+          <div className="flex flex-col gap-3 rounded-[18px] bg-surface p-4">
             <div className="grid grid-cols-2 gap-3">
               <Info label="Syarikat" value={syarikat} />
               <Info label="Jawatan" value={p.position ?? "—"} />
@@ -177,7 +177,7 @@ export function Daftar() {
               placeholder="••••"
               value={ic4}
               onChange={(e) => setIc4(e.target.value.replace(/\D/g, "").slice(0, 4))}
-              className="h-[52px] rounded-[14px] border-[1.5px] border-primary bg-surface px-4 text-base font-semibold tracking-[0.3em] text-ink"
+              className="h-12 rounded-[14px] border-[1.5px] border-primary bg-surface px-4 text-base font-semibold tracking-[0.3em] text-ink"
             />
           </label>
 
@@ -203,7 +203,7 @@ export function Daftar() {
           <button
             type="submit"
             disabled={busy}
-            className="flex h-14 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover disabled:opacity-60"
+            className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover disabled:opacity-60"
           >
             {busy ? "Memproses…" : "Aktifkan akaun"}
           </button>
