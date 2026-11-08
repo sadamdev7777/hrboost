@@ -35,7 +35,7 @@ const navMobile = async (p) => (await p.locator('nav.sticky >> visible=true').lo
   log('1. Lily (HR) — desktop');
   let { ctx, p } = await masuk(browser, 'lily@demo.hrboost.io', DESKTOP);
   await p.waitForURL('**/pengurusan', { timeout: 20000 });
-  await p.waitForSelector('text=PERLU PERHATIAN');
+  await p.waitForSelector('text=PERLU TINDAKAN ANDA');
   expect(true, 'HR terus ke Papan Pemuka selepas log masuk');
   const sisi = await p.locator('aside').innerText();
   expect(['Papan Pemuka', 'Pekerja', 'Kelulusan', 'Gaji', 'Gaji Pekerja', 'Tetapan', 'Tukar ke Mod Pekerja'].every((t) => sisi.includes(t)), 'menu sisi desktop: menu HR + suis mod');
@@ -49,8 +49,8 @@ const navMobile = async (p) => (await p.locator('nav.sticky >> visible=true').lo
   log('2. Gaji Pekerja');
   await p.click('aside a:has-text("Gaji Pekerja")');
   await p.waitForURL('**/pengurusan/gaji/pekerja');
-  await p.waitForSelector(V('text=Jumlah tetap sebulan'));
-  await p.locator('tr', { hasText: 'Amin' }).locator('button:has-text("Ubah")').click();
+  await p.waitForSelector(V('text=Jumlah gaji kasar'));
+  await p.locator(V('tr:has-text("Amin")')).first().locator('button:has-text("Ubah")').click();
   await p.waitForSelector('[role=dialog] >> text=Gaji Amin');
   await p.fill('[role=dialog] label:has-text("Gaji Pokok") input', '3500');
   await p.fill('[role=dialog] label:has-text("Elaun Tetap") input', '250');
@@ -62,9 +62,9 @@ const navMobile = async (p) => (await p.locator('nav.sticky >> visible=true').lo
   await p.click('[role=dialog] button:has-text("Simpan gaji")');
   await p.waitForSelector('[role=dialog]', { state: 'detached' });
   await p.waitForSelector(V('tr:has-text("Amin") >> text=3,750.00'));
-  const baris = await p.locator('tr', { hasText: 'Amin' }).innerText();
+  const baris = await p.locator(V('tr:has-text("Amin")')).first().innerText();
   expect(baris.includes('3,309.75') && baris.includes('414.00') && baris.includes('4,312.15'), 'jadual: kasar 3,750.00, KWSP 414.00, bersih 3,309.75, kos majikan 4,312.15');
-  expect(await p.locator('tfoot').isVisible(), 'baris jumlah syarikat dipaparkan');
+  expect(await p.locator(V('tfoot')).count() === 1, 'baris jumlah syarikat dipaparkan');
 
   await p.click('button:has-text("Ubah ramai sekali gus")');
   await p.fill('input[aria-label="Gaji Pokok Zulfa"]', '3000');
@@ -100,7 +100,7 @@ const navMobile = async (p) => (await p.locator('nav.sticky >> visible=true').lo
   log('4. Lily — telefon: tab Mod HR & tukar mod');
   ({ ctx, p } = await masuk(browser, 'lily@demo.hrboost.io', TELEFON));
   await p.waitForURL('**/pengurusan', { timeout: 20000 });
-  await p.waitForSelector('text=PERLU PERHATIAN');
+  await p.waitForSelector('text=PERLU TINDAKAN ANDA');
   let tab = await navMobile(p);
   expect(JSON.stringify(tab) === JSON.stringify(['Utama', 'Pekerja', 'Kelulusan', 'Gaji', 'Saya']), `tab Mod HR: ${tab.join(', ')}`);
   await p.screenshot({ path: `${shots}/hr-papan-telefon.png` });
@@ -131,7 +131,7 @@ const navMobile = async (p) => (await p.locator('nav.sticky >> visible=true').lo
   expect((await p.locator(V('button:has-text("Tukar ke Mod")')).count()) === 0, 'tiada suis Mod HR');
   await p.goto(BASE + '/pengurusan/gaji/pekerja');
   await p.waitForSelector('text=Halaman ini hanya untuk', { timeout: 15000 }).catch(() => null);
-  expect(!(await p.locator('text=Jumlah tetap sebulan').count()), 'Gaji Pekerja disekat untuk pekerja biasa');
+  expect(!(await p.locator('text=Jumlah gaji kasar').count()), 'Gaji Pekerja disekat untuk pekerja biasa');
   await ctx.close();
 
   await browser.close();

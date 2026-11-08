@@ -247,9 +247,9 @@ node supabase/scripts/ujian-fungsi-crosschex.cjs
 
 ### Mod HR & paparan desktop
 
-- HR / Kewangan / CEO / Pentadbir masuk ke **Mod HR** secara lalai: laman utama ialah Papan Pemuka (`/pengurusan`), tab telefon: Utama, Pekerja, Kelulusan, Gaji, Saya (ikut peranan). Suis "Tukar ke Mod Pekerja" (Saya / menu sisi) untuk urusan diri sendiri; pilihan disimpan dalam pelayar. Pekerja biasa kekal 4 tab (CLAUDE.md §1).
+- HR / Kewangan / CEO / Pentadbir masuk ke **Mod HR** secara lalai: laman utama ialah Papan Pemuka "Pusat Tindakan" (`/pengurusan`: angka utama, perlu tindakan dengan butang Lulus, status gaji bulan ini, siapa tiada, minggu ini — `hr_dashboard_extra`), tab telefon: Utama, Pekerja, Kelulusan, Gaji, Saya (ikut peranan). Suis "Tukar ke Mod Pekerja" (Saya / menu sisi) untuk urusan diri sendiri; pilihan disimpan dalam pelayar. Pekerja biasa kekal 4 tab (CLAUDE.md §1).
 - Skrin ≥ 1024px: menu sisi kiri untuk semua pengguna, kandungan dilebarkan (`Screen lebar="lebar"` untuk skrin pengurusan), jadual untuk Pekerja dan Gaji Pekerja, lembaran menjadi dialog di tengah. Telefon tidak berubah.
-- Gaji Pekerja: RPC `hr_pay_table`, `hr_set_pay` (mengikut tarikh berkuat kuasa; 0 = hentikan elaun), `hr_add_pay_component` (jenis elaun / potongan tetap baharu). Komisen, kerja lebih masa dan tuntutan kekal dalam Proses Gaji. Setiap paparan & perubahan direkodkan dalam `data_access_log`.
+- Gaji Pekerja: KWSP, PERKESO, SIP, HRDF, PCB, gaji bersih dan kos majikan dikira automatik (`pay_estimate` / `hr_pay_preview`, fungsi kiraan yang sama dengan Proses Gaji) — langsung semasa menaip, dalam jadual dan jumlah syarikat. RPC `hr_pay_table`, `hr_set_pay` (mengikut tarikh berkuat kuasa; 0 = hentikan elaun), `hr_add_pay_component` (jenis elaun / potongan tetap baharu). Komisen, kerja lebih masa dan tuntutan kekal dalam Proses Gaji. Setiap paparan & perubahan direkodkan dalam `data_access_log`.
 
 ### Log masuk e-mel & kata laluan
 

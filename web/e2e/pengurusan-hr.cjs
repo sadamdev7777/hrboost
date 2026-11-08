@@ -47,7 +47,7 @@ async function login(browser, phone) {
   ({ ctx, p } = await login(browser, '100000002'));
   await p.goto(BASE + '/saya');
   await p.click('a:has-text("Papan Pemuka Syarikat")');
-  await p.waitForSelector('text=PERLU PERHATIAN');
+  await p.waitForSelector('text=PERLU TINDAKAN ANDA');
   await p.waitForSelector('text=Pertukaran akaun bank Amin menunggu pengesahan');
   expect(true, 'papan pemuka menunjukkan pertukaran bank menunggu');
   await p.screenshot({ path: `${shots}/d3-dashboard.png` });
