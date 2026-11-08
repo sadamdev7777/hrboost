@@ -1,0 +1,99 @@
+"use client";
+
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { hasRole, useMe } from "@/lib/me";
+import type { Database } from "@/lib/database.types";
+import { BackHeader, Screen } from "./ui";
+
+type Role = Database["public"]["Enums"]["app_role"];
+
+/** Label seksyen huruf besar: "PERLU PERHATIAN" */
+export function Seksyen({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <span className={`text-xs font-bold tracking-[0.04em] text-[#4A5A57] ${className}`}>{children}</span>;
+}
+
+/** Kotak putih dengan baris dipisahkan garis halus. */
+export function Kotak({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div className={`flex flex-col rounded-card bg-surface px-4 py-1 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1] ${className}`}>{children}</div>;
+}
+
+/** Baris label kiri / nilai kanan. */
+export function Medan({ label, children }: { label: ReactNode; children: ReactNode }) {
+  return (
+    <div className="flex min-h-[50px] items-center justify-between gap-3 py-2 text-sm">
+      <span className="text-muted">{label}</span>
+      <span className="text-right font-bold">{children}</span>
+    </div>
+  );
+}
+
+/** Baris pautan dengan ikon/teks dan anak panah. */
+export function BarisPautan({ href, children, kanan }: { href: string; children: ReactNode; kanan?: ReactNode }) {
+  return (
+    <Link href={href} className="flex min-h-[52px] items-center gap-3 py-2 text-[15px] font-semibold text-ink!">
+      <span className="grow">{children}</span>
+      {kanan}
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9AA8A5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 18l6-6-6-6" />
+      </svg>
+    </Link>
+  );
+}
+
+export function Tag({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "warning" | "danger" | "ai" | "success" | "primary" }) {
+  const cls = {
+    neutral: "bg-[#E9EEED] text-subtle",
+    warning: "bg-warning-soft text-warning",
+    danger: "bg-danger-soft text-danger",
+    ai: "bg-[#EDE9F8] text-[#4A3B8C]",
+    success: "bg-success-soft text-success",
+    primary: "bg-[#E3F1EE] text-primary",
+  }[tone];
+  return <span className={`shrink-0 rounded-lg px-2 py-[3px] text-[11px] font-bold whitespace-nowrap ${cls}`}>{children}</span>;
+}
+
+/** Hadkan skrin pengurusan kepada peranan tertentu dalam syarikat aktif (RLS tetap menjadi kawalan sebenar). */
+export function HadPeranan({ roles, children, back = "/saya" }: { roles: Role[]; children: ReactNode; back?: string }) {
+  const me = useMe();
+  if (!me.active || !hasRole(me, roles)) {
+    return (
+      <Screen>
+        <BackHeader title="Tiada akses" href={back} />
+        <main className="px-5 pt-2 text-sm text-muted">Skrin ini hanya untuk {roles.map((r) => ({ hr: "HR", finance: "Kewangan", ceo: "CEO", admin: "Pentadbir" })[r as string] ?? r).join(", ")} syarikat ini.</main>
+      </Screen>
+    );
+  }
+  return <>{children}</>;
+}
+
+export const inputKecil =
+  "h-11 w-full rounded-[12px] border border-[#D5DEDC] bg-surface px-3 text-[15px] font-semibold text-ink outline-none focus:border-primary";
+
+export function MedanBorang({ label, children, nota }: { label: string; children: ReactNode; nota?: ReactNode }) {
+  return (
+    <label className="flex flex-col gap-1.5">
+      <span className="text-[13px] font-bold text-[#4A5A57]">{label}</span>
+      {children}
+      {nota && <span className="text-xs text-muted">{nota}</span>}
+    </label>
+  );
+}
+
+/** Lembaran bawah generik (borang ringkas dalam skrin yang sama). */
+export function Lembaran({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40" onClick={onClose}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        className="flex max-h-[90dvh] w-full max-w-[480px] flex-col gap-3 overflow-y-auto rounded-t-[20px] bg-surface px-5 pt-5 pb-7"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="m-0 text-lg font-extrabold">{title}</h2>
+        {children}
+      </div>
+    </div>
+  );
+}

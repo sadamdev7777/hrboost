@@ -799,14 +799,14 @@ isOneToOne: false
                   ]
                 },"employments": {
                   Row: {
-                    "attendance_workno": string | null,"company_id": string,"confirm_date": string | null,"contract_end_date": string | null,"created_at": string,"department_id": string | null,"employee_no": string,"employment_type": Database["public"]['Enums']["employment_type"],"end_date": string | null,"epf_no": string | null,"id": string,"join_date": string,"manager_person_id": string | null,"person_id": string,"position_id": string | null,"probation_end_date": string | null,"socso_no": string | null,"status": Database["public"]['Enums']["employment_status"],"tax_no": string | null,"work_start": string | null,"work_state": string | null
+                    "attendance_workno": string | null,"company_id": string,"confirm_date": string | null,"contract_end_date": string | null,"created_at": string,"department_id": string | null,"employee_no": string,"employment_type": Database["public"]['Enums']["employment_type"],"end_date": string | null,"end_reason": string | null,"end_status": Database["public"]['Enums']["employment_status"] | null,"epf_no": string | null,"id": string,"join_date": string,"manager_person_id": string | null,"person_id": string,"position_id": string | null,"probation_end_date": string | null,"socso_no": string | null,"status": Database["public"]['Enums']["employment_status"],"tax_no": string | null,"work_start": string | null,"work_state": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "attendance_workno"?: string | null,"company_id": string,"confirm_date"?: string | null,"contract_end_date"?: string | null,"created_at"?: string,"department_id"?: string | null,"employee_no": string,"employment_type"?: Database["public"]['Enums']["employment_type"],"end_date"?: string | null,"epf_no"?: string | null,"id"?: string,"join_date": string,"manager_person_id"?: string | null,"person_id": string,"position_id"?: string | null,"probation_end_date"?: string | null,"socso_no"?: string | null,"status"?: Database["public"]['Enums']["employment_status"],"tax_no"?: string | null,"work_start"?: string | null,"work_state"?: string | null
+                    "attendance_workno"?: string | null,"company_id": string,"confirm_date"?: string | null,"contract_end_date"?: string | null,"created_at"?: string,"department_id"?: string | null,"employee_no": string,"employment_type"?: Database["public"]['Enums']["employment_type"],"end_date"?: string | null,"end_reason"?: string | null,"end_status"?: Database["public"]['Enums']["employment_status"] | null,"epf_no"?: string | null,"id"?: string,"join_date": string,"manager_person_id"?: string | null,"person_id": string,"position_id"?: string | null,"probation_end_date"?: string | null,"socso_no"?: string | null,"status"?: Database["public"]['Enums']["employment_status"],"tax_no"?: string | null,"work_start"?: string | null,"work_state"?: string | null
                   }
                   Update: {
-                    "attendance_workno"?: string | null,"company_id"?: string,"confirm_date"?: string | null,"contract_end_date"?: string | null,"created_at"?: string,"department_id"?: string | null,"employee_no"?: string,"employment_type"?: Database["public"]['Enums']["employment_type"],"end_date"?: string | null,"epf_no"?: string | null,"id"?: string,"join_date"?: string,"manager_person_id"?: string | null,"person_id"?: string,"position_id"?: string | null,"probation_end_date"?: string | null,"socso_no"?: string | null,"status"?: Database["public"]['Enums']["employment_status"],"tax_no"?: string | null,"work_start"?: string | null,"work_state"?: string | null
+                    "attendance_workno"?: string | null,"company_id"?: string,"confirm_date"?: string | null,"contract_end_date"?: string | null,"created_at"?: string,"department_id"?: string | null,"employee_no"?: string,"employment_type"?: Database["public"]['Enums']["employment_type"],"end_date"?: string | null,"end_reason"?: string | null,"end_status"?: Database["public"]['Enums']["employment_status"] | null,"epf_no"?: string | null,"id"?: string,"join_date"?: string,"manager_person_id"?: string | null,"person_id"?: string,"position_id"?: string | null,"probation_end_date"?: string | null,"socso_no"?: string | null,"status"?: Database["public"]['Enums']["employment_status"],"tax_no"?: string | null,"work_start"?: string | null,"work_state"?: string | null
                   }
                   Relationships: [
                     {
@@ -1471,6 +1471,9 @@ isOneToOne: false
 "can_view_request":
 { Args: { "p_request": string }; Returns: boolean
                            },
+"cancel_employment_end":
+{ Args: { "p_employment": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
+                           },
 "company_holidays":
 { Args: { "p_company": string,"p_from": string,"p_to": string }; Returns: {
               "holiday_date": string,"name": string
@@ -1515,6 +1518,9 @@ isOneToOne: false
 "employment_company":
 { Args: { "p_employment": string }; Returns: string
                            },
+"end_employment":
+{ Args: { "p_employment": string,"p_end_date": string,"p_reason"?: string,"p_status": Database["public"]['Enums']["employment_status"],"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
+                           },
 "ensure_leave_balance":
 { Args: { "p_employment": string,"p_leave_type": string,"p_year": number }; Returns: {
               "adjustment": number,
@@ -1537,6 +1543,9 @@ isOneToOne: false
 "eval_condition":
 { Args: { "cond": Json,"ctx": Json }; Returns: boolean
                            },
+"finalize_employment_ends":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
 "fmt_num":
 { Args: { "n": number }; Returns: string
                            },
@@ -1545,6 +1554,20 @@ isOneToOne: false
                            },
 "has_role":
 { Args: { "p_company": string,"p_roles": (Database["public"]['Enums']["app_role"])[] }; Returns: boolean
+                           },
+"hr_current_pay":
+{ Args: { "p_employment": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: {
+              "amount": number,"code": string,"effective_from": string,"name": string
+            }[]
+                           },
+"hr_dashboard":
+{ Args: { "p_company": string }; Returns: Json
+                           },
+"hr_update_employment":
+{ Args: { "p_data": Json,"p_employment": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
+                           },
+"hr_view_sensitive":
+{ Args: { "p_employment": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: Json
                            },
 "ingest_attendance":
 { Args: { "p_company": string,"p_date": string,"p_employee_no": string,"p_external_id": string,"p_in": string,"p_out": string,"p_raw": Json,"p_source": string }; Returns: {
@@ -1567,6 +1590,9 @@ isOneToOne: false
       } },
 "ingest_punch":
 { Args: { "p_checktype"?: number,"p_company": string,"p_device_name"?: string,"p_device_sn"?: string,"p_raw"?: Json,"p_time": string,"p_uuid": string,"p_workno": string }; Returns: boolean
+                           },
+"invite_employee":
+{ Args: { "p_base_url": string,"p_employment": string }; Returns: string
                            },
 "invite_preview":
 { Args: { "p_token": string }; Returns: Json
@@ -1622,6 +1648,9 @@ isOneToOne: false
                            },
 "notify_person":
 { Args: { "p_company": string,"p_message": string,"p_person": string }; Returns: undefined
+                           },
+"person_other_companies":
+{ Args: { "p_employment": string }; Returns: number
                            },
 "platform_setting":
 { Args: { "p_key": string }; Returns: Json
