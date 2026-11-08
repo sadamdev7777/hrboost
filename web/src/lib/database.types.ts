@@ -1153,6 +1153,64 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"payroll_adjustments": {
+                  Row: {
+                    "amount": number,"component_code": string,"created_at": string,"created_by": string | null,"employment_id": string,"id": string,"note": string | null,"payroll_run_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "amount": number,"component_code": string,"created_at"?: string,"created_by"?: string | null,"employment_id": string,"id"?: string,"note"?: string | null,"payroll_run_id": string
+                  }
+                  Update: {
+                    "amount"?: number,"component_code"?: string,"created_at"?: string,"created_by"?: string | null,"employment_id"?: string,"id"?: string,"note"?: string | null,"payroll_run_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "payroll_adjustments_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "payroll_adjustments_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "payroll_adjustments_payroll_run_id_fkey"
+      columns: ["payroll_run_id"]
+isOneToOne: false
+      referencedRelation: "payroll_runs"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"payroll_opening_balances": {
+                  Row: {
+                    "employment_id": string,"epf": number,"gross": number,"pcb": number,"up_to_month": number,"updated_at": string,"updated_by": string | null,"year": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "employment_id": string,"epf"?: number,"gross"?: number,"pcb"?: number,"up_to_month": number,"updated_at"?: string,"updated_by"?: string | null,"year": number
+                  }
+                  Update: {
+                    "employment_id"?: string,"epf"?: number,"gross"?: number,"pcb"?: number,"up_to_month"?: number,"updated_at"?: string,"updated_by"?: string | null,"year"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "payroll_opening_balances_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "payroll_opening_balances_updated_by_fkey"
+      columns: ["updated_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"payroll_runs": {
                   Row: {
                     "approval_request_id": string | null,"company_id": string,"created_at": string,"id": string,"pay_date": string | null,"period_month": number,"period_year": number,"prepared_by": string | null,"status": Database["public"]['Enums']["payroll_status"],"totals": Json | null
@@ -1712,6 +1770,11 @@ isOneToOne: false
               "department": string,"department_id": string,"name": string,"person_id": string
             }[]
                            },
+"my_payslips":
+{ Args: { "p_employment": string }; Returns: {
+              "id": string,"net": number,"pay_date": string,"period_month": number,"period_year": number,"status": Database["public"]['Enums']["payroll_status"]
+            }[]
+                           },
 "next_working_day":
 { Args: { "p_company": string,"p_date": string }; Returns: string
                            },
@@ -1728,6 +1791,47 @@ isOneToOne: false
                            },
 "notify_person":
 { Args: { "p_company": string,"p_message": string,"p_person": string }; Returns: undefined
+                           },
+"payroll_calculate":
+{ Args: { "p_run": string }; Returns: Json
+                           },
+"payroll_differences":
+{ Args: { "p_run": string }; Returns: {
+              "employment_id": string,"name": string,"note": string
+            }[]
+                           },
+"payroll_export":
+{ Args: { "p_kind": string,"p_run": string }; Returns: string
+                           },
+"payroll_mark_paid":
+{ Args: { "p_pay_date"?: string,"p_run": string }; Returns: number
+                           },
+"payroll_period":
+{ Args: { "p_run": string }; Returns: Record<string, unknown>
+                           },
+"payroll_prepare":
+{ Args: { "p_company": string,"p_month": number,"p_year": number }; Returns: Json
+                           },
+"payroll_set_adjustment":
+{ Args: { "p_amount": number,"p_code": string,"p_employment": string,"p_note"?: string,"p_run": string }; Returns: undefined
+                           },
+"payslip_is_mine":
+{ Args: { "p_payslip": string }; Returns: boolean
+                           },
+"payslip_meta":
+{ Args: { "p_payslip": string }; Returns: Json
+                           },
+"payslip_opened":
+{ Args: { "p_payslip": string }; Returns: undefined
+                           },
+"payslip_wage":
+{ Args: { "p_kind": string,"p_payslip": string }; Returns: number
+                           },
+"payslip_ytd":
+{ Args: { "p_payslip": string }; Returns: Json
+                           },
+"person_age":
+{ Args: { "p_on": string,"p_person": string }; Returns: number
                            },
 "person_other_companies":
 { Args: { "p_employment": string }; Returns: number
@@ -1794,8 +1898,26 @@ isOneToOne: false
 "set_company_holidays":
 { Args: { "p_company": string,"p_holiday_ids": (string)[],"p_year": number }; Returns: number
                            },
+"set_payroll_opening":
+{ Args: { "p_employment": string,"p_epf": number,"p_gross": number,"p_pcb": number,"p_up_to_month": number,"p_year": number }; Returns: undefined
+                           },
 "settings_summary":
 { Args: { "p_company": string }; Returns: Json
+                           },
+"stat_epf":
+{ Args: { "p_age": number,"p_date": string,"p_employer_override"?: number,"p_wage": number }; Returns: Record<string, unknown>
+                           },
+"stat_params":
+{ Args: { "p_code": string,"p_date": string }; Returns: Json
+                           },
+"stat_pcb":
+{ Args: { "p_children": number,"p_date": string,"p_epf": number,"p_gross": number,"p_married": boolean,"p_month": number,"p_spouse_working": boolean,"p_ytd_epf": number,"p_ytd_gross": number,"p_ytd_pcb": number }; Returns: number
+                           },
+"stat_socso_eis":
+{ Args: { "p_age": number,"p_code": string,"p_date": string,"p_wage": number }; Returns: Record<string, unknown>
+                           },
+"stat_tax":
+{ Args: { "p_chargeable": number,"p_date": string }; Returns: number
                            },
 "statutory_leave_minimum":
 { Args: { "p_code": string,"p_min_service_months": number }; Returns: number

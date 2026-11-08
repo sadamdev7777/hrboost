@@ -608,7 +608,67 @@ function TabGaji({ id }: { id: string }) {
         ))}
       </Senarai>
       <span className="text-xs text-muted">Akses ini direkodkan. Slip gaji bulanan dijana melalui Proses Gaji.</span>
+      <BakiAwal id={id} />
     </>
+  );
+}
+
+/** Data terkumpul tahun ini daripada sistem lama (untuk PCB yang tepat apabila mula pada pertengahan tahun). */
+function BakiAwal({ id }: { id: string }) {
+  const y = Number(todayISO().slice(0, 4));
+  const d = useData(
+    async () => must(await getSupabase().from("payroll_opening_balances").select("up_to_month, gross, epf, pcb").eq("employment_id", id).eq("year", y).maybeSingle()),
+    [id, y],
+  );
+  const [f, setF] = useState<{ m: string; g: string; e: string; p: string } | null>(null);
+  const [ralat, setRalat] = useState<string | null>(null);
+  const [ok, setOk] = useState(false);
+  const v = f ?? (d.data ? { m: String(d.data.up_to_month), g: String(d.data.gross), e: String(d.data.epf), p: String(d.data.pcb) } : { m: String(Math.max(1, Number(todayISO().slice(5, 7)) - 1)), g: "", e: "", p: "" });
+  const BULAN = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogo", "Sep", "Okt", "Nov"];
+  async function simpan() {
+    setRalat(null);
+    try {
+      must(await getSupabase().rpc("set_payroll_opening", { p_employment: id, p_year: y, p_up_to_month: Number(v.m), p_gross: Number(v.g) || 0, p_epf: Number(v.e) || 0, p_pcb: Number(v.p) || 0 }));
+      setOk(true);
+      d.reload();
+    } catch (e) {
+      setRalat(e instanceof Error ? e.message : "Ralat");
+    }
+  }
+  const num = (k: "g" | "e" | "p") => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOk(false);
+    setF({ ...v, [k]: e.target.value.replace(/[^\d.]/g, "") });
+  };
+  return (
+    <div className="mt-2 flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3.5">
+      <b className="text-sm font-extrabold">Data terkumpul {y} daripada sistem lama</b>
+      <span className="text-xs text-muted">Untuk syarikat yang mula menggunakan HRBoost pada pertengahan tahun — diperlukan supaya PCB dikira dengan tepat.</span>
+      <div className="grid grid-cols-2 gap-2.5">
+        <MedanBorang label="Hingga bulan">
+          <select className={inputKecil} value={v.m} onChange={(e) => setF({ ...v, m: e.target.value })}>
+            {BULAN.map((b, i) => (
+              <option key={b} value={i + 1}>
+                Jan – {b}
+              </option>
+            ))}
+          </select>
+        </MedanBorang>
+        <MedanBorang label="Saraan kasar (RM)">
+          <input className={inputKecil} inputMode="decimal" value={v.g} onChange={num("g")} />
+        </MedanBorang>
+        <MedanBorang label="KWSP pekerja (RM)">
+          <input className={inputKecil} inputMode="decimal" value={v.e} onChange={num("e")} />
+        </MedanBorang>
+        <MedanBorang label="PCB dibayar (RM)">
+          <input className={inputKecil} inputMode="decimal" value={v.p} onChange={num("p")} />
+        </MedanBorang>
+      </div>
+      {ralat && <ErrorBox message={ralat} />}
+      {ok && <span className="text-sm font-semibold text-success">Disimpan.</span>}
+      <button type="button" onClick={simpan} className="h-11 rounded-[12px] border border-primary text-sm font-bold text-primary">
+        Simpan data terkumpul
+      </button>
+    </div>
   );
 }
 

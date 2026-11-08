@@ -59,6 +59,17 @@ insert into employments (id, person_id, company_id, employee_no, department_id, 
   ('00000000-0000-0000-0000-0000000000e5', '00000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-0000000000c1', 'DEMO005', '00000000-0000-0000-0000-0000000000d2', 'active', '2021-01-01'),
   ('00000000-0000-0000-0000-0000000000e6', '00000000-0000-0000-0000-000000000006', '00000000-0000-0000-0000-0000000000c1', 'DEMO006', '00000000-0000-0000-0000-0000000000d1', 'active', '2024-01-01');
 
+-- Gaji demo (Fasa F) — nilai rekaan untuk ujian tempatan sahaja
+insert into employment_compensation (employment_id, component_id, amount, effective_from)
+select e, (select id from pay_components where company_id = '00000000-0000-0000-0000-0000000000c1' and code = c), a, '2024-01-01'
+  from (values ('00000000-0000-0000-0000-0000000000e1'::uuid, 'BASIC', 12000), ('00000000-0000-0000-0000-0000000000e2'::uuid, 'BASIC', 5500),
+               ('00000000-0000-0000-0000-0000000000e3'::uuid, 'BASIC', 4800), ('00000000-0000-0000-0000-0000000000e4'::uuid, 'BASIC', 3000),
+               ('00000000-0000-0000-0000-0000000000e4'::uuid, 'ALLOWANCE', 200), ('00000000-0000-0000-0000-0000000000e5'::uuid, 'BASIC', 5200),
+               ('00000000-0000-0000-0000-0000000000e6'::uuid, 'BASIC', 2800)) v(e, c, a);
+update employments set epf_no = 'K' || right(employee_no, 3), socso_no = 'S' || right(employee_no, 3), tax_no = 'SG' || right(employee_no, 3)
+ where company_id = '00000000-0000-0000-0000-0000000000c1' and employee_no <> 'DEMO006';
+update persons set bank_name = 'Maybank', bank_account_no = '5140' || right(phone_whatsapp, 8) where bank_account_no is null and ic_no is not null;
+
 insert into user_roles (person_id, company_id, role) values
   ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-0000000000c1', 'ceo'),
   ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-0000000000c1', 'admin'),

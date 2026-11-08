@@ -119,6 +119,16 @@ export function RequestDetail({ mode }: { mode: Mode }) {
             </div>
           )}
 
+          {x.gaji && (
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Bulan" value={x.gaji.bulan} />
+              <Field label="Pekerja" value={String(x.gaji.headcount)} />
+              <Field label="Jumlah kasar" value={ringgit(x.gaji.gross)} />
+              <Field label="Jumlah bersih" value={ringgit(x.gaji.net)} />
+              <Field label="Caruman majikan" value={ringgit(x.gaji.employer)} />
+              <Field label="PCB" value={ringgit(x.gaji.pcb)} />
+            </div>
+          )}
           {x.koreksi && (
             <div className="grid grid-cols-2 gap-3">
               <Field label="Tarikh" value={tarikh(x.koreksi.date)} />
@@ -405,6 +415,7 @@ async function loadDetail(mode: Mode) {
     balanceAfter: number | null;
     attachment: string | null;
   } = null;
+  let gaji: null | { bulan: string; headcount: number; gross: number; net: number; employer: number; pcb: number } = null;
   let koreksi: null | { date: string; in: string | null; out: string | null; reason: string; machineIn: string | null; machineOut: string | null } = null;
   let claim: null | {
     title: string;
@@ -450,6 +461,20 @@ async function loadDetail(mode: Mode) {
         cover,
         balanceAfter,
         attachment: lr.attachment_path,
+      };
+    }
+  } else if (req.request_type === "payroll_run") {
+    const pr = must(await sb.from("payroll_runs").select("period_year, period_month, totals").eq("id", req.reference_id).maybeSingle());
+    if (pr) {
+      const t = (pr.totals ?? {}) as Record<string, number>;
+      const BULAN = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+      gaji = {
+        bulan: `${BULAN[pr.period_month - 1]} ${pr.period_year}`,
+        headcount: Number(t.headcount ?? 0),
+        gross: Number(t.gross ?? 0),
+        net: Number(t.net ?? 0),
+        employer: Number(t.employer ?? 0),
+        pcb: Number(t.pcb ?? 0),
       };
     }
   } else if (req.request_type === "attendance_correction") {
@@ -509,6 +534,7 @@ async function loadDetail(mode: Mode) {
     leave,
     claim,
     koreksi,
+    gaji,
     isToday: tarikhTempatan(req.submitted_at) === todayISO(),
   };
 }
