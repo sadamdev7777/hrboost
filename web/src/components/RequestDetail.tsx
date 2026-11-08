@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
-import { hari, julatTarikh, masa, namaPeringkat, ringgit, tarikh, tarikhTempatan, todayISO, type StatusPermohonan } from "@/lib/format";
+import { hari, jam, julatTarikh, masa, namaPeringkat, ringgit, tarikh, tarikhTempatan, todayISO, type StatusPermohonan } from "@/lib/format";
 import { IconCheck, IconSparkle } from "./icons";
 import { Avatar, BackHeader, ErrorBox, Loading, Screen, StatusPill } from "./ui";
 import { ReasonSheet } from "./ReasonSheet";
@@ -118,6 +118,16 @@ export function RequestDetail({ mode }: { mode: Mode }) {
               <LihatFail path={x.leave.attachment} label="Lihat sijil" />
             </div>
           )}
+
+          {x.koreksi && (
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Tarikh" value={tarikh(x.koreksi.date)} />
+              <Field label="Rekod mesin" value={`${x.koreksi.machineIn ? jam(x.koreksi.machineIn) : "Tiada"} – ${x.koreksi.machineOut ? jam(x.koreksi.machineOut) : "Tiada"}`} />
+              <Field label="Masuk sebenar" value={x.koreksi.in ? jam(x.koreksi.in) : "Tiada perubahan"} />
+              <Field label="Keluar sebenar" value={x.koreksi.out ? jam(x.koreksi.out) : "Tiada perubahan"} />
+            </div>
+          )}
+          {x.koreksi && <Field label="Sebab" value={x.koreksi.reason} plain />}
 
           {x.claim && (
             <div className="flex flex-col gap-2">
@@ -395,6 +405,7 @@ async function loadDetail(mode: Mode) {
     balanceAfter: number | null;
     attachment: string | null;
   } = null;
+  let koreksi: null | { date: string; in: string | null; out: string | null; reason: string; machineIn: string | null; machineOut: string | null } = null;
   let claim: null | {
     title: string;
     total: number;
@@ -441,6 +452,28 @@ async function loadDetail(mode: Mode) {
         attachment: lr.attachment_path,
       };
     }
+  } else if (req.request_type === "attendance_correction") {
+    const ac = must(
+      await sb
+        .from("attendance_corrections")
+        .select("employment_id, work_date, requested_clock_in, requested_clock_out, reason")
+        .eq("id", req.reference_id)
+        .maybeSingle(),
+    );
+    if (ac) {
+      const rec = (
+        await sb.from("attendance_records").select("clock_in, clock_out, source").eq("employment_id", ac.employment_id).eq("work_date", ac.work_date).maybeSingle()
+      ).data;
+      const asal = rec && rec.source !== "correction" ? rec : null;
+      koreksi = {
+        date: ac.work_date,
+        in: ac.requested_clock_in,
+        out: ac.requested_clock_out,
+        reason: ac.reason,
+        machineIn: asal?.clock_in ?? null,
+        machineOut: asal?.clock_out ?? null,
+      };
+    }
   } else if (req.request_type === "claim") {
     const c = must(
       await sb
@@ -475,6 +508,7 @@ async function loadDetail(mode: Mode) {
     flow,
     leave,
     claim,
+    koreksi,
     isToday: tarikhTempatan(req.submitted_at) === todayISO(),
   };
 }

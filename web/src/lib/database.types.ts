@@ -373,6 +373,32 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"attendance_integrations": {
+                  Row: {
+                    "active": boolean,"api_url": string,"company_id": string,"key_secret_id": string | null,"next_run_at": string,"provider": string,"secret_secret_id": string | null,"sync_minutes": number,"token_secret_id": string | null,"updated_at": string,"updated_by": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "active"?: boolean,"api_url"?: string,"company_id": string,"key_secret_id"?: string | null,"next_run_at"?: string,"provider"?: string,"secret_secret_id"?: string | null,"sync_minutes"?: number,"token_secret_id"?: string | null,"updated_at"?: string,"updated_by"?: string | null
+                  }
+                  Update: {
+                    "active"?: boolean,"api_url"?: string,"company_id"?: string,"key_secret_id"?: string | null,"next_run_at"?: string,"provider"?: string,"secret_secret_id"?: string | null,"sync_minutes"?: number,"token_secret_id"?: string | null,"updated_at"?: string,"updated_by"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "attendance_integrations_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: true
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "attendance_integrations_updated_by_fkey"
+      columns: ["updated_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"attendance_punches": {
                   Row: {
                     "checktype": number | null,"company_id": string,"created_at": string,"device_name": string | null,"device_sn": string | null,"employment_id": string | null,"external_uuid": string,"id": number,"punched_at": string,"raw": Json | null,"workno": string
@@ -887,6 +913,26 @@ isOneToOne: false
                   Relationships: [
                     {
       foreignKeyName: "integration_keys_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"integration_sync_log": {
+                  Row: {
+                    "company_id": string,"created_at": string,"id": number,"message": string,"ok": boolean,"provider": string,"records": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "company_id": string,"created_at"?: string,"id"?: never,"message": string,"ok": boolean,"provider": string,"records"?: number
+                  }
+                  Update: {
+                    "company_id"?: string,"created_at"?: string,"id"?: never,"message"?: string,"ok"?: boolean,"provider"?: string,"records"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "integration_sync_log_company_id_fkey"
       columns: ["company_id"]
 isOneToOne: false
       referencedRelation: "companies"
@@ -1459,11 +1505,22 @@ isOneToOne: false
 "approval_sla_tick":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
+"attendance_integration_status":
+{ Args: { "p_company": string }; Returns: Json
+                           },
+"attendance_month":
+{ Args: { "p_employment": string,"p_from": string,"p_to": string }; Returns: {
+              "clock_in": string,"clock_out": string,"correction_request": string,"correction_status": Database["public"]['Enums']["request_status"],"holiday": string,"late_minutes": number,"leave_code": string,"source": string,"work_date": string,"working_day": boolean
+            }[]
+                           },
 "birthday_whatsapp":
 { Args: { "p_company": string,"p_person": string }; Returns: string
                            },
 "bump_usage":
 { Args: { "p_company": string,"p_kind": string,"p_n"?: number }; Returns: boolean
+                           },
+"can_manage_attendance":
+{ Args: { "p_company": string }; Returns: boolean
                            },
 "can_view_employment":
 { Args: { "p_employment": string }; Returns: boolean
@@ -1494,6 +1551,14 @@ isOneToOne: false
                            },
 "create_invite":
 { Args: { "p_employment": string }; Returns: string
+                           },
+"crosschex_mark":
+{ Args: { "p_company": string,"p_message": string,"p_ok": boolean,"p_records"?: number,"p_synced_to"?: string,"p_token"?: string,"p_token_expires"?: string }; Returns: undefined
+                           },
+"crosschex_targets":
+{ Args: { "p_company"?: string,"p_force"?: boolean }; Returns: {
+              "api_key": string,"api_secret": string,"api_url": string,"company_id": string,"last_synced_at": string,"timezone": string,"token": string,"token_expires_at": string
+            }[]
                            },
 "current_person_id":
 { Args: Record<PropertyKey, never>; Returns: string
@@ -1682,6 +1747,9 @@ isOneToOne: false
 "render_template":
 { Args: { "p_tpl": string,"p_vars": Json }; Returns: string
                            },
+"request_attendance_sync":
+{ Args: { "p_company": string }; Returns: undefined
+                           },
 "request_bank_change":
 { Args: { "p_account_no": string,"p_bank_name": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: string
                            },
@@ -1719,6 +1787,9 @@ isOneToOne: false
                            },
 "seed_company_defaults":
 { Args: { "p_company": string }; Returns: undefined
+                           },
+"set_attendance_integration":
+{ Args: { "p_active"?: boolean,"p_api_url": string,"p_company": string,"p_key": string,"p_minutes"?: number,"p_secret": string }; Returns: undefined
                            },
 "set_company_holidays":
 { Args: { "p_company": string,"p_holiday_ids": (string)[],"p_year": number }; Returns: number

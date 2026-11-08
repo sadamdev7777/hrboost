@@ -60,7 +60,7 @@ npx supabase stop
 npm run db:test
 ```
 
-Empat fail ujian: `hrboost_tests_v0.2_approval`, `hrboost_tests_v0.2_platform`, `hrboost_tests_b_onboarding` (jemputan & orientasi) dan `hrboost_tests_c_whatsapp` (balasan WhatsApp & giliran notifikasi). Skrip `supabase/scripts/run-sql-tests.sh` memulakan bekas Docker `pgvector/pgvector:pg16` pada port 55432, kemudian bagi setiap fail dalam `supabase/tests/*.sql` mencipta pangkalan data baharu dan menjalankan:
+Fail ujian: `hrboost_tests_v0.2_approval`, `hrboost_tests_v0.2_platform`, `hrboost_tests_b_onboarding` (jemputan & orientasi), `hrboost_tests_c_whatsapp` (balasan WhatsApp & giliran notifikasi), `hrboost_tests_d_profil` (kalendar cuti, profil, tukar bank), `hrboost_tests_d_hr` (pengurusan pekerja), `hrboost_tests_d_tetapan` (aliran kelulusan, minimum cuti, tempoh tuntutan, wakil) dan `hrboost_tests_e_kehadiran` (kehadiran & pembetulan masa). Skrip `supabase/scripts/run-sql-tests.sh` memulakan bekas Docker `pgvector/pgvector:pg16` pada port 55432, kemudian bagi setiap fail dalam `supabase/tests/*.sql` mencipta pangkalan data baharu dan menjalankan:
 
 1. stub `supabase/tests/local_only/hrboost_tests_stub_local_only.sql`
 2. semua migrasi dalam `supabase/migrations/`
@@ -138,7 +138,7 @@ psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -c "select phone, o
 
 Di staging/produksi, kod OTP dihantar melalui WhatsApp oleh Edge Function `auth-sms-hook` (sudah ditulis, belum dipasang — lihat bahagian "OTP melalui WhatsApp" di bawah).
 
-### Laluan skrin (Fasa B)
+### Laluan skrin
 
 | Laluan | Skrin reka bentuk |
 |---|---|
@@ -151,6 +151,13 @@ Di staging/produksi, kod OTP dihantar melalui WhatsApp oleh Edge Function `auth-
 | `/permohonan`, `/permohonan/[id]` | PermohonanSaya, Butiran (paparan pemohon) |
 | `/kelulusan`, `/kelulusan/[id]` | Kelulusan, Butiran (paparan pelulus) |
 | `/saya` | Saya |
+| `/tuntutan`, `/tuntutan/baru`, `/tuntutan/[id]` | Tuntutan, BuatClaim |
+| `/cuti`, `/hari-jadi`, `/profil`, `/profil/ubah` | Cuti, HariJadi, Profil, ProfilUbah |
+| `/kehadiran`, `/kehadiran/betulkan` | Kehadiran, PembetulanMasa |
+| `/pengurusan` | DashboardHR |
+| `/pengurusan/pekerja`, `/pengurusan/pekerja/baru`, `/pengurusan/pekerja/[id]` | Pekerja, TambahPekerja, ProfilPekerja |
+| `/pengurusan/akses` | AksesSyarikat |
+| `/pengurusan/tetapan` (+ `/aliran`, `/wakil`, `/automasi`, `/cuti`, `/cuti-umum`, `/tuntutan`, `/syarikat`, `/kadar`, `/akaun`, `/pengguna`, `/kehadiran`) | Tetapan, AliranApproval, T_WakilKelulusan, Automasi, T_JenisCuti, CutiUmum, T_JenisClaim, T_Syarikat, T_KadarBerkanun, T_IntegrasiAkaun, T_Pengguna, IntegrasiKehadiran |
 | `/privasi` | Privasi (DRAF — perlu semakan peguam) |
 
 Fail peribadi (swafoto, kad pengenalan, sijil MC) disimpan dalam bucket storan peribadi `peribadi`, folder `<person_id>/`. Gambar dimampatkan di telefon (≤ 1600px, JPEG 0.8) sebelum dimuat naik dan dipaparkan melalui URL bertandatangan 5 minit. Hanya pemilik, HR/Pentadbir syarikat itu dan pelulus permohonan berkaitan boleh membacanya.
@@ -168,6 +175,8 @@ node web/e2e/aliran-cuti.cjs
 ```bash
 node web/e2e/orientasi.cjs
 ```
+
+Ujian lain dalam `web/e2e/`: `tuntutan.cjs` (RM1,250 → Ketua → Kewangan → CEO), `profil-cuti.cjs`, `pengurusan-hr.cjs`, `tetapan.cjs`, `kehadiran.cjs`. Untuk staging: `E2E_BASE=https://hrboost-staging.netlify.app`.
 
 - `aliran-cuti.cjs`: Amin memohon cuti 23–28 Dis → Zuerin, Lily dan Sadam meluluskan dari telefon masing-masing → baki Amin 8 → 5 hari.
 - `orientasi.cjs`: HR menjemput pekerja baharu → pautan jemputan + 4 digit IC + OTP → 8 langkah orientasi (swafoto, kad pengenalan dan lain-lain) → Amin memohon MC bersama gambar sijil → ketua jabatan membuka sijil itu.
@@ -192,6 +201,18 @@ node supabase/scripts/ujian-fungsi-whatsapp.cjs
 ```
 
 Bila Murpati tersedia: tetapkan rahsia `MURPATI_API_URL`, `MURPATI_API_KEY`, `MURPATI_WEBHOOK_SECRET`; pasang `notify-sender`, `whatsapp-inbound` dan `auth-sms-hook`; jadualkan `notify-sender` setiap minit dengan pg_cron + pg_net (kunci service role dalam Vault); tetapkan URL webhook Murpati ke `whatsapp-inbound`.
+
+### Kehadiran CrossChex (Fasa E)
+
+`supabase/functions/crosschex-sync` menarik imbasan CrossChex Cloud (`api.eu.crosschexcloud.com`) bagi setiap syarikat mengikut kekerapan pilihan (5/15/30 minit): token disimpan dalam Vault hingga `expires` (ralat `TOKEN_EXPIRES` → token baharu), julat `last_synced_at − 10 minit` hingga kini, 100 rekod setiap halaman, `ingest_punch` (tiada pendua). HR mengisi kunci di **Tetapan → Integrasi Kehadiran**; kunci, rahsia dan token disimpan dalam Supabase Vault dan tidak pernah dipaparkan semula. Rekod yang telah dibetulkan (pembetulan masa diluluskan) tidak ditulis ganti oleh imbasan seterusnya.
+
+Ujian integrasi (tempatan, pelayan CrossChex palsu):
+
+```bash
+node supabase/scripts/ujian-fungsi-crosschex.cjs
+```
+
+**Belum dipasang di staging** — kunci CrossChex yang pernah ditampal dalam chat perlu dijana semula dahulu (CLAUDE.md §8). Bila sedia: pasang fungsi `crosschex-sync`, kemudian jadualkan setiap 5 minit dengan pg_cron + pg_net (kunci service role dalam Vault). `CROSSCHEX_URL_OVERRIDE` hanya untuk ujian tempatan — jangan tetapkan di Supabase sebenar.
 
 ### OTP melalui WhatsApp (staging/produksi)
 

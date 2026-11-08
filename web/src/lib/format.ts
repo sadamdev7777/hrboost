@@ -191,3 +191,9 @@ export function namaPeringkat(nama: string): string {
   const peta: Record<string, string> = { Finance: "Kewangan" };
   return peta[nama] ?? nama;
 }
+
+/** Jam 24 jam waktu Malaysia: "9:05", "18:20" (jadual kehadiran). */
+export function jam(ts: string | Date): string {
+  const t = localParts(typeof ts === "string" ? new Date(ts) : ts);
+  return `${t.h}:${String(t.min).padStart(2, "0")}`;
+}

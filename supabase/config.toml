@@ -453,3 +453,7 @@ verify_jwt = false
 
 [functions.whatsapp-inbound]
 verify_jwt = false
+
+# HRBoost Fasa E. Menyemak sendiri pemanggil: kunci service role (pg_cron) atau JWT HR/Pentadbir.
+[functions.crosschex-sync]
+verify_jwt = false
