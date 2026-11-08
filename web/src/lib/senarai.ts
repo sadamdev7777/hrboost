@@ -22,3 +22,9 @@ export const BANK = [
   "Standard Chartered",
 ];
 export const HUBUNGAN = ["Ibu", "Bapa", "Suami / Isteri", "Adik-beradik", "Anak", "Lain-lain"];
+
+/** Negeri & wilayah persekutuan (cuti umum negeri). */
+export const NEGERI = [
+  "Johor", "Kedah", "Kelantan", "Melaka", "Negeri Sembilan", "Pahang", "Perak", "Perlis", "Pulau Pinang",
+  "Sabah", "Sarawak", "Selangor", "Terengganu", "WP Kuala Lumpur", "WP Labuan", "WP Putrajaya",
+];

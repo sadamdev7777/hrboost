@@ -1,0 +1,209 @@
+"use client";
+
+import { useState } from "react";
+import { useMe } from "@/lib/me";
+import { getSupabase } from "@/lib/supabase";
+import { must, useData } from "@/lib/useData";
+import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
+import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Suis, Tag, inputKecil, inputSempit } from "@/components/Senarai";
+
+const WAJIB = ["AL", "MC", "HL", "ML", "PL"];
+const NAMA: Record<string, string> = { AL: "Tahunan", MC: "Sakit (MC)", HL: "Kemasukan hospital", ML: "Bersalin", PL: "Paterniti" };
+const PILIHAN = [
+  { code: "EL", name: "Cuti Kecemasan", label: "Kecemasan", sub: "Tidak menolak baki · boleh dimohon selepas", deduct: false, paid: true, days: null as number | null },
+  { code: "UL", name: "Cuti Tanpa Gaji", label: "Tanpa gaji", sub: "Gaji dipotong mengikut hari", deduct: false, paid: false, days: null },
+  { code: "KW", name: "Cuti Kahwin", label: "Cuti kahwin", sub: "3 hari · sekali sepanjang perkhidmatan", deduct: true, paid: true, days: 3 },
+  { code: "HJ", name: "Cuti Haji / Umrah", label: "Cuti haji / umrah", sub: "Bilangan hari ditetapkan syarikat · sekali sepanjang perkhidmatan", deduct: true, paid: true, days: null },
+];
+type Rule = { id: string; min_service_months: number; max_service_months: number | null; days_per_year: number };
+type Jenis = { id: string; code: string; name: string; active: boolean; max_carry_forward: number; requires_attachment: boolean; leave_entitlement_rules: Rule[] };
+
+// Rujukan reka bentuk: design/T_JenisCuti.dc.html
+export default function JenisCutiPage() {
+  return (
+    <HadPeranan roles={["hr", "admin"]} back="/pengurusan/tetapan">
+      <JenisCuti />
+    </HadPeranan>
+  );
+}
+
+function JenisCuti() {
+  const me = useMe();
+  const cid = me.active!.companyId;
+  const d = useData(
+    async () =>
+      (must(
+        await getSupabase()
+          .from("leave_types")
+          .select("id, code, name, active, max_carry_forward, requires_attachment, leave_entitlement_rules(id, min_service_months, max_service_months, days_per_year)")
+          .eq("company_id", cid)
+          .order("sort_order"),
+      ) ?? []) as Jenis[],
+    [cid],
+  );
+  const [ubah, setUbah] = useState<Jenis | null>(null);
+  const [haji, setHaji] = useState<string>("");
+  const [ralat, setRalat] = useState<string | null>(null);
+  const jenis = d.data ?? [];
+  const al = jenis.find((j) => j.code === "AL");
+
+  const ringkas = (j: Jenis) => {
+    const r = [...j.leave_entitlement_rules].sort((a, b) => a.min_service_months - b.min_service_months);
+    const hari = r.map((x) => Number(x.days_per_year)).join(" / ");
+    return r.length > 1 ? `${hari} hari mengikut tempoh perkhidmatan` : `${hari} hari${j.code === "HL" ? " setahun" : ""}`;
+  };
+
+  async function togol(p: (typeof PILIHAN)[number], on: boolean) {
+    setRalat(null);
+    const sb = getSupabase();
+    try {
+      const ada = jenis.find((j) => j.code === p.code);
+      if (ada) {
+        must(await sb.from("leave_types").update({ active: on }).eq("id", ada.id));
+      } else if (on) {
+        const hari = p.code === "HJ" ? Number(haji) : p.days;
+        if (p.code === "HJ" && !(hari && hari > 0)) {
+          setRalat("Sila isi bilangan hari cuti haji / umrah dahulu.");
+          return;
+        }
+        const t = must(
+          await sb
+            .from("leave_types")
+            .insert({ company_id: cid, code: p.code, name: p.name, deduct_balance: p.deduct, is_paid: p.paid, sort_order: 10 + PILIHAN.indexOf(p) })
+            .select("id")
+            .single(),
+        );
+        if (hari) must(await sb.from("leave_entitlement_rules").insert({ leave_type_id: t.id, days_per_year: hari }));
+      }
+      d.reload();
+    } catch (e) {
+      setRalat(e instanceof Error ? e.message : "Ralat");
+    }
+  }
+
+  async function bawa(v: string) {
+    if (!al) return;
+    const n = Number(v);
+    if (!(n >= 0 && n <= 30)) return;
+    try {
+      must(await getSupabase().from("leave_types").update({ max_carry_forward: n }).eq("id", al.id));
+      d.reload();
+    } catch (e) {
+      setRalat(e instanceof Error ? e.message : "Ralat");
+    }
+  }
+
+  return (
+    <Screen>
+      <BackHeader title="Jenis cuti" href="/pengurusan/tetapan" />
+      <main className="flex grow flex-col gap-2.5 px-5 pt-1 pb-6">
+        {d.error && <ErrorBox message={d.error} />}
+        {d.loading && !d.data && <Loading />}
+        <Seksyen>MENGIKUT AKTA KERJA · MINIMUM</Seksyen>
+        <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
+          {WAJIB.map((c) => jenis.find((j) => j.code === c))
+            .filter(Boolean)
+            .map((j) => (
+              <button key={j!.id} type="button" onClick={() => setUbah(j!)} className="flex min-h-[56px] items-center gap-2 py-2 text-left">
+                <span className="flex grow flex-col gap-0.5">
+                  <b className="text-[15px] font-bold">{NAMA[j!.code]}</b>
+                  <span className="text-xs text-muted">
+                    {ringkas(j!)}
+                    {j!.requires_attachment ? " · perlu sijil" : ""}
+                  </span>
+                </span>
+                <Tag tone="primary">Wajib</Tag>
+              </button>
+            ))}
+        </div>
+
+        <Seksyen className="pt-1">PILIHAN SYARIKAT</Seksyen>
+        <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
+          {PILIHAN.map((p) => {
+            const j = jenis.find((x) => x.code === p.code);
+            const on = !!j?.active;
+            return (
+              <div key={p.code} className="flex min-h-[56px] items-center gap-2 py-2">
+                <span className="flex grow flex-col gap-0.5">
+                  <b className="text-[15px] font-bold">{p.label}</b>
+                  <span className="text-xs text-muted">{j && j.leave_entitlement_rules.length ? `${ringkas(j)} · sekali sepanjang perkhidmatan` : p.sub}</span>
+                  {p.code === "HJ" && !j && (
+                    <input className={`${inputSempit} mt-1 h-9 w-32`} inputMode="numeric" placeholder="Bilangan hari" value={haji} onChange={(e) => setHaji(e.target.value.replace(/\D/g, ""))} aria-label="Bilangan hari cuti haji" />
+                  )}
+                </span>
+                <Suis on={on} label={`${on ? "Matikan" : "Hidupkan"} ${p.label}`} onChange={(v) => togol(p, v)} />
+              </div>
+            );
+          })}
+        </div>
+
+        {al && (
+          <div className="flex items-center gap-2 rounded-card bg-surface px-4 py-3">
+            <span className="flex grow flex-col gap-0.5">
+              <b className="text-[15px] font-bold">Bawa ke tahun hadapan</b>
+              <span className="text-xs text-muted">Baki cuti tahunan</span>
+            </span>
+            <label className="flex items-center gap-1.5 text-sm font-bold">
+              maks
+              <input className={`${inputSempit} w-16 text-center`} inputMode="numeric" defaultValue={Number(al.max_carry_forward)} onBlur={(e) => bawa(e.target.value)} aria-label="Maksimum hari dibawa ke hadapan" />
+              hari
+            </label>
+          </div>
+        )}
+        {ralat && <ErrorBox message={ralat} />}
+        <span className="text-xs text-muted">Kelayakan syarikat boleh lebih tinggi daripada minimum, tetapi tidak boleh kurang.</span>
+      </main>
+      {ubah && (
+        <UbahKelayakan
+          j={ubah}
+          onClose={() => setUbah(null)}
+          onDone={() => {
+            setUbah(null);
+            d.reload();
+          }}
+        />
+      )}
+    </Screen>
+  );
+}
+
+function tempoh(r: Rule) {
+  const a = r.min_service_months / 12;
+  if (r.max_service_months == null) return r.min_service_months ? `${a} tahun ke atas` : "Semua pekerja";
+  return `${a} – ${r.max_service_months / 12} tahun`;
+}
+
+function UbahKelayakan({ j, onClose, onDone }: { j: Jenis; onClose: () => void; onDone: () => void }) {
+  const rules = [...j.leave_entitlement_rules].sort((a, b) => a.min_service_months - b.min_service_months);
+  const [nilai, setNilai] = useState<Record<string, string>>(Object.fromEntries(rules.map((r) => [r.id, String(Number(r.days_per_year))])));
+  const [busy, setBusy] = useState(false);
+  const [ralat, setRalat] = useState<string | null>(null);
+  async function simpan() {
+    setBusy(true);
+    setRalat(null);
+    try {
+      for (const r of rules) {
+        const v = Number(nilai[r.id]);
+        if (v !== Number(r.days_per_year)) must(await getSupabase().from("leave_entitlement_rules").update({ days_per_year: v }).eq("id", r.id));
+      }
+      onDone();
+    } catch (e) {
+      setRalat(e instanceof Error ? e.message : "Ralat");
+      setBusy(false);
+    }
+  }
+  return (
+    <Lembaran title={`Kelayakan ${NAMA[j.code] ?? j.name}`} onClose={onClose}>
+      {rules.map((r) => (
+        <MedanBorang key={r.id} label={`${tempoh(r)} (hari setahun)`}>
+          <input className={inputKecil} inputMode="decimal" value={nilai[r.id]} onChange={(e) => setNilai({ ...nilai, [r.id]: e.target.value.replace(/[^\d.]/g, "") })} />
+        </MedanBorang>
+      ))}
+      <span className="text-xs text-muted">Nilai di bawah minimum Akta Kerja akan ditolak.</span>
+      {ralat && <ErrorBox message={ralat} />}
+      <ButangUtama onClick={simpan} busy={busy}>
+        Simpan
+      </ButangUtama>
+    </Lembaran>
+  );
+}

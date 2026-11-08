@@ -97,3 +97,53 @@ export function Lembaran({ title, onClose, children }: { title: string; onClose:
     </div>
   );
 }
+
+/** Suis hidup/mati (≥ 44px kawasan sentuh). */
+export function Suis({ on, onChange, label, disabled }: { on: boolean; onChange: (v: boolean) => void; label: string; disabled?: boolean }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      aria-label={label}
+      disabled={disabled}
+      onClick={() => onChange(!on)}
+      className="flex h-11 w-[52px] shrink-0 items-center justify-end disabled:opacity-50"
+    >
+      <span className={`relative block h-7 w-[46px] rounded-full transition-colors ${on ? "bg-primary" : "bg-[#C9D3D1]"}`}>
+        <span className={`absolute top-[3px] size-[22px] rounded-full bg-white transition-all ${on ? "right-[3px]" : "left-[3px]"}`} />
+      </span>
+    </button>
+  );
+}
+
+/** Butang pilihan berbentuk cip. */
+export function Cip({ on, onClick, children }: { on: boolean; onClick: () => void; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={onClick}
+      className={`h-[34px] rounded-full px-3 text-xs font-bold ${on ? "border-[1.5px] border-primary bg-[#E3F1EE] text-primary" : "border border-[#D5DEDC] bg-surface text-[#4A5A57]"}`}
+    >
+      {children}
+    </button>
+  );
+}
+
+export function ButangUtama({ children, onClick, busy, disabled, danger }: { children: ReactNode; onClick: () => void; busy?: boolean; disabled?: boolean; danger?: boolean }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={busy || disabled}
+      className={`h-[52px] w-full rounded-button text-base font-extrabold text-white disabled:opacity-60 ${danger ? "bg-danger" : "bg-primary"}`}
+    >
+      {busy ? "Menyimpan…" : children}
+    </button>
+  );
+}
+
+/** Input sempit untuk nilai di hujung baris (tanpa w-full). */
+export const inputSempit =
+  "h-10 shrink-0 rounded-[10px] border border-[#D5DEDC] bg-surface px-2.5 text-sm font-semibold text-ink outline-none focus:border-primary disabled:bg-page";

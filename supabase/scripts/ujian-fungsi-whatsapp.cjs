@@ -90,8 +90,8 @@ async function jalankan(fn, port = 8000) {
   const r1 = await (await fetch("http://127.0.0.1:8000/", { method: "POST", headers: { Authorization: `Bearer ${SERVICE}` } })).json();
   expect(r1.dihantar >= 3 && r1.gagal === 0, `notify-sender menghantar ${r1.dihantar} mesej`);
   const zuerin = outbox.find((m) => m.to === "60100000003" && /menunggu kelulusan anda/.test(m.message));
-  const pic = outbox.find((m) => m.to === "60100000006" && /PIC ganti/.test(m.message));
-  expect(zuerin && pic, "Zuerin (pelulus) dan Zulfa (PIC ganti) menerima WhatsApp");
+  const pic = outbox.find((m) => m.to === "60100000006" && /pengganti tugas/.test(m.message));
+  expect(zuerin && pic, "Zuerin (pelulus) dan Zulfa (pengganti tugas) menerima WhatsApp");
   expect(outbox.every((m) => m.auth === "Bearer kunci-palsu"), "kunci API dihantar dalam pengepala");
   const { count: baki } = await db.from("notifications").select("id", { count: "exact", head: true }).eq("status", "pending");
   const { count: sent } = await db.from("notifications").select("id", { count: "exact", head: true }).eq("status", "sent");

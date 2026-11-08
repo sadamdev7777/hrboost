@@ -557,14 +557,14 @@ isOneToOne: false
                   ]
                 },"companies": {
                   Row: {
-                    "accounting_config": NonNullable<Json>,"accounting_system": Database["public"]['Enums']["accounting_system"],"ai_monthly_limit": number | null,"code": string,"created_at": string,"created_by": string | null,"epf_employer_no": string | null,"hrdf_registered": boolean,"id": string,"late_grace_minutes": number,"lhdn_employer_no": string | null,"logo_path": string | null,"name": string,"onboarding_completed_at": string | null,"reg_no": string | null,"socso_employer_no": string | null,"state": string,"status": string,"suspended_at": string | null,"suspended_reason": string | null,"timezone": string,"wa_monthly_limit": number | null,"weekend_days": (number)[],"work_end": string,"work_start": string
+                    "accounting_config": NonNullable<Json>,"accounting_system": Database["public"]['Enums']["accounting_system"],"ai_monthly_limit": number | null,"claim_submit_days": number | null,"code": string,"created_at": string,"created_by": string | null,"epf_employer_no": string | null,"epf_employer_rate": number | null,"hrdf_registered": boolean,"id": string,"late_grace_minutes": number,"lhdn_employer_no": string | null,"logo_path": string | null,"name": string,"onboarding_completed_at": string | null,"reg_no": string | null,"socso_employer_no": string | null,"state": string,"status": string,"suspended_at": string | null,"suspended_reason": string | null,"timezone": string,"wa_monthly_limit": number | null,"weekend_days": (number)[],"work_end": string,"work_start": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"ai_monthly_limit"?: number | null,"code": string,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name": string,"onboarding_completed_at"?: string | null,"reg_no"?: string | null,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string
+                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"ai_monthly_limit"?: number | null,"claim_submit_days"?: number | null,"code": string,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name": string,"onboarding_completed_at"?: string | null,"reg_no"?: string | null,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string
                   }
                   Update: {
-                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"ai_monthly_limit"?: number | null,"code"?: string,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name"?: string,"onboarding_completed_at"?: string | null,"reg_no"?: string | null,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string
+                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"ai_monthly_limit"?: number | null,"claim_submit_days"?: number | null,"code"?: string,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name"?: string,"onboarding_completed_at"?: string | null,"reg_no"?: string | null,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string
                   }
                   Relationships: [
                     {
@@ -1474,6 +1474,16 @@ isOneToOne: false
 "cancel_employment_end":
 { Args: { "p_employment": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
                            },
+"company_external_access":
+{ Args: { "p_company": string }; Returns: {
+              "created_at": string,"days": number,"expires_at": string,"home_company": string,"id": string,"name": string,"reason": string,"role": Database["public"]['Enums']["app_role"],"status": string
+            }[]
+                           },
+"company_holiday_options":
+{ Args: { "p_company": string,"p_year": number }; Returns: {
+              "chosen": boolean,"holiday_date": string,"id": string,"is_adhoc": boolean,"is_mandatory": boolean,"name": string
+            }[]
+                           },
 "company_holidays":
 { Args: { "p_company": string,"p_from": string,"p_to": string }; Returns: {
               "holiday_date": string,"name": string
@@ -1627,6 +1637,11 @@ isOneToOne: false
 "match_attendance_workno":
 { Args: { "p_employment": string,"p_workno": string }; Returns: number
                            },
+"my_access_requests":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "company_code": string,"company_name": string,"created_at": string,"days": number,"decision_note": string,"expires_at": string,"id": string,"role": Database["public"]['Enums']["app_role"],"status": string
+            }[]
+                           },
 "my_colleagues":
 { Args: { "p_company": string }; Returns: {
               "department": string,"department_id": string,"name": string,"person_id": string
@@ -1699,11 +1714,20 @@ isOneToOne: false
 "save_onboarding_step":
 { Args: { "p_data"?: Json,"p_employment": string,"p_step": string }; Returns: number
                            },
+"save_workflow":
+{ Args: { "p_company": string,"p_cutoff"?: string,"p_reminder_hours"?: number,"p_steps": Json,"p_type": Database["public"]['Enums']["request_type"] }; Returns: string
+                           },
 "seed_company_defaults":
 { Args: { "p_company": string }; Returns: undefined
                            },
 "set_company_holidays":
 { Args: { "p_company": string,"p_holiday_ids": (string)[],"p_year": number }; Returns: number
+                           },
+"settings_summary":
+{ Args: { "p_company": string }; Returns: Json
+                           },
+"statutory_leave_minimum":
+{ Args: { "p_code": string,"p_min_service_months": number }; Returns: number
                            },
 "submit_attendance_correction":
 { Args: { "p_date": string,"p_employment": string,"p_in": string,"p_on_behalf"?: string,"p_out": string,"p_reason": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: {

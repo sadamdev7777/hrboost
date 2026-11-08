@@ -37,7 +37,7 @@ select status from submit_leave('00000000-0000-0000-0000-0000000000e4','AL','202
 select status from submit_leave('00000000-0000-0000-0000-0000000000e6','AL','2027-01-11','2027-01-12','full',null,null,'web','00000000-0000-0000-0000-000000000006');
 select process_hr_events() as event_diproses;
 select p.preferred_name kepada, n.message from notifications n join persons p on p.id=n.person_id
- where n.message like 'Ada permohonan%' or n.message like '%PIC ganti%' order by p.preferred_name, n.message;
+ where n.message like 'Terdapat permohonan%' or n.message like '%pengganti tugas%' order by p.preferred_name, n.message;
 
 \echo '=== C3: balasan WhatsApp ==='
 select whatsapp_handle_reply('60119999999','LULUS')->>'action' as nombor_asing;
