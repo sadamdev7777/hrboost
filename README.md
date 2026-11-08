@@ -95,6 +95,7 @@ Kunci projek tidak disimpan dalam repo.
 - Laman: https://hrboost-staging.netlify.app (projek Netlify `hrboost-staging`, binaan daripada `netlify.toml`, folder `web/`)
 - Pemboleh ubah Netlify: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (kunci awam/publishable staging sahaja)
 - Data demo rekaan yang sama seperti `supabase/seed.sql` (syarikat DEMO, 7 orang). Padam sebelum data MTB sebenar diimport.
+- Log masuk e-mel (data demo staging, rekaan): `<nama>@demo.hrboost.io` / `Demo1234` (sadam, lily, zuerin, amin, farah, zulfa, owner). Pengguna baharu menetapkan e-mel & kata laluan sendiri selepas OTP pertama.
 - OTP sementara: hook Postgres `staging_dev.send_sms_hook` menyimpan kod dalam `staging_dev.sms_outbox` (skema peribadi, tidak didedahkan API). Nombor demo menggunakan kod ujian tetap yang ditetapkan dalam papan pemuka. Diganti oleh `auth-sms-hook` (WhatsApp) bila Murpati tersedia.
 
 Tetapan papan pemuka Supabase (Authentication) yang diperlukan untuk staging:
