@@ -15,6 +15,8 @@ const expect = (ok, msg) => { if (!ok) throw new Error('SEMAKAN GAGAL: ' + msg);
 async function login(browser, phone) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const p = await ctx.newPage();
+  // Lencana Netlify di staging menutup butang bawah
+  await p.addInitScript(() => { const st = document.createElement('style'); st.textContent = '#nl-badge-frame{display:none!important}'; document.addEventListener('DOMContentLoaded', () => document.head.appendChild(st)); });
   p.on('pageerror', (e) => log('   [ralat halaman]', e.message));
   await p.goto(BASE + '/masuk');
   await p.fill('input[type=tel]', phone);
@@ -34,10 +36,13 @@ async function login(browser, phone) {
   await pg.screenshot({ path: resit, type: 'jpeg', quality: 80 });
   await pg.close();
 
+  let ctx, p;
+  // E2E_DARI=2 melangkau langkah 1 (contoh: tuntutan sudah dihantar di staging)
+  if (Number(process.env.E2E_DARI || 1) <= 1) {
   log('1. Amin: draf, kemudian hantar tuntutan RM1,250');
-  let { ctx, p } = await login(browser, '100000004');
+  ({ ctx, p } = await login(browser, '100000004'));
   await p.goto(BASE + '/tuntutan');
-  await p.waitForSelector('text=Belum ada tuntutan');
+  await p.waitForSelector('a:has-text("Ambil gambar")'); // senarai mungkin sudah berisi data di staging
   await p.click('a:has-text("Ambil gambar")');
   await p.waitForURL('**/tuntutan/baru');
   await p.waitForSelector('text=Tambah resit');
@@ -53,7 +58,7 @@ async function login(browser, phone) {
   await p.waitForURL('**/tuntutan');
   await p.waitForSelector('text=Draf · belum dihantar');
   expect(true, 'draf disimpan bersama resit');
-  await p.click('a:has-text("Penginapan lawatan Kundasang")');
+  await p.locator('a:has-text("Penginapan lawatan Kundasang")').first().click();
   await p.waitForSelector('text=Ubah Tuntutan');
   await p.waitForSelector('text=1 resit dilampirkan');
   await p.click('button:has-text("Hantar RM 1,250.00")');
@@ -73,9 +78,10 @@ async function login(browser, phone) {
   await p.click('a:has-text("Perbatuan Melaka")');
   await p.click('button:has-text("Padam draf")');
   await p.waitForURL('**/tuntutan');
-  await p.waitForTimeout(800);
+  await p.locator('text=Perbatuan Melaka').first().waitFor({ state: 'detached', timeout: 15000 }).catch(() => {});
   expect((await p.locator('text=Perbatuan Melaka').count()) === 0, 'perbatuan 284 km × RM0.60 = RM170.40; draf boleh dipadam');
   await ctx.close();
+  }
 
   log('2. Kelulusan: Ketua Jabatan -> Kewangan -> CEO');
   for (const [phone, who] of [['100000003', 'Zuerin (Ketua)'], ['100000005', 'Farah (Kewangan)'], ['100000001', 'Sadam (CEO)']]) {

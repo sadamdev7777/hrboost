@@ -29,6 +29,8 @@ async function gambarUjian(browser, file, label, w = 800, h = 600) {
 async function loginUI(browser, phoneLocal) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const p = await ctx.newPage();
+  // Lencana Netlify di staging menutup butang bawah
+  await p.addInitScript(() => { const st = document.createElement('style'); st.textContent = '#nl-badge-frame{display:none!important}'; document.addEventListener('DOMContentLoaded', () => document.head.appendChild(st)); });
   await p.goto(BASE + '/masuk');
   await p.fill('input[type=tel]', phoneLocal);
   await p.click('button:has-text("Hantar kod")');

@@ -11,6 +11,8 @@ const expect = (ok, msg) => { if (!ok) throw new Error('SEMAKAN GAGAL: ' + msg);
 async function login(browser, phoneLocal, who) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const p = await ctx.newPage();
+  // Lencana Netlify di staging menutup butang bawah
+  await p.addInitScript(() => { const st = document.createElement('style'); st.textContent = '#nl-badge-frame{display:none!important}'; document.addEventListener('DOMContentLoaded', () => document.head.appendChild(st)); });
   p.on('pageerror', (e) => log(`  [${who}] ralat halaman:`, e.message));
   await p.goto(BASE + '/masuk');
   await p.fill('input[type=tel]', phoneLocal);
