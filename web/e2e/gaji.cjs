@@ -34,7 +34,7 @@ async function login(browser, phone) {
   await p.goto(BASE + '/saya');
   await p.click('a:has-text("Proses Gaji")');
   await p.waitForSelector('text=DATA BULAN INI (AUTOMATIK)');
-  await p.waitForSelector('text=Semakan sebelum kira');
+  await p.waitForSelector('text=tiada data gaji terkumpul');
   await p.screenshot({ path: `${shots}/f-proses.png` });
   await p.click('button:has-text("Tambah")');
   await p.selectOption('[role=dialog] label:has-text("Pekerja") select', { label: 'Amin · DEMO004' });
