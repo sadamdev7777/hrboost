@@ -77,8 +77,8 @@ async function login(browser, phone) {
   await p.goto(BASE + '/pengurusan/pekerja');
   await p.click('a:has-text("Amin")');
   await p.waitForSelector('text=No. pekerja');
-  await p.click('button:has-text("Papar kad pengenalan, bank & waris")');
   await p.waitForSelector('text=951109-14-1234');
+  expect(true, 'HR terus melihat kad pengenalan & bank (tanpa butang Papar)');
   await p.click('button:has-text("Sahkan akaun")');
   await p.waitForSelector('text=Mohon tukar akaun bank', { state: 'detached' });
   expect((await p.innerText('main')).includes('CIMB Bank · 8000123456'), 'akaun bank Amin disahkan');
@@ -87,9 +87,9 @@ async function login(browser, phone) {
   await p.click('[role=dialog] button:has-text("Simpan")');
   await p.waitForSelector('[role=dialog]', { state: 'detached' });
   await p.click('button[role=tab]:has-text("Gaji")');
-  await p.click('button:has-text("Papar gaji semasa")');
   await p.waitForSelector('text=RM 3,200.00');
-  expect(true, 'gaji pokok dikemas kini kepada RM3,200');
+  await p.waitForSelector('text=Gaji bersih');
+  expect(true, 'gaji pokok dikemas kini kepada RM3,200; KWSP/PERKESO/bersih dipaparkan terus');
   await p.click('button[role=tab]:has-text("Dokumen")');
   await p.setInputFiles('input[aria-label="Pilih fail dokumen"]', dok);
   await p.waitForSelector('text=Surat tawaran ·');

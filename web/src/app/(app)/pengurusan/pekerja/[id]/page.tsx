@@ -27,7 +27,7 @@ import {
 import { muatNaikPeribadi, urlSementara } from "@/lib/upload";
 import { hari, julatTarikh, masa, paparTelefon, ringgit, tarikh, todayISO, type StatusPermohonan } from "@/lib/format";
 import { Avatar, BackHeader, ErrorBox, Loading, Screen, StatusPill } from "@/components/ui";
-import { UbahGaji } from "@/components/GajiPekerja";
+import { RingkasanKiraan, UbahGaji, usePratonton } from "@/components/GajiPekerja";
 import type { KomponenTetap } from "@/lib/gaji";
 import { HadPeranan, Kotak, Lembaran, Medan, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
 
@@ -99,7 +99,9 @@ function bacaPautan(id: string) {
 
 function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja; reload: () => void; bolehUbah: boolean; baru: boolean; keDokumen: () => void }) {
   const [lembaran, setLembaran] = useState<null | "ubah" | "tamat">(null);
-  const [sensitif, setSensitif] = useState<MaklumatSensitif | null>(null);
+  // HR terus melihat maklumat peribadi; setiap paparan direkodkan dalam data_access_log (hr_view_sensitive).
+  const sd = useData(() => (bolehUbah ? bukaMaklumatSensitif(p.id) : Promise.resolve(null as MaklumatSensitif | null)), [p.id, bolehUbah]);
+  const sensitif = sd.data;
   const [ralat, setRalat] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [pautanBaru, setPautanBaru] = useState<string | null>(null);
@@ -117,15 +119,6 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
       : p.status === "probation"
         ? { label: "Percubaan", tone: "warning" as const }
         : { label: "Aktif", tone: "success" as const };
-
-  async function buka() {
-    setRalat(null);
-    try {
-      setSensitif(await bukaMaklumatSensitif(p.id));
-    } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
-    }
-  }
 
   async function jemputSemula() {
     setRalat(null);
@@ -151,7 +144,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
     setRalat(null);
     try {
       await putuskanBank(sensitif.bank_change.id, lulus, nota);
-      setSensitif(await bukaMaklumatSensitif(p.id));
+      sd.reload();
     } catch (e) {
       setRalat(e instanceof Error ? e.message : "Ralat");
     }
@@ -275,10 +268,9 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
       {bolehUbah && (
         <>
           <Seksyen>MAKLUMAT PERIBADI</Seksyen>
+          {sd.error && <ErrorBox message={sd.error} />}
           {!sensitif ? (
-            <button type="button" onClick={buka} className="min-h-12 rounded-[14px] border border-line bg-surface text-sm font-bold">
-              Papar kad pengenalan, bank & waris
-            </button>
+            !sd.error && <Loading />
           ) : (
             <>
               <Kotak>
@@ -616,7 +608,7 @@ function TabKehadiran({ id }: { id: string }) {
 function TabGaji({ id, nama, tarikhMula }: { id: string; nama: string; tarikhMula: string }) {
   const me = useMe();
   const boleh = me.roles.some((r) => ["hr", "finance", "admin"].includes(r));
-  const [buka, setBuka] = useState(false);
+  const buka = boleh;
   const [ubah, setUbah] = useState(false);
   const d = useData(() => (buka ? getGajiSemasa(id) : Promise.resolve(null)), [id, buka]);
   const komp = useData(
@@ -629,13 +621,9 @@ function TabGaji({ id, nama, tarikhMula }: { id: string; nama: string; tarikhMul
         : [],
     [buka, me.active!.companyId],
   );
+  const semasa = d.data ? Object.fromEntries(d.data.filter((c) => c.effective_from <= todayISO()).map((c) => [c.code, Number(c.amount)])) : null;
+  const pr = usePratonton(id, semasa && semasa.BASIC ? semasa : null);
   if (!boleh) return <span className="text-sm text-muted">Maklumat gaji hanya untuk HR dan Kewangan.</span>;
-  if (!buka)
-    return (
-      <button type="button" onClick={() => setBuka(true)} className="min-h-12 rounded-[14px] border border-line bg-surface text-sm font-bold">
-        Papar gaji semasa
-      </button>
-    );
   if (d.error) return <ErrorBox message={d.error} />;
   if (!d.data) return <Loading />;
   return (
@@ -647,7 +635,8 @@ function TabGaji({ id, nama, tarikhMula }: { id: string; nama: string; tarikhMul
           </Medan>
         ))}
       </Senarai>
-      <button type="button" onClick={() => setUbah(true)} disabled={!komp.data} className="min-h-12 rounded-[14px] bg-primary text-sm font-extrabold text-white disabled:opacity-60">
+      <RingkasanKiraan k={semasa?.BASIC ? pr.k : null} mengira={pr.mengira} />
+      <button type="button" onClick={() => setUbah(true)} disabled={!komp.data} className="min-h-12 rounded-[14px] bg-primary text-sm font-extrabold text-white disabled:opacity-60 lg:w-60">
         Ubah gaji &amp; elaun
       </button>
       <span className="text-xs text-muted">Akses ini direkodkan. Slip gaji bulanan dijana melalui Proses Gaji.</span>
