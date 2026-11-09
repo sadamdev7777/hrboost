@@ -87,6 +87,23 @@ a:hover {
     padding-left: 28px;
     padding-right: 28px;
   }
+  .bar-bawah > div {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 12px !important;
+  }
+  .bar-bawah > div > button,
+  .bar-bawah > div > a {
+    width: auto !important;
+    min-width: 160px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  /* Butang terus selepas kandungan, bukan di bucu bawah skrin */
+  main:has(+ .bar-bawah),
+  main:has(+ div + .bar-bawah) {
+    flex-grow: 0 !important;
+  }
   .bar-bawah > span,
   .bar-bawah > p {
     flex-basis: 100%;

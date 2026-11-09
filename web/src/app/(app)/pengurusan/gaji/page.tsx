@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
@@ -22,6 +22,8 @@ import { getSenaraiPekerja } from "@/lib/hr";
 import { namaPeringkat, todayISO } from "@/lib/format";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar } from "@/components/TabNav";
+import { TabGaji } from "@/components/TabGaji";
+import { useSearchParams } from "next/navigation";
 import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
 
 const rm = (n: number | string | null | undefined) => `RM ${Number(n ?? 0).toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -36,7 +38,9 @@ function geser(y: number, m: number, n: number) {
 export default function ProsesGajiPage() {
   return (
     <HadPeranan roles={["hr", "finance", "admin"]}>
-      <ProsesGaji />
+      <Suspense fallback={<Loading />}>
+        <ProsesGaji />
+      </Suspense>
     </HadPeranan>
   );
 }
@@ -45,7 +49,12 @@ function ProsesGaji() {
   const me = useMe();
   const emp = me.active!;
   const t = todayISO();
-  const [tempoh, setTempoh] = useState({ y: Number(t.slice(0, 4)), m: Number(t.slice(5, 7)) });
+  const sp = useSearchParams();
+  const [tempoh, setTempoh] = useState(() => {
+    const y = Number(sp.get("y"));
+    const m = Number(sp.get("m"));
+    return y > 2000 && m >= 1 && m <= 12 ? { y, m } : { y: Number(t.slice(0, 4)), m: Number(t.slice(5, 7)) };
+  });
   const d = useData(async () => {
     const prep = await sediakanGaji(emp.companyId, tempoh.y, tempoh.m);
     const run = await getLarian(prep.run_id);
@@ -81,11 +90,8 @@ function ProsesGaji() {
           </div>
         }
       />
-      <Link href="/pengurusan/gaji/pekerja" className="mx-4 mb-3 flex min-h-12 items-center justify-between gap-2 rounded-[14px] bg-surface px-4 text-sm font-bold text-ink! lg:mx-0">
-        <span>Gaji pokok &amp; elaun pekerja</span>
-        <span className="whitespace-nowrap text-primary">Tetapkan ›</span>
-      </Link>
-      <ol className="mx-5 grid grid-cols-4 gap-1.5 lg:mx-0" aria-label="Langkah proses gaji">
+      <TabGaji />
+      <ol className="mx-5 mt-4 grid grid-cols-4 gap-1.5 lg:mx-0" aria-label="Langkah proses gaji">
         {LANGKAH.map((l, i) => {
           const siap = langkah > i + 1 || status === "paid";
           const kini = langkah === i + 1 && status !== "paid";
@@ -115,6 +121,50 @@ function ProsesGaji() {
         </main>
       )}
     </Screen>
+  );
+}
+
+/** Semakan sebelum kira, dikumpulkan: "Mesti dibaiki" (merah) dan "Amaran" (kuning), dengan pautan terus. */
+function SemakanGaji({ checks }: { checks: string[] }) {
+  const tiadaGaji = checks.filter((c) => c.includes("gaji pokok belum ditetapkan"));
+  const terkumpul = checks.filter((c) => c.includes("tiada data terkumpul"));
+  const lain = checks.filter((c) => !tiadaGaji.includes(c) && !terkumpul.includes(c));
+  const nama = (xs: string[]) => xs.map((c) => c.split(":")[0]).join(", ");
+  if (!checks.length)
+    return <div className="rounded-card bg-success-soft px-4 py-3 text-[13px] font-semibold text-success">Semakan sebelum kira: tiada isu ditemui.</div>;
+  return (
+    <div className="flex flex-col gap-2">
+      {tiadaGaji.length > 0 && (
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-card bg-danger-soft px-4 py-3 text-[13px] text-danger">
+          <b className="grow">
+            Mesti dibaiki: {tiadaGaji.length} pekerja belum mempunyai gaji pokok ({nama(tiadaGaji)})
+          </b>
+          <Link href="/pengurusan/gaji/pekerja" className="font-bold text-danger!">
+            Tetapkan gaji ›
+          </Link>
+        </div>
+      )}
+      {terkumpul.length > 0 && (
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-card bg-warning-soft px-4 py-3 text-[13px] text-warning">
+          <span className="grow">
+            <b>Amaran:</b> {terkumpul.length} pekerja tiada data gaji terkumpul tahun ini — PCB mungkin kurang tepat ({nama(terkumpul)}).
+          </span>
+          <Link href="/pengurusan/gaji/data-terkumpul" className="font-bold text-warning!">
+            Isi sekarang ›
+          </Link>
+        </div>
+      )}
+      {lain.length > 0 && (
+        <div className="flex flex-col gap-1 rounded-card bg-warning-soft px-4 py-3 text-[13px] text-warning">
+          <b>Amaran ({lain.length})</b>
+          <ul className="m-0 flex list-disc flex-col gap-0.5 pl-5">
+            {lain.map((c, i) => (
+              <li key={i}>{c}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -157,28 +207,7 @@ function Langkah1({ data, reload }: { data: Data; reload: () => void }) {
         </div>
 
         {!data.prep.statutory_ready && <ErrorBox message="Jadual kadar berkanun belum dimuatkan untuk bulan ini. Hubungi Pentadbir Platform." />}
-        <div className="flex flex-col gap-2 rounded-card bg-[#F3F0FC] px-4 py-3 text-[#4A3B8C]">
-          <b className="text-sm font-extrabold">Semakan sebelum kira</b>
-          {data.prep.checks.length === 0 ? (
-            <span className="text-[13px]">Tiada isu ditemui.</span>
-          ) : (
-            <ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-[13px]">
-              {data.prep.checks.map((c, i) => (
-                <li key={i}>
-                  {c}
-                  {c.includes("gaji pokok belum ditetapkan") && (
-                    <>
-                      {" "}
-                      <Link href="/pengurusan/gaji/pekerja" className="font-bold">
-                        Tetapkan
-                      </Link>
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+        <SemakanGaji checks={data.prep.checks} />
         <Seksyen className="pt-1">SELEPAS DILULUSKAN, SISTEM AKAN MENYEDIAKAN</Seksyen>
         <span className="text-[13px] leading-normal text-[#4A5A57]">Slip gaji (WhatsApp ke pekerja) · Fail bank pukal · KWSP · PERKESO/SIP · PCB (CP39) · Jurnal ke sistem perakaunan</span>
         {ralat && <ErrorBox message={ralat} />}

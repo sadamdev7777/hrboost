@@ -26,7 +26,7 @@ import {
 } from "@/lib/hr";
 import { muatNaikPeribadi, urlSementara } from "@/lib/upload";
 import { hari, julatTarikh, masa, paparTelefon, ringgit, tarikh, todayISO, type StatusPermohonan } from "@/lib/format";
-import { BackHeader, ErrorBox, Loading, Screen, StatusPill } from "@/components/ui";
+import { Avatar, BackHeader, ErrorBox, Loading, Screen, StatusPill } from "@/components/ui";
 import { UbahGaji } from "@/components/GajiPekerja";
 import type { KomponenTetap } from "@/lib/gaji";
 import { HadPeranan, Kotak, Lembaran, Medan, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
@@ -56,9 +56,10 @@ function Profil() {
   const bolehUbah = me.roles.includes("hr") || me.roles.includes("admin");
 
   return (
-    <Screen lebar="sederhana">
-      <BackHeader title={p.data?.name ?? ""} href="/pengurusan/pekerja" />
-      <div role="tablist" className="flex gap-0.5 overflow-x-auto border-b border-line-soft px-3">
+    <Screen>
+      <BackHeader title={p.data ? "" : ""} href="/pengurusan/pekerja" />
+      {p.data && <KepalaPekerja p={p.data} />}
+      <div role="tablist" className="flex gap-0.5 overflow-x-auto border-b border-line-soft px-3 lg:px-0">
         {TABS.map((t) => (
           <button
             key={t}
@@ -66,13 +67,13 @@ function Profil() {
             type="button"
             aria-selected={tab === t}
             onClick={() => setTab(t)}
-            className={`h-10 shrink-0 border-b-[3px] px-3.5 text-sm whitespace-nowrap ${tab === t ? "border-primary font-extrabold text-primary" : "border-transparent font-semibold text-[#4A5A57]"}`}
+            className={`h-10 shrink-0 border-b-[3px] px-3 text-sm whitespace-nowrap ${tab === t ? "border-primary font-extrabold text-primary" : "border-transparent font-semibold text-[#4A5A57]"}`}
           >
             {t}
           </button>
         ))}
       </div>
-      <main className="flex grow flex-col gap-3 px-4 py-4">
+      <main className="flex grow flex-col gap-3 px-4 py-4 lg:px-0">
         {p.error && <ErrorBox message={p.error} />}
         {p.loading && !p.data && <Loading />}
         {p.data && tab === "Maklumat" && <Maklumat p={p.data} reload={p.reload} bolehUbah={bolehUbah} baru={sp.get("jemput") === "1"} keDokumen={() => setTab("Dokumen")} />}
@@ -157,7 +158,8 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-5">
+      <div className="flex flex-col gap-3">
       {baru && <div className="rounded-[14px] bg-success-soft px-4 py-3 text-[13px] font-semibold text-success">Pekerja ditambah. Jemputan WhatsApp telah dimasukkan ke barisan penghantaran.</div>}
       <div className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3">
         <div className="flex items-center justify-between gap-2">
@@ -223,6 +225,53 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
         </div>
       )}
 
+      {bolehUbah && !tamat && (
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={() => setLembaran("ubah")} className="flex h-11 items-center rounded-full bg-primary px-4 text-sm font-bold text-white">
+            Ubah gaji &amp; jawatan
+          </button>
+          {p.status === "probation" && (
+            <button
+              type="button"
+              onClick={async () => {
+                if (!window.confirm(`Sahkan jawatan ${p.name} mulai hari ini?`)) return;
+                try {
+                  await kemasKiniPekerjaan(p.id, { confirm: true });
+                  reload();
+                } catch (e) {
+                  setRalat(e instanceof Error ? e.message : "Ralat");
+                }
+              }}
+              className="flex h-11 items-center rounded-full border border-line bg-surface px-4 text-sm font-bold"
+            >
+              Sahkan jawatan
+            </button>
+          )}
+          <button type="button" onClick={keDokumen} className="flex h-11 items-center rounded-full border border-line bg-surface px-4 text-sm font-bold">
+            Dokumen
+          </button>
+          <details className="relative">
+            <summary className="flex h-11 cursor-pointer list-none items-center rounded-full border border-line bg-surface px-4 text-sm font-bold [&::-webkit-details-marker]:hidden">
+              ⋯ Lagi
+            </summary>
+            <div className="absolute right-0 z-20 mt-1 flex w-64 flex-col overflow-hidden rounded-[14px] border border-line bg-surface shadow-lg [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
+              {!p.activated && (
+                <button type="button" onClick={jemputSemula} disabled={busy} className="min-h-11 px-4 text-left text-sm font-semibold disabled:opacity-60">
+                  {busy ? "Menghantar…" : "Hantar semula jemputan"}
+                </button>
+              )}
+              <Link href={`/pembantu-ai?pekerja=${p.id}&surat=1`} className="flex min-h-11 items-center px-4 text-sm font-semibold text-[#4A3B8C]!">
+                Draf surat (AI): pengesahan, amaran…
+              </Link>
+              <button type="button" onClick={() => setLembaran("tamat")} disabled={!!p.endStatus} className="min-h-11 px-4 text-left text-sm font-semibold text-danger disabled:opacity-50">
+                Tamatkan pekerjaan
+              </button>
+            </div>
+          </details>
+        </div>
+      )}
+      </div>
+      <div className="flex flex-col gap-3">
       {bolehUbah && (
         <>
           <Seksyen>MAKLUMAT PERIBADI</Seksyen>
@@ -265,46 +314,11 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
             </>
           )}
 
-          {!tamat && (
-            <div className="grid grid-cols-2 gap-2">
-              <Aksi onClick={() => setLembaran("ubah")}>Ubah gaji &amp; jawatan</Aksi>
-              {p.status === "probation" ? (
-                <Aksi
-                  onClick={async () => {
-                    if (!window.confirm(`Sahkan jawatan ${p.name} mulai hari ini?`)) return;
-                    try {
-                      await kemasKiniPekerjaan(p.id, { confirm: true });
-                      reload();
-                    } catch (e) {
-                      setRalat(e instanceof Error ? e.message : "Ralat");
-                    }
-                  }}
-                >
-                  Sahkan jawatan
-                </Aksi>
-              ) : (
-                <Aksi onClick={keDokumen}>Muat naik dokumen</Aksi>
-              )}
-              {!p.activated && (
-                <Aksi onClick={jemputSemula} disabled={busy}>
-                  {busy ? "Menghantar…" : "Hantar semula jemputan"}
-                </Aksi>
-              )}
-              <Aksi onClick={() => setLembaran("tamat")} danger disabled={!!p.endStatus}>
-                Tamatkan pekerjaan
-              </Aksi>
-              <Link
-                href={`/pembantu-ai?pekerja=${p.id}&surat=1`}
-                className="col-span-2 flex min-h-12 items-center justify-center gap-2 rounded-[14px] border border-[#D9D2F1] bg-surface text-sm font-bold text-[#4A3B8C]!"
-              >
-                Draf surat (AI): pengesahan, amaran…
-              </Link>
-            </div>
-          )}
         </>
       )}
       {ralat && <ErrorBox message={ralat} />}
       <span className="text-xs text-muted">Kad pengenalan, akaun bank dan rekod cuti sakit hanya boleh dilihat oleh HR. Setiap akses direkodkan.</span>
+      </div>
 
       {lembaran === "ubah" && (
         <UbahPekerjaan
@@ -326,7 +340,33 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
           }}
         />
       )}
-    </>
+    </div>
+  );
+}
+
+/** Tajuk profil: avatar, nama, jawatan · jabatan, status — dipaparkan pada semua tab. */
+function KepalaPekerja({ p }: { p: ButiranPekerja }) {
+  const tamat = !["probation", "active"].includes(p.status);
+  const st = tamat
+    ? { label: "Tamat", tone: "neutral" as const }
+    : !p.activated
+      ? { label: "Belum aktif", tone: "neutral" as const }
+      : p.status === "probation"
+        ? { label: "Percubaan", tone: "warning" as const }
+        : { label: "Aktif", tone: "success" as const };
+  return (
+    <div className="flex items-center gap-3 px-4 pt-1 pb-3 lg:px-0">
+      <Avatar name={p.name} size={56} />
+      <div className="flex min-w-0 grow flex-col gap-0.5">
+        <span className="flex flex-wrap items-center gap-2">
+          <h1 className="m-0 text-xl font-extrabold lg:text-2xl">{p.name}</h1>
+          <Tag tone={st.tone}>{st.label}</Tag>
+        </span>
+        <span className="truncate text-[13px] text-muted">
+          {[p.position, p.department, p.employeeNo].filter(Boolean).join(" · ")}
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -336,19 +376,6 @@ function Butir({ label, children }: { label: string; children: React.ReactNode }
       <span className="text-xs text-muted">{label}</span>
       <b className="text-sm font-bold">{children}</b>
     </div>
-  );
-}
-
-function Aksi({ children, onClick, danger, disabled }: { children: React.ReactNode; onClick: () => void; danger?: boolean; disabled?: boolean }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className={`flex min-h-12 items-center justify-center rounded-[14px] border border-[#D5DEDC] bg-surface px-2 text-sm font-bold disabled:opacity-60 ${danger ? "text-danger" : "text-ink"}`}
-    >
-      {children}
-    </button>
   );
 }
 

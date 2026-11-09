@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { IconCard, IconChart, IconCheckSquare, IconHome, IconPlusCircle, IconSettings, IconUser, IconUsers } from "./icons";
+import { IconCard, IconChart, IconCheckSquare, IconHome, IconPlusCircle, IconOrg, IconSettings, IconUser, IconUsers } from "./icons";
 import { getBilanganTugasan } from "@/lib/data";
 import { useData } from "@/lib/useData";
 import { useMeContext } from "@/lib/me";
@@ -11,6 +11,7 @@ import { NAV_HR_LAGI, itemAktif, lamanUtama, navUntuk, useMod, type ItemNav, typ
 import { getSupabase } from "@/lib/supabase";
 import { BackHeader } from "./ui";
 import { useSkrinLebar } from "@/lib/skrin";
+import { bukaCari } from "./CariPantas";
 import { hasRole } from "@/lib/me";
 
 const IKON: Record<ItemNav["ikon"], (p: { size?: number }) => ReactNode> = {
@@ -22,6 +23,7 @@ const IKON: Record<ItemNav["ikon"], (p: { size?: number }) => ReactNode> = {
   users: IconUsers,
   card: IconCard,
   settings: IconSettings,
+  org: IconOrg,
 };
 
 function Lencana({ n }: { n: number }) {
@@ -129,10 +131,28 @@ export function MenuSisi() {
       <div className="flex items-center gap-2.5 px-2 pb-4">
         <span className="flex size-9 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold text-white">HR</span>
         <span className="flex min-w-0 flex-col">
-          <b className="truncate text-sm font-extrabold">{me.active?.companyName ?? "HRBoost"}</b>
-          <span className="text-xs text-muted">{mod === "hr" ? "Mod HR" : "Mod Pekerja"}</span>
+          <b className="line-clamp-2 text-[13px] leading-snug font-extrabold" title={me.active?.companyName}>
+            {me.active?.companyName ?? "HRBoost"}
+          </b>
+          <span className="text-xs text-muted">
+            {me.active?.companyCode} · {mod === "hr" ? "Mod HR" : "Mod Pekerja"}
+          </span>
         </span>
       </div>
+      {mod === "hr" && (
+        <button
+          type="button"
+          onClick={bukaCari}
+          className="mb-2 flex h-10 items-center gap-2 rounded-[12px] border border-line bg-page px-3 text-left text-[13px] text-muted hover:border-primary"
+        >
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-3.5-3.5" />
+          </svg>
+          <span className="grow">Cari pekerja…</span>
+          <kbd className="rounded border border-line px-1.5 font-sans text-[11px]">Ctrl K</kbd>
+        </button>
+      )}
       <nav className="flex flex-col gap-0.5" aria-label="Menu utama">
         {utama.map(pautan)}
         {lagi.length > 0 && <span className="px-3 pt-4 pb-1 text-[11px] font-bold tracking-[0.04em] text-muted">PENGURUSAN</span>}

@@ -50,7 +50,7 @@ export function useMod(): { mod: Mod; boleh: boolean; tukar: (m: Mod) => void } 
   return { mod, boleh, tukar };
 }
 
-export type ItemNav = { href: string; label: string; pendek?: string; ikon: "home" | "plus" | "check" | "user" | "chart" | "users" | "card" | "settings"; roles?: string[] };
+export type ItemNav = { href: string; label: string; pendek?: string; ikon: "home" | "plus" | "check" | "user" | "chart" | "users" | "card" | "settings" | "org"; roles?: string[] };
 
 export const NAV_PEKERJA: ItemNav[] = [
   { href: "/utama", label: "Utama", ikon: "home" },
@@ -69,8 +69,7 @@ export const NAV_HR: ItemNav[] = [
 
 /** Item tambahan dalam menu sisi (desktop) Mod HR. */
 export const NAV_HR_LAGI: ItemNav[] = [
-  { href: "/pengurusan/gaji/pekerja", label: "Gaji Pekerja", ikon: "card", roles: ["hr", "finance", "admin"] },
-  { href: "/pengurusan/tetapan/jabatan", label: "Jabatan", ikon: "users", roles: ["hr", "admin"] },
+  { href: "/pengurusan/tetapan/jabatan", label: "Jabatan", ikon: "org", roles: ["hr", "admin"] },
   { href: "/pengurusan/tetapan", label: "Tetapan", ikon: "settings" },
 ];
 

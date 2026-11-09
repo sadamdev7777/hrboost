@@ -23,7 +23,12 @@ const TAJUK: Record<string, string> = {
 type Mode = { kind: "approver"; taskId: string } | { kind: "requester"; requestId: string };
 
 // Rujukan reka bentuk: design/Butiran.dc.html
-export function RequestDetail({ mode }: { mode: Mode }) {
+/** Bingkai: skrin penuh, atau panel dalam halaman Kelulusan (desktop) apabila `tertanam`. */
+function Bingkai({ tertanam, children }: { tertanam: boolean; children: React.ReactNode }) {
+  return tertanam ? <div className="flex flex-col">{children}</div> : <Screen lebar="sederhana">{children}</Screen>;
+}
+
+export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onSelesai: () => void } }) {
   const me = useMe();
   const router = useRouter();
   const d = useData(() => loadDetail(mode), [mode.kind === "approver" ? mode.taskId : mode.requestId]);
@@ -34,24 +39,26 @@ export function RequestDetail({ mode }: { mode: Mode }) {
 
   if (d.loading && !d.data) {
     return (
-      <Screen lebar="sederhana">
-        <BackHeader href={back} />
+      <Bingkai tertanam={!!tertanam}>
+        {!tertanam && <BackHeader href={back} />}
         <Loading />
-      </Screen>
+      </Bingkai>
     );
   }
   if (d.error || !d.data) {
     return (
-      <Screen lebar="sederhana">
-        <BackHeader href={back} />
+      <Bingkai tertanam={!!tertanam}>
+        {!tertanam && <BackHeader href={back} />}
         <div className="p-5">
           <ErrorBox message={d.error ?? "Permohonan tidak dijumpai atau anda tidak mempunyai akses."} />
         </div>
-      </Screen>
+      </Bingkai>
     );
   }
 
   const x = d.data;
+  // Panel tertanam berada dalam <main> halaman Kelulusan: elak <main> bersarang.
+  const Isi = tertanam ? "div" : "main";
   const myTask = x.tasks.find((t) => t.approver_person_id === me.personId && t.status === "pending");
   const canAct = mode.kind === "approver" && !!myTask && x.req.status === "pending";
   const canCancel = mode.kind === "requester" && x.req.requester_person_id === me.personId && x.req.status === "pending";
@@ -72,7 +79,8 @@ export function RequestDetail({ mode }: { mode: Mode }) {
       return;
     }
     setSheet(null);
-    router.push("/kelulusan");
+    if (tertanam) tertanam.onSelesai();
+    else router.push("/kelulusan");
   }
 
   async function batal() {
@@ -85,9 +93,13 @@ export function RequestDetail({ mode }: { mode: Mode }) {
   }
 
   return (
-    <Screen lebar="sederhana">
-      <BackHeader title={TAJUK[x.req.request_type] ?? "Permohonan"} href={back} />
-      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
+    <Bingkai tertanam={!!tertanam}>
+      {tertanam ? (
+        <h2 className="m-0 px-1 pt-1 pb-2 text-lg font-extrabold">{TAJUK[x.req.request_type] ?? "Permohonan"}</h2>
+      ) : (
+        <BackHeader title={TAJUK[x.req.request_type] ?? "Permohonan"} href={back} />
+      )}
+      <Isi className={`flex grow flex-col gap-3 ${tertanam ? "" : "px-4 pt-1 pb-4"}`}>
         <section className="flex flex-col gap-3 rounded-[18px] bg-surface p-4">
           <div className="flex items-center gap-3">
             <Avatar name={x.requesterName} size={48} />
@@ -216,7 +228,7 @@ export function RequestDetail({ mode }: { mode: Mode }) {
           ))}
         </section>
         {error && <ErrorBox message={error} />}
-      </main>
+      </Isi>
 
       {canAct && (
         <div className="bar-bawah sticky bottom-0 flex flex-col gap-2 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
@@ -271,7 +283,7 @@ export function RequestDetail({ mode }: { mode: Mode }) {
           onConfirm={(r) => act(sheet, r)}
         />
       )}
-    </Screen>
+    </Bingkai>
   );
 }
 

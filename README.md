@@ -146,6 +146,7 @@ Di staging/produksi, kod OTP dihantar melalui WhatsApp oleh Edge Function `auth-
 | `/masuk` | Log masuk dengan e-mel & kata laluan |
 | `/masuk/telefon`, `/masuk/kod` | Login, OTP (kali pertama — sahkan nombor telefon) |
 | `/masuk/lupa`, `/masuk/set-semula` | Lupa kata laluan: pautan e-mel + 4 digit akhir kad pengenalan |
+| `/pengurusan/gaji/sejarah`, `/pengurusan/gaji/data-terkumpul` | Gaji bertab: Sejarah (bulan lepas & fail bank/KWSP/PERKESO/PCB), data gaji terkumpul tahun ini (PCB tepat) diisi sekali gus |
 | `/pengurusan/gaji/pekerja` | Gaji Pekerja: gaji pokok & elaun / potongan tetap semua pekerja (jadual, ubah ramai di desktop) |
 | `/pengurusan/tetapan/jabatan` | Jabatan & Ketua: tambah, namakan semula, pilih ketua, padam jabatan kosong |
 | `/akaun/kata-laluan` | Wajib selepas OTP pertama: tetapkan e-mel & kata laluan; juga dari Profil untuk menukarnya |
@@ -190,7 +191,7 @@ node web/e2e/aliran-cuti.cjs
 node web/e2e/orientasi.cjs
 ```
 
-Ujian lain dalam `web/e2e/`: `tuntutan.cjs` (RM1,250 → Ketua → Kewangan → CEO), `profil-cuti.cjs`, `pengurusan-hr.cjs`, `tetapan.cjs`, `kehadiran.cjs`, `gaji.cjs`, `syarikat-baharu.cjs`, `pembantu-ai.cjs`, `jabatan.cjs` (Tetapan → Jabatan), `mod-hr.cjs` (Mod HR, desktop, Gaji Pekerja → slip), `kata-laluan.cjs` (log masuk e-mel, langkah wajib selepas OTP, lupa kata laluan dengan pelayan Resend palsu). Untuk staging: `E2E_BASE=https://hrboost-staging.netlify.app`.
+Ujian lain dalam `web/e2e/`: `tuntutan.cjs` (RM1,250 → Ketua → Kewangan → CEO), `profil-cuti.cjs`, `pengurusan-hr.cjs`, `tetapan.cjs`, `kehadiran.cjs`, `gaji.cjs`, `syarikat-baharu.cjs`, `pembantu-ai.cjs`, `audit-hr.cjs` (Kelulusan desktop, Ctrl+K, data terkumpul, jadual Pekerja, loceng), `jabatan.cjs` (Tetapan → Jabatan), `mod-hr.cjs` (Mod HR, desktop, Gaji Pekerja → slip), `kata-laluan.cjs` (log masuk e-mel, langkah wajib selepas OTP, lupa kata laluan dengan pelayan Resend palsu). Untuk staging: `E2E_BASE=https://hrboost-staging.netlify.app`.
 
 - `aliran-cuti.cjs`: Amin memohon cuti 23–28 Dis → Zuerin, Lily dan Sadam meluluskan dari telefon masing-masing → baki Amin 8 → 5 hari.
 - `orientasi.cjs`: HR menjemput pekerja baharu → pautan jemputan + 4 digit IC + OTP → 8 langkah orientasi (swafoto, kad pengenalan dan lain-lain) → Amin memohon MC bersama gambar sijil → ketua jabatan membuka sijil itu.
@@ -250,6 +251,7 @@ node supabase/scripts/ujian-fungsi-crosschex.cjs
 
 - HR / Kewangan / CEO / Pentadbir masuk ke **Mod HR** secara lalai: laman utama ialah Papan Pemuka "Pusat Tindakan" (`/pengurusan`: angka utama, perlu tindakan dengan butang Lulus, status gaji bulan ini, siapa tiada, minggu ini — `hr_dashboard_extra`), tab telefon: Utama, Pekerja, Kelulusan, Gaji, Saya (ikut peranan). Suis "Tukar ke Mod Pekerja" (Saya / menu sisi) untuk urusan diri sendiri; pilihan disimpan dalam pelayar. Pekerja biasa kekal 4 tab (CLAUDE.md §1).
 - Skrin ≥ 1024px: menu sisi kiri untuk semua pengguna, kandungan dilebarkan (`Screen lebar="lebar"` untuk skrin pengurusan), jadual untuk Pekerja dan Gaji Pekerja, lembaran menjadi dialog di tengah. Telefon tidak berubah.
+- Kelulusan (desktop): senarai + butiran sebelah-menyebelah, lulus ramai sekali gus, konteks pada setiap baris (baki selepas, rakan sejabatan bercuti, lampiran — `approval_task_context`). Carian pantas Ctrl+K (pekerja & tindakan). Loceng pemberitahuan (`notifications.read_at`). Jadual Pekerja boleh diisih, ditapis ikut jabatan dan dieksport CSV.
 - Gaji Pekerja: KWSP, PERKESO, SIP, HRDF, PCB, gaji bersih dan kos majikan dikira automatik (`pay_estimate` / `hr_pay_preview`, fungsi kiraan yang sama dengan Proses Gaji) — langsung semasa menaip, dalam jadual dan jumlah syarikat. RPC `hr_pay_table`, `hr_set_pay` (mengikut tarikh berkuat kuasa; 0 = hentikan elaun), `hr_add_pay_component` (jenis elaun / potongan tetap baharu). Komisen, kerja lebih masa dan tuntutan kekal dalam Proses Gaji. Setiap paparan & perubahan direkodkan dalam `data_access_log`.
 
 ### Log masuk e-mel & kata laluan

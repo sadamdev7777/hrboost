@@ -1102,14 +1102,14 @@ isOneToOne: false
                   ]
                 },"notifications": {
                   Row: {
-                    "attempts": number,"bypass_limit": boolean,"channel": string,"claimed_at": string | null,"company_id": string | null,"created_at": string,"error": string | null,"event_id": number | null,"id": string,"message": string,"person_id": string,"provider_ref": string | null,"rule_id": string | null,"send_after": string | null,"sent_at": string | null,"status": Database["public"]['Enums']["notify_status"],"to_address": string | null
+                    "attempts": number,"bypass_limit": boolean,"channel": string,"claimed_at": string | null,"company_id": string | null,"created_at": string,"error": string | null,"event_id": number | null,"id": string,"message": string,"person_id": string,"provider_ref": string | null,"read_at": string | null,"rule_id": string | null,"send_after": string | null,"sent_at": string | null,"status": Database["public"]['Enums']["notify_status"],"to_address": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "attempts"?: number,"bypass_limit"?: boolean,"channel"?: string,"claimed_at"?: string | null,"company_id"?: string | null,"created_at"?: string,"error"?: string | null,"event_id"?: number | null,"id"?: string,"message": string,"person_id": string,"provider_ref"?: string | null,"rule_id"?: string | null,"send_after"?: string | null,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["notify_status"],"to_address"?: string | null
+                    "attempts"?: number,"bypass_limit"?: boolean,"channel"?: string,"claimed_at"?: string | null,"company_id"?: string | null,"created_at"?: string,"error"?: string | null,"event_id"?: number | null,"id"?: string,"message": string,"person_id": string,"provider_ref"?: string | null,"read_at"?: string | null,"rule_id"?: string | null,"send_after"?: string | null,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["notify_status"],"to_address"?: string | null
                   }
                   Update: {
-                    "attempts"?: number,"bypass_limit"?: boolean,"channel"?: string,"claimed_at"?: string | null,"company_id"?: string | null,"created_at"?: string,"error"?: string | null,"event_id"?: number | null,"id"?: string,"message"?: string,"person_id"?: string,"provider_ref"?: string | null,"rule_id"?: string | null,"send_after"?: string | null,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["notify_status"],"to_address"?: string | null
+                    "attempts"?: number,"bypass_limit"?: boolean,"channel"?: string,"claimed_at"?: string | null,"company_id"?: string | null,"created_at"?: string,"error"?: string | null,"event_id"?: number | null,"id"?: string,"message"?: string,"person_id"?: string,"provider_ref"?: string | null,"read_at"?: string | null,"rule_id"?: string | null,"send_after"?: string | null,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["notify_status"],"to_address"?: string | null
                   }
                   Relationships: [
                     {
@@ -1602,6 +1602,11 @@ isOneToOne: false
 "approval_sla_tick":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
+"approval_task_context":
+{ Args: { "p_tasks": (string)[] }; Returns: {
+              "balance_after": number,"has_attachment": boolean,"task_id": string,"team_names": string,"team_off": number
+            }[]
+                           },
 "attendance_integration_status":
 { Args: { "p_company": string }; Returns: Json
                            },
@@ -1747,6 +1752,11 @@ isOneToOne: false
 "hr_dashboard_extra":
 { Args: { "p_company": string }; Returns: Json
                            },
+"hr_opening_balances":
+{ Args: { "p_company": string,"p_year": number }; Returns: {
+              "employee_no": string,"employment_id": string,"epf": number,"gross": number,"join_date": string,"name": string,"payroll_months": number,"pcb": number,"up_to_month": number
+            }[]
+                           },
 "hr_pay_preview":
 { Args: { "p_employment": string,"p_items": Json,"p_on"?: string }; Returns: Json
                            },
@@ -1845,6 +1855,9 @@ isOneToOne: false
                            },
 "log_platform":
 { Args: { "p_action": string,"p_company": string,"p_details"?: Json,"p_target": string,"p_target_type": string }; Returns: undefined
+                           },
+"mark_my_notifications_read":
+{ Args: { "p_ids"?: (string)[] }; Returns: number
                            },
 "mask_phone":
 { Args: { "p": string }; Returns: string

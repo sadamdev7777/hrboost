@@ -11,6 +11,8 @@ import { IconClock } from "@/components/icons";
 import { Avatar, Empty, ErrorBox, Loading, Screen, StatusPill } from "@/components/ui";
 import { TabNav } from "@/components/TabNav";
 import { ReasonSheet } from "@/components/ReasonSheet";
+import { RequestDetail } from "@/components/RequestDetail";
+import { useSkrinLebar } from "@/lib/skrin";
 
 // Rujukan reka bentuk: design/Kelulusan.dc.html
 type Filter = "all" | "leave" | "claim" | "attendance_correction" | "payroll_run";
@@ -30,6 +32,15 @@ export default function KelulusanPage() {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const tasks = useData(loadPending, []);
+  const lebar = useSkrinLebar();
+  const [pilih, setPilih] = useState<string | null>(null);
+  const [tanda, setTanda] = useState<Set<string>>(new Set());
+  const konteks = useData(async () => {
+    const ids = (tasks.data ?? []).map((t) => t.taskId);
+    if (!ids.length) return new Map<string, Konteks>();
+    const rows = must(await getSupabase().rpc("approval_task_context", { p_tasks: ids })) ?? [];
+    return new Map(rows.map((r) => [r.task_id, r as Konteks]));
+  }, [(tasks.data ?? []).map((t) => t.taskId).join(",")]);
   const history = useData(() => (tab === "history" ? loadHistory(me.personId) : Promise.resolve(null)), [tab]);
 
   const list = tasks.data ?? [];
@@ -48,6 +59,23 @@ export default function KelulusanPage() {
     setBusy(null);
     setRejecting(null);
     if (err) setError(err.message);
+    if (pilih === taskId) setPilih(null);
+    tasks.reload();
+  }
+
+  async function lulusDitanda() {
+    const ids = [...tanda];
+    setBusy("pukal");
+    setError(null);
+    const gagal: string[] = [];
+    for (const id of ids) {
+      const { error: err } = await getSupabase().rpc("approval_act", { p_task: id, p_action: "approve", p_via: "web" });
+      if (err) gagal.push(err.message);
+    }
+    setBusy(null);
+    setTanda(new Set());
+    setPilih(null);
+    if (gagal.length) setError(`${ids.length - gagal.length} diluluskan. Tidak berjaya: ${gagal.join("; ")}`);
     tasks.reload();
   }
 
@@ -104,6 +132,75 @@ export default function KelulusanPage() {
             {tasks.loading && !tasks.data && <Loading />}
             {tasks.data && list.length === 0 && <Empty>Tiada permohonan menunggu kelulusan anda.</Empty>}
 
+            {lebar && shown.length > 0 ? (
+              <div className="grid grid-cols-[minmax(0,400px)_minmax(0,1fr)] items-start gap-5">
+                <div className="flex flex-col gap-2">
+                  <div className="flex min-h-11 items-center justify-between gap-2 rounded-[14px] bg-surface px-3">
+                    <label className="flex items-center gap-2 text-[13px] font-semibold">
+                      <input
+                        type="checkbox"
+                        className="size-[18px] accent-primary"
+                        checked={tanda.size > 0 && shown.every((t) => tanda.has(t.taskId))}
+                        onChange={(e) => setTanda(e.target.checked ? new Set(shown.filter((t) => t.type !== "payroll_run").map((t) => t.taskId)) : new Set())}
+                      />
+                      Pilih semua
+                    </label>
+                    <button
+                      type="button"
+                      disabled={!tanda.size || busy === "pukal"}
+                      onClick={lulusDitanda}
+                      className="flex h-9 items-center rounded-full bg-primary px-4 text-[13px] font-bold text-white disabled:opacity-40"
+                    >
+                      {busy === "pukal" ? "Meluluskan…" : `Lulus ${tanda.size || ""} dipilih`}
+                    </button>
+                  </div>
+                  {shown.map((t, i) => {
+                    const aktif = (pilih ?? shown[0].taskId) === t.taskId;
+                    return (
+                      <div
+                        key={t.taskId}
+                        className={`flex cursor-pointer gap-3 rounded-[14px] px-3 py-3 ${aktif ? "bg-[#E3F1EE] ring-2 ring-primary" : "bg-surface hover:bg-[#F7F9F8]"}`}
+                        onClick={() => setPilih(t.taskId)}
+                      >
+                        {t.type !== "payroll_run" ? (
+                          <input
+                            type="checkbox"
+                            aria-label={`Pilih ${t.name}`}
+                            className="mt-1 size-[18px] shrink-0 accent-primary"
+                            checked={tanda.has(t.taskId)}
+                            onClick={(e) => e.stopPropagation()}
+                            onChange={(e) => {
+                              const n = new Set(tanda);
+                              if (e.target.checked) n.add(t.taskId);
+                              else n.delete(t.taskId);
+                              setTanda(n);
+                            }}
+                          />
+                        ) : (
+                          <span className="w-[18px] shrink-0" />
+                        )}
+                        <Avatar name={t.name} index={i} size={36} />
+                        <div className="flex min-w-0 grow flex-col gap-0.5">
+                          <div className="flex justify-between gap-2">
+                            <span className="truncate text-sm font-extrabold">{t.name}</span>
+                            <span className="text-xs whitespace-nowrap text-muted">{masa(t.assignedAt)}</span>
+                          </div>
+                          <span className="truncate text-[13px] font-semibold">{t.title}</span>
+                          <BarisKonteks k={konteks.data?.get(t.taskId)} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="sticky top-4 rounded-[18px] bg-page">
+                  <RequestDetail
+                    key={pilih ?? shown[0].taskId}
+                    mode={{ kind: "approver", taskId: pilih ?? shown[0].taskId }}
+                    tertanam={{ onSelesai: () => { setPilih(null); tasks.reload(); } }}
+                  />
+                </div>
+              </div>
+            ) : (
             <div className="flex flex-col gap-2.5">
               {shown.map((t, i) => (
                 <div key={t.taskId} className="flex flex-col gap-2.5 rounded-[18px] bg-surface px-4 py-3">
@@ -115,6 +212,7 @@ export default function KelulusanPage() {
                         <span className="text-xs whitespace-nowrap text-muted">{masa(t.assignedAt)}</span>
                       </div>
                       <span className="text-sm font-semibold">{t.title}</span>
+                      <BarisKonteks k={konteks.data?.get(t.taskId)} />
                       {t.ai && <span className="text-[13px] text-ai">AI: {t.ai}</span>}
                     </div>
                   </Link>
@@ -139,6 +237,7 @@ export default function KelulusanPage() {
                 </div>
               ))}
             </div>
+            )}
           </>
         )}
 
@@ -172,6 +271,30 @@ export default function KelulusanPage() {
         />
       )}
     </Screen>
+  );
+}
+
+type Konteks = { task_id: string; balance_after: number | null; team_off: number; team_names: string | null; has_attachment: boolean };
+
+/** Satu baris konteks supaya keputusan mudah boleh dibuat tanpa membuka butiran. */
+function BarisKonteks({ k }: { k: Konteks | undefined }) {
+  if (!k) return null;
+  const bah: { t: string; tone: string }[] = [];
+  if (k.balance_after !== null && k.balance_after !== undefined)
+    bah.push({ t: `Baki selepas: ${hari(Number(k.balance_after))} hari`, tone: Number(k.balance_after) < 0 ? "text-danger" : "text-subtle" });
+  if (k.team_off > 0) bah.push({ t: `${k.team_off} rakan bercuti (${k.team_names})`, tone: "text-warning" });
+  else if (k.balance_after !== null) bah.push({ t: "Tiada rakan sejabatan bercuti", tone: "text-subtle" });
+  if (k.has_attachment) bah.push({ t: "Ada lampiran", tone: "text-subtle" });
+  if (!bah.length) return null;
+  return (
+    <span className="flex flex-wrap gap-x-2 text-xs">
+      {bah.map((b, i) => (
+        <span key={i} className={b.tone}>
+          {i > 0 ? "· " : ""}
+          {b.t}
+        </span>
+      ))}
+    </span>
   );
 }
 

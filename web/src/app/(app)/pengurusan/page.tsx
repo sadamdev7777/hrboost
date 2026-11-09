@@ -11,6 +11,9 @@ import { addDays, hariTarikh, inisial, masa, ringgit, tarikh, todayISO, ucapan }
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { HadPeranan, Tag } from "@/components/Senarai";
 import { TabNav } from "@/components/TabNav";
+import { Loceng } from "@/components/Loceng";
+import { bukaCari } from "@/components/CariPantas";
+import { useSkrinLebar } from "@/lib/skrin";
 
 const AV = ["bg-[#FDEBD7] text-warning", "bg-[#E3F1EE] text-primary", "bg-[#EDE9F8] text-ai"];
 const JENIS: Record<string, string> = { leave: "Cuti", claim: "Tuntutan", attendance_correction: "Pembetulan", payroll_run: "Gaji" };
@@ -57,6 +60,7 @@ function Kandungan() {
     d.reload();
   }
 
+  const lebar = useSkrinLebar();
   const urusGaji = hasRole(me, ["hr", "finance", "admin"]);
   const a = x?.asas;
   const t = x?.tambahan;
@@ -72,7 +76,17 @@ function Kandungan() {
             {ucapan()} {me.name}
           </h1>
         </div>
-        <span className="flex h-9 items-center rounded-full bg-[#E3F1EE] px-3 text-[13px] font-extrabold text-primary">{emp.companyCode}</span>
+        <span className="flex items-center gap-2">
+          {!lebar && (
+            <button type="button" onClick={bukaCari} aria-label="Cari pekerja" className="flex size-10 items-center justify-center rounded-full bg-surface">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M20 20l-3.5-3.5" />
+              </svg>
+            </button>
+          )}
+          <Loceng />
+        </span>
       </header>
       <main className="flex grow flex-col gap-4 px-4 pt-2 pb-5 lg:px-0">
         {d.error && <ErrorBox message={d.error} />}
@@ -80,7 +94,7 @@ function Kandungan() {
         {d.loading && !x && <Loading />}
         {x && a && t && (
           <>
-            <div className="grid grid-cols-2 gap-2 lg:grid-cols-4 lg:gap-3">
+            <div className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-3 lg:overflow-visible lg:px-0 lg:pb-0">
               <Kad label="Pekerja aktif" nilai={String(a.headcount)} href="/pengurusan/pekerja" />
               {t.attendance_connected ? (
                 <Kad
@@ -204,6 +218,17 @@ function Kandungan() {
           </>
         )}
       </main>
+      {!lebar && hasRole(me, ["hr", "admin"]) && (
+        <Link
+          href="/pengurusan/pekerja/baru"
+          aria-label="Tambah pekerja"
+          className="fixed right-4 bottom-[92px] z-20 flex size-14 items-center justify-center rounded-full bg-primary text-white! shadow-lg"
+        >
+          <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </Link>
+      )}
       <TabNav />
     </Screen>
   );
@@ -214,11 +239,11 @@ function Kad({ label, nilai, kecil, tone, href }: { label: string; nilai: string
   const isi = (
     <>
       <span className="text-xs font-semibold text-muted">{label}</span>
-      <b className={`text-2xl font-extrabold lg:text-[28px] ${tone === "primary" ? "text-primary" : ""}`}>{nilai}</b>
+      <b className={`text-xl font-extrabold lg:text-[28px] ${tone === "primary" ? "text-primary" : ""}`}>{nilai}</b>
       {kecil && <span className={`text-xs font-semibold ${warna}`}>{kecil}</span>}
     </>
   );
-  const cls = "flex min-h-[92px] flex-col gap-1 rounded-card bg-surface px-4 py-3 lg:px-5 lg:py-4";
+  const cls = "flex min-h-[76px] min-w-[148px] shrink-0 snap-start flex-col gap-0.5 rounded-card bg-surface px-4 py-3 lg:min-h-[92px] lg:min-w-0 lg:gap-1 lg:px-5 lg:py-4";
   return href ? (
     <Link href={href} className={`${cls} text-ink! hover:bg-[#F7F9F8]`}>
       {isi}

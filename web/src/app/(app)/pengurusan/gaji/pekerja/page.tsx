@@ -6,10 +6,11 @@ import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { getJadualGaji, setGajiPekerja, type BarisGaji, type JadualGaji, type Kiraan } from "@/lib/gaji";
 import { inisial, ringgit, tarikh, todayISO } from "@/lib/format";
-import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
+import { ErrorBox, Loading, Screen } from "@/components/ui";
+import { TabGaji } from "@/components/TabGaji";
 import { HadPeranan, Tag } from "@/components/Senarai";
 import { KomponenBaharu, RingkasanKiraan, UbahGaji, nilaiInput, usePratonton } from "@/components/GajiPekerja";
-import { TabNav } from "@/components/TabNav";
+import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { useSkrinLebar } from "@/lib/skrin";
 
 const AV = ["bg-[#E3F1EE] text-primary", "bg-[#FDEBD7] text-warning", "bg-[#EDE9F8] text-ai"];
@@ -40,16 +41,17 @@ function GajiPekerja() {
 
   return (
     <Screen lebar="lebar">
-      <BackHeader
-        title="Gaji Pekerja"
-        href="/pengurusan/gaji"
+      <PengepalaAkar
+        title="Gaji"
+        backHr="/pengurusan"
         action={
           <button type="button" onClick={() => setBaru(true)} className="mr-1 flex min-h-11 items-center px-2 text-[13px] font-bold text-primary">
             + Jenis elaun
           </button>
         }
       />
-      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
+      <TabGaji />
+      <main className="flex grow flex-col gap-3 px-4 pt-4 pb-6 lg:px-0">
         <span className="text-sm leading-normal text-subtle">
           Gaji pokok dan elaun / potongan tetap. KWSP, PERKESO, SIP, HRDF dan PCB dikira secara automatik. Komisen, kerja lebih masa dan tuntutan ditambah semasa{" "}
           <Link href="/pengurusan/gaji" className="font-bold">

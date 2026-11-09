@@ -1,0 +1,169 @@
+"use client";
+
+import { useState } from "react";
+import { useMe } from "@/lib/me";
+import { getSupabase } from "@/lib/supabase";
+import { must, useData } from "@/lib/useData";
+import { BULAN_PENUH } from "@/lib/gaji";
+import { todayISO } from "@/lib/format";
+import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
+import { HadPeranan, inputKecil } from "@/components/Senarai";
+import { nilaiInput } from "@/components/GajiPekerja";
+
+type Baris = {
+  employment_id: string;
+  name: string;
+  employee_no: string;
+  join_date: string;
+  up_to_month: number | null;
+  gross: number | null;
+  epf: number | null;
+  pcb: number | null;
+  payroll_months: number;
+};
+type Nilai = { bulan: string; gross: string; epf: string; pcb: string };
+
+/** Data gaji terkumpul tahun ini daripada sistem lama — diisi sekali gus untuk semua pekerja (PCB tepat). */
+export default function DataTerkumpulPage() {
+  return (
+    <HadPeranan roles={["hr", "finance", "admin"]} back="/pengurusan/gaji">
+      <DataTerkumpul />
+    </HadPeranan>
+  );
+}
+
+function DataTerkumpul() {
+  const me = useMe();
+  const cid = me.active!.companyId;
+  const tahun = Number(todayISO().slice(0, 4));
+  const bulanLalu = Math.max(Number(todayISO().slice(5, 7)) - 1, 1);
+  const d = useData(async () => (must(await getSupabase().rpc("hr_opening_balances", { p_company: cid, p_year: tahun })) ?? []) as Baris[], [cid, tahun]);
+  const [nilai, setNilai] = useState<Record<string, Nilai>>({});
+  const [busy, setBusy] = useState(false);
+  const [ralat, setRalat] = useState<string[]>([]);
+  const [ok, setOk] = useState<string | null>(null);
+
+  const awal = (r: Baris): Nilai => ({
+    bulan: String(r.up_to_month ?? bulanLalu),
+    gross: r.gross != null ? String(r.gross) : "",
+    epf: r.epf != null ? String(r.epf) : "",
+    pcb: r.pcb != null ? String(r.pcb) : "",
+  });
+  const v = (r: Baris) => nilai[r.employment_id] ?? awal(r);
+  const ubah = (r: Baris, k: keyof Nilai, x: string) => setNilai((s) => ({ ...s, [r.employment_id]: { ...v(r), [k]: k === "bulan" ? x : x.replace(/[^\d.,]/g, "") } }));
+
+  async function simpan() {
+    setRalat([]);
+    setOk(null);
+    const kerja = (d.data ?? []).filter((r) => nilai[r.employment_id] && JSON.stringify(nilai[r.employment_id]) !== JSON.stringify(awal(r)));
+    if (!kerja.length) return setRalat(["Tiada perubahan untuk disimpan."]);
+    setBusy(true);
+    const gagal: string[] = [];
+    for (const r of kerja) {
+      const x = v(r);
+      const g = nilaiInput(x.gross);
+      const e = nilaiInput(x.epf);
+      const p = nilaiInput(x.pcb);
+      if (g === null || e === null || p === null) {
+        gagal.push(`${r.name}: amaun tidak sah.`);
+        continue;
+      }
+      const { error } = await getSupabase().rpc("set_payroll_opening", {
+        p_employment: r.employment_id,
+        p_year: tahun,
+        p_up_to_month: Number(x.bulan),
+        p_gross: g,
+        p_epf: e,
+        p_pcb: p,
+      });
+      if (error) gagal.push(`${r.name}: ${error.message}`);
+    }
+    setBusy(false);
+    if (gagal.length) setRalat(gagal);
+    else setOk(`${kerja.length} pekerja disimpan.`);
+    setNilai({});
+    d.reload();
+  }
+
+  return (
+    <Screen>
+      <BackHeader title={`Data gaji terkumpul ${tahun}`} href="/pengurusan/gaji" />
+      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
+        <span className="text-sm leading-normal text-subtle">
+          Jika syarikat mula menggunakan HRBoost pada pertengahan tahun, isi jumlah gaji kasar, KWSP pekerja dan PCB yang telah dibayar dalam sistem lama sejak Januari. Ini
+          diperlukan supaya PCB dikira dengan tepat (kaedah berkomputer LHDN). Gunakan angka daripada slip gaji / borang CP39 terdahulu.
+        </span>
+        {d.error && <ErrorBox message={d.error} />}
+        {d.loading && !d.data && <Loading />}
+        {d.data && (
+          <div className="overflow-x-auto rounded-card bg-surface">
+            <table className="w-full min-w-[720px] border-collapse text-left text-[13px]">
+              <thead>
+                <tr className="border-b border-[#EEF2F1] text-[11px] font-bold tracking-[0.03em] text-muted">
+                  <th className="px-4 py-3">PEKERJA</th>
+                  <th className="px-2 py-3">HINGGA BULAN</th>
+                  <th className="px-2 py-3 text-right">GAJI KASAR (RM)</th>
+                  <th className="px-2 py-3 text-right">KWSP PEKERJA (RM)</th>
+                  <th className="px-2 py-3 text-right">PCB (RM)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {d.data.map((r) => {
+                  const x = v(r);
+                  return (
+                    <tr key={r.employment_id} className="border-b border-[#EEF2F1] last:border-0">
+                      <td className="px-4 py-2">
+                        <span className="flex flex-col">
+                          <b className="text-sm">{r.name}</b>
+                          <span className="text-[11px] text-muted">
+                            {r.employee_no}
+                            {r.payroll_months ? ` · ${r.payroll_months} bulan dalam HRBoost` : ""}
+                            {r.up_to_month == null ? " · belum diisi" : ""}
+                          </span>
+                        </span>
+                      </td>
+                      <td className="px-2 py-2">
+                        <select aria-label={`Hingga bulan ${r.name}`} className={`${inputKecil} w-36!`} value={x.bulan} onChange={(e) => ubah(r, "bulan", e.target.value)}>
+                          {BULAN_PENUH.slice(0, 11).map((b, i) => (
+                            <option key={b} value={i + 1}>
+                              Jan – {b.slice(0, 3)}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      {(["gross", "epf", "pcb"] as const).map((k) => (
+                        <td key={k} className="px-2 py-2 text-right">
+                          <input
+                            aria-label={`${k} ${r.name}`}
+                            inputMode="decimal"
+                            placeholder="0.00"
+                            value={x[k]}
+                            onChange={(e) => ubah(r, k, e.target.value)}
+                            className="h-10 w-32 rounded-[10px] border border-line bg-surface px-2.5 text-right tabular-nums outline-none focus:border-primary"
+                          />
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {ralat.length > 0 && (
+          <div role="alert" className="flex flex-col gap-1 rounded-[14px] bg-danger-soft px-4 py-3 text-[13px] text-danger">
+            {ralat.map((x) => (
+              <span key={x}>{x}</span>
+            ))}
+          </div>
+        )}
+        {ok && <span className="rounded-[14px] bg-success-soft px-4 py-3 text-[13px] font-semibold text-success">{ok}</span>}
+      </main>
+      <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <button type="button" onClick={simpan} disabled={busy} className="flex h-12 w-full items-center justify-center rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
+          {busy ? "Menyimpan…" : "Simpan semua"}
+        </button>
+      </div>
+    </Screen>
+  );
+}

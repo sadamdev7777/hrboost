@@ -44,6 +44,7 @@ function Senarai() {
   const list = useData(() => getSenaraiPekerja(emp.companyId), [emp.companyId]);
   const [cari, setCari] = useState("");
   const [tapis, setTapis] = useState<Tapis>("semua");
+  const [jab, setJab] = useState("");
   const lebar = useSkrinLebar();
   const boleh = me.roles.includes("hr") || me.roles.includes("admin");
 
@@ -56,11 +57,13 @@ function Senarai() {
       !p.employeeNo.toLowerCase().includes(q)
     )
       return false;
+    if (jab && (p.department ?? "-") !== jab) return false;
     if (tapis === "aktif") return p.activated && p.status === "active";
     if (tapis === "percubaan") return p.status === "probation";
     if (tapis === "belum") return !p.activated;
     return true;
   });
+  const senaraiJab = [...new Set(semua.map((p) => p.department ?? "-"))].sort();
   const kumpulan = new Map<string, PekerjaRingkas[]>();
   for (const p of tapisan) {
     const k = (p.department ?? "Tiada jabatan").toUpperCase();
@@ -141,6 +144,24 @@ function Senarai() {
               </button>
             ))}
           </div>
+          <select
+            aria-label="Tapis jabatan"
+            value={jab}
+            onChange={(e) => setJab(e.target.value)}
+            className="h-9 rounded-full border border-line bg-surface px-3 text-[13px] font-bold text-[#4A5A57]"
+          >
+            <option value="">Semua jabatan</option>
+            {senaraiJab.map((j) => (
+              <option key={j} value={j}>
+                {j === "-" ? "Tiada jabatan" : j}
+              </option>
+            ))}
+          </select>
+          {lebar && tapisan.length > 0 && (
+            <button type="button" onClick={() => eksportCSV(tapisan, emp.companyCode)} className="ml-auto h-9 rounded-full border border-primary px-4 text-[13px] font-bold text-primary">
+              Eksport CSV
+            </button>
+          )}
         </div>
 
         {list.error && <ErrorBox message={list.error} />}
@@ -209,19 +230,53 @@ function StatusPekerja({ p }: { p: PekerjaRingkas }) {
 }
 
 /** Jadual untuk skrin lebar (desktop). */
-function JadualPekerja({ ppl }: { ppl: PekerjaRingkas[] }) {
+type Lajur = "name" | "employeeNo" | "department" | "position" | "status";
+const STATUS_TEKS = (p: PekerjaRingkas) => (!p.activated ? "Belum aktif" : p.status === "probation" ? "Percubaan" : "Aktif");
+
+function eksportCSV(ppl: PekerjaRingkas[], kod: string) {
+  const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
+  const baris = [
+    ["Nama", "No. pekerja", "Jabatan", "Jawatan", "Peranan", "Status"],
+    ...ppl.map((p) => [p.name, p.employeeNo, p.department ?? "", p.isHead ? "Ketua Jabatan" : (p.position ?? ""), p.roles.map((r) => LABEL_PERANAN[r] ?? r).join(" / "), STATUS_TEKS(p)]),
+  ];
+  const url = URL.createObjectURL(new Blob(["\ufeff" + baris.map((b) => b.map(esc).join(",")).join("\n")], { type: "text/csv;charset=utf-8" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `pekerja-${kod}.csv`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+type Isih = { k: Lajur; naik: boolean };
+function Kepala({ k, label, isih, setIsih }: { k: Lajur; label: string; isih: Isih; setIsih: (i: Isih) => void }) {
+  return (
+    <th className="px-4 py-3 font-bold" aria-sort={isih.k === k ? (isih.naik ? "ascending" : "descending") : "none"}>
+      <button type="button" onClick={() => setIsih({ k, naik: isih.k === k ? !isih.naik : true })} className="flex items-center gap-1 font-bold tracking-[0.03em]">
+        {label}
+        <span aria-hidden="true" className={isih.k === k ? "text-primary" : "opacity-30"}>
+          {isih.k === k && !isih.naik ? "▼" : "▲"}
+        </span>
+      </button>
+    </th>
+  );
+}
+
+function JadualPekerja({ ppl: asal }: { ppl: PekerjaRingkas[] }) {
   const router = useRouter();
+  const [isih, setIsih] = useState<Isih>({ k: "employeeNo", naik: true });
+  const nilai = (p: PekerjaRingkas, k: Lajur) => (k === "status" ? STATUS_TEKS(p) : k === "position" ? (p.isHead ? "Ketua Jabatan" : (p.position ?? "")) : ((p[k] as string | null) ?? ""));
+  const ppl = [...asal].sort((a, b) => nilai(a, isih.k).localeCompare(nilai(b, isih.k), "ms") * (isih.naik ? 1 : -1));
   return (
     <div className="overflow-hidden rounded-card bg-surface">
       <table className="w-full border-collapse text-left text-sm">
         <thead>
           <tr className="border-b border-[#EEF2F1] text-xs font-bold tracking-[0.03em] text-muted">
-            <th className="px-4 py-3 font-bold">NAMA</th>
-            <th className="px-4 py-3 font-bold">NO. PEKERJA</th>
-            <th className="px-4 py-3 font-bold">JABATAN</th>
-            <th className="px-4 py-3 font-bold">JAWATAN</th>
+            <Kepala isih={isih} setIsih={setIsih} k="name" label="NAMA" />
+            <Kepala isih={isih} setIsih={setIsih} k="employeeNo" label="NO. PEKERJA" />
+            <Kepala isih={isih} setIsih={setIsih} k="department" label="JABATAN" />
+            <Kepala isih={isih} setIsih={setIsih} k="position" label="JAWATAN" />
             <th className="px-4 py-3 font-bold">PERANAN</th>
-            <th className="px-4 py-3 font-bold">STATUS</th>
+            <Kepala isih={isih} setIsih={setIsih} k="status" label="STATUS" />
           </tr>
         </thead>
         <tbody>
