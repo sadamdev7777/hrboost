@@ -1,5 +1,6 @@
 "use client";
 
+import { sahkan } from "@/components/Dialog";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
@@ -38,7 +39,7 @@ function Pengguna() {
   const khas = (d.data?.ppl ?? []).filter((p) => p.isHead || p.roles.some((r) => PERANAN_KHAS.includes(r as Role)));
 
   async function buang(personId: string, role: string, nama: string) {
-    if (!window.confirm(`Tarik balik peranan ${LABEL_PERANAN[role]} daripada ${nama}?`)) return;
+    if (!(await sahkan({ tajuk: `Tarik balik peranan ${LABEL_PERANAN[role]}?`, mesej: `${nama} tidak lagi mempunyai akses ${LABEL_PERANAN[role]}.`, ok: "Tarik balik", bahaya: true }))) return;
     setRalat(null);
     try {
       must(await getSupabase().from("user_roles").delete().eq("company_id", emp.companyId).eq("person_id", personId).eq("role", role as Role));
@@ -49,7 +50,7 @@ function Pengguna() {
   }
 
   async function tarikBalik(id: string) {
-    if (!window.confirm("Tarik balik akses ini?")) return;
+    if (!(await sahkan({ tajuk: "Tarik balik akses ini?", ok: "Tarik balik", bahaya: true }))) return;
     try {
       must(await getSupabase().rpc("revoke_company_access", { p_grant: id }));
       d.reload();

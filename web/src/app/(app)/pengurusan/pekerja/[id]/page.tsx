@@ -1,5 +1,6 @@
 "use client";
 
+import { mintaTeks, sahkan } from "@/components/Dialog";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { Suspense, useRef, useState, useSyncExternalStore } from "react";
@@ -139,7 +140,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
 
   async function bank(lulus: boolean) {
     if (!sensitif?.bank_change) return;
-    const nota = lulus ? "" : (window.prompt("Sebab menolak pertukaran akaun bank") ?? "");
+    const nota = lulus ? "" : ((await mintaTeks({ tajuk: "Tolak pertukaran akaun bank", mesej: "Sebab ini dihantar kepada pekerja.", label: "Sebab", ok: "Tolak", bahaya: true })) ?? "");
     if (!lulus && !nota.trim()) return;
     setRalat(null);
     try {
@@ -227,7 +228,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
             <button
               type="button"
               onClick={async () => {
-                if (!window.confirm(`Sahkan jawatan ${p.name} mulai hari ini?`)) return;
+                if (!(await sahkan({ tajuk: `Sahkan jawatan ${p.name}?`, mesej: "Tempoh percubaan tamat dan jawatan disahkan mulai hari ini.", ok: "Sahkan jawatan" }))) return;
                 try {
                   await kemasKiniPekerjaan(p.id, { confirm: true });
                   reload();

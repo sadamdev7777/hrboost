@@ -1,5 +1,6 @@
 "use client";
 
+import { sahkan } from "@/components/Dialog";
 import Link from "next/link";
 import { useState } from "react";
 import { getSupabase } from "@/lib/supabase";
@@ -24,7 +25,7 @@ export default function PermohonanSayaPage() {
   );
 
   async function batal(id: string) {
-    if (!window.confirm("Batalkan permohonan ini?")) return;
+    if (!(await sahkan({ tajuk: "Batalkan permohonan ini?", mesej: "Pelulus akan dimaklumkan. Anda boleh memohon semula kemudian.", ok: "Batalkan", bahaya: true }))) return;
     setError(null);
     const { error: err } = await getSupabase().rpc("approval_cancel", { p_request: id, p_via: "web" });
     if (err) setError(err.message);

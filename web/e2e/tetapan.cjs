@@ -96,6 +96,7 @@ async function login(browser, phone) {
   await p.waitForSelector('button[aria-label="Tarik balik HR daripada Zulfa"]');
   await p.screenshot({ path: `${shots}/t-pengguna.png` });
   await p.click('button[aria-label="Tarik balik HR daripada Zulfa"]');
+  await p.click('[role=alertdialog] button:has-text("Tarik balik")');
   await p.waitForSelector('button[aria-label="Tarik balik HR daripada Zulfa"]', { state: 'detached' });
   expect(true, 'peranan HR diberi kepada Zulfa dan ditarik balik');
   await ctx.close();

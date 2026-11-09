@@ -112,10 +112,23 @@ export function PrimaryButton({
   );
 }
 
+/** Rangka kelabu semasa memuatkan (lebih pantas dirasai berbanding teks "Memuatkan…"). */
 export function Loading({ label = "Memuatkan…" }: { label?: string }) {
   return (
-    <div role="status" className="flex grow items-center justify-center p-8 text-sm text-muted">
-      {label}
+    <div role="status" aria-live="polite" className="flex w-full flex-col gap-3 px-4 py-4 lg:px-0">
+      <span className="sr-only">{label}</span>
+      <div className="h-[72px] animate-pulse rounded-card bg-[#E4EAE8]" />
+      <div className="flex flex-col gap-0 rounded-card bg-surface px-4">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="flex items-center gap-3 border-b border-[#EEF2F1] py-3.5 last:border-0">
+            <span className="size-9 shrink-0 animate-pulse rounded-full bg-[#E4EAE8]" />
+            <span className="flex grow flex-col gap-2">
+              <span className="h-3 w-2/5 animate-pulse rounded bg-[#E4EAE8]" />
+              <span className="h-2.5 w-3/5 animate-pulse rounded bg-[#EEF2F1]" />
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

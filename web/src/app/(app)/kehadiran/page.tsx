@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
-import { getKehadiranBulan, type HariHadir } from "@/lib/kehadiran";
+import { kehadiranDisambung, getKehadiranBulan, type HariHadir } from "@/lib/kehadiran";
 import { hariPendek, jam, todayISO } from "@/lib/format";
 import { IconBack, IconChevronRight } from "@/components/icons";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
@@ -25,6 +25,7 @@ export default function KehadiranPage() {
   const kini = todayISO().slice(0, 7);
   const [bulan, setBulan] = useState(kini);
   const d = useData(() => getKehadiranBulan(emp.id, bulan), [emp.id, bulan]);
+  const sambung = useData(() => kehadiranDisambung(emp.companyId), [emp.companyId]);
   // Seperti reka bentuk: hari bekerja sahaja (hujung minggu dipaparkan jika ada imbasan)
   const hari = (d.data ?? []).filter((h) => h.working || h.clockIn || h.holiday);
   const today = todayISO();
@@ -60,6 +61,15 @@ export default function KehadiranPage() {
         }
       />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
+        {sambung.data === false ? (
+          <div className="flex flex-col gap-1.5 rounded-card bg-surface px-4 py-4">
+            <b className="text-sm">Kehadiran belum disambung</b>
+            <span className="text-[13px] leading-normal text-subtle">
+              Syarikat anda belum menyambungkan mesin atau sistem kehadiran ke HRBoost. Rekod masuk dan keluar akan dipaparkan di sini selepas HR menyambungkannya.
+            </span>
+          </div>
+        ) : (
+          <>
         <div className="grid grid-cols-3 gap-2">
           <Kad n={hadir} label="Hari hadir" />
           <Kad n={lewat} label="Kali lewat" tone={lewat ? "warning" : undefined} />
@@ -81,6 +91,8 @@ export default function KehadiranPage() {
               <Baris key={h.date} h={h} today={today} />
             ))}
           </div>
+        )}
+          </>
         )}
         <span className="text-xs leading-normal text-muted">
           Data daripada sistem kehadiran syarikat. Waktu masuk {emp.workStart.slice(0, 5).replace(/^0/, "")}, kelonggaran {emp.graceMinutes} minit. Terlupa mendaftar masuk? Tekan “Betulkan” untuk kelulusan ketua.

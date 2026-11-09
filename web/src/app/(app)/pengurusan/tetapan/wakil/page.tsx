@@ -1,5 +1,6 @@
 "use client";
 
+import { sahkan } from "@/components/Dialog";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
@@ -63,7 +64,7 @@ function Wakil() {
   }
 
   async function padam(id: string) {
-    if (!window.confirm("Buang wakil ini?")) return;
+    if (!(await sahkan({ tajuk: "Buang wakil ini?", mesej: "Tugasan kelulusan akan kembali kepada pelulus asal.", ok: "Buang", bahaya: true }))) return;
     try {
       must(await getSupabase().from("approval_delegations").delete().eq("id", id));
       d.reload();

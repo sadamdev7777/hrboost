@@ -1,5 +1,6 @@
 "use client";
 
+import { sahkan } from "@/components/Dialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -84,7 +85,7 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
   }
 
   async function batal() {
-    if (!window.confirm("Batalkan permohonan ini?")) return;
+    if (!(await sahkan({ tajuk: "Batalkan permohonan ini?", mesej: "Pelulus akan dimaklumkan. Anda boleh memohon semula kemudian.", ok: "Batalkan", bahaya: true }))) return;
     setBusy(true);
     const { error: err } = await getSupabase().rpc("approval_cancel", { p_request: x.req.id, p_via: "web" });
     setBusy(false);

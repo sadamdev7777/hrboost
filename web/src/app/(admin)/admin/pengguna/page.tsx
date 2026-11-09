@@ -1,5 +1,6 @@
 "use client";
 
+import { mintaTeks } from "@/components/Dialog";
 import { useState } from "react";
 import { useData } from "@/lib/useData";
 import { masaRelatif, rpc } from "@/lib/admin";
@@ -84,12 +85,14 @@ export default function SaPengguna() {
                     <span className="flex gap-2">
                       <button
                         type="button"
-                        onClick={() =>
+                        onClick={async () => {
+                          const sebab = u.active ? await mintaTeks({ tajuk: `Nyahaktifkan ${u.name}?`, mesej: "Pengguna ini tidak boleh log masuk sehingga diaktifkan semula.", label: "Sebab", ok: "Nyahaktifkan", bahaya: true }) : null;
+                          if (u.active && sebab === null) return;
                           buat(
-                            () => rpc("sa_set_person_active", { p_person: u.person_id, p_active: !u.active, p_reason: u.active ? window.prompt("Sebab dinyahaktifkan") ?? null : null }),
+                            () => rpc("sa_set_person_active", { p_person: u.person_id, p_active: !u.active, p_reason: sebab }),
                             u.active ? `${u.name} dinyahaktifkan.` : `${u.name} diaktifkan semula.`,
-                          )
-                        }
+                          );
+                        }}
                         className={`h-9 rounded-[10px] border px-3 text-[13px] font-bold ${u.active ? "border-danger text-danger" : "border-primary text-primary"}`}
                       >
                         {u.active ? "Nyahaktifkan" : "Aktifkan"}

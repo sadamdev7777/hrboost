@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMe, type Me } from "@/lib/me";
 import { useData } from "@/lib/useData";
+import { kehadiranDisambung } from "@/lib/kehadiran";
 import { getBaki, getKehadiranMinggu, type Baki, getPermohonanSaya, kiniDi, paparPermohonan } from "@/lib/data";
 import { hari, hariPendek, masaRingkas, todayISO } from "@/lib/format";
 import { IconCalendar, IconClock, IconReceipt } from "@/components/icons";
@@ -28,6 +29,7 @@ function StaffUtama({ me }: { me: Me }) {
   const baki = useData(() => (emp ? getBaki(emp) : Promise.resolve({} as Record<string, Baki>)), [emp?.id]);
   const mohon = useData(() => getPermohonanSaya(2), [emp?.id]);
   const hadir = useData(() => (emp ? getKehadiranMinggu(emp) : Promise.resolve([])), [emp?.id]);
+  const sambung = useData(() => (emp ? kehadiranDisambung(emp.companyId) : Promise.resolve(false)), [emp?.companyId]);
 
   const al = baki.data?.AL;
   const mc = baki.data?.MC;
@@ -73,7 +75,7 @@ function StaffUtama({ me }: { me: Me }) {
             <QuickAction href="/tuntutan/baru" label="Buat Tuntutan" icon={<IconReceipt size={22} />} />
             <QuickAction href="/kehadiran/betulkan" label="Betulkan Masa" icon={<IconClock size={22} />} />
           </div>
-          {emp && (
+          {emp && sambung.data === true && (
             <section className="flex flex-col gap-3 rounded-card bg-surface px-4 py-3">
               <div className="flex items-center justify-between">
                 <h2 className="m-0 text-base font-extrabold">Kehadiran minggu ini</h2>

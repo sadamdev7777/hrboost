@@ -102,11 +102,11 @@ select e.id, s from employments e
 insert into public_holidays (holiday_date, name, is_mandatory) values
   ('2026-12-25', 'Hari Krismas', false);
 
--- Kehadiran minggu ini untuk Amin (contoh paparan tab Utama)
+-- Kehadiran 7 hari bekerja lepas untuk Amin (contoh paparan tab Utama & Kehadiran)
 insert into attendance_records (employment_id, work_date, clock_in, source)
 select '00000000-0000-0000-0000-0000000000e4', d::date,
        (d::date + time '08:50' + (random() * interval '25 minutes')) at time zone 'Asia/Kuala_Lumpur', 'demo'
-  from generate_series(date_trunc('week', current_date), current_date - 1, interval '1 day') d
+  from generate_series(current_date - 7, current_date - 1, interval '1 day') d
  where extract(isodow from d) <= 5;
 
 -- ---------------------------------------------------------------------

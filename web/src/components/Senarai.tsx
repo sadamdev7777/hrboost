@@ -29,7 +29,10 @@ export function Medan({ label, children }: { label: ReactNode; children: ReactNo
 }
 
 /** Baris pautan dengan ikon/teks dan anak panah. */
-export function BarisPautan({ href, children, kanan }: { href: string; children: ReactNode; kanan?: ReactNode }) {
+export function BarisPautan({ href, children, kanan, roles }: { href: string; children: ReactNode; kanan?: ReactNode; roles?: Role[] }) {
+  const me = useMe();
+  // Pautan ke skrin yang tiada akses tidak dipaparkan langsung (elak halaman "Tiada akses").
+  if (roles && !hasRole(me, roles)) return null;
   return (
     <Link href={href} className="flex min-h-12 items-center gap-3 py-2 text-sm font-semibold text-ink!">
       <span className="grow">{children}</span>

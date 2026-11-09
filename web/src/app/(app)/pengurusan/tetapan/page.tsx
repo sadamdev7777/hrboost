@@ -62,23 +62,23 @@ function Menu() {
           <BarisPautan href="/pengurusan/tetapan/syarikat" kanan={em(x?.code)}>
             Profil Syarikat
           </BarisPautan>
-          <BarisPautan href="/pengurusan/tetapan/jabatan" kanan={em(jab.data && `${jab.data} jabatan`)}>
+          <BarisPautan href="/pengurusan/tetapan/jabatan" roles={["hr","admin"]} kanan={em(jab.data && `${jab.data} jabatan`)}>
             Jabatan &amp; Ketua
           </BarisPautan>
-          <BarisPautan href="/pengurusan/tetapan/pengguna">Pengguna &amp; Peranan</BarisPautan>
+          <BarisPautan href="/pengurusan/tetapan/pengguna" roles={["hr","admin"]}>Pengguna &amp; Peranan</BarisPautan>
         </Kotak>
 </div>
 
 <div className="flex flex-col gap-2.5">
         <Seksyen className="pt-1">KELULUSAN &amp; AUTOMASI</Seksyen>
         <Kotak>
-          <BarisPautan href="/pengurusan/tetapan/aliran" kanan={em(x && `${x.workflows} jenis`)}>
+          <BarisPautan href="/pengurusan/tetapan/aliran" roles={["hr","admin"]} kanan={em(x && `${x.workflows} jenis`)}>
             Aliran Kelulusan
           </BarisPautan>
-          <BarisPautan href="/pengurusan/tetapan/wakil" kanan={em(x && `${x.delegations_active} aktif`)}>
+          <BarisPautan href="/pengurusan/tetapan/wakil" roles={["hr","admin"]} kanan={em(x && `${x.delegations_active} aktif`)}>
             Wakil Kelulusan
           </BarisPautan>
-          <BarisPautan href="/pengurusan/tetapan/automasi" kanan={em(x && `${x.automations} peraturan`)}>
+          <BarisPautan href="/pengurusan/tetapan/automasi" roles={["hr","admin"]} kanan={em(x && `${x.automations} peraturan`)}>
             Automasi WhatsApp
           </BarisPautan>
         </Kotak>
@@ -87,11 +87,11 @@ function Menu() {
 <div className="flex flex-col gap-2.5">
         <Seksyen className="pt-1">CUTI, TUNTUTAN &amp; KEHADIRAN</Seksyen>
         <Kotak>
-          <BarisPautan href="/pengurusan/tetapan/cuti">Jenis &amp; Kelayakan Cuti</BarisPautan>
-          <BarisPautan href="/pengurusan/tetapan/cuti-umum" kanan={em(x && `${x.holidays} hari · ${NEGERI_RINGKAS[x.state] ?? x.state}`)}>
+          <BarisPautan href="/pengurusan/tetapan/cuti" roles={["hr","admin"]}>Jenis &amp; Kelayakan Cuti</BarisPautan>
+          <BarisPautan href="/pengurusan/tetapan/cuti-umum" roles={["hr","admin"]} kanan={em(x && `${x.holidays} hari · ${NEGERI_RINGKAS[x.state] ?? x.state}`)}>
             Cuti Umum
           </BarisPautan>
-          <BarisPautan href="/pengurusan/tetapan/tuntutan">Jenis Tuntutan &amp; Had</BarisPautan>
+          <BarisPautan href="/pengurusan/tetapan/tuntutan" roles={["hr","finance","admin"]}>Jenis Tuntutan &amp; Had</BarisPautan>
           <BarisPautan href="/pengurusan/tetapan/syarikat#waktu" kanan={em(x && `${x.work_start} · ${x.grace} min`)}>
             Waktu Kerja
           </BarisPautan>
@@ -104,7 +104,7 @@ function Menu() {
           <BarisPautan href="/pengurusan/tetapan/kadar" kanan={em("KWSP · PERKESO · PCB")}>
             Kadar Berkanun
           </BarisPautan>
-          <BarisPautan href="/pengurusan/tetapan/akaun" kanan={em(x && AKAUN[x.accounting])}>
+          <BarisPautan href="/pengurusan/tetapan/akaun" roles={["finance","admin"]} kanan={em(x && AKAUN[x.accounting])}>
             Integrasi Akaun
           </BarisPautan>
         </Kotak>
@@ -113,10 +113,10 @@ function Menu() {
 <div className="flex flex-col gap-2.5">
         <Seksyen className="pt-1">SISTEM</Seksyen>
         <Kotak>
-          <BarisPautan href="/pengurusan/tetapan/pengetahuan-ai" kanan={em(x && (x.kb_docs ? `${x.kb_docs} dokumen` : "Buku panduan, polisi"))}>
+          <BarisPautan href="/pengurusan/tetapan/pengetahuan-ai" roles={["hr","admin"]} kanan={em(x && (x.kb_docs ? `${x.kb_docs} dokumen` : "Buku panduan, polisi"))}>
             Pengetahuan AI
           </BarisPautan>
-          <BarisPautan href="/pengurusan/tetapan/kehadiran" kanan={em(x && (x.attendance ? "CrossChex" : "Belum disambung"))}>
+          <BarisPautan href="/pengurusan/tetapan/kehadiran" roles={["hr","admin"]} kanan={em(x && (x.attendance ? "CrossChex" : "Belum disambung"))}>
             Integrasi Kehadiran
           </BarisPautan>
         </Kotak>

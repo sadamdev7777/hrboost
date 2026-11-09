@@ -1,5 +1,6 @@
 "use client";
 
+import { mintaTeks, sahkan } from "@/components/Dialog";
 import { useState } from "react";
 import { useData } from "@/lib/useData";
 import { rpc, tarikhPendek } from "@/lib/admin";
@@ -28,7 +29,8 @@ export default function SaAkses() {
   const aktif = (d.data ?? []).filter((g) => g.status === "approved");
 
   async function putus(id: string, lulus: boolean) {
-    const nota = lulus ? null : window.prompt("Sebab menolak (dimaklumkan kepada pemohon)");
+    const nota = lulus ? null : await mintaTeks({ tajuk: "Tolak permohonan akses", label: "Sebab (dimaklumkan kepada pemohon)", ok: "Tolak", bahaya: true });
+    if (!lulus && nota === null) return;
     if (!lulus && !nota?.trim()) return;
     setRalat(null);
     try {
@@ -39,7 +41,7 @@ export default function SaAkses() {
     }
   }
   async function tarik(id: string) {
-    if (!window.confirm("Tarik balik akses ini?")) return;
+    if (!(await sahkan({ tajuk: "Tarik balik akses ini?", ok: "Tarik balik", bahaya: true }))) return;
     try {
       await rpc("revoke_company_access", { p_grant: id });
       d.reload();

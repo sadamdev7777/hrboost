@@ -1633,6 +1633,9 @@ isOneToOne: false
 "cancel_employment_end":
 { Args: { "p_employment": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
                            },
+"company_attendance_connected":
+{ Args: { "p_company": string }; Returns: boolean
+                           },
 "company_external_access":
 { Args: { "p_company": string }; Returns: {
               "created_at": string,"days": number,"expires_at": string,"home_company": string,"id": string,"name": string,"reason": string,"role": Database["public"]['Enums']["app_role"],"status": string

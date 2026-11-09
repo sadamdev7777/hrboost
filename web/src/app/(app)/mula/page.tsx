@@ -53,10 +53,13 @@ function Senarai() {
                       {done ? "✓" : i + 1}
                     </span>
                     <span className={`grow text-sm ${done ? "text-muted line-through" : "font-bold"}`}>{l.label}</span>
-                    <span className={`text-[13px] font-bold ${kini ? "text-primary" : "text-muted"}`}>{kini ? "Mulakan →" : l.nota}</span>
+                    <span className={`text-[13px] font-bold ${kini ? "text-primary" : "text-muted"}`}>
+                      {(l.id === "company" || l.id === "roles") && !me.roles.includes("admin") && !done ? "Pentadbir sahaja" : kini ? "Mulakan →" : l.nota}
+                    </span>
                   </>
                 );
-                return l.id === "admin" ? (
+                const khas = (l.id === "company" || l.id === "roles") && !me.roles.includes("admin");
+                return l.id === "admin" || khas ? (
                   <div key={l.id} className="flex min-h-12 items-center gap-3">
                     {isi}
                   </div>

@@ -62,3 +62,9 @@ export async function hantarPembetulan(employmentId: string, date: string, masuk
     }),
   );
 }
+
+/** Adakah syarikat sudah menyambung sistem kehadiran? (Jika belum, jangan kira "tidak hadir".) */
+export async function kehadiranDisambung(companyId: string): Promise<boolean> {
+  const { data } = await getSupabase().rpc("company_attendance_connected", { p_company: companyId });
+  return data !== false;
+}
