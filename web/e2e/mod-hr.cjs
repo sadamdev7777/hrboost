@@ -37,7 +37,7 @@ const navMobile = async (p) => (await p.locator('nav.sticky >> visible=true').lo
   await p.waitForURL('**/pengurusan', { timeout: 20000 });
   await p.waitForSelector('text=PERLU TINDAKAN ANDA');
   expect(true, 'HR terus ke Papan Pemuka selepas log masuk');
-  const sisi = await p.locator('aside').innerText();
+  const sisi = await p.locator('aside[aria-label="Menu sisi"] >> visible=true').innerText();
   expect(['Papan Pemuka', 'Pekerja', 'Kelulusan', 'Gaji', 'Jabatan', 'Tetapan', 'Tukar ke Mod Pekerja', 'Cari pekerja'].every((t) => sisi.includes(t)), 'menu sisi desktop: menu HR + suis mod');
   expect(!(await p.locator('nav.sticky').isVisible()), 'navigasi bawah disorok di desktop');
   await p.screenshot({ path: `${shots}/hr-papan-desktop.png` });

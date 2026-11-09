@@ -11,8 +11,8 @@ type Orang = { personId: string; name: string; departmentId: string | null; empl
 
 function ralatJabatan(e: unknown): string {
   const m = e instanceof Error ? e.message : String(e);
-  if (/duplicate|unique|departments_company_id_name/i.test(m)) return "Nama jabatan ini sudah wujud.";
-  if (/foreign key|violates/i.test(m)) return "Jabatan ini masih dikaitkan dengan rekod pekerja (termasuk bekas pekerja). Pindahkan pekerja ke jabatan lain dahulu.";
+  if (/duplicate|unique|departments_company_id_name|sudah wujud/i.test(m)) return "Nama jabatan ini sudah wujud.";
+  if (/foreign key|violates|masih digunakan/i.test(m)) return "Jabatan ini masih dikaitkan dengan rekod pekerja (termasuk bekas pekerja). Pindahkan pekerja ke jabatan lain dahulu.";
   return m || "Ralat";
 }
 

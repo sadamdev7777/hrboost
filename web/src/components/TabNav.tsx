@@ -127,7 +127,7 @@ export function MenuSisi() {
   };
 
   return (
-    <aside className="sticky top-0 hidden h-dvh w-[248px] shrink-0 flex-col gap-1 border-r border-line-soft bg-surface px-3 py-5 lg:flex">
+    <aside aria-label="Menu sisi" className="sticky top-0 hidden h-dvh w-[248px] shrink-0 flex-col gap-1 border-r border-line-soft bg-surface px-3 py-5 lg:flex">
       <div className="flex items-center gap-2.5 px-2 pb-4">
         <span className="flex size-9 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold text-white">HR</span>
         <span className="flex min-w-0 flex-col">

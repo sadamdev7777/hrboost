@@ -10,7 +10,7 @@ const CIRI = ["Mohon cuti & tuntutan dari telefon", "Lulus terus dari WhatsApp",
 export function KerangkaMasuk({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-dvh w-full bg-page text-ink">
-      <aside className="hidden w-[46%] max-w-[640px] flex-col justify-between bg-primary px-14 py-12 text-on-primary lg:flex">
+      <div className="hidden w-[46%] max-w-[640px] flex-col justify-between bg-primary px-14 py-12 text-on-primary lg:flex">
         <Link href="/" className="flex items-center gap-2.5 text-white!">
           <span className="flex size-10 items-center justify-center rounded-[10px] bg-surface text-base font-extrabold text-primary">HR</span>
           <b className="text-xl font-extrabold">HRBoost.io</b>
@@ -32,7 +32,7 @@ export function KerangkaMasuk({ children }: { children: ReactNode }) {
           </ul>
         </div>
         <span className="text-sm opacity-75">Sistem HR percuma untuk syarikat di Malaysia.</span>
-      </aside>
+      </div>
 
       <main className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col lg:max-w-[440px] lg:justify-center">
         <header className="flex flex-col gap-3 bg-primary px-6 pt-14 pb-8 text-on-primary lg:bg-transparent lg:px-6 lg:pt-0 lg:pb-2 lg:text-ink">
