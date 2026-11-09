@@ -39,6 +39,10 @@ function Menu() {
     async () => must(await getSupabase().rpc("settings_summary", { p_company: emp.companyId })) as unknown as Ringkasan,
     [emp.companyId],
   );
+  const jab = useData(
+    async () => (await getSupabase().from("departments").select("id", { count: "exact", head: true }).eq("company_id", emp.companyId)).count ?? 0,
+    [emp.companyId],
+  );
   const x = r.data;
   const em = (t: string | number | undefined | null) => (t === undefined || t === null || t === "" ? undefined : <em className="text-[13px] font-semibold text-muted not-italic">{t}</em>);
 
@@ -53,7 +57,20 @@ function Menu() {
         {r.error && <ErrorBox message={r.error} />}
 <div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6 lg:gap-y-5">
 <div className="flex flex-col gap-2.5">
-        <Seksyen>KELULUSAN &amp; AUTOMASI</Seksyen>
+        <Seksyen>SYARIKAT &amp; PEKERJA</Seksyen>
+        <Kotak>
+          <BarisPautan href="/pengurusan/tetapan/syarikat" kanan={em(x?.code)}>
+            Profil Syarikat
+          </BarisPautan>
+          <BarisPautan href="/pengurusan/tetapan/jabatan" kanan={em(jab.data && `${jab.data} jabatan`)}>
+            Jabatan &amp; Ketua
+          </BarisPautan>
+          <BarisPautan href="/pengurusan/tetapan/pengguna">Pengguna &amp; Peranan</BarisPautan>
+        </Kotak>
+</div>
+
+<div className="flex flex-col gap-2.5">
+        <Seksyen className="pt-1">KELULUSAN &amp; AUTOMASI</Seksyen>
         <Kotak>
           <BarisPautan href="/pengurusan/tetapan/aliran" kanan={em(x && `${x.workflows} jenis`)}>
             Aliran Kelulusan
@@ -96,11 +113,6 @@ function Menu() {
 <div className="flex flex-col gap-2.5">
         <Seksyen className="pt-1">SISTEM</Seksyen>
         <Kotak>
-          <BarisPautan href="/pengurusan/tetapan/syarikat" kanan={em(x?.code)}>
-            Profil Syarikat
-          </BarisPautan>
-          <BarisPautan href="/pengurusan/tetapan/jabatan">Jabatan &amp; Ketua</BarisPautan>
-          <BarisPautan href="/pengurusan/tetapan/pengguna">Pengguna &amp; Peranan</BarisPautan>
           <BarisPautan href="/pengurusan/tetapan/pengetahuan-ai" kanan={em(x && (x.kb_docs ? `${x.kb_docs} dokumen` : "Buku panduan, polisi"))}>
             Pengetahuan AI
           </BarisPautan>

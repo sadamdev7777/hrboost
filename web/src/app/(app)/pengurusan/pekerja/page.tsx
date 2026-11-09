@@ -73,6 +73,13 @@ function Senarai() {
         title={`Pekerja ${emp.companyCode}`}
         action={
           boleh && (
+            <span className="flex items-center gap-2">
+            <Link
+              href="/pengurusan/tetapan/jabatan"
+              className="flex h-11 items-center rounded-full border border-line bg-surface px-4 text-sm font-bold text-primary!"
+            >
+              Jabatan
+            </Link>
             <Link
               href="/pengurusan/pekerja/baru"
               aria-label="Tambah pekerja"
@@ -92,6 +99,7 @@ function Senarai() {
               </svg>
               <span className="hidden lg:inline">Tambah pekerja</span>
             </Link>
+            </span>
           )
         }
       />

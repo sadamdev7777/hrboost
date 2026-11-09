@@ -84,6 +84,7 @@ export default function SayaPage() {
           <Kumpulan tajuk="PENGURUSAN · HR / CEO SAHAJA">
             <Baris href="/pengurusan" icon={<IconChart size={18} />} tone="bg-[#FDEBD7] text-warning" label="Papan Pemuka Syarikat" />
             <Baris href="/pengurusan/pekerja" icon={<IconUsers size={18} />} tone="bg-[#FDEBD7] text-warning" label="Pekerja" />
+            {hasRole(me, ["hr", "admin"]) && <Baris href="/pengurusan/tetapan/jabatan" icon={<IconUsers size={18} />} tone="bg-[#FDEBD7] text-warning" label="Jabatan & Ketua" />}
             {hasRole(me, ["hr", "finance", "admin"]) && (
               <>
                 <Baris href="/pengurusan/gaji" icon={<IconCard size={18} />} tone="bg-[#FDEBD7] text-warning" label="Proses Gaji" />
