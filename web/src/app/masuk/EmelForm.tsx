@@ -32,7 +32,7 @@ export function EmelForm() {
   }
 
   return (
-    <form onSubmit={submit} className="flex grow flex-col gap-4 px-6 pt-7 pb-4" noValidate>
+    <form onSubmit={submit} className="flex grow flex-col gap-4 px-6 pt-7 pb-4 lg:grow-0" noValidate>
       <label className="flex flex-col gap-2 text-sm font-bold">
         E-mel
         <input

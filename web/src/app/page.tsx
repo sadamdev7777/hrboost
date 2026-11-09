@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -19,6 +20,20 @@ const LANGKAH = [
   ["Import pekerja", "Muat naik senarai Excel sedia ada. Sistem akan memadankan jabatan dan ketua untuk anda semak."],
   ["Pekerja menerima jemputan", "Setiap pekerja menerima pautan di WhatsApp, mengaktifkan akaun dengan OTP, dan terus boleh memohon cuti."],
 ];
+const SOALAN = [
+  ["Adakah HRBoost benar-benar percuma?", "Ya. Daftar syarikat, jemput pekerja dan gunakan cuti, tuntutan, kelulusan, kehadiran dan gaji tanpa bayaran dan tanpa kad kredit."],
+  ["Adakah data pekerja selamat?", "Setiap syarikat diasingkan sepenuhnya. Hanya HR syarikat anda boleh melihat kad pengenalan, akaun bank, gaji dan sijil cuti sakit, dan setiap akses direkodkan. Pentadbir platform hanya melihat jumlah keseluruhan, bukan data peribadi."],
+  ["Perlukah pekerja memasang aplikasi?", "Tidak. Pekerja menerima pautan di WhatsApp dan boleh terus menggunakan pelayar telefon. Mereka boleh memasangnya pada skrin utama jika mahu."],
+  ["Bagaimana jika pekerja tiada WhatsApp?", "HR boleh menyalin pautan jemputan dan menghantarnya melalui saluran lain. Pekerja kemudian log masuk dengan e-mel dan kata laluan."],
+  ["Bolehkah saya menggunakan mesin kehadiran sedia ada?", "Ya, mesin CrossChex Cloud boleh disambungkan. Rekod masuk dan keluar diterima secara automatik setiap 5 minit."],
+  ["Berapa lama untuk mula?", "Kebanyakan syarikat siap dalam satu petang: daftar, import senarai pekerja daripada Excel, semak jabatan dan ketua, kemudian jemput pekerja."],
+];
+const SKRIN = [
+  { src: "/skrin/pekerja-utama.webp", alt: "Skrin utama pekerja: baki cuti, permohonan dan kehadiran", tajuk: "Pekerja", sub: "Baki cuti, permohonan dan kehadiran di satu skrin.", telefon: true },
+  { src: "/skrin/pekerja-mohon-cuti.webp", alt: "Skrin mohon cuti: jenis cuti, tarikh dan pelulus", tajuk: "Mohon cuti", sub: "Hari bekerja dan baki dikira semasa memilih tarikh.", telefon: true },
+  { src: "/skrin/hr-papan-pemuka.webp", alt: "Papan Pemuka HR: tindakan, kehadiran hari ini dan status gaji", tajuk: "Papan Pemuka HR", sub: "Semua yang perlu diuruskan hari ini, dengan butang Lulus terus.", telefon: false },
+  { src: "/skrin/hr-gaji-pekerja.webp", alt: "Jadual Gaji Pekerja dengan KWSP, PERKESO, SIP dan gaji bersih", tajuk: "Gaji pekerja", sub: "KWSP, PERKESO, SIP dan PCB dikira semasa anda menaip.", telefon: false },
+];
 const PATUH = ["Akta Kerja 1955", "KWSP", "PERKESO", "SIP", "PCB / MTD", "HRDF", "Borang EA"];
 
 // Rujukan reka bentuk: design/Homepage.dc.html
@@ -36,6 +51,9 @@ export default function Homepage() {
         </a>
         <a href="#cara" className="hidden text-sm font-bold text-[#4A5A57]! sm:block">
           Cara bermula
+        </a>
+        <a href="#soalan" className="hidden text-sm font-bold text-[#4A5A57]! md:block">
+          Soalan lazim
         </a>
         <Link href="/masuk" className="flex min-h-11 items-center text-sm font-bold">
           Log masuk
@@ -84,6 +102,33 @@ export default function Homepage() {
         </div>
       </section>
 
+      <section id="skrin" className="mx-auto max-w-[1120px] px-4 pt-14">
+        <h2 className="m-0 text-2xl leading-tight font-extrabold md:text-[34px]">Lihat sendiri.</h2>
+        <p className="mt-3 mb-8 max-w-[680px] text-base text-[#4A5A57]">Skrin sebenar HRBoost — di telefon untuk pekerja, di komputer untuk HR. Contoh menggunakan data demo.</p>
+        <div className="grid gap-4 md:grid-cols-[repeat(2,minmax(0,0.6fr))_minmax(0,1.4fr)]">
+          {SKRIN.filter((x) => x.telefon).map((x) => (
+            <figure key={x.src} className="m-0 flex flex-col gap-2">
+              <Image src={x.src} alt={x.alt} width={780} height={1560} sizes="(min-width: 768px) 220px, 100vw" className="w-full rounded-[22px] border-4 border-ink shadow-md" />
+              <figcaption className="flex flex-col">
+                <b className="text-sm">{x.tajuk}</b>
+                <span className="text-[13px] text-[#4A5A57]">{x.sub}</span>
+              </figcaption>
+            </figure>
+          ))}
+          <div className="flex flex-col gap-4">
+            {SKRIN.filter((x) => !x.telefon).map((x) => (
+              <figure key={x.src} className="m-0 flex flex-col gap-2">
+                <Image src={x.src} alt={x.alt} width={2560} height={1520} sizes="(min-width: 768px) 620px, 100vw" className="w-full rounded-[14px] border border-line shadow-md" />
+                <figcaption className="flex flex-col">
+                  <b className="text-sm">{x.tajuk}</b>
+                  <span className="text-[13px] text-[#4A5A57]">{x.sub}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section id="ciri" className="mx-auto max-w-[1120px] px-4 py-14">
         <h2 className="m-0 max-w-[680px] text-2xl leading-tight font-extrabold md:text-[34px]">Semua urusan HR, tanpa kertas dan tanpa perlu mengejar sesiapa.</h2>
         <p className="mt-3 mb-8 max-w-[680px] text-base text-[#4A5A57]">Dibina untuk syarikat kecil dan sederhana yang memerlukan sistem yang benar-benar digunakan oleh pekerja.</p>
@@ -111,6 +156,48 @@ export default function Homepage() {
               </li>
             ))}
           </ol>
+        </div>
+      </section>
+
+      <section id="pekerja" className="mx-auto grid max-w-[1120px] gap-6 px-4 pt-14 md:grid-cols-2">
+        <div className="flex flex-col gap-3 rounded-card bg-surface p-6">
+          <h2 className="m-0 text-xl font-extrabold">Untuk pekerja</h2>
+          <ul className="m-0 flex list-disc flex-col gap-1.5 pl-5 text-sm leading-relaxed text-[#4A5A57]">
+            <li>Mohon cuti dan buat tuntutan dari telefon — ambil gambar resit, AI mengisi borang.</li>
+            <li>Semak baki cuti, slip gaji dan kehadiran bila-bila masa.</li>
+            <li>Terima keputusan dan slip gaji terus di WhatsApp.</li>
+          </ul>
+          <Link href="/masuk" className="self-start text-sm font-bold">
+            Sudah dijemput? Log masuk ›
+          </Link>
+        </div>
+        <div className="flex flex-col gap-3 rounded-card bg-surface p-6">
+          <h2 className="m-0 text-xl font-extrabold">Untuk HR & majikan</h2>
+          <ul className="m-0 flex list-disc flex-col gap-1.5 pl-5 text-sm leading-relaxed text-[#4A5A57]">
+            <li>Semua kelulusan di satu tempat — atau terus dari WhatsApp dengan membalas LULUS.</li>
+            <li>Gaji, KWSP, PERKESO, SIP dan PCB dikira secara automatik, termasuk fail untuk bank.</li>
+            <li>Papan Pemuka harian: siapa tiada, siapa lewat, apa yang perlu diluluskan.</li>
+          </ul>
+          <Link href="/daftar" className="self-start text-sm font-bold">
+            Daftar syarikat ›
+          </Link>
+        </div>
+      </section>
+
+      <section id="soalan" className="mx-auto max-w-[1120px] px-4 pt-14">
+        <h2 className="m-0 mb-6 text-2xl font-extrabold md:text-[34px]">Soalan lazim</h2>
+        <div className="flex flex-col rounded-card bg-surface px-5 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
+          {SOALAN.map(([q, a]) => (
+            <details key={q} className="group py-4">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-base font-bold [&::-webkit-details-marker]:hidden">
+                {q}
+                <span aria-hidden="true" className="text-xl text-primary transition-transform group-open:rotate-45">
+                  +
+                </span>
+              </summary>
+              <p className="mt-2 mb-0 text-sm leading-relaxed text-[#4A5A57]">{a}</p>
+            </details>
+          ))}
         </div>
       </section>
 

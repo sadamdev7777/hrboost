@@ -31,7 +31,7 @@ export default function KehadiranPage() {
   const today = todayISO();
   const kerja = hari.filter((h) => h.working && !h.holiday);
   const hadir = kerja.filter((h) => h.clockIn).length;
-  const lewat = kerja.filter((h) => h.late > 0 && h.correction !== "approved").length;
+  const lewat = kerja.filter((h) => h.late > emp.graceMinutes && h.correction !== "approved").length;
   const tidakHadir = kerja.filter((h) => !h.clockIn && !h.leave && h.date !== today && h.correction !== "approved").length;
   const [y, m] = bulan.split("-").map(Number);
 
@@ -88,7 +88,7 @@ export default function KehadiranPage() {
             </div>
             {hari.length === 0 && <span className="border-t border-[#EEF2F1] py-3 text-sm text-muted">Tiada rekod bagi bulan ini.</span>}
             {hari.map((h) => (
-              <Baris key={h.date} h={h} today={today} />
+              <Baris key={h.date} h={h} today={today} grace={emp.graceMinutes} />
             ))}
           </div>
         )}
@@ -102,10 +102,10 @@ export default function KehadiranPage() {
   );
 }
 
-function Baris({ h, today }: { h: HariHadir; today: string }) {
+function Baris({ h, today, grace }: { h: HariHadir; today: string; grace: number }) {
   const tarikhLabel = `${hariPendek(h.date)} ${Number(h.date.slice(8))}`;
   const rehat = !h.working || h.holiday || h.leave;
-  const bolehBetul = h.working && !h.holiday && !h.leave && h.correction !== "pending" && h.correction !== "approved" && (h.late > 0 || !h.clockIn || (!h.clockOut && h.date !== today));
+  const bolehBetul = h.working && !h.holiday && !h.leave && h.correction !== "pending" && h.correction !== "approved" && (h.late > grace || !h.clockIn || (!h.clockOut && h.date !== today));
   return (
     <div className="grid grid-cols-[1.1fr_1fr_1fr_auto] items-center gap-2 border-t border-[#EEF2F1] py-2.5 text-sm">
       <span className="flex flex-col">
@@ -116,7 +116,7 @@ function Baris({ h, today }: { h: HariHadir; today: string }) {
         <span className="col-span-2 text-[13px] text-muted">{h.holiday ?? (h.leave ? (CUTI[h.leave] ?? "Cuti") : "Hujung minggu")}</span>
       ) : (
         <>
-          <span className={`font-semibold ${h.late > 0 && h.correction !== "approved" ? "text-warning" : ""}`}>{h.clockIn ? jam(h.clockIn) : "—"}</span>
+          <span className={`font-semibold ${h.late > grace && h.correction !== "approved" ? "text-warning" : ""}`}>{h.clockIn ? jam(h.clockIn) : "—"}</span>
           <span className="font-semibold">{h.clockOut ? jam(h.clockOut) : "—"}</span>
         </>
       )}

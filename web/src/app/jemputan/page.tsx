@@ -48,6 +48,20 @@ export default function JemputanPage() {
         >
           Teruskan
         </button>
+        <div className="mt-2 flex flex-col gap-2 rounded-card bg-surface px-4 py-4 text-[13px] leading-normal text-[#4A5A57]">
+          <b className="text-sm text-ink">Tidak jumpa pautan?</b>
+          <ol className="m-0 flex list-decimal flex-col gap-1 pl-5">
+            <li>Buka WhatsApp dan cari mesej daripada HRBoost bertajuk &ldquo;anda dijemput menyertai&rdquo;.</li>
+            <li>Pautan sah selama 7 hari. Jika telah tamat, minta HR anda menghantar jemputan semula.</li>
+            <li>Tiada WhatsApp? HR boleh menyalin pautan dan menghantarnya melalui e-mel atau SMS.</li>
+          </ol>
+          <span>
+            Sudah mengaktifkan akaun?{" "}
+            <a href="/masuk" className="font-bold">
+              Log masuk
+            </a>
+          </span>
+        </div>
       </form>
     </Screen>
   );

@@ -42,7 +42,7 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={submit} className="flex grow flex-col gap-4 px-6 pt-7 pb-4" noValidate>
+    <form onSubmit={submit} className="flex grow flex-col gap-4 px-6 pt-7 pb-4 lg:grow-0" noValidate>
       <label className="flex flex-col gap-2 text-sm leading-[normal] font-bold">
         No. telefon WhatsApp
         <div className="flex gap-2">

@@ -1,5 +1,6 @@
 "use client";
 
+import { Langkah } from "@/components/LangkahDaftar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
@@ -74,6 +75,7 @@ export default function SahkanSyarikatPage() {
         }}
       >
         <div className="flex flex-col gap-2">
+          <Langkah n={2} />
           <h1 className="m-0 text-[22px] font-extrabold">Sahkan nombor anda</h1>
           <span className="text-sm leading-normal text-subtle">
             Kod 6 digit dihantar ke WhatsApp <b className="text-ink">{p ? paparTelefon(p.phone) : ""}</b>. Ini memastikan hanya anda yang boleh mengurus {p?.company}.
