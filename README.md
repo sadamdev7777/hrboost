@@ -147,6 +147,7 @@ Di staging/produksi, kod OTP dihantar melalui WhatsApp oleh Edge Function `auth-
 | `/masuk/telefon`, `/masuk/kod` | Login, OTP (kali pertama — sahkan nombor telefon) |
 | `/masuk/lupa`, `/masuk/set-semula` | Lupa kata laluan: pautan e-mel + 4 digit akhir kad pengenalan |
 | `/pengurusan/gaji/pekerja` | Gaji Pekerja: gaji pokok & elaun / potongan tetap semua pekerja (jadual, ubah ramai di desktop) |
+| `/pengurusan/tetapan/jabatan` | Jabatan & Ketua: tambah, namakan semula, pilih ketua, padam jabatan kosong |
 | `/akaun/kata-laluan` | Wajib selepas OTP pertama: tetapkan e-mel & kata laluan; juga dari Profil untuk menukarnya |
 | `/jemputan`, `/jemputan/[token]` | Daftar (aktifkan akaun melalui pautan jemputan + 4 digit IC + OTP) |
 | `/orientasi` | Onboarding (senarai semak 8 langkah) |
@@ -189,7 +190,7 @@ node web/e2e/aliran-cuti.cjs
 node web/e2e/orientasi.cjs
 ```
 
-Ujian lain dalam `web/e2e/`: `tuntutan.cjs` (RM1,250 → Ketua → Kewangan → CEO), `profil-cuti.cjs`, `pengurusan-hr.cjs`, `tetapan.cjs`, `kehadiran.cjs`, `gaji.cjs`, `syarikat-baharu.cjs`, `pembantu-ai.cjs`, `mod-hr.cjs` (Mod HR, desktop, Gaji Pekerja → slip), `kata-laluan.cjs` (log masuk e-mel, langkah wajib selepas OTP, lupa kata laluan dengan pelayan Resend palsu). Untuk staging: `E2E_BASE=https://hrboost-staging.netlify.app`.
+Ujian lain dalam `web/e2e/`: `tuntutan.cjs` (RM1,250 → Ketua → Kewangan → CEO), `profil-cuti.cjs`, `pengurusan-hr.cjs`, `tetapan.cjs`, `kehadiran.cjs`, `gaji.cjs`, `syarikat-baharu.cjs`, `pembantu-ai.cjs`, `jabatan.cjs` (Tetapan → Jabatan), `mod-hr.cjs` (Mod HR, desktop, Gaji Pekerja → slip), `kata-laluan.cjs` (log masuk e-mel, langkah wajib selepas OTP, lupa kata laluan dengan pelayan Resend palsu). Untuk staging: `E2E_BASE=https://hrboost-staging.netlify.app`.
 
 - `aliran-cuti.cjs`: Amin memohon cuti 23–28 Dis → Zuerin, Lily dan Sadam meluluskan dari telefon masing-masing → baki Amin 8 → 5 hari.
 - `orientasi.cjs`: HR menjemput pekerja baharu → pautan jemputan + 4 digit IC + OTP → 8 langkah orientasi (swafoto, kad pengenalan dan lain-lain) → Amin memohon MC bersama gambar sijil → ketua jabatan membuka sijil itu.

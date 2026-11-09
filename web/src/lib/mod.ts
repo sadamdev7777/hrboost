@@ -70,6 +70,7 @@ export const NAV_HR: ItemNav[] = [
 /** Item tambahan dalam menu sisi (desktop) Mod HR. */
 export const NAV_HR_LAGI: ItemNav[] = [
   { href: "/pengurusan/gaji/pekerja", label: "Gaji Pekerja", ikon: "card", roles: ["hr", "finance", "admin"] },
+  { href: "/pengurusan/tetapan/jabatan", label: "Jabatan", ikon: "users", roles: ["hr", "admin"] },
   { href: "/pengurusan/tetapan", label: "Tetapan", ikon: "settings" },
 ];
 

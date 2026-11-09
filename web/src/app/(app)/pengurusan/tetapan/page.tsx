@@ -99,6 +99,7 @@ function Menu() {
           <BarisPautan href="/pengurusan/tetapan/syarikat" kanan={em(x?.code)}>
             Profil Syarikat
           </BarisPautan>
+          <BarisPautan href="/pengurusan/tetapan/jabatan">Jabatan &amp; Ketua</BarisPautan>
           <BarisPautan href="/pengurusan/tetapan/pengguna">Pengguna &amp; Peranan</BarisPautan>
           <BarisPautan href="/pengurusan/tetapan/pengetahuan-ai" kanan={em(x && (x.kb_docs ? `${x.kb_docs} dokumen` : "Buku panduan, polisi"))}>
             Pengetahuan AI

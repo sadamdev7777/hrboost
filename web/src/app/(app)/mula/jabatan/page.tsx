@@ -3,13 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
-import { getSupabase } from "@/lib/supabase";
-import { must, useData } from "@/lib/useData";
+import { useData } from "@/lib/useData";
 import { getJabatan, getSenaraiPekerja } from "@/lib/hr";
 import { selesaiLangkah } from "@/lib/mula";
 import { inisial } from "@/lib/format";
 import { ErrorBox, Loading } from "@/components/ui";
-import { ButangUtama, HadPeranan, Lembaran, MedanBorang, inputKecil } from "@/components/Senarai";
+import { ButangUtama, HadPeranan } from "@/components/Senarai";
+import { BorangJabatan, PilihKetua } from "@/components/Jabatan";
 import { MulaLayout } from "@/components/MulaLayout";
 
 // Rujukan reka bentuk: design/SyarikatJabatan.dc.html
@@ -111,7 +111,7 @@ function Jabatan() {
         />
       )}
       {baru && (
-        <JabatanBaru
+        <BorangJabatan
           cid={cid}
           onClose={() => setBaru(false)}
           onDone={() => {
@@ -121,68 +121,5 @@ function Jabatan() {
         />
       )}
     </MulaLayout>
-  );
-}
-
-function PilihKetua({
-  jabatan,
-  ppl,
-  onClose,
-  onDone,
-}: {
-  jabatan: { id: string; name: string; headPersonId: string | null };
-  ppl: { personId: string; name: string; departmentId: string | null; employeeNo: string }[];
-  onClose: () => void;
-  onDone: () => void;
-}) {
-  const susun = [...ppl].sort((a, b) => Number(b.departmentId === jabatan.id) - Number(a.departmentId === jabatan.id));
-  const [orang, setOrang] = useState(jabatan.headPersonId ?? susun[0]?.personId ?? "");
-  const [ralat, setRalat] = useState<string | null>(null);
-  async function simpan() {
-    try {
-      must(await getSupabase().rpc("set_department_head", { p_department: jabatan.id, p_person: orang }));
-      onDone();
-    } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
-    }
-  }
-  return (
-    <Lembaran title={`Ketua ${jabatan.name}`} onClose={onClose}>
-      <MedanBorang label="Pekerja">
-        <select className={inputKecil} value={orang} onChange={(e) => setOrang(e.target.value)}>
-          {susun.map((p) => (
-            <option key={p.personId} value={p.personId}>
-              {p.name} · {p.employeeNo}
-              {p.departmentId === jabatan.id ? "" : " (jabatan lain)"}
-            </option>
-          ))}
-        </select>
-      </MedanBorang>
-      {ralat && <ErrorBox message={ralat} />}
-      <ButangUtama onClick={simpan}>Tetapkan ketua</ButangUtama>
-    </Lembaran>
-  );
-}
-
-function JabatanBaru({ cid, onClose, onDone }: { cid: string; onClose: () => void; onDone: () => void }) {
-  const [nama, setNama] = useState("");
-  const [ralat, setRalat] = useState<string | null>(null);
-  async function simpan() {
-    if (!nama.trim()) return setRalat("Sila isi nama jabatan.");
-    try {
-      must(await getSupabase().from("departments").insert({ company_id: cid, name: nama.trim() }));
-      onDone();
-    } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
-    }
-  }
-  return (
-    <Lembaran title="Jabatan baharu" onClose={onClose}>
-      <MedanBorang label="Nama jabatan">
-        <input className={inputKecil} value={nama} onChange={(e) => setNama(e.target.value)} placeholder="Contoh: Operasi" />
-      </MedanBorang>
-      {ralat && <ErrorBox message={ralat} />}
-      <ButangUtama onClick={simpan}>Tambah</ButangUtama>
-    </Lembaran>
   );
 }
