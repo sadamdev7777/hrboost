@@ -14,6 +14,8 @@ import { TabNav } from "@/components/TabNav";
 import { Loceng } from "@/components/Loceng";
 import { bukaCari } from "@/components/CariPantas";
 import { useSkrinLebar } from "@/lib/skrin";
+import { getKalendarBerkanun, getTarikhTamat, tandaDihantar, type KewajipanBerkanun } from "@/lib/berkanun";
+import { beritahu, mintaTeks } from "@/components/Dialog";
 
 const AV = ["bg-[#FDEBD7] text-warning", "bg-[#E3F1EE] text-primary", "bg-[#EDE9F8] text-ai"];
 const JENIS: Record<string, string> = { leave: "Cuti", claim: "Tuntutan", attendance_correction: "Pembetulan", payroll_run: "Gaji" };
@@ -39,13 +41,15 @@ function Kandungan() {
   const hariIni = todayISO();
   const d = useData(async () => {
     const sb = getSupabase();
-    const [asas, tambahan, tugas, jadi] = await Promise.all([
+    const [asas, tambahan, tugas, jadi, berkanun, tamat] = await Promise.all([
       getDashboard(emp.companyId),
       getDashboardTambahan(emp.companyId),
       getTugasSaya(emp.companyId),
       sb.rpc("team_birthdays", { p_company: emp.companyId, p_from: hariIni, p_to: addDays(hariIni, 6) }),
+      getKalendarBerkanun(emp.companyId).catch(() => [] as KewajipanBerkanun[]),
+      getTarikhTamat(emp.companyId).catch(() => []),
     ]);
-    return { asas, tambahan, tugas, jadi: must(jadi) ?? [] };
+    return { asas, tambahan, tugas, jadi: must(jadi) ?? [], berkanun, tamat };
   }, [emp.companyId]);
   const [sibuk, setSibuk] = useState<string | null>(null);
   const [ralat, setRalat] = useState<string | null>(null);
@@ -65,7 +69,24 @@ function Kandungan() {
   const a = x?.asas;
   const t = x?.tambahan;
   const dijangka = a ? Math.max(a.headcount - a.on_leave.length, 0) : 0;
-  const tindakan = x && a ? x.tugas.length + a.attention.length + (t?.no_salary ? 1 : 0) : 0;
+  const tindakan = x && a ? x.tugas.length + a.attention.length + (t?.no_salary ? 1 : 0) + x.tamat.length : 0;
+
+  async function tanda(k: KewajipanBerkanun) {
+    const ruj = await mintaTeks({
+      tajuk: `Tanda ${k.label} telah dihantar`,
+      label: "No. rujukan / resit (pilihan)",
+      ok: "Tanda dihantar",
+      wajib: false,
+    });
+    if (ruj === null) return;
+    try {
+      await tandaDihantar(emp.companyId, k, ruj);
+      beritahu(`${k.label} ditanda telah dihantar.`);
+      d.reload();
+    } catch (e) {
+      setRalat(e instanceof Error ? e.message : String(e));
+    }
+  }
 
   return (
     <Screen lebar="lebar">
@@ -154,6 +175,16 @@ function Kandungan() {
                   {t.no_salary ? (
                     <Baris tag="Gaji" tone="warning" teks={`${t.no_salary} pekerja belum mempunyai gaji pokok`} href="/pengurusan/gaji/pekerja" aksi="Tetapkan" />
                   ) : null}
+                  {x.tamat.map((m) => (
+                    <Baris
+                      key={m.kind + m.employment_id + m.expiry}
+                      tag={TAMAT[m.kind]}
+                      tone={m.days_left <= 7 ? "danger" : "warning"}
+                      teks={`${m.text} (${m.days_left < 0 ? `lewat ${-m.days_left} hari` : m.days_left === 0 ? "hari ini" : `${m.days_left} hari lagi`})`}
+                      href={`/pengurusan/pekerja/${m.employment_id}`}
+                      aksi="Profil"
+                    />
+                  ))}
                   {a.attention.map((p, i) => (
                     <Baris
                       key={i}
@@ -170,6 +201,7 @@ function Kandungan() {
               </div>
 
               <div className="flex flex-col gap-4">
+                {x.berkanun.length > 0 && <PanelBerkanun senarai={x.berkanun} boleh={urusGaji} onTanda={tanda} />}
                 <Panel tajuk="SIAPA TIADA HARI INI">
                   {a.on_leave.length === 0 && t.late_names.length === 0 && <span className="py-4 text-sm text-muted">Semua pekerja bertugas hari ini.</span>}
                   {a.on_leave.map((c, i) => (
@@ -292,6 +324,46 @@ function Orang({ i, nama, kecil, kanan, kananTone, href }: { i: number; nama: st
     </Link>
   ) : (
     <div className={cls}>{isi}</div>
+  );
+}
+
+const TAMAT: Record<string, string> = { contract: "Kontrak", permit: "Permit", passport: "Pasport", document: "Dokumen" };
+
+function PanelBerkanun({ senarai, boleh, onTanda }: { senarai: KewajipanBerkanun[]; boleh: boolean; onTanda: (k: KewajipanBerkanun) => void }) {
+  return (
+    <Panel tajuk="TARIKH AKHIR BERKANUN">
+      {senarai.map((k) => {
+        const lewat = k.days_left < 0;
+        const dekat = k.days_left <= 5;
+        return (
+          <div key={`${k.kind}-${k.period_year}-${k.period_month}`} className="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-1.5 py-2.5 text-sm">
+            <span className="flex min-w-0 grow basis-40 flex-col">
+              <b className="font-bold">{k.label}</b>
+              <span className="text-xs text-muted">
+                {k.period_month ? `Gaji ${BULAN_PENUH[k.period_month - 1]} ${k.period_year}` : `Tahun ${k.period_year}`} · akhir {tarikh(k.due_date)}
+                {!k.payroll_ready && k.period_month ? " · gaji belum diluluskan" : ""}
+              </span>
+            </span>
+            <span className={`text-xs font-bold ${lewat ? "text-danger" : dekat ? "text-warning" : "text-subtle"}`}>
+              {lewat ? `Lewat ${-k.days_left} hari` : k.days_left === 0 ? "Hari ini" : `${k.days_left} hari lagi`}
+            </span>
+            {boleh && (
+              <span className="flex gap-2">
+                {k.payroll_ready && (
+                  <Link href="/pengurusan/gaji/sejarah" className="flex h-9 items-center rounded-full border border-line px-3 text-xs font-bold">
+                    Fail
+                  </Link>
+                )}
+                <button type="button" onClick={() => onTanda(k)} className="flex h-9 items-center rounded-full border border-line px-3 text-xs font-bold text-primary">
+                  Tanda dihantar
+                </button>
+              </span>
+            )}
+          </div>
+        );
+      })}
+      <span className="py-2 text-[11px] leading-snug text-muted">Peringatan WhatsApp dihantar kepada HR dan Kewangan 5 hari dan 1 hari sebelum tarikh akhir.</span>
+    </Panel>
   );
 }
 

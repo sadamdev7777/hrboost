@@ -26,6 +26,7 @@ import {
   type MaklumatSensitif,
 } from "@/lib/hr";
 import { muatNaikPeribadi, urlSementara } from "@/lib/upload";
+import { setTarikhTamat } from "@/lib/berkanun";
 import { hari, julatTarikh, masa, paparTelefon, ringgit, tarikh, todayISO, type StatusPermohonan } from "@/lib/format";
 import { Avatar, BackHeader, ErrorBox, Loading, Screen, StatusPill } from "@/components/ui";
 import { RingkasanKiraan, UbahGaji, usePratonton } from "@/components/GajiPekerja";
@@ -100,7 +101,7 @@ function bacaPautan(id: string) {
 }
 
 function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja; reload: () => void; bolehUbah: boolean; baru: boolean; keDokumen: () => void }) {
-  const [lembaran, setLembaran] = useState<null | "ubah" | "tamat">(null);
+  const [lembaran, setLembaran] = useState<null | "ubah" | "tamat" | "tarikh">(null);
   // HR terus melihat maklumat peribadi; setiap paparan direkodkan dalam data_access_log (hr_view_sensitive).
   const sd = useData(() => (bolehUbah ? bukaMaklumatSensitif(p.id) : Promise.resolve(null as MaklumatSensitif | null)), [p.id, bolehUbah]);
   const sensitif = sd.data;
@@ -171,6 +172,9 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
           {p.position && <Butir label="Jawatan">{p.position}</Butir>}
           {p.status === "probation" && p.probationEnd && <Butir label="Tamat percubaan">{tarikhPenuh(p.probationEnd)}</Butir>}
           {tamat && p.endDate && <Butir label="Tarikh akhir">{tarikhPenuh(p.endDate)}</Butir>}
+          {p.contractEnd && <Butir label="Kontrak tamat"><TarikhAmaran iso={p.contractEnd} /></Butir>}
+          {p.permitExpiry && <Butir label="Permit kerja tamat"><TarikhAmaran iso={p.permitExpiry} /></Butir>}
+          {p.passportExpiry && <Butir label="Pasport tamat"><TarikhAmaran iso={p.passportExpiry} /></Butir>}
         </div>
       </div>
 
@@ -258,6 +262,9 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
               <Link href={`/pembantu-ai?pekerja=${p.id}&surat=1`} className="flex min-h-11 items-center px-4 text-sm font-semibold text-[#4A3B8C]!">
                 Draf surat (AI): pengesahan, amaran…
               </Link>
+              <button type="button" onClick={() => setLembaran("tarikh")} className="min-h-11 px-4 text-left text-sm font-semibold">
+                Tarikh tamat kontrak, permit &amp; pasport
+              </button>
               <button type="button" onClick={() => setLembaran("tamat")} disabled={!!p.endStatus} className="min-h-11 px-4 text-left text-sm font-semibold text-danger disabled:opacity-50">
                 Tamatkan pekerjaan
               </button>
@@ -316,6 +323,16 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
 
       {lembaran === "ubah" && (
         <UbahPekerjaan
+          p={p}
+          onClose={() => setLembaran(null)}
+          onDone={() => {
+            setLembaran(null);
+            reload();
+          }}
+        />
+      )}
+      {lembaran === "tarikh" && (
+        <UbahTarikhTamat
           p={p}
           onClose={() => setLembaran(null)}
           onDone={() => {
@@ -475,6 +492,55 @@ function UbahPekerjaan({ p, onClose, onDone }: { p: ButiranPekerja; onClose: () 
         </MedanBorang>
         <MedanBorang label="Berkuat kuasa">
           <input className={inputKecil} type="date" value={f.effective_from} onChange={(e) => setF({ ...f, effective_from: e.target.value })} />
+        </MedanBorang>
+      </div>
+      {ralat && <ErrorBox message={ralat} />}
+      <button type="button" onClick={simpan} disabled={busy} className="h-12 rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
+        {busy ? "Menyimpan…" : "Simpan"}
+      </button>
+    </Lembaran>
+  );
+}
+
+/** Tarikh dengan warna amaran: merah jika telah lepas / ≤ 30 hari, kuning jika ≤ 60 hari. */
+function TarikhAmaran({ iso }: { iso: string }) {
+  const baki = Math.round((Date.parse(iso) - Date.parse(todayISO())) / 86400000);
+  const warna = baki <= 30 ? "text-danger" : baki <= 60 ? "text-warning" : "";
+  return (
+    <span className={warna}>
+      {tarikhPenuh(iso)}
+      {baki < 0 ? " (telah tamat)" : baki <= 60 ? ` (${baki} hari lagi)` : ""}
+    </span>
+  );
+}
+
+function UbahTarikhTamat({ p, onClose, onDone }: { p: ButiranPekerja; onClose: () => void; onDone: () => void }) {
+  const [f, setF] = useState({ kontrak: p.contractEnd ?? "", permit: p.permitExpiry ?? "", pasport: p.passportExpiry ?? "" });
+  const [ralat, setRalat] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  async function simpan() {
+    setBusy(true);
+    setRalat(null);
+    try {
+      await setTarikhTamat(p.id, f.kontrak || null, f.pasport || null, f.permit || null);
+      onDone();
+    } catch (e) {
+      setRalat(e instanceof Error ? e.message : "Ralat");
+      setBusy(false);
+    }
+  }
+  return (
+    <Lembaran title="Tarikh tamat" onClose={onClose}>
+      <span className="text-[13px] leading-snug text-subtle">Anda akan diingatkan dalam Papan Pemuka sebelum tarikh ini (kontrak 30 hari, permit &amp; pasport 60 hari).</span>
+      <MedanBorang label="Kontrak tamat" nota="Untuk pekerja kontrak atau pelatih">
+        <input className={inputKecil} type="date" value={f.kontrak} onChange={(e) => setF({ ...f, kontrak: e.target.value })} />
+      </MedanBorang>
+      <div className="grid grid-cols-2 gap-2.5">
+        <MedanBorang label="Permit kerja tamat">
+          <input className={inputKecil} type="date" value={f.permit} onChange={(e) => setF({ ...f, permit: e.target.value })} />
+        </MedanBorang>
+        <MedanBorang label="Pasport tamat">
+          <input className={inputKecil} type="date" value={f.pasport} onChange={(e) => setF({ ...f, pasport: e.target.value })} />
         </MedanBorang>
       </div>
       {ralat && <ErrorBox message={ralat} />}
@@ -766,6 +832,7 @@ function TabDokumen({ p, bolehUbah }: { p: ButiranPekerja; bolehUbah: boolean })
   const fail = useRef<HTMLInputElement>(null);
   const [jenis, setJenis] = useState("offer_letter");
   const [tajuk, setTajuk] = useState("");
+  const [tamatDok, setTamatDok] = useState("");
   const [busy, setBusy] = useState(false);
   const [ralat, setRalat] = useState<string | null>(null);
 
@@ -775,8 +842,9 @@ function TabDokumen({ p, bolehUbah }: { p: ButiranPekerja; bolehUbah: boolean })
     setRalat(null);
     try {
       const path = await muatNaikPeribadi(p.personId, `dokumen-${jenis}`, file);
-      await simpanDokumen(p.id, me.personId, jenis, tajuk.trim() || (JENIS_DOKUMEN.find((j) => j.value === jenis)?.label ?? "Dokumen"), path);
+      await simpanDokumen(p.id, me.personId, jenis, tajuk.trim() || (JENIS_DOKUMEN.find((j) => j.value === jenis)?.label ?? "Dokumen"), path, tamatDok);
       setTajuk("");
+      setTamatDok("");
       d.reload();
     } catch (e) {
       setRalat(e instanceof Error ? e.message : "Ralat");
@@ -809,6 +877,9 @@ function TabDokumen({ p, bolehUbah }: { p: ButiranPekerja; bolehUbah: boolean })
             <MedanBorang label="Tajuk (pilihan)">
               <input className={inputKecil} value={tajuk} onChange={(e) => setTajuk(e.target.value)} />
             </MedanBorang>
+            <MedanBorang label="Tarikh tamat (pilihan)" nota="Cth. sijil, lesen, permit">
+              <input className={inputKecil} type="date" value={tamatDok} onChange={(e) => setTamatDok(e.target.value)} />
+            </MedanBorang>
           </div>
           <button type="button" disabled={busy} onClick={() => fail.current?.click()} className="h-12 rounded-button bg-primary text-sm font-bold text-white disabled:opacity-60">
             {busy ? "Memuat naik…" : "Muat naik dokumen"}
@@ -828,6 +899,12 @@ function TabDokumen({ p, bolehUbah }: { p: ButiranPekerja; bolehUbah: boolean })
                 <b className="font-bold">{x.title}</b>
                 <span className="text-xs text-muted">
                   {JENIS_DOKUMEN.find((j) => j.value === x.doc_type)?.label ?? x.doc_type} · {tarikh(x.created_at)}
+                  {x.expiry_date && (
+                    <>
+                      {" · tamat "}
+                      <TarikhAmaran iso={x.expiry_date} />
+                    </>
+                  )}
                 </span>
               </span>
               <span className="text-[13px] font-bold text-primary">Buka</span>

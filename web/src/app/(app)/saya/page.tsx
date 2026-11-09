@@ -92,6 +92,7 @@ export default function SayaPage() {
                 <Baris href="/pengurusan/gaji/pekerja" icon={<IconWallet size={18} />} tone="bg-[#FDEBD7] text-warning" label="Gaji Pekerja" />
               </>
             )}
+            <Baris href="/pengurusan/laporan" icon={<IconChart size={18} />} tone="bg-[#FDEBD7] text-warning" label="Laporan" />
             <Baris href="/pengurusan/tetapan" icon={<IconSettings size={18} />} tone="bg-[#FDEBD7] text-warning" label="Tetapan" />
           </Kumpulan>
         )}

@@ -156,6 +156,9 @@ export type ButiranPekerja = {
   otherCompanies: number;
   activated: boolean;
   inviteSentAt: string | null;
+  contractEnd: string | null;
+  passportExpiry: string | null;
+  permitExpiry: string | null;
 };
 
 export async function getButiranPekerja(employmentId: string): Promise<ButiranPekerja> {
@@ -164,7 +167,7 @@ export async function getButiranPekerja(employmentId: string): Promise<ButiranPe
     await sb
       .from("employments")
       .select(
-        "id, person_id, company_id, employee_no, status, employment_type, join_date, probation_end_date, end_date, end_status, department_id, work_start, departments(name, head_person_id), positions(title), companies(name, work_start), persons!employments_person_id_fkey(preferred_name, full_name, auth_user_id)",
+        "id, person_id, company_id, employee_no, status, employment_type, join_date, probation_end_date, end_date, end_status, contract_end_date, department_id, work_start, departments(name, head_person_id), positions(title), companies(name, work_start), persons!employments_person_id_fkey(preferred_name, full_name, auth_user_id, passport_expiry, permit_expiry)",
       )
       .eq("id", employmentId)
       .maybeSingle(),
@@ -200,6 +203,9 @@ export async function getButiranPekerja(employmentId: string): Promise<ButiranPe
     otherCompanies: Number(must(lain) ?? 0),
     activated: !!e.persons?.auth_user_id,
     inviteSentAt: (must(inv) ?? [])[0]?.created_at ?? null,
+    contractEnd: e.contract_end_date,
+    passportExpiry: e.persons?.passport_expiry ?? null,
+    permitExpiry: e.persons?.permit_expiry ?? null,
   };
 }
 
@@ -255,14 +261,14 @@ export async function getDokumen(employmentId: string) {
     must(
       await getSupabase()
         .from("employee_documents")
-        .select("id, doc_type, title, storage_path, created_at")
+        .select("id, doc_type, title, storage_path, created_at, expiry_date")
         .eq("employment_id", employmentId)
         .order("created_at", { ascending: false }),
     ) ?? []
   );
 }
 
-export async function simpanDokumen(employmentId: string, personId: string, docType: string, title: string, path: string) {
+export async function simpanDokumen(employmentId: string, personId: string, docType: string, title: string, path: string, tamat?: string | null) {
   must(
     await getSupabase().from("employee_documents").insert({
       employment_id: employmentId,
@@ -270,6 +276,7 @@ export async function simpanDokumen(employmentId: string, personId: string, docT
       title,
       storage_path: path,
       uploaded_by: personId,
+      expiry_date: tamat || null,
     }),
   );
 }

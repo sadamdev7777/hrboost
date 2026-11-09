@@ -778,14 +778,14 @@ isOneToOne: false
                   ]
                 },"employee_documents": {
                   Row: {
-                    "created_at": string,"doc_type": string,"employment_id": string,"id": string,"storage_path": string,"title": string,"uploaded_by": string | null
+                    "created_at": string,"doc_type": string,"employment_id": string,"expiry_date": string | null,"id": string,"storage_path": string,"title": string,"uploaded_by": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"doc_type": string,"employment_id": string,"id"?: string,"storage_path": string,"title": string,"uploaded_by"?: string | null
+                    "created_at"?: string,"doc_type": string,"employment_id": string,"expiry_date"?: string | null,"id"?: string,"storage_path": string,"title": string,"uploaded_by"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"doc_type"?: string,"employment_id"?: string,"id"?: string,"storage_path"?: string,"title"?: string,"uploaded_by"?: string | null
+                    "created_at"?: string,"doc_type"?: string,"employment_id"?: string,"expiry_date"?: string | null,"id"?: string,"storage_path"?: string,"title"?: string,"uploaded_by"?: string | null
                   }
                   Relationships: [
                     {
@@ -1342,14 +1342,14 @@ isOneToOne: false
                   ]
                 },"persons": {
                   Row: {
-                    "address": string | null,"auth_user_id": string | null,"bank_account_no": string | null,"bank_name": string | null,"children_count": number,"created_at": string,"date_of_birth": string | null,"email": string | null,"full_name": string,"gender": string | null,"hide_birthday": boolean,"ic_no": string | null,"id": string,"is_active": boolean,"language": string,"marital_status": string | null,"passport_no": string | null,"phone_whatsapp": string | null,"photo_path": string | null,"preferred_name": string | null,"spouse_working": boolean | null,"updated_at": string
+                    "address": string | null,"auth_user_id": string | null,"bank_account_no": string | null,"bank_name": string | null,"children_count": number,"created_at": string,"date_of_birth": string | null,"email": string | null,"full_name": string,"gender": string | null,"hide_birthday": boolean,"ic_no": string | null,"id": string,"is_active": boolean,"language": string,"marital_status": string | null,"passport_expiry": string | null,"passport_no": string | null,"permit_expiry": string | null,"phone_whatsapp": string | null,"photo_path": string | null,"preferred_name": string | null,"spouse_working": boolean | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "address"?: string | null,"auth_user_id"?: string | null,"bank_account_no"?: string | null,"bank_name"?: string | null,"children_count"?: number,"created_at"?: string,"date_of_birth"?: string | null,"email"?: string | null,"full_name": string,"gender"?: string | null,"hide_birthday"?: boolean,"ic_no"?: string | null,"id"?: string,"is_active"?: boolean,"language"?: string,"marital_status"?: string | null,"passport_no"?: string | null,"phone_whatsapp"?: string | null,"photo_path"?: string | null,"preferred_name"?: string | null,"spouse_working"?: boolean | null,"updated_at"?: string
+                    "address"?: string | null,"auth_user_id"?: string | null,"bank_account_no"?: string | null,"bank_name"?: string | null,"children_count"?: number,"created_at"?: string,"date_of_birth"?: string | null,"email"?: string | null,"full_name": string,"gender"?: string | null,"hide_birthday"?: boolean,"ic_no"?: string | null,"id"?: string,"is_active"?: boolean,"language"?: string,"marital_status"?: string | null,"passport_expiry"?: string | null,"passport_no"?: string | null,"permit_expiry"?: string | null,"phone_whatsapp"?: string | null,"photo_path"?: string | null,"preferred_name"?: string | null,"spouse_working"?: boolean | null,"updated_at"?: string
                   }
                   Update: {
-                    "address"?: string | null,"auth_user_id"?: string | null,"bank_account_no"?: string | null,"bank_name"?: string | null,"children_count"?: number,"created_at"?: string,"date_of_birth"?: string | null,"email"?: string | null,"full_name"?: string,"gender"?: string | null,"hide_birthday"?: boolean,"ic_no"?: string | null,"id"?: string,"is_active"?: boolean,"language"?: string,"marital_status"?: string | null,"passport_no"?: string | null,"phone_whatsapp"?: string | null,"photo_path"?: string | null,"preferred_name"?: string | null,"spouse_working"?: boolean | null,"updated_at"?: string
+                    "address"?: string | null,"auth_user_id"?: string | null,"bank_account_no"?: string | null,"bank_name"?: string | null,"children_count"?: number,"created_at"?: string,"date_of_birth"?: string | null,"email"?: string | null,"full_name"?: string,"gender"?: string | null,"hide_birthday"?: boolean,"ic_no"?: string | null,"id"?: string,"is_active"?: boolean,"language"?: string,"marital_status"?: string | null,"passport_expiry"?: string | null,"passport_no"?: string | null,"permit_expiry"?: string | null,"phone_whatsapp"?: string | null,"photo_path"?: string | null,"preferred_name"?: string | null,"spouse_working"?: boolean | null,"updated_at"?: string
                   }
                   Relationships: [
                     
@@ -1467,6 +1467,32 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"statutory_submissions": {
+                  Row: {
+                    "company_id": string,"id": string,"kind": string,"period_month": number,"period_year": number,"reference": string | null,"submitted_at": string,"submitted_by": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "company_id": string,"id"?: string,"kind": string,"period_month"?: number,"period_year": number,"reference"?: string | null,"submitted_at"?: string,"submitted_by"?: string | null
+                  }
+                  Update: {
+                    "company_id"?: string,"id"?: string,"kind"?: string,"period_month"?: number,"period_year"?: number,"reference"?: string | null,"submitted_at"?: string,"submitted_by"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "statutory_submissions_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "statutory_submissions_submitted_by_fkey"
+      columns: ["submitted_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"usage_counters": {
                   Row: {
@@ -1755,6 +1781,11 @@ isOneToOne: false
 "hr_dashboard_extra":
 { Args: { "p_company": string }; Returns: Json
                            },
+"hr_expiring":
+{ Args: { "p_company": string,"p_days"?: number }; Returns: {
+              "days_left": number,"employment_id": string,"expiry": string,"kind": string,"name": string,"text": string
+            }[]
+                           },
 "hr_opening_balances":
 { Args: { "p_company": string,"p_year": number }; Returns: {
               "employee_no": string,"employment_id": string,"epf": number,"gross": number,"join_date": string,"name": string,"payroll_months": number,"pcb": number,"up_to_month": number
@@ -1765,6 +1796,12 @@ isOneToOne: false
                            },
 "hr_pay_table":
 { Args: { "p_company": string,"p_on"?: string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: Json
+                           },
+"hr_report":
+{ Args: { "p_company": string,"p_from": string,"p_kind": string,"p_to": string }; Returns: Json
+                           },
+"hr_set_expiry":
+{ Args: { "p_contract_end": string,"p_employment": string,"p_passport_expiry": string,"p_permit_expiry": string }; Returns: undefined
                            },
 "hr_set_pay":
 { Args: { "p_effective_from": string,"p_employment": string,"p_items": Json,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
@@ -1862,6 +1899,9 @@ isOneToOne: false
 "mark_my_notifications_read":
 { Args: { "p_ids"?: (string)[] }; Returns: number
                            },
+"mark_statutory_submitted":
+{ Args: { "p_company": string,"p_kind": string,"p_month": number,"p_reference"?: string,"p_year": number }; Returns: undefined
+                           },
 "mask_phone":
 { Args: { "p": string }; Returns: string
                            },
@@ -1935,6 +1975,11 @@ isOneToOne: false
                            },
 "payroll_export":
 { Args: { "p_kind": string,"p_run": string }; Returns: string
+                           },
+"payroll_flags":
+{ Args: { "p_run": string }; Returns: {
+              "employment_id": string,"level": string,"message": string,"name": string
+            }[]
                            },
 "payroll_mark_paid":
 { Args: { "p_pay_date"?: string,"p_run": string }; Returns: number
@@ -2099,8 +2144,19 @@ isOneToOne: false
 "stat_tax":
 { Args: { "p_chargeable": number,"p_date": string }; Returns: number
                            },
+"statutory_calendar":
+{ Args: { "p_company": string }; Returns: Json
+                           },
+"statutory_due_items":
+{ Args: { "p_company": string,"p_today"?: string }; Returns: {
+              "days_left": number,"due_date": string,"kind": string,"label": string,"payroll_ready": boolean,"period_month": number,"period_year": number
+            }[]
+                           },
 "statutory_leave_minimum":
 { Args: { "p_code": string,"p_min_service_months": number }; Returns: number
+                           },
+"statutory_reminders":
+{ Args: Record<PropertyKey, never>; Returns: number
                            },
 "submit_attendance_correction":
 { Args: { "p_date": string,"p_employment": string,"p_in": string,"p_on_behalf"?: string,"p_out": string,"p_reason": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: {

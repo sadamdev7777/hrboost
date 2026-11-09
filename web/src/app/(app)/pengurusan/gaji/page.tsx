@@ -19,6 +19,7 @@ import {
   type Jumlah,
 } from "@/lib/gaji";
 import { getSenaraiPekerja } from "@/lib/hr";
+import { getBenderaGaji, type BenderaGaji } from "@/lib/berkanun";
 import { namaPeringkat, todayISO } from "@/lib/format";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar } from "@/components/TabNav";
@@ -315,6 +316,7 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
           <Angka k="Caruman majikan" v={rm(j.employer)} />
           <Angka k="PCB" v={rm(j.pcb)} />
         </div>
+        <PanelBendera runId={data.run.id} />
         <Seksyen className="pt-1">{j.previous_run ? "BERBEZA DARIPADA BULAN LALU" : "PERUBAHAN"}</Seksyen>
         <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
           {(diff.data ?? []).length === 0 && <span className="py-3 text-muted">Tiada perubahan berbanding bulan lalu.</span>}
@@ -354,6 +356,47 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
         </ButangUtama>
       </div>
     </>
+  );
+}
+
+const GAYA_BENDERA: Record<BenderaGaji["level"], { kotak: string; label: string }> = {
+  ralat: { kotak: "bg-danger-soft text-danger", label: "Mesti dibaiki" },
+  amaran: { kotak: "bg-warning-soft text-warning", label: "Semak" },
+  maklumat: { kotak: "bg-[#E3F1EE] text-primary", label: "Untuk makluman" },
+};
+
+/** Semakan pintar selepas kira: setiap bendera disertakan penjelasan supaya HR tahu apa yang perlu disemak. */
+function PanelBendera({ runId }: { runId: string }) {
+  const f = useData(() => getBenderaGaji(runId), [runId]);
+  const senarai = f.data ?? [];
+  if (f.loading && !f.data) return null;
+  if (!senarai.length)
+    return <div className="rounded-card bg-success-soft px-4 py-3 text-[13px] font-semibold text-success">Semakan pintar: tiada perkara luar biasa ditemui.</div>;
+  return (
+    <section aria-label="Semakan pintar" className="flex flex-col gap-2">
+      <Seksyen className="pt-1">SEMAKAN PINTAR ({senarai.length})</Seksyen>
+      {(["ralat", "amaran", "maklumat"] as const).map((lv) => {
+        const xs = senarai.filter((b) => b.level === lv);
+        if (!xs.length) return null;
+        return (
+          <div key={lv} className={`flex flex-col gap-1 rounded-card px-4 py-3 text-[13px] ${GAYA_BENDERA[lv].kotak}`}>
+            <b>
+              {GAYA_BENDERA[lv].label} ({xs.length})
+            </b>
+            <ul className="m-0 flex list-none flex-col gap-1 p-0">
+              {xs.map((b, i) => (
+                <li key={i} className="leading-snug">
+                  <Link href={`/pengurusan/pekerja/${b.employment_id}`} className="font-bold text-inherit! underline-offset-2 hover:underline">
+                    {b.name}
+                  </Link>
+                  : {b.message}
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })}
+    </section>
   );
 }
 

@@ -14,6 +14,7 @@ const TINDAKAN: { label: string; sub: string; href: string; roles: string[]; kat
   { label: "Proses gaji", sub: "Gaji bulan ini", href: "/pengurusan/gaji", roles: ["hr", "finance", "admin"], kata: "gaji payroll proses slip" },
   { label: "Gaji pekerja", sub: "Gaji pokok & elaun", href: "/pengurusan/gaji/pekerja", roles: ["hr", "finance", "admin"], kata: "gaji pokok elaun kwsp" },
   { label: "Sejarah gaji", sub: "Bulan-bulan lepas & fail", href: "/pengurusan/gaji/sejarah", roles: ["hr", "finance", "admin"], kata: "sejarah gaji fail bank kwsp perkeso" },
+  { label: "Laporan", sub: "Pekerja, cuti, kehadiran, tuntutan, kos gaji", href: "/pengurusan/laporan", roles: ["hr", "finance", "ceo", "admin"], kata: "laporan report pusing ganti baki cuti kehadiran lewat tuntutan kos gaji eksport csv" },
   { label: "Jabatan & ketua", sub: "Tetapan", href: "/pengurusan/tetapan/jabatan", roles: ["hr", "admin"], kata: "jabatan ketua department" },
   { label: "Cuti umum", sub: "Tetapan", href: "/pengurusan/tetapan/cuti-umum", roles: ["hr", "admin"], kata: "cuti umum public holiday" },
   { label: "Jenis cuti", sub: "Tetapan", href: "/pengurusan/tetapan/cuti", roles: ["hr", "admin"], kata: "jenis cuti kelayakan" },
