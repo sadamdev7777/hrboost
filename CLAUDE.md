@@ -131,4 +131,11 @@ Menu "Pengurusan" dalam `Saya` hanya dipaparkan jika `has_role(company, '{hr,fin
 - Semakan undang-undang untuk Notis Privasi & Terma.
 
 ## Bahasa antara muka
-Semua teks skrin, mesej WhatsApp, PDF dan e-mel menggunakan **bahasa Melayu rasmi**: tiada bahasa pasar (dah, tak, nak, je, kat) dan tiada istilah Indonesia. Istilah tetap: tuntutan (bukan claim), pekerja (bukan staff), pelulus, peringkat, Kewangan, Pentadbir, Pentadbir Platform, Papan Pemuka, swafoto, buku panduan, kad pengenalan, e-mel, lalai, perbatuan, letak kereta, pengganti tugas, orientasi pekerja, persediaan syarikat. Nama jenama kekal (WhatsApp, QuickBooks, KWSP, PERKESO, HR, CEO, AI). Ikut teks dalam reka bentuk HRBoost.io — Skrin.
+**English ialah bahasa lalai**; setiap pengguna boleh menukar kepada Bahasa Melayu (Saya → Bahasa, atau suis EN/BM di halaman awam). Pilihan disimpan dalam `persons.language` (`en`/`ms`), kuki `hrb_bahasa` dan localStorage. Mesej WhatsApp, balasan Pembantu AI dan draf surat ikut bahasa setiap orang.
+
+- **Teks sumber dalam kod kekal Bahasa Melayu rasmi** dan dibalut `tr("…", ...nilai)` (`web/src/lib/i18n.ts`); terjemahan English dalam `web/src/lib/kamus/en.ts`. Pemboleh ubah ditulis `{0}`, `{1}`.
+- Mesej daripada pangkalan data (raise exception, nama komponen, semakan gaji) diterjemah dengan `trRalat()` menggunakan `web/src/lib/kamus/ralat.ts` (`%` = nilai, `[%]` = tanda peratus).
+- Mesej WhatsApp diterjemah di pangkalan data: jadual `message_i18n` + `translate_message()` + pencetus pada `notifications`. Tambah peraturan apabila menulis mesej baharu.
+- Teks baharu: tulis dalam BM dengan `tr()`, kemudian tambah entri English dalam kamus. `node web/scripts/i18n-codemod.cjs --keys` menyenaraikan kunci.
+- Bahasa Melayu mesti rasmi: tiada bahasa pasar (dah, tak, nak, je, kat) dan tiada istilah Indonesia. Istilah tetap: tuntutan (bukan claim), pekerja (bukan staff), pelulus, peringkat, Kewangan, Pentadbir, Pentadbir Platform, Papan Pemuka, swafoto, buku panduan, kad pengenalan, e-mel, lalai, perbatuan, letak kereta, pengganti tugas, orientasi pekerja, persediaan syarikat. Nama jenama kekal (WhatsApp, QuickBooks, KWSP, PERKESO, HR, CEO, AI). Ikut teks dalam reka bentuk HRBoost.io — Skrin.
+- Ujian e2e berjalan dalam BM (`web/e2e/_bahasa.cjs`); `web/e2e/bahasa-en.cjs` mengimbas skrin English untuk teks BM yang tertinggal.

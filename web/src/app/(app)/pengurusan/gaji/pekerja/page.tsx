@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { beritahu } from "@/components/Dialog";
 import Link from "next/link";
 import { useState } from "react";
@@ -46,26 +47,23 @@ function GajiPekerja() {
   return (
     <Screen lebar="lebar">
       <PengepalaAkar
-        title="Gaji"
+        title={tr("Gaji")}
         backHr="/pengurusan"
         action={
           <span className="mr-1 flex items-center gap-1">
             <button type="button" onClick={() => setImp(true)} className="flex min-h-11 items-center px-2 text-[13px] font-bold text-primary">
-              Import Excel
-            </button>
+              {tr("Import Excel")}</button>
             <button type="button" onClick={() => setBaru(true)} className="flex min-h-11 items-center px-2 text-[13px] font-bold text-primary">
-              + Jenis elaun
-            </button>
+              {tr("+ Jenis elaun")}</button>
           </span>
         }
       />
       <TabGaji />
       <main className="flex grow flex-col gap-3 px-4 pt-4 pb-6 lg:px-0">
         <span className="text-sm leading-normal text-subtle">
-          Gaji pokok dan elaun / potongan tetap. KWSP, PERKESO, SIP, HRDF dan PCB dikira secara automatik. Komisen, kerja lebih masa dan tuntutan ditambah semasa{" "}
+          {tr("Gaji pokok dan elaun / potongan tetap. KWSP, PERKESO, SIP, HRDF dan PCB dikira secara automatik. Komisen, kerja lebih masa dan tuntutan ditambah semasa")}{" "}
           <Link href="/pengurusan/gaji" className="font-bold">
-            Proses Gaji
-          </Link>
+            {tr("Proses Gaji")}</Link>
           .
         </span>
         {d.error && <ErrorBox message={d.error} />}
@@ -73,17 +71,17 @@ function GajiPekerja() {
         {j && (
           <>
             <div className="grid grid-cols-2 gap-2 lg:grid-cols-5 lg:gap-3">
-              <Angka n={String(j.rows.length)} label="Pekerja aktif" />
-              <Angka n={String(belum.length)} label="Belum ada gaji pokok" tone={belum.length ? "warning" : undefined} />
-              <Angka n={ringgit(t.gross)} label="Jumlah gaji kasar" kecil />
-              <Angka n={ringgit(t.net)} label="Jumlah gaji bersih" kecil />
-              <Angka n={ringgit(t.employer_cost)} label="Kos majikan (termasuk caruman)" kecil />
+              <Angka n={String(j.rows.length)} label={tr("Pekerja aktif")} />
+              <Angka n={String(belum.length)} label={tr("Belum ada gaji pokok")} tone={belum.length ? "warning" : undefined} />
+              <Angka n={ringgit(t.gross)} label={tr("Jumlah gaji kasar")} kecil />
+              <Angka n={ringgit(t.net)} label={tr("Jumlah gaji bersih")} kecil />
+              <Angka n={ringgit(t.employer_cost)} label={tr("Kos majikan (termasuk caruman)")} kecil />
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {(
                 [
-                  ["semua", `Semua · ${j.rows.length}`],
-                  ["belum", `Belum ditetapkan · ${belum.length}`],
+                  ["semua", tr("Semua · {0}", j.rows.length)],
+                  ["belum", tr("Belum ditetapkan · {0}", belum.length)],
                 ] as const
               ).map(([k, l]) => (
                 <button
@@ -97,12 +95,11 @@ function GajiPekerja() {
               ))}
               {!pukal && lebar && (
                 <button type="button" onClick={() => setPukal(true)} className="ml-auto h-9 rounded-full border border-primary px-4 text-[13px] font-bold text-primary">
-                  Ubah ramai sekali gus
-                </button>
+                  {tr("Ubah ramai sekali gus")}</button>
               )}
             </div>
             {senarai.length === 0 && (
-              <span className="text-sm text-muted">{tapis === "belum" ? "Semua pekerja sudah mempunyai gaji pokok." : "Tiada pekerja aktif."}</span>
+              <span className="text-sm text-muted">{tapis === "belum" ? tr("Semua pekerja sudah mempunyai gaji pokok.") : tr("Tiada pekerja aktif.")}</span>
             )}
 
             {lebar &&
@@ -129,7 +126,7 @@ function GajiPekerja() {
                     <span className="flex min-w-0 grow flex-col gap-0.5">
                       <b className="text-sm font-bold">{r.name}</b>
                       <span className="truncate text-xs text-muted">
-                        {r.items.BASIC > 0 ? `Kasar ${ringgit(r.calc?.gross)} · KWSP ${rm(r.calc?.epf_employee)}` : r.employee_no}
+                        {r.items.BASIC > 0 ? tr("Kasar {0} · KWSP {1}", ringgit(r.calc?.gross), rm(r.calc?.epf_employee)) : r.employee_no}
                       </span>
                     </span>
                     {r.items.BASIC > 0 ? (
@@ -138,15 +135,14 @@ function GajiPekerja() {
                         <span className="text-[11px] text-muted">bersih</span>
                       </span>
                     ) : (
-                      <Tag tone="warning">Belum ditetapkan</Tag>
+                      <Tag tone="warning">{tr("Belum ditetapkan")}</Tag>
                     )}
                   </button>
                 ))}
               </div>
             )}
             <span className="text-xs leading-normal text-muted">
-              Angka ialah anggaran sebulan bagi gaji tetap; PCB sebenar bergantung pada data terkumpul tahun ini. Setiap paparan dan perubahan gaji direkodkan dalam log akses data.
-            </span>
+              {tr("Angka ialah anggaran sebulan bagi gaji tetap; PCB sebenar bergantung pada data terkumpul tahun ini. Setiap paparan dan perubahan gaji direkodkan dalam log akses data.")}</span>
           </>
         )}
       </main>
@@ -177,15 +173,15 @@ function GajiPekerja() {
       )}
       {imp && (
         <ImportPukal
-          tajuk="Import gaji pokok"
-          huraian="Kemas kini gaji pokok ramai pekerja sekali gus. Lajur: No. pekerja, Gaji pokok dan Berkuat kuasa (pilihan; lalai awal bulan ini). Elaun lain diubah dalam jadual."
+          tajuk={tr("Import gaji pokok")}
+          huraian={tr("Kemas kini gaji pokok ramai pekerja sekali gus. Lajur: No. pekerja, Gaji pokok dan Berkuat kuasa (pilihan; lalai awal bulan ini). Elaun lain diubah dalam jadual.")}
           lajur={[
-            { k: "employee_no", label: "No. pekerja", alias: /^(nopekerja|nopek|employeeno|empno|staffno|no)$/, wajib: true },
-            { k: "basic", label: "Gaji pokok", alias: /^(gajipokok|basic|basicsalary|gaji)/, wajib: true, jenis: "nombor" },
-            { k: "effective_from", label: "Berkuat kuasa", alias: /^(berkuatkuasa|effective|mulai|tarikh)/, jenis: "tarikh" },
+            { k: "employee_no", label: tr("No. pekerja"), alias: /^(nopekerja|nopek|employeeno|empno|staffno|no)$/, wajib: true },
+            { k: "basic", label: tr("Gaji pokok"), alias: /^(gajipokok|basic|basicsalary|gaji)/, wajib: true, jenis: "nombor" },
+            { k: "effective_from", label: tr("Berkuat kuasa"), alias: /^(berkuatkuasa|effective|mulai|tarikh)/, jenis: "tarikh" },
           ]}
-          templat={["No. pekerja,Gaji pokok,Berkuat kuasa", ...(j?.rows ?? []).map((r) => `${r.employee_no},${r.items.BASIC ?? ""},`)].join("\n")}
-          namaTemplat={`gaji-pokok-${emp.companyCode}.csv`}
+          templat={[tr("No. pekerja,Gaji pokok,Berkuat kuasa"), ...(j?.rows ?? []).map((r) => `${r.employee_no},${r.items.BASIC ?? ""},`)].join("\n")}
+          namaTemplat={tr("gaji-pokok-{0}.csv", emp.companyCode)}
           hantar={(b) => importGajiPokok(emp.companyId, b.map((x) => ({ employee_no: x.employee_no, basic: x.basic, effective_from: x.effective_from || undefined })))}
           onClose={() => setImp(false)}
           onDone={() => d.reload()}
@@ -208,13 +204,12 @@ function GajiPekerja() {
 function ButiranTelefon({ r, onClose, onUbah }: { r: BarisGaji; onClose: () => void; onUbah: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40" onClick={onClose}>
-      <div role="dialog" aria-modal="true" aria-label={`Gaji ${r.name}`} className="flex max-h-[90dvh] w-full max-w-[480px] flex-col gap-3 overflow-y-auto rounded-t-[20px] bg-surface px-4 pt-5 pb-5" onClick={(e) => e.stopPropagation()}>
-        <h2 className="m-0 text-lg font-extrabold">Gaji {r.name}</h2>
-        {r.effective_from && <span className="-mt-2 text-xs text-muted">Berkuat kuasa mulai {tarikh(r.effective_from)}</span>}
+      <div role="dialog" aria-modal="true" aria-label={tr("Gaji {0}", r.name)} className="flex max-h-[90dvh] w-full max-w-[480px] flex-col gap-3 overflow-y-auto rounded-t-[20px] bg-surface px-4 pt-5 pb-5" onClick={(e) => e.stopPropagation()}>
+        <h2 className="m-0 text-lg font-extrabold">{tr("Gaji {0}", r.name)}</h2>
+        {r.effective_from && <span className="-mt-2 text-xs text-muted">{tr("Berkuat kuasa mulai {0}", tarikh(r.effective_from))}</span>}
         <RingkasanKiraan k={r.items.BASIC > 0 ? r.calc : null} padat />
         <button type="button" onClick={onUbah} className="h-12 rounded-button bg-primary text-base font-extrabold text-white">
-          Ubah gaji
-        </button>
+          {tr("Ubah gaji")}</button>
       </div>
     </div>
   );
@@ -270,25 +265,25 @@ function SelKiraan({ k }: { k: Kiraan | null }) {
 
 const KepalaKiraan = () => (
   <>
-    <th className={`${th} text-right`}>KASAR</th>
+    <th className={`${th} text-right`}>{tr("KASAR")}</th>
     <th className={`${th} text-right`}>
       KWSP
       <br />
-      <span className="font-semibold">pekerja / majikan</span>
+      <span className="font-semibold">{tr("pekerja / majikan")}</span>
     </th>
     <th className={`${th} text-right`}>
       PERKESO
       <br />
-      <span className="font-semibold">pekerja / majikan</span>
+      <span className="font-semibold">{tr("pekerja / majikan")}</span>
     </th>
     <th className={`${th} text-right`}>
       SIP
       <br />
-      <span className="font-semibold">pekerja / majikan</span>
+      <span className="font-semibold">{tr("pekerja / majikan")}</span>
     </th>
     <th className={`${th} text-right`}>PCB</th>
-    <th className={`${th} text-right`}>BERSIH</th>
-    <th className={`${th} text-right`}>KOS MAJIKAN</th>
+    <th className={`${th} text-right`}>{tr("BERSIH")}</th>
+    <th className={`${th} text-right`}>{tr("KOS MAJIKAN")}</th>
   </>
 );
 
@@ -300,7 +295,7 @@ function Jadual({ j, rows, onUbah }: { j: JadualGaji; rows: BarisGaji[]; onUbah:
       <table className="w-full border-collapse text-left text-[13px]">
         <thead>
           <tr className="border-b border-[#EEF2F1] align-bottom">
-            <th className={`${th} pl-4`}>PEKERJA</th>
+            <th className={`${th} pl-4`}>{tr("PEKERJA")}</th>
             {j.components.map((c) => (
               <th key={c.code} className={`${th} text-right`}>
                 {c.name.toUpperCase()}
@@ -319,32 +314,31 @@ function Jadual({ j, rows, onUbah }: { j: JadualGaji; rows: BarisGaji[]; onUbah:
                   <b className="text-sm">{r.name}</b>
                   <span className="text-[11px] whitespace-nowrap text-muted">
                     {r.employee_no}
-                    {r.effective_from ? ` · mulai ${tarikh(r.effective_from)}` : ""}
+                    {r.effective_from ? tr(" · mulai {0}", tarikh(r.effective_from)) : ""}
                   </span>
                   {r.upcoming && (
                     <span className="mt-0.5">
-                      <Tag tone="ai">Perubahan akan datang</Tag>
+                      <Tag tone="ai">{tr("Perubahan akan datang")}</Tag>
                     </span>
                   )}
                 </span>
               </td>
               {j.components.map((c) => (
                 <td key={c.code} className={`${td} text-right`}>
-                  {r.items[c.code] ? rm(r.items[c.code]) : c.code === "BASIC" ? <Tag tone="warning">Belum</Tag> : <span className="text-muted">—</span>}
+                  {r.items[c.code] ? rm(r.items[c.code]) : c.code === "BASIC" ? <Tag tone="warning">{tr("Belum")}</Tag> : <span className="text-muted">—</span>}
                 </td>
               ))}
               <SelKiraan k={r.items.BASIC > 0 ? r.calc : null} />
               <td className="py-2.5 pr-3 text-right">
                 <button type="button" onClick={() => onUbah(r)} className="flex min-h-10 items-center px-2 font-bold text-primary">
-                  Ubah
-                </button>
+                  {tr("Ubah")}</button>
               </td>
             </tr>
           ))}
         </tbody>
         <tfoot>
           <tr className="border-t-2 border-[#DCE3E1] bg-[#F7F9F8] font-extrabold">
-            <td className="py-3 pr-2.5 pl-4">Jumlah</td>
+            <td className="py-3 pr-2.5 pl-4">{tr("Jumlah")}</td>
             {j.components.map((c) => (
               <td key={c.code} className={`${td} text-right`}>
                 {rm(rows.reduce((s, r) => s + (r.items[c.code] ?? 0), 0))}
@@ -447,7 +441,7 @@ function JadualPukal({ j, rows, onBatal, onSiap }: { j: JadualGaji; rows: BarisG
       else kerja.push({ r, out });
     }
     if (salah.length) return setRalat(salah);
-    if (!kerja.length) return setRalat(["Tiada perubahan untuk disimpan."]);
+    if (!kerja.length) return setRalat([tr("Tiada perubahan untuk disimpan.")]);
     setBusy(true);
     setRalat([]);
     const gagal: string[] = [];
@@ -460,12 +454,12 @@ function JadualPukal({ j, rows, onBatal, onSiap }: { j: JadualGaji; rows: BarisG
         n++;
         setSiap(n);
       } catch (e) {
-        gagal.push(`${r.name}: ${e instanceof Error ? e.message : "Ralat"}`);
+        gagal.push(`${r.name}: ${e instanceof Error ? e.message : tr("Ralat")}`);
       }
     }
     setBusy(false);
-    if (gagal.length) return setRalat([`${n} pekerja disimpan. Tidak berjaya:`, ...gagal]);
-    beritahu(`Gaji ${n} pekerja dikemas kini.`);
+    if (gagal.length) return setRalat([tr("{0} pekerja disimpan. Tidak berjaya:", n), ...gagal]);
+    beritahu(tr("Gaji {0} pekerja dikemas kini.", n));
     onSiap();
   }
 
@@ -475,11 +469,10 @@ function JadualPukal({ j, rows, onBatal, onSiap }: { j: JadualGaji; rows: BarisG
         <table className="w-full border-collapse text-left text-[13px]">
           <thead>
             <tr className="border-b border-[#EEF2F1] align-bottom">
-              <th className={`${th} pl-4`}>PEKERJA</th>
+              <th className={`${th} pl-4`}>{tr("PEKERJA")}</th>
               {j.components.map((c) => (
                 <th key={c.code} className={`${th} text-right`}>
-                  {c.name.toUpperCase()} (RM)
-                </th>
+                  {tr("{0} (RM)", c.name.toUpperCase())}</th>
               ))}
               <KepalaKiraan />
             </tr>
@@ -500,18 +493,15 @@ function JadualPukal({ j, rows, onBatal, onSiap }: { j: JadualGaji; rows: BarisG
       </div>
       <div className="flex flex-wrap items-end gap-3 rounded-card bg-surface p-4">
         <label className="flex flex-col gap-1.5 text-[13px] font-bold text-[#4A5A57]">
-          Berkuat kuasa mulai
-          <input type="date" value={mulai} onChange={(e) => setMulai(e.target.value)} className="h-11 rounded-[10px] border border-line bg-surface px-3 text-sm text-ink" />
+          {tr("Berkuat kuasa mulai")}<input type="date" value={mulai} onChange={(e) => setMulai(e.target.value)} className="h-11 rounded-[10px] border border-line bg-surface px-3 text-sm text-ink" />
         </label>
         <span className="max-w-[420px] text-xs leading-normal text-muted">
-          Baris berlatar kuning telah diubah; kiraan dikemas kini semasa anda menaip. Hanya baris yang berubah disimpan. Pekerja yang mula bekerja selepas tarikh ini menggunakan tarikh mula bekerja.
-        </span>
+          {tr("Baris berlatar kuning telah diubah; kiraan dikemas kini semasa anda menaip. Hanya baris yang berubah disimpan. Pekerja yang mula bekerja selepas tarikh ini menggunakan tarikh mula bekerja.")}</span>
         <span className="grow" />
         <button type="button" onClick={onBatal} disabled={busy} className="h-11 rounded-button border border-line px-5 text-sm font-bold">
-          Batal
-        </button>
+          {tr("Batal")}</button>
         <button type="button" onClick={simpan} disabled={busy} className="h-11 rounded-button bg-primary px-6 text-sm font-extrabold text-white disabled:opacity-60">
-          {busy ? `Menyimpan… (${siap})` : "Simpan semua"}
+          {busy ? tr("Menyimpan… ({0})", siap) : tr("Simpan semua")}
         </button>
       </div>
       {ralat.length > 0 && (

@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { sahkan } from "@/components/Dialog";
 import Link from "next/link";
 import { useState } from "react";
@@ -25,7 +26,7 @@ export default function PermohonanSayaPage() {
   );
 
   async function batal(id: string) {
-    if (!(await sahkan({ tajuk: "Batalkan permohonan ini?", mesej: "Pelulus akan dimaklumkan. Anda boleh memohon semula kemudian.", ok: "Batalkan", bahaya: true }))) return;
+    if (!(await sahkan({ tajuk: tr("Batalkan permohonan ini?"), mesej: tr("Pelulus akan dimaklumkan. Anda boleh memohon semula kemudian."), ok: tr("Batalkan"), bahaya: true }))) return;
     setError(null);
     const { error: err } = await getSupabase().rpc("approval_cancel", { p_request: id, p_via: "web" });
     if (err) setError(mesejRalat(err.message, err.code));
@@ -34,7 +35,7 @@ export default function PermohonanSayaPage() {
 
   return (
     <Screen>
-      <BackHeader title="Permohonan saya" href="/utama" />
+      <BackHeader title={tr("Permohonan saya")} href="/utama" />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-4">
         <div role="tablist" className="grid grid-cols-3 gap-1 rounded-[14px] bg-[#E4EAE8] p-1">
           {TABS.map((t) => (
@@ -47,7 +48,7 @@ export default function PermohonanSayaPage() {
                 tab === t.id ? "bg-surface font-extrabold text-ink" : "bg-transparent font-semibold text-subtle"
               }`}
             >
-              {t.label}
+              {tr(t.label)}
             </button>
           ))}
         </div>
@@ -55,7 +56,7 @@ export default function PermohonanSayaPage() {
         {error && <ErrorBox message={error} />}
         {list.error && <ErrorBox message={list.error} />}
         {list.loading && !list.data && <Loading />}
-        {list.data && items.length === 0 && <Empty>Tiada permohonan dalam senarai ini.</Empty>}
+        {list.data && items.length === 0 && <Empty>{tr("Tiada permohonan dalam senarai ini.")}</Empty>}
 
         {items.map((p) => {
           const v = paparPermohonan(p);
@@ -79,8 +80,7 @@ export default function PermohonanSayaPage() {
                     onClick={() => batal(p.id)}
                     className="h-[38px] rounded-[10px] border border-line bg-surface px-3.5 text-[13px] font-bold text-danger"
                   >
-                    Batal
-                  </button>
+                    {tr("Batal")}</button>
                 </div>
               )}
             </div>

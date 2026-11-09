@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -26,45 +27,44 @@ export default function PendahuluanPage() {
 
   async function hantar() {
     const n = Number(jumlah);
-    if (!(n > 0)) return setRalat("Sila masukkan jumlah.");
-    if (n > 1000000) return setRalat("Jumlah tidak sah.");
-    if (!sebab.trim()) return setRalat("Sila nyatakan sebab.");
+    if (!(n > 0)) return setRalat(tr("Sila masukkan jumlah."));
+    if (n > 1000000) return setRalat(tr("Jumlah tidak sah."));
+    if (!sebab.trim()) return setRalat(tr("Sila nyatakan sebab."));
     setBusy(true);
     setRalat(null);
     try {
       const a = (await mohonPendahuluan(emp.id, n, sebab.trim())) as { approval_request_id?: string };
-      beritahu("Permohonan pendahuluan gaji dihantar.");
+      beritahu(tr("Permohonan pendahuluan gaji dihantar."));
       router.push(a.approval_request_id ? `/permohonan/${a.approval_request_id}` : "/permohonan");
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
       setBusy(false);
     }
   }
 
   return (
     <Screen lebar="sederhana">
-      <BackHeader title="Pendahuluan gaji" href="/mohon" />
+      <BackHeader title={tr("Pendahuluan gaji")} href="/mohon" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         {d.loading && !d.data && <Loading />}
         {d.error && <ErrorBox message={d.error} />}
         {d.data && (
           <>
-            <span className="text-sm leading-snug text-subtle">Masukkan jumlah yang diperlukan. Permohonan diluluskan oleh CEO, dan jumlahnya ditolak sepenuhnya daripada gaji bulan berikutnya.</span>
-            <MedanBorang label="Jumlah (RM)">
-              <input className={inputKecil} inputMode="decimal" value={jumlah} onChange={(e) => setJumlah(e.target.value.replace(/[^\d.]/g, ""))} aria-label="Jumlah" />
+            <span className="text-sm leading-snug text-subtle">{tr("Masukkan jumlah yang diperlukan. Permohonan diluluskan oleh CEO, dan jumlahnya ditolak sepenuhnya daripada gaji bulan berikutnya.")}</span>
+            <MedanBorang label={tr("Jumlah (RM)")}>
+              <input className={inputKecil} inputMode="decimal" value={jumlah} onChange={(e) => setJumlah(e.target.value.replace(/[^\d.]/g, ""))} aria-label={tr("Jumlah")} />
             </MedanBorang>
-            <MedanBorang label="Sebab">
-              <input className={inputKecil} value={sebab} onChange={(e) => setSebab(e.target.value)} placeholder="Contoh: Kecemasan keluarga" />
+            <MedanBorang label={tr("Sebab")}>
+              <input className={inputKecil} value={sebab} onChange={(e) => setSebab(e.target.value)} placeholder={tr("Contoh: Kecemasan keluarga")} />
             </MedanBorang>
             {ralat && <ErrorBox message={ralat} />}
             <ButangUtama onClick={hantar} busy={busy}>
-              Hantar permohonan
-            </ButangUtama>
+              {tr("Hantar permohonan")}</ButangUtama>
           </>
         )}
         {senarai.length > 0 && (
           <>
-            <Seksyen className="pt-2">PERMOHONAN TERDAHULU</Seksyen>
+            <Seksyen className="pt-2">{tr("PERMOHONAN TERDAHULU")}</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {senarai.map((x) => (
                 <Link key={x.id} href={x.approval_request_id ? `/permohonan/${x.approval_request_id}` : "#"} className="flex min-h-12 items-center gap-3 py-2 text-sm text-ink!">
@@ -72,7 +72,7 @@ export default function PendahuluanPage() {
                     <b className="font-bold">{ringgit(Number(x.amount))}</b>
                     <span className="text-xs text-muted">
                       {tarikh(tarikhTempatan(x.created_at!))}
-                      {x.deduct_month ? ` · ${x.deducted ? "telah ditolak" : "akan ditolak"} daripada gaji ${BULAN_PENUH[x.deduct_month - 1]} ${x.deduct_year}` : ""}
+                      {x.deduct_month ? tr(" · {0} daripada gaji {1} {2}", x.deducted ? tr("telah ditolak") : tr("akan ditolak"), BULAN_PENUH[x.deduct_month - 1], x.deduct_year) : ""}
                     </span>
                   </span>
                   <StatusPill status={x.status as StatusPermohonan} />

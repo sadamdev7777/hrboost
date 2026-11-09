@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -11,7 +12,7 @@ import { IconDocument, IconSparkle } from "@/components/icons";
 import { NextButton, OnboardingLayout } from "@/components/OnboardingLayout";
 
 // Rujukan reka bentuk: design/OnboardingHandbook.dc.html
-const HARI = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+const HARI = [tr("Ahad"), tr("Isnin"), tr("Selasa"), tr("Rabu"), tr("Khamis"), tr("Jumaat"), tr("Sabtu")];
 
 export default function OrientasiBukuPanduanPage() {
   const me = useMe();
@@ -67,26 +68,26 @@ export default function OrientasiBukuPanduanPage() {
     <OnboardingLayout
       step={7}
       back="/orientasi/peribadi"
-      title={`Perkara penting di ${emp.companyCode}`}
-      sub="Ringkasan buku panduan syarikat — 3 minit."
+      title={tr("Perkara penting di {0}", emp.companyCode)}
+      sub={tr("Ringkasan buku panduan syarikat — 3 minit.")}
       error={error}
       footer={
         <NextButton busy={busy} disabled={!faham} onClick={simpan}>
-          {faham ? "Seterusnya" : "Sila tandakan dahulu untuk meneruskan"}
+          {faham ? tr("Seterusnya") : tr("Sila tandakan dahulu untuk meneruskan")}
         </NextButton>
       }
     >
       <div className="grid grid-cols-2 gap-2">
-        <Perkara tajuk="WAKTU KERJA" isi={`${emp.workStart.replace(/^0/, "")} – ${tukar12(emp.workEnd)}`} nota={hariKerja} />
-        <Perkara tajuk="CUTI TAHUNAN" isi={info.data?.alDays != null ? `${hari(info.data.alDays)} hari` : "—"} nota="tahun pertama" />
-        <Perkara tajuk="SAKIT (MC)" isi="Ambil gambar sijil di aplikasi" nota="pada hari yang sama" />
-        <Perkara tajuk="TUNTUTAN" isi="Hantar resit" nota="mengikut tempoh polisi syarikat" />
+        <Perkara tajuk={tr("WAKTU KERJA")} isi={`${emp.workStart.replace(/^0/, "")} – ${tukar12(emp.workEnd)}`} nota={hariKerja} />
+        <Perkara tajuk={tr("CUTI TAHUNAN")} isi={info.data?.alDays != null ? tr("{0} hari", hari(info.data.alDays)) : "—"} nota={tr("tahun pertama")} />
+        <Perkara tajuk={tr("SAKIT (MC)")} isi={tr("Ambil gambar sijil di aplikasi")} nota={tr("pada hari yang sama")} />
+        <Perkara tajuk={tr("TUNTUTAN")} isi={tr("Hantar resit")} nota={tr("mengikut tempoh polisi syarikat")} />
       </div>
 
       {docUrl && (
         <a href={docUrl} target="_blank" rel="noreferrer" className="flex items-center gap-3 rounded-[14px] bg-surface px-3.5 py-3 text-ink!">
           <IconDocument size={22} className="text-primary" />
-          <span className="grow text-sm font-bold">Baca buku panduan penuh</span>
+          <span className="grow text-sm font-bold">{tr("Baca buku panduan penuh")}</span>
           <span className="text-xs text-muted">PDF</span>
         </a>
       )}
@@ -100,15 +101,14 @@ export default function OrientasiBukuPanduanPage() {
       >
         <span className="flex items-center gap-2 text-[13px] font-extrabold text-ai-hover">
           <IconSparkle size={18} className="text-ai" />
-          Ada soalan? Tanya AI
-        </span>
+          {tr("Ada soalan? Tanya AI")}</span>
         <label className="flex">
-          <span className="sr-only">Soalan tentang polisi</span>
+          <span className="sr-only">{tr("Soalan tentang polisi")}</span>
           <input
             type="text"
             value={soalan}
             onChange={(e) => setSoalan(e.target.value)}
-            placeholder="Contoh: Bolehkah saya menuntut bayaran letak kereta di KLIA?"
+            placeholder={tr("Contoh: Bolehkah saya menuntut bayaran letak kereta di KLIA?")}
             className="h-11 grow rounded-xl border border-[#D9D2F1] bg-surface px-3 text-sm text-ink"
           />
         </label>
@@ -116,8 +116,7 @@ export default function OrientasiBukuPanduanPage() {
 
       <label className="mt-0.5 flex items-start gap-2.5 text-sm leading-[1.45] font-semibold">
         <input type="checkbox" checked={faham} onChange={(e) => setFaham(e.target.checked)} className="mt-px size-[22px] shrink-0 accent-primary" />
-        Saya telah membaca dan memahami polisi syarikat.
-      </label>
+        {tr("Saya telah membaca dan memahami polisi syarikat.")}</label>
     </OnboardingLayout>
   );
 }

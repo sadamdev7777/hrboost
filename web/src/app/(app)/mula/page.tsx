@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
@@ -31,18 +32,18 @@ function Senarai() {
         {k && (
           <>
             <span className="text-sm font-bold text-primary uppercase">{k.name}</span>
-            <h1 className="m-0 text-[22px] font-extrabold">Sediakan syarikat anda</h1>
-            <span className="text-sm leading-normal text-subtle">Tetapan cuti, tuntutan dan kelulusan telah disediakan mengikut Akta Kerja. Anda hanya perlu menyemaknya.</span>
+            <h1 className="m-0 text-[22px] font-extrabold">{tr("Sediakan syarikat anda")}</h1>
+            <span className="text-sm leading-normal text-subtle">{tr("Tetapan cuti, tuntutan dan kelulusan telah disediakan mengikut Akta Kerja. Anda hanya perlu menyemaknya.")}</span>
             <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3">
               <div className="flex justify-between text-sm font-bold">
-                <span>{siap} daripada 6 selesai</span>
-                <span className="text-muted">~{Math.max(0, 6 - siap) * 4} minit lagi</span>
+                <span>{tr("{0} daripada 6 selesai", siap)}</span>
+                <span className="text-muted">{tr("~{0} minit lagi", Math.max(0, 6 - siap) * 4)}</span>
               </div>
               <div className="h-2 rounded-full bg-[#E4EAE8]">
                 <div className="h-full rounded-full bg-primary" style={{ width: `${(siap / 6) * 100}%` }} />
               </div>
             </div>
-            <span className="text-xs font-bold tracking-[0.04em] text-[#4A5A57]">WAJIB UNTUK MULA</span>
+            <span className="text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("WAJIB UNTUK MULA")}</span>
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {LANGKAH_MULA.map((l, i) => {
                 const done = k.steps.includes(l.id);
@@ -52,9 +53,9 @@ function Senarai() {
                     <span className={`flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-extrabold ${done ? "bg-primary text-white" : kini ? "border-2 border-primary text-primary" : "bg-[#E4EAE8] text-[#4A5A57]"}`}>
                       {done ? "✓" : i + 1}
                     </span>
-                    <span className={`grow text-sm ${done ? "text-muted line-through" : "font-bold"}`}>{l.label}</span>
+                    <span className={`grow text-sm ${done ? "text-muted line-through" : "font-bold"}`}>{tr(l.label)}</span>
                     <span className={`text-[13px] font-bold ${kini ? "text-primary" : "text-muted"}`}>
-                      {(l.id === "company" || l.id === "roles") && !me.roles.includes("admin") && !done ? "Pentadbir sahaja" : kini ? "Mulakan →" : l.nota}
+                      {(l.id === "company" || l.id === "roles") && !me.roles.includes("admin") && !done ? tr("Pentadbir sahaja") : kini ? tr("Mulakan →") : l.nota}
                     </span>
                   </>
                 );
@@ -70,13 +71,13 @@ function Senarai() {
                 );
               })}
             </div>
-            <span className="pt-1 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">BOLEH DILAKUKAN KEMUDIAN</span>
+            <span className="pt-1 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("BOLEH DILAKUKAN KEMUDIAN")}</span>
             <div className="flex flex-col rounded-card bg-surface px-4 text-sm text-[#4A5A57] [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {[
-                ["No. majikan & tetapan gaji", "/pengurusan/tetapan/syarikat"],
-                ["Sambungkan mesin kehadiran", "/pengurusan/tetapan/kehadiran"],
-                ["Muat naik buku panduan untuk AI", "/pengurusan/tetapan/pengetahuan-ai"],
-                ["Daftar syarikat lain milik anda", "/daftar"],
+                [tr("No. majikan & tetapan gaji"), "/pengurusan/tetapan/syarikat"],
+                [tr("Sambungkan mesin kehadiran"), "/pengurusan/tetapan/kehadiran"],
+                [tr("Muat naik buku panduan untuk AI"), "/pengurusan/tetapan/pengetahuan-ai"],
+                [tr("Daftar syarikat lain milik anda"), "/daftar"],
               ].map(([t, h]) => (
                 <Link key={t} href={h} className="flex min-h-12 items-center text-[#4A5A57]!">
                   {t}
@@ -89,7 +90,7 @@ function Senarai() {
       {k && (
         <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <Link href={seterusnya} className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white!">
-            {seterusnya === "/mula/selesai" ? "Lihat ringkasan" : "Teruskan"}
+            {seterusnya === "/mula/selesai" ? tr("Lihat ringkasan") : tr("Teruskan")}
           </Link>
         </div>
       )}

@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -45,7 +46,7 @@ function Jemput() {
 
   const tanpaWa = d.data.filter((p) => telefon.data?.find((t) => t.id === p.personId && !t.phone_whatsapp));
   const denganWa = d.data.length - tanpaWa.length;
-  const contoh = d.data[0]?.name ?? "Firdaus";
+  const contoh = d.data[0]?.name ?? tr("Firdaus");
   const isnin = isninSeterusnya();
 
   async function hantar() {
@@ -61,7 +62,7 @@ function Jemput() {
       } catch {}
       router.push("/mula/selesai");
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
       setBusy(false);
     }
   }
@@ -69,40 +70,39 @@ function Jemput() {
   return (
     <MulaLayout
       n={6}
-      title="Jemput pekerja"
+      title={tr("Jemput pekerja")}
       back="/mula/peranan"
       footer={
         <ButangUtama onClick={hantar} busy={busy}>
-          {d.data.length === 0 ? "Selesai" : bila === "now" ? `Hantar ${denganWa} jemputan sekarang` : "Jadualkan Isnin 9:00 pagi"}
+          {d.data.length === 0 ? tr("Selesai") : bila === "now" ? tr("Hantar {0} jemputan sekarang", denganWa) : tr("Jadualkan Isnin 9:00 pagi")}
         </ButangUtama>
       }
     >
-      <span className="text-sm leading-normal text-subtle">Setiap pekerja akan menerima pautan peribadi melalui WhatsApp.</span>
-      <Seksyen>PRATONTON MESEJ</Seksyen>
+      <span className="text-sm leading-normal text-subtle">{tr("Setiap pekerja akan menerima pautan peribadi melalui WhatsApp.")}</span>
+      <Seksyen>{tr("PRATONTON MESEJ")}</Seksyen>
       <div className="max-w-[92%] rounded-[14px] rounded-tl-sm bg-[#E7DED3] p-3">
         <div className="rounded-[12px] bg-white px-3.5 py-2.5 text-sm leading-snug">
-          Assalamualaikum <b>{contoh}</b>, anda dijemput menyertai <b>{emp.companyName}</b> di HRBoost. Buka pautan ini dan sahkan 4 digit akhir kad pengenalan anda:{" "}
-          <span className="text-primary">{typeof window !== "undefined" ? window.location.host : "hrboost.io"}/jemputan/••••••</span> (sah selama 7 hari)
-        </div>
+          {tr("Assalamualaikum")}{" "}<b>{contoh}</b>{tr(", anda dijemput menyertai")}{" "}<b>{emp.companyName}</b> {" "}{tr("di HRBoost. Buka pautan ini dan sahkan 4 digit akhir kad pengenalan anda:")}{" "}
+          <span className="text-primary">{tr("{0}/jemputan/••••••", typeof window !== "undefined" ? window.location.host : "hrboost.io")}</span> {" "}{tr("(sah selama 7 hari)")}</div>
       </div>
       <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
         <div className="flex min-h-12 items-center justify-between">
-          <span className="text-muted">Dihantar melalui WhatsApp</span>
-          <b>{denganWa} orang</b>
+          <span className="text-muted">{tr("Dihantar melalui WhatsApp")}</span>
+          <b>{tr("{0} orang", denganWa)}</b>
         </div>
         {tanpaWa.map((p) => (
           <div key={p.id} className="flex min-h-12 items-center justify-between">
-            <span>{p.name} — tiada WhatsApp</span>
-            <span className="text-xs text-muted">Pautan untuk disalin selepas ini</span>
+            <span>{tr("{0} — tiada WhatsApp", p.name)}</span>
+            <span className="text-xs text-muted">{tr("Pautan untuk disalin selepas ini")}</span>
           </div>
         ))}
       </div>
-      <Seksyen className="pt-1">MASA PENGHANTARAN</Seksyen>
+      <Seksyen className="pt-1">{tr("MASA PENGHANTARAN")}</Seksyen>
       <div className="grid grid-cols-2 gap-2">
         {(
           [
-            ["now", "Sekarang"],
-            ["mon", "Isnin, 9:00 pagi"],
+            ["now", tr("Sekarang")],
+            ["mon", tr("Isnin, 9:00 pagi")],
           ] as const
         ).map(([k, l]) => (
           <button
@@ -117,8 +117,7 @@ function Jemput() {
         ))}
       </div>
       <span className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] leading-normal text-warning">
-        Petua: maklumkan dahulu dalam kumpulan WhatsApp syarikat supaya pekerja tidak menyangka mesej ini spam.
-      </span>
+        {tr("Petua: maklumkan dahulu dalam kumpulan WhatsApp syarikat supaya pekerja tidak menyangka mesej ini spam.")}</span>
       {ralat && <ErrorBox message={ralat} />}
     </MulaLayout>
   );

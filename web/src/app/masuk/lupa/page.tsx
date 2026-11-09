@@ -1,5 +1,6 @@
 "use client";
 
+import { tr, trRalat } from "@/lib/i18n";
 import Link from "next/link";
 import { useState } from "react";
 import { BackHeader } from "@/components/ui";
@@ -15,11 +16,11 @@ export default function LupaPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!EMEL_SAH.test(email.trim())) return setError("Sila masukkan alamat e-mel yang sah.");
+    if (!EMEL_SAH.test(email.trim())) return setError(tr("Sila masukkan alamat e-mel yang sah."));
     setBusy(true);
     const r = await panggilSetSemula({ action: "request", email: email.trim() });
     setBusy(false);
-    if (!r.ok) return setError(r.error ?? "Permintaan tidak dapat dihantar. Sila cuba lagi.");
+    if (!r.ok) return setError(r.error ? trRalat(r.error) : tr("Permintaan tidak dapat dihantar. Sila cuba lagi."));
     setDihantar(true);
   }
 
@@ -28,26 +29,22 @@ export default function LupaPage() {
       <BackHeader href="/masuk" />
       {dihantar ? (
         <div className="flex flex-col gap-3 px-6 py-4">
-          <h1 className="m-0 text-xl font-extrabold">Semak e-mel anda</h1>
+          <h1 className="m-0 text-xl font-extrabold">{tr("Semak e-mel anda")}</h1>
           <p className="m-0 text-sm leading-normal text-subtle">
-            Jika <b className="text-ink">{email.trim()}</b> berdaftar dengan HRBoost, pautan untuk menetapkan semula kata laluan telah dihantar. Pautan sah selama
-            1 jam. Semak juga folder spam.
-          </p>
+            {tr("Jika")}{" "}<b className="text-ink">{email.trim()}</b> {" "}{tr("berdaftar dengan HRBoost, pautan untuk menetapkan semula kata laluan telah dihantar. Pautan sah selama 1 jam. Semak juga folder spam.")}</p>
           <Link href="/masuk" className="mt-2 flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-on-primary!">
-            Kembali ke log masuk
-          </Link>
+            {tr("Kembali ke log masuk")}</Link>
         </div>
       ) : (
         <form onSubmit={submit} noValidate className="flex grow flex-col gap-4 px-6 py-4">
           <div className="flex flex-col gap-1.5">
-            <h1 className="m-0 text-xl font-extrabold">Lupa kata laluan</h1>
+            <h1 className="m-0 text-xl font-extrabold">{tr("Lupa kata laluan")}</h1>
             <span className="text-sm leading-normal text-subtle">
-              Masukkan e-mel akaun anda. Kami akan menghantar pautan untuk menetapkan kata laluan baharu. Anda perlu mengesahkan 4 digit akhir kad pengenalan.
-            </span>
+              {tr("Masukkan e-mel akaun anda. Kami akan menghantar pautan untuk menetapkan kata laluan baharu. Anda perlu mengesahkan 4 digit akhir kad pengenalan.")}</span>
           </div>
           <label className="flex flex-col gap-2 text-sm font-bold">
             E-mel
-            <input type="email" inputMode="email" autoComplete="username" placeholder="nama@contoh.com" value={email} onChange={(e) => setEmail(e.target.value)} className={medanMasuk} />
+            <input type="email" inputMode="email" autoComplete="username" placeholder={tr("nama@contoh.com")} value={email} onChange={(e) => setEmail(e.target.value)} className={medanMasuk} />
           </label>
           {error && (
             <span role="alert" className="text-[13px] font-semibold text-danger">
@@ -59,11 +56,10 @@ export default function LupaPage() {
             disabled={busy}
             className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-on-primary hover:bg-primary-hover disabled:opacity-60"
           >
-            {busy ? "Menghantar…" : "Hantar pautan"}
+            {busy ? tr("Menghantar…") : tr("Hantar pautan")}
           </button>
           <Link href="/masuk/telefon" className="flex min-h-11 items-center justify-center text-sm font-bold">
-            Log masuk dengan kod WhatsApp
-          </Link>
+            {tr("Log masuk dengan kod WhatsApp")}</Link>
         </form>
       )}
     </main>

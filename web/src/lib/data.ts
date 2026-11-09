@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { getSupabase } from "./supabase";
 import { must } from "./useData";
 import {
@@ -131,7 +132,7 @@ export function paparPermohonan(p: { type: RequestType; title: string; context: 
     const nama = p.title.split(" " + tarikh(c.start_date))[0];
     return {
       title: `${nama} ${julatTarikh(c.start_date, c.end_date)}`,
-      sub: `${hari(Number(c.days ?? 0))} hari · dihantar ${bilaDihantar(p.submittedAt)}`,
+      sub: tr("{0} hari · dihantar {1}", hari(Number(c.days ?? 0)), bilaDihantar(p.submittedAt)),
       days: Number(c.days ?? 0),
     };
   }
@@ -143,19 +144,19 @@ export function paparPermohonan(p: { type: RequestType; title: string; context: 
     };
   }
   if (p.type === "attendance_correction") {
-    return { title: p.title.replace(/^Pembetulan kehadiran/, "Betulkan masa"), sub: "Pembetulan kehadiran", days: null };
+    return { title: p.title.replace(/^Pembetulan kehadiran/, "Betulkan masa"), sub: tr("Pembetulan kehadiran"), days: null };
   }
   if (p.type === "overtime") {
-    const jenis = c.day_type === "holiday" ? "cuti umum" : c.day_type === "rest" ? "hari rehat" : "hari biasa";
+    const jenis = c.day_type === "holiday" ? tr("cuti umum") : c.day_type === "rest" ? tr("hari rehat") : tr("hari biasa");
     return { title: p.title, sub: `${jenis} · ${String(c.reason ?? "")}`.trim(), days: null };
   }
-  return { title: p.title, sub: `Dihantar ${bilaDihantar(p.submittedAt)}`, days: null };
+  return { title: p.title, sub: tr("Dihantar {0}", bilaDihantar(p.submittedAt)), days: null };
 }
 
 /** "Kini di HR" daripada nama peringkat yang menunggu. */
 export function kiniDi(waitingFor: string | null): string | null {
   if (!waitingFor) return null;
-  return "Kini di " + waitingFor.split(", ").map(namaPeringkat).join(", ");
+  return tr("Kini di ") + waitingFor.split(", ").map(namaPeringkat).join(", ");
 }
 
 /** Bilangan tugasan kelulusan yang menunggu tindakan saya. */

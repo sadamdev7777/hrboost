@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useMe } from "@/lib/me";
@@ -41,8 +42,8 @@ export default function OrientasiSwafotoPage() {
     <OnboardingLayout
       step={3}
       back="/orientasi/nama"
-      title="Ambil swafoto"
-      sub="Untuk gambar profil. Rakan sekerja dan ketua akan melihat gambar ini."
+      title={tr("Ambil swafoto")}
+      sub={tr("Untuk gambar profil. Rakan sekerja dan ketua akan melihat gambar ini.")}
       error={error}
       footer={
         file ? (
@@ -53,18 +54,15 @@ export default function OrientasiSwafotoPage() {
               onClick={() => input.current?.click()}
               className="h-12 rounded-button border-[1.5px] border-line bg-surface text-sm font-bold text-ink disabled:opacity-60"
             >
-              Ambil semula
-            </button>
+              {tr("Ambil semula")}</button>
             <NextButton busy={busy} onClick={gunakan}>
-              Gunakan gambar ini
-            </NextButton>
+              {tr("Gunakan gambar ini")}</NextButton>
           </div>
         ) : (
           <NextButton onClick={() => input.current?.click()}>
             <span className="flex items-center gap-2.5">
               <CameraIcon />
-              Ambil swafoto
-            </span>
+              {tr("Ambil swafoto")}</span>
           </NextButton>
         )
       }
@@ -85,33 +83,30 @@ export default function OrientasiSwafotoPage() {
       {!file || !preview ? (
         <div
           role="img"
-          aria-label="Paparan kamera hadapan dengan panduan bujur untuk muka"
+          aria-label={tr("Paparan kamera hadapan dengan panduan bujur untuk muka")}
           className="relative flex h-[360px] items-center justify-center overflow-hidden rounded-3xl bg-[#1E2B29]"
         >
           <div className="h-[260px] w-[200px] rounded-[50%] border-[3px] border-dashed border-white/85" />
           <span className="absolute inset-x-0 bottom-4 text-center text-sm font-semibold text-white">
-            Letakkan muka dalam bulatan
-          </span>
+            {tr("Letakkan muka dalam bulatan")}</span>
           <span className="absolute top-3.5 left-3.5 rounded-[10px] bg-white/18 px-2.5 py-1 text-xs font-bold text-white">
-            Kamera hadapan
-          </span>
+            {tr("Kamera hadapan")}</span>
         </div>
       ) : (
         <div className="flex h-[360px] flex-col items-center justify-center gap-4 rounded-3xl bg-surface">
           {/* eslint-disable-next-line @next/next/no-img-element -- pratonton fail tempatan (blob:) */}
-          <img src={preview} alt="Swafoto yang diambil" className="size-[200px] rounded-full object-cover" />
+          <img src={preview} alt={tr("Swafoto yang diambil")} className="size-[200px] rounded-full object-cover" />
           <span className="flex items-center gap-2 text-sm font-bold text-subtle">
             <span className="flex size-5 items-center justify-center rounded-full bg-primary-soft text-primary">
               <IconCheck size={12} />
             </span>
-            Pastikan muka jelas dan tidak kabur
-          </span>
+            {tr("Pastikan muka jelas dan tidak kabur")}</span>
         </div>
       )}
 
       <div className="flex flex-col gap-2">
-        <Tip>Pencahayaan mencukupi, menghadap tingkap atau lampu</Tip>
-        <Tip>Muka penuh, tanpa cermin mata hitam</Tip>
+        <Tip>{tr("Pencahayaan mencukupi, menghadap tingkap atau lampu")}</Tip>
+        <Tip>{tr("Muka penuh, tanpa cermin mata hitam")}</Tip>
       </div>
     </OnboardingLayout>
   );

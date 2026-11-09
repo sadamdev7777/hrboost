@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useRef, useState } from "react";
 import { bacaJadual, tarikhISO, teksSel } from "@/lib/import";
 import type { HasilImport } from "@/lib/berkanun";
@@ -58,10 +59,10 @@ export function ImportPukal({
     try {
       const data = await bacaJadual(f);
       const h = data.findIndex((r) => r.some((c) => lajur[0].alias.test(norm(teksSel(c)))));
-      if (h < 0) throw new Error(`Lajur "${lajur[0].label}" tidak ditemui. Gunakan templat yang disediakan.`);
+      if (h < 0) throw new Error(tr("Lajur \"{0}\" tidak ditemui. Gunakan templat yang disediakan.", lajur[0].label));
       const peta = lajur.map((l) => data[h].findIndex((c) => l.alias.test(norm(teksSel(c)))));
       const tiada = lajur.filter((l, i) => l.wajib && peta[i] < 0);
-      if (tiada.length) throw new Error(`Lajur tiada: ${tiada.map((l) => l.label).join(", ")}.`);
+      if (tiada.length) throw new Error(tr("Lajur tiada: {0}.", tiada.map((l) => l.label).join(", ")));
       const out: Record<string, string>[] = [];
       for (const r of data.slice(h + 1)) {
         const o: Record<string, string> = {};
@@ -72,11 +73,11 @@ export function ImportPukal({
         if (!o[lajur[0].k]) continue;
         out.push(o);
       }
-      if (!out.length) throw new Error("Tiada baris data ditemui dalam fail.");
-      if (out.length > 1000) throw new Error("Maksimum 1,000 baris setiap import.");
+      if (!out.length) throw new Error(tr("Tiada baris data ditemui dalam fail."));
+      if (out.length > 1000) throw new Error(tr("Maksimum 1,000 baris setiap import."));
       setBaris(out);
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Fail tidak dapat dibaca.");
+      setRalat(e instanceof Error ? e.message : tr("Fail tidak dapat dibaca."));
     }
     if (fail.current) fail.current.value = "";
   }
@@ -89,10 +90,10 @@ export function ImportPukal({
       const r = await hantar(baris);
       setHasil(r);
       const ok = r.filter((x) => x.ok).length;
-      beritahu(`${ok} daripada ${r.length} baris berjaya diimport.`, ok === r.length ? "ok" : "ralat");
+      beritahu(tr("{0} daripada {1} baris berjaya diimport.", ok, r.length), ok === r.length ? "ok" : "ralat");
       if (ok) onDone();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
     setBusy(false);
   }
@@ -103,25 +104,24 @@ export function ImportPukal({
       <p className="m-0 text-[13px] leading-snug text-subtle">{huraian}</p>
       <div className="flex flex-wrap gap-2">
         <button type="button" onClick={muatTemplat} className="flex h-10 items-center rounded-full border border-line px-4 text-[13px] font-bold">
-          Muat turun templat
-        </button>
+          {tr("Muat turun templat")}</button>
         <button type="button" onClick={() => fail.current?.click()} className="flex h-10 items-center rounded-full border border-primary px-4 text-[13px] font-bold text-primary">
-          {baris ? "Pilih fail lain" : "Pilih fail Excel / CSV"}
+          {baris ? tr("Pilih fail lain") : tr("Pilih fail Excel / CSV")}
         </button>
-        <input ref={fail} type="file" accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" className="hidden" aria-label="Pilih fail import" onChange={(e) => baca(e.target.files?.[0])} />
+        <input ref={fail} type="file" accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" className="hidden" aria-label={tr("Pilih fail import")} onChange={(e) => baca(e.target.files?.[0])} />
       </div>
       {ralat && <ErrorBox message={ralat} />}
 
       {baris && !hasil && (
         <>
-          <span className="text-[13px] font-bold">{baris.length} baris dibaca. Pratonton:</span>
+          <span className="text-[13px] font-bold">{tr("{0} baris dibaca. Pratonton:", baris.length)}</span>
           <div className="max-h-[280px] overflow-auto rounded-[12px] border border-line-soft">
             <table className="w-full border-collapse text-[13px]">
               <thead className="sticky top-0 bg-page">
                 <tr>
                   {lajur.map((l) => (
                     <th key={l.k} scope="col" className="px-3 py-2 text-left text-xs font-bold text-muted">
-                      {l.label}
+                      {tr(l.label)}
                     </th>
                   ))}
                 </tr>
@@ -139,18 +139,16 @@ export function ImportPukal({
               </tbody>
             </table>
           </div>
-          {baris.length > 50 && <span className="text-xs text-muted">dan {baris.length - 50} baris lagi.</span>}
+          {baris.length > 50 && <span className="text-xs text-muted">{tr("dan {0} baris lagi.", baris.length - 50)}</span>}
           <ButangUtama onClick={simpan} busy={busy}>
-            Import {baris.length} baris
-          </ButangUtama>
+            {tr("Import {0} baris", baris.length)}</ButangUtama>
         </>
       )}
 
       {hasil && (
         <div className="flex flex-col gap-2">
           <div className={`rounded-[12px] px-4 py-3 text-[13px] font-semibold ${gagal.length ? "bg-warning-soft text-warning" : "bg-success-soft text-success"}`}>
-            {hasil.length - gagal.length} berjaya{gagal.length ? `, ${gagal.length} tidak berjaya` : ""}.
-          </div>
+            {tr("{0} berjaya{1}.", hasil.length - gagal.length, gagal.length ? tr(", {0} tidak berjaya", gagal.length) : "")}</div>
           {gagal.length > 0 && (
             <ul className="m-0 flex max-h-[220px] list-none flex-col gap-1 overflow-auto p-0 text-[13px]">
               {gagal.map((g, i) => (
@@ -165,8 +163,7 @@ export function ImportPukal({
             </ul>
           )}
           <button type="button" onClick={onClose} className="h-12 rounded-button bg-primary text-base font-extrabold text-white">
-            Selesai
-          </button>
+            {tr("Selesai")}</button>
         </div>
       )}
     </Lembaran>

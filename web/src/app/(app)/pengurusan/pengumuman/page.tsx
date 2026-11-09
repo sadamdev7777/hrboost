@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
@@ -30,33 +31,33 @@ function Kandungan() {
   const [lihat, setLihat] = useState<Pengumuman | null>(null);
 
   async function siar() {
-    if (tajuk.trim().length < 3) return setRalat("Sila isi tajuk.");
-    if (isi.trim().length < 3) return setRalat("Sila isi kandungan pengumuman.");
-    if (wa && !(await sahkan({ tajuk: "Hantar kepada semua pekerja?", mesej: "Pengumuman akan dihantar melalui WhatsApp kepada setiap pekerja aktif dan dipaparkan di skrin Utama.", ok: "Siarkan" }))) return;
+    if (tajuk.trim().length < 3) return setRalat(tr("Sila isi tajuk."));
+    if (isi.trim().length < 3) return setRalat(tr("Sila isi kandungan pengumuman."));
+    if (wa && !(await sahkan({ tajuk: tr("Hantar kepada semua pekerja?"), mesej: tr("Pengumuman akan dihantar melalui WhatsApp kepada setiap pekerja aktif dan dipaparkan di skrin Utama."), ok: tr("Siarkan") }))) return;
     setBusy(true);
     setRalat(null);
     try {
       await siarPengumuman(emp.companyId, tajuk.trim(), isi.trim(), wa);
-      beritahu("Pengumuman disiarkan.");
+      beritahu(tr("Pengumuman disiarkan."));
       setTajuk("");
       setIsi("");
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
     setBusy(false);
   }
 
   return (
     <Screen lebar="lebar">
-      <PengepalaAkar title="Pengumuman" backHr="/pengurusan" />
+      <PengepalaAkar title={tr("Pengumuman")} backHr="/pengurusan" />
       <main className="flex grow flex-col gap-4 px-4 pt-1 pb-6 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] lg:items-start lg:gap-5 lg:px-0">
         <section className="flex flex-col gap-3 rounded-card bg-surface px-4 py-4 lg:px-5">
-          <h2 className="m-0 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">PENGUMUMAN BAHARU</h2>
-          <MedanBorang label="Tajuk">
-            <input className={inputKecil} value={tajuk} maxLength={120} onChange={(e) => setTajuk(e.target.value)} placeholder="Contoh: Cuti umum ganti pada Isnin" />
+          <h2 className="m-0 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("PENGUMUMAN BAHARU")}</h2>
+          <MedanBorang label={tr("Tajuk")}>
+            <input className={inputKecil} value={tajuk} maxLength={120} onChange={(e) => setTajuk(e.target.value)} placeholder={tr("Contoh: Cuti umum ganti pada Isnin")} />
           </MedanBorang>
-          <MedanBorang label="Kandungan">
+          <MedanBorang label={tr("Kandungan")}>
             <textarea
               rows={6}
               maxLength={2000}
@@ -67,21 +68,20 @@ function Kandungan() {
           </MedanBorang>
           <div className="flex items-center gap-3">
             <span className="flex grow flex-col gap-0.5">
-              <b className="text-sm font-bold">Hantar melalui WhatsApp</b>
-              <span className="text-xs text-muted">Jika dimatikan, pengumuman hanya dipaparkan dalam aplikasi.</span>
+              <b className="text-sm font-bold">{tr("Hantar melalui WhatsApp")}</b>
+              <span className="text-xs text-muted">{tr("Jika dimatikan, pengumuman hanya dipaparkan dalam aplikasi.")}</span>
             </span>
-            <Suis on={wa} onChange={setWa} label="Hantar melalui WhatsApp" />
+            <Suis on={wa} onChange={setWa} label={tr("Hantar melalui WhatsApp")} />
           </div>
           {ralat && <ErrorBox message={ralat} />}
           <ButangUtama onClick={siar} busy={busy}>
-            Siarkan
-          </ButangUtama>
+            {tr("Siarkan")}</ButangUtama>
         </section>
 
         <section className="flex flex-col gap-2">
           {d.error && <ErrorBox message={d.error} />}
           {d.loading && !d.data && <Loading />}
-          {d.data && d.data.length === 0 && <div className="rounded-card bg-surface px-4 py-8 text-center text-sm text-muted">Belum ada pengumuman.</div>}
+          {d.data && d.data.length === 0 && <div className="rounded-card bg-surface px-4 py-8 text-center text-sm text-muted">{tr("Belum ada pengumuman.")}</div>}
           {(d.data ?? []).length > 0 && (
             <div className="flex flex-col rounded-card bg-surface px-4 lg:px-5 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {(d.data ?? []).map((a) => {
@@ -98,13 +98,9 @@ function Kandungan() {
                         <span className="h-1.5 w-24 overflow-hidden rounded-full bg-[#E4EAE8]">
                           <span className="block h-full rounded-full bg-primary" style={{ width: `${peratus}%` }} />
                         </span>
-                        Dibaca {a.read_count ?? 0}/{a.audience ?? 0}
-                        {a.sent_whatsapp ? " · WhatsApp" : ""}
-                        {a.archived ? " · diarkibkan" : ""}
-                      </span>
+                        {tr("Dibaca {0}/{1}{2}{3}", a.read_count ?? 0, a.audience ?? 0, a.sent_whatsapp ? tr(" · WhatsApp") : "", a.archived ? tr(" · diarkibkan") : "")}</span>
                       <button type="button" onClick={() => setLihat(a)} className="flex min-h-9 items-center text-xs font-bold text-primary">
-                        Belum membaca
-                      </button>
+                        {tr("Belum membaca")}</button>
                       {!a.archived && (
                         <button
                           type="button"
@@ -119,8 +115,7 @@ function Kandungan() {
                           }}
                           className="flex min-h-9 items-center text-xs font-bold text-muted"
                         >
-                          Arkibkan
-                        </button>
+                          {tr("Arkibkan")}</button>
                       )}
                     </div>
                   </div>
@@ -138,10 +133,10 @@ function Kandungan() {
 function BelumBaca({ a, onClose }: { a: Pengumuman; onClose: () => void }) {
   const d = useData(() => getBelumBaca(a.id), [a.id]);
   return (
-    <Lembaran title={`Belum membaca: ${a.title}`} onClose={onClose}>
+    <Lembaran title={tr("Belum membaca: {0}", a.title)} onClose={onClose}>
       {d.error && <ErrorBox message={d.error} />}
       {!d.data && !d.error && <Loading />}
-      {d.data && d.data.length === 0 && <span className="text-sm text-success">Semua pekerja telah membaca.</span>}
+      {d.data && d.data.length === 0 && <span className="text-sm text-success">{tr("Semua pekerja telah membaca.")}</span>}
       {d.data && d.data.length > 0 && (
         <ul className="m-0 flex max-h-[360px] list-none flex-col overflow-auto p-0 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
           {d.data.map((x) => (

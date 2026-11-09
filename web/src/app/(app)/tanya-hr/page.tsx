@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
@@ -25,7 +26,7 @@ export default function TanyaHrPage() {
   const [ralat, setRalat] = useState<string | null>(null);
 
   async function tanya() {
-    if (soalan.trim().length < 3) return setRalat("Sila taip soalan anda.");
+    if (soalan.trim().length < 3) return setRalat(tr("Sila taip soalan anda."));
     setBusy(true);
     setRalat(null);
     try {
@@ -44,13 +45,13 @@ export default function TanyaHrPage() {
     setRalat(null);
     try {
       await tanyaHr(emp.id, soalan.trim(), jawapanAi, kepadaHr);
-      beritahu(kepadaHr ? "Soalan dihantar kepada HR. Jawapan akan dihantar melalui WhatsApp." : "Terima kasih.");
+      beritahu(kepadaHr ? tr("Soalan dihantar kepada HR. Jawapan akan dihantar melalui WhatsApp.") : tr("Terima kasih."));
       setSoalan("");
       setAi(null);
       setTahap("tulis");
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
     setBusy(false);
   }
@@ -58,48 +59,45 @@ export default function TanyaHrPage() {
   const sejarah = (d.data ?? []).filter((q) => q.status !== "ai_resolved");
   return (
     <Screen lebar="sederhana">
-      <BackHeader title="Tanya HR" href="/saya" />
+      <BackHeader title={tr("Tanya HR")} href="/saya" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
-        <span className="text-sm leading-snug text-subtle">Soalan tentang cuti, gaji, tuntutan atau polisi syarikat. Pembantu AI menjawab dahulu daripada buku panduan; jika belum jelas, soalan anda dihantar kepada HR.</span>
+        <span className="text-sm leading-snug text-subtle">{tr("Soalan tentang cuti, gaji, tuntutan atau polisi syarikat. Pembantu AI menjawab dahulu daripada buku panduan; jika belum jelas, soalan anda dihantar kepada HR.")}</span>
         <textarea
           rows={4}
           value={soalan}
           disabled={tahap === "ai"}
           onChange={(e) => setSoalan(e.target.value)}
-          placeholder="Contoh: Bolehkah saya membawa baki cuti tahunan ke tahun hadapan?"
+          placeholder={tr("Contoh: Bolehkah saya membawa baki cuti tahunan ke tahun hadapan?")}
           className="rounded-[14px] border border-[#D5DEDC] bg-surface px-3.5 py-3 text-sm text-ink outline-none focus:border-primary disabled:bg-page"
-          aria-label="Soalan"
+          aria-label={tr("Soalan")}
         />
         {ralat && <ErrorBox message={ralat} />}
         {tahap === "tulis" && (
           <ButangUtama onClick={tanya} busy={busy}>
-            Tanya
-          </ButangUtama>
+            {tr("Tanya")}</ButangUtama>
         )}
         {tahap === "ai" && ai && (
-          <section aria-label="Jawapan Pembantu AI" className="flex flex-col gap-3 rounded-card bg-ai-soft px-4 py-3.5">
-            <b className="text-xs font-bold tracking-[0.04em] text-ai">JAWAPAN PEMBANTU AI</b>
+          <section aria-label={tr("Jawapan Pembantu AI")} className="flex flex-col gap-3 rounded-card bg-ai-soft px-4 py-3.5">
+            <b className="text-xs font-bold tracking-[0.04em] text-ai">{tr("JAWAPAN PEMBANTU AI")}</b>
             <p className="m-0 text-sm leading-relaxed whitespace-pre-line text-ink">{ai}</p>
             <div className="grid grid-cols-2 gap-2">
               <button type="button" disabled={busy} onClick={() => hantar(ai, false)} className="h-11 rounded-button border border-ai bg-surface text-[13px] font-bold text-ai disabled:opacity-60">
-                Ini menjawab soalan saya
-              </button>
+                {tr("Ini menjawab soalan saya")}</button>
               <button type="button" disabled={busy} onClick={() => hantar(ai, true)} className="h-11 rounded-button bg-ai text-[13px] font-bold text-white disabled:opacity-60">
-                Hantar kepada HR
-              </button>
+                {tr("Hantar kepada HR")}</button>
             </div>
           </section>
         )}
 
         {sejarah.length > 0 && (
           <>
-            <Seksyen className="pt-2">SOALAN SAYA KEPADA HR</Seksyen>
+            <Seksyen className="pt-2">{tr("SOALAN SAYA KEPADA HR")}</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {sejarah.map((q) => (
                 <div key={q.id} className="flex flex-col gap-1.5 py-3 text-sm">
                   <div className="flex items-start justify-between gap-2">
                     <b className="font-bold">{q.question}</b>
-                    <Tag tone={q.status === "answered" ? "success" : "warning"}>{q.status === "answered" ? "Dijawab" : "Menunggu HR"}</Tag>
+                    <Tag tone={q.status === "answered" ? "success" : "warning"}>{q.status === "answered" ? tr("Dijawab") : tr("Menunggu HR")}</Tag>
                   </div>
                   {q.answer && (
                     <p className="m-0 rounded-[12px] bg-page px-3 py-2 leading-snug whitespace-pre-line">
@@ -109,7 +107,7 @@ export default function TanyaHrPage() {
                       </span>
                     </p>
                   )}
-                  {!q.answer && <span className="text-xs text-muted">Dihantar {bilaDihantar(q.created_at)}</span>}
+                  {!q.answer && <span className="text-xs text-muted">{tr("Dihantar {0}", bilaDihantar(q.created_at))}</span>}
                 </div>
               ))}
             </div>

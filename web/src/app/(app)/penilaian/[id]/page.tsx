@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -10,7 +11,7 @@ import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
 import { ButangUtama, Cip, MedanBorang } from "@/components/Senarai";
 import { beritahu } from "@/components/Dialog";
 
-const SKALA = ["Lemah", "Kurang memuaskan", "Memuaskan", "Baik", "Cemerlang"];
+const SKALA = [tr("Lemah"), tr("Kurang memuaskan"), tr("Memuaskan"), tr("Baik"), tr("Cemerlang")];
 
 /** Borang penilaian akhir tempoh percubaan oleh ketua jabatan → keputusan HR. */
 export default function PenilaianPage() {
@@ -28,34 +29,33 @@ export default function PenilaianPage() {
   const [ralat, setRalat] = useState<string | null>(null);
 
   async function hantar() {
-    if (ASPEK_PENILAIAN.some((a) => !markah[a.k])) return setRalat("Sila beri penilaian bagi setiap aspek.");
-    if (cadangan !== "confirm" && ulasan.trim().length < 5) return setRalat("Sila nyatakan sebab cadangan anda.");
+    if (ASPEK_PENILAIAN.some((a) => !markah[a.k])) return setRalat(tr("Sila beri penilaian bagi setiap aspek."));
+    if (cadangan !== "confirm" && ulasan.trim().length < 5) return setRalat(tr("Sila nyatakan sebab cadangan anda."));
     setBusy(true);
     setRalat(null);
     try {
       await hantarPenilaian(id, markah, cadangan, cadangan === "extend" ? bulan : null, ulasan.trim());
-      beritahu("Penilaian dihantar kepada HR.");
+      beritahu(tr("Penilaian dihantar kepada HR."));
       router.push("/utama");
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
       setBusy(false);
     }
   }
 
   return (
     <Screen lebar="sederhana">
-      <BackHeader title="Penilaian percubaan" href="/utama" />
+      <BackHeader title={tr("Penilaian percubaan")} href="/utama" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         {d.error && <ErrorBox message={d.error} />}
         {!d.data && !d.error && <Loading />}
-        {d.data && !orang && <div className="rounded-card bg-surface px-4 py-6 text-sm text-muted">Penilaian ini telah dihantar atau tidak lagi diperlukan.</div>}
+        {d.data && !orang && <div className="rounded-card bg-surface px-4 py-6 text-sm text-muted">{tr("Penilaian ini telah dihantar atau tidak lagi diperlukan.")}</div>}
         {orang && (
           <>
             <div className="flex flex-col gap-0.5 rounded-card bg-surface px-4 py-3">
               <b className="text-base font-extrabold">{orang.name}</b>
               <span className="text-[13px] text-muted">
-                Tempoh percubaan tamat {tarikh(orang.probation_end)} ({orang.days_left < 0 ? `lewat ${-orang.days_left} hari` : `${orang.days_left} hari lagi`})
-              </span>
+                {tr("Tempoh percubaan tamat {0} ({1})", tarikh(orang.probation_end), orang.days_left < 0 ? tr("lewat {0} hari", -orang.days_left) : tr("{0} hari lagi", orang.days_left))}</span>
             </div>
             {ASPEK_PENILAIAN.map((a) => (
               <MedanBorang key={a.k} label={a.label}>
@@ -69,7 +69,7 @@ export default function PenilaianPage() {
                         type="button"
                         role="radio"
                         aria-checked={on}
-                        aria-label={`${a.label}: ${n} ${s}`}
+                        aria-label={`${tr(a.label)}: ${n} ${s}`}
                         onClick={() => setMarkah({ ...markah, [a.k]: n })}
                         className={`flex min-h-12 flex-col items-center justify-center rounded-[12px] border text-[11px] leading-tight font-semibold ${on ? "border-primary bg-primary text-white" : "border-line bg-surface text-subtle"}`}
                       >
@@ -81,7 +81,7 @@ export default function PenilaianPage() {
                 </div>
               </MedanBorang>
             ))}
-            <MedanBorang label="Cadangan anda">
+            <MedanBorang label={tr("Cadangan anda")}>
               <div className="flex flex-wrap gap-2">
                 {(Object.keys(LABEL_CADANGAN) as CadanganPercubaan[]).map((k) => (
                   <Cip key={k} on={cadangan === k} onClick={() => setCadangan(k)}>
@@ -91,17 +91,17 @@ export default function PenilaianPage() {
               </div>
             </MedanBorang>
             {cadangan === "extend" && (
-              <MedanBorang label="Lanjutkan selama">
+              <MedanBorang label={tr("Lanjutkan selama")}>
                 <div className="flex gap-2">
                   {[1, 2, 3, 6].map((n) => (
                     <Cip key={n} on={bulan === n} onClick={() => setBulan(n)}>
-                      {`${n} bulan`}
+                      {tr("{0} bulan", n)}
                     </Cip>
                   ))}
                 </div>
               </MedanBorang>
             )}
-            <MedanBorang label={cadangan === "confirm" ? "Ulasan (pilihan)" : "Sebab cadangan"}>
+            <MedanBorang label={cadangan === "confirm" ? tr("Ulasan (pilihan)") : tr("Sebab cadangan")}>
               <textarea
                 rows={3}
                 value={ulasan}
@@ -109,7 +109,7 @@ export default function PenilaianPage() {
                 className="rounded-[12px] border border-[#D5DEDC] bg-surface px-3 py-2.5 text-sm text-ink outline-none focus:border-primary"
               />
             </MedanBorang>
-            <span className="text-xs leading-snug text-muted">Penilaian ini dihantar kepada HR untuk keputusan muktamad. Pekerja tidak melihat penilaian ini.</span>
+            <span className="text-xs leading-snug text-muted">{tr("Penilaian ini dihantar kepada HR untuk keputusan muktamad. Pekerja tidak melihat penilaian ini.")}</span>
             {ralat && <ErrorBox message={ralat} />}
           </>
         )}
@@ -117,8 +117,7 @@ export default function PenilaianPage() {
       {orang && (
         <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <ButangUtama onClick={hantar} busy={busy}>
-            Hantar penilaian
-          </ButangUtama>
+            {tr("Hantar penilaian")}</ButangUtama>
         </div>
       )}
     </Screen>

@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { beritahu } from "@/components/Dialog";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
@@ -54,7 +55,7 @@ function Betulkan() {
   const lalaiKeluar = emp.workEnd.slice(0, 5).replace(/^0/, "");
   const vMasuk = masuk?.t === tarikh ? masuk.v : r?.clockIn && !(r.late > 0) ? jam(r.clockIn) : lalaiMasuk;
   const vKeluar = keluar?.t === tarikh ? keluar.v : r?.clockOut ? jam(r.clockOut) : lalaiKeluar;
-  const ketua = emp.departmentName ? `ketua jabatan ${emp.departmentName}` : "ketua jabatan";
+  const ketua = emp.departmentName ? tr("ketua jabatan {0}", emp.departmentName) : tr("ketua jabatan");
   const pelulus = (d.data?.steps ?? []).map((s) => (s.approver === "dept_head" ? ketua : s.name)).join(", kemudian ") || ketua;
   const hd = hariTarikh(tarikh);
 
@@ -62,27 +63,27 @@ function Betulkan() {
     setRalat(null);
     const i = vMasuk ? masaKeISO(tarikh, vMasuk) : null;
     const o = vKeluar ? masaKeISO(tarikh, vKeluar) : null;
-    if (vMasuk && !i) return setRalat("Masa masuk tidak sah (contoh: 8:55).");
-    if (vKeluar && !o) return setRalat("Masa keluar tidak sah (contoh: 18:05).");
+    if (vMasuk && !i) return setRalat(tr("Masa masuk tidak sah (contoh: 8:55)."));
+    if (vKeluar && !o) return setRalat(tr("Masa keluar tidak sah (contoh: 18:05)."));
     const label = SEBAB_PEMBETULAN.find((s) => s.id === sebab)!.label;
-    if (sebab === "lain" && !ket.trim()) return setRalat("Sila terangkan sebabnya.");
+    if (sebab === "lain" && !ket.trim()) return setRalat(tr("Sila terangkan sebabnya."));
     setBusy(true);
     try {
       await hantarPembetulan(emp.id, tarikh, i, o, ket.trim() ? `${label}: ${ket.trim()}` : label);
-      beritahu("Pembetulan masa dihantar kepada ketua.");
+      beritahu(tr("Pembetulan masa dihantar kepada ketua."));
       router.replace("/kehadiran");
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
       setBusy(false);
     }
   }
 
   return (
     <Screen lebar="sederhana">
-      <BackHeader title="Betulkan masa" href="/kehadiran" />
+      <BackHeader title={tr("Betulkan masa")} href="/kehadiran" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         <label className="flex items-center gap-2 text-sm">
-          <span className="font-bold text-[#4A5A57]">Tarikh</span>
+          <span className="font-bold text-[#4A5A57]">{tr("Tarikh")}</span>
           <input
             type="date"
             min={addDays(today, -31)}
@@ -93,37 +94,36 @@ function Betulkan() {
           />
         </label>
         <Seksyen>
-          REKOD MESIN · {HARI_PENUH[hd.slice(0, 3)] ?? ""}, {hd.slice(5).toUpperCase()}
-        </Seksyen>
+          {tr("REKOD MESIN · {0}, {1}", HARI_PENUH[hd.slice(0, 3)] ?? "", hd.slice(5).toUpperCase())}</Seksyen>
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data ? (
           <Loading />
         ) : (
           <div className="grid grid-cols-2 gap-2">
             <div className="flex flex-col gap-0.5 rounded-[14px] bg-surface px-3.5 py-3">
-              <span className="text-xs text-muted">Masuk</span>
-              <b className={`text-lg font-extrabold ${r?.late ? "text-warning" : ""}`}>{r?.clockIn ? jam(r.clockIn) : "Tiada"}</b>
+              <span className="text-xs text-muted">{tr("Masuk")}</span>
+              <b className={`text-lg font-extrabold ${r?.late ? "text-warning" : ""}`}>{r?.clockIn ? jam(r.clockIn) : tr("Tiada")}</b>
             </div>
             <div className="flex flex-col gap-0.5 rounded-[14px] bg-surface px-3.5 py-3">
-              <span className="text-xs text-muted">Keluar</span>
-              <b className="text-lg font-extrabold">{r?.clockOut ? jam(r.clockOut) : "Tiada"}</b>
+              <span className="text-xs text-muted">{tr("Keluar")}</span>
+              <b className="text-lg font-extrabold">{r?.clockOut ? jam(r.clockOut) : tr("Tiada")}</b>
             </div>
           </div>
         )}
 
-        <Seksyen className="pt-1">MASA SEBENAR</Seksyen>
+        <Seksyen className="pt-1">{tr("MASA SEBENAR")}</Seksyen>
         <div className="grid grid-cols-2 gap-2">
           <label className="flex flex-col gap-1 rounded-[14px] bg-surface px-3.5 py-2.5">
-            <span className="text-xs text-muted">Masuk</span>
+            <span className="text-xs text-muted">{tr("Masuk")}</span>
             <input value={vMasuk} onChange={(e) => setMasuk({ t: tarikh, v: e.target.value })} inputMode="numeric" placeholder="8:55" className="h-9 text-lg font-extrabold outline-none" />
           </label>
           <label className="flex flex-col gap-1 rounded-[14px] bg-surface px-3.5 py-2.5">
-            <span className="text-xs text-muted">Keluar</span>
+            <span className="text-xs text-muted">{tr("Keluar")}</span>
             <input value={vKeluar} onChange={(e) => setKeluar({ t: tarikh, v: e.target.value })} inputMode="numeric" placeholder="18:05" className="h-9 text-lg font-extrabold outline-none" />
           </label>
         </div>
 
-        <Seksyen className="pt-1">SEBAB</Seksyen>
+        <Seksyen className="pt-1">{tr("SEBAB")}</Seksyen>
         <div className="grid grid-cols-2 gap-2">
           {SEBAB_PEMBETULAN.map((s) => (
             <button
@@ -133,27 +133,26 @@ function Betulkan() {
               onClick={() => setSebab(s.id)}
               className={`h-[46px] rounded-[12px] px-2 text-[13px] font-bold ${sebab === s.id ? "border-[1.5px] border-primary bg-[#E3F1EE] text-primary" : "border border-[#D5DEDC] bg-surface"}`}
             >
-              {s.label}
+              {tr(s.label)}
             </button>
           ))}
         </div>
         <label className="flex flex-col gap-1.5">
-          <span className="text-[13px] font-bold text-[#4A5A57]">Keterangan {sebab === "lain" ? "" : "(pilihan)"}</span>
+          <span className="text-[13px] font-bold text-[#4A5A57]">{tr("Keterangan {0}", sebab === "lain" ? "" : "(pilihan)")}</span>
           <input
             value={ket}
             onChange={(e) => setKet(e.target.value)}
-            placeholder="Contoh: berjumpa pelanggan di KLIA terlebih dahulu"
+            placeholder={tr("Contoh: berjumpa pelanggan di KLIA terlebih dahulu")}
             className="h-12 rounded-[12px] border border-[#D5DEDC] bg-surface px-3 text-sm outline-none focus:border-primary"
           />
         </label>
         <span className="rounded-[14px] bg-[#E3F1EE] px-4 py-3 text-[13px] leading-normal text-primary">
-          Akan diluluskan oleh {pelulus} hari ini. Setelah diluluskan, rekod lewat akan dibatalkan.
-        </span>
+          {tr("Akan diluluskan oleh {0} hari ini. Setelah diluluskan, rekod lewat akan dibatalkan.", pelulus)}</span>
         {ralat && <ErrorBox message={ralat} />}
       </main>
       <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <ButangUtama onClick={hantar} busy={busy} disabled={r?.correction === "pending"}>
-          {r?.correction === "pending" ? "Sedang menunggu kelulusan" : "Hantar permohonan"}
+          {r?.correction === "pending" ? tr("Sedang menunggu kelulusan") : tr("Hantar permohonan")}
         </ButangUtama>
       </div>
     </Screen>

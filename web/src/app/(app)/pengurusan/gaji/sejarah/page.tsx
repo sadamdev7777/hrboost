@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -13,19 +14,19 @@ import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { TabGaji } from "@/components/TabGaji";
 
 const STATUS: Record<string, { l: string; t: "neutral" | "warning" | "primary" | "success" | "danger" }> = {
-  draft: { l: "Draf", t: "neutral" },
-  calculated: { l: "Dikira", t: "warning" },
-  returned: { l: "Dikembalikan", t: "danger" },
-  pending: { l: "Menunggu kelulusan", t: "warning" },
-  approved: { l: "Diluluskan", t: "primary" },
-  rejected: { l: "Ditolak", t: "danger" },
-  paid: { l: "Dibayar", t: "success" },
-  locked: { l: "Dikunci", t: "success" },
+  draft: { l: tr("Draf"), t: "neutral" },
+  calculated: { l: tr("Dikira"), t: "warning" },
+  returned: { l: tr("Dikembalikan"), t: "danger" },
+  pending: { l: tr("Menunggu kelulusan"), t: "warning" },
+  approved: { l: tr("Diluluskan"), t: "primary" },
+  rejected: { l: tr("Ditolak"), t: "danger" },
+  paid: { l: tr("Dibayar"), t: "success" },
+  locked: { l: tr("Dikunci"), t: "success" },
 };
 const FAIL = [
-  ["bank", "Bank"],
-  ["epf", "KWSP"],
-  ["socso", "PERKESO"],
+  ["bank", tr("Bank")],
+  ["epf", tr("KWSP")],
+  ["socso", tr("PERKESO")],
   ["pcb", "PCB"],
 ] as const;
 
@@ -57,21 +58,21 @@ function Sejarah() {
   async function fail(id: string, jenis: (typeof FAIL)[number][0], y: number, m: number) {
     setRalat(null);
     try {
-      await muatTurun(id, jenis, `${emp.companyCode}-${jenis}-${y}-${String(m).padStart(2, "0")}.csv`);
+      await muatTurun(id, jenis, tr("{0}-{1}-{2}-{3}.csv", emp.companyCode, jenis, y, String(m).padStart(2, "0")));
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
 
   return (
     <Screen>
-      <PengepalaAkar title="Gaji" backHr="/pengurusan" />
+      <PengepalaAkar title={tr("Gaji")} backHr="/pengurusan" />
       <TabGaji />
       <main className="flex grow flex-col gap-3 px-4 py-4 lg:px-0">
         {d.error && <ErrorBox message={d.error} />}
         {ralat && <ErrorBox message={ralat} />}
         {d.loading && !d.data && <Loading />}
-        {d.data && d.data.length === 0 && <span className="text-sm text-muted">Belum ada gaji diproses.</span>}
+        {d.data && d.data.length === 0 && <span className="text-sm text-muted">{tr("Belum ada gaji diproses.")}</span>}
         {d.data && d.data.length > 0 && (
           <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
             {d.data.map((r) => {
@@ -85,18 +86,18 @@ function Sejarah() {
                       {BULAN_PENUH[r.period_month - 1]} {r.period_year}
                     </b>
                     <span className="text-xs text-muted">
-                      {t.headcount ? `${t.headcount} pekerja` : "Belum dikira"}
-                      {r.pay_date ? ` · dibayar ${tarikh(r.pay_date)}` : ""}
+                      {t.headcount ? tr("{0} pekerja", t.headcount) : tr("Belum dikira")}
+                      {r.pay_date ? tr(" · dibayar {0}", tarikh(r.pay_date)) : ""}
                     </span>
                   </span>
                   {t.gross != null && (
                     <span className="flex gap-5 text-sm tabular-nums">
                       <span className="flex flex-col">
-                        <span className="text-[11px] text-muted">Kasar</span>
+                        <span className="text-[11px] text-muted">{tr("Kasar")}</span>
                         <b>{ringgit(t.gross)}</b>
                       </span>
                       <span className="flex flex-col">
-                        <span className="text-[11px] text-muted">Bersih</span>
+                        <span className="text-[11px] text-muted">{tr("Bersih")}</span>
                         <b>{ringgit(t.net)}</b>
                       </span>
                     </span>
@@ -118,8 +119,7 @@ function Sejarah() {
                       href={`/pengurusan/gaji?y=${r.period_year}&m=${r.period_month}`}
                       className="flex h-9 items-center rounded-full bg-[#E3F1EE] px-3.5 text-xs font-bold text-primary!"
                     >
-                      Buka
-                    </Link>
+                      {tr("Buka")}</Link>
                   </span>
                 </div>
               );

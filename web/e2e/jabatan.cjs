@@ -3,6 +3,7 @@
 // Prasyarat: `npx supabase db reset`, aplikasi di localhost:3000. Jalankan: node web/e2e/jabatan.cjs
 const os = require('os');
 const { chromium } = require('playwright');
+require('./_bahasa.cjs');
 
 const BASE = process.env.E2E_BASE || 'http://localhost:3000';
 const shots = process.env.E2E_SHOTS || os.tmpdir();

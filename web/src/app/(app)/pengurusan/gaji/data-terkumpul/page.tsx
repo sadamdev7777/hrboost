@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
@@ -56,7 +57,7 @@ function DataTerkumpul() {
     setRalat([]);
     setOk(null);
     const kerja = (d.data ?? []).filter((r) => nilai[r.employment_id] && JSON.stringify(nilai[r.employment_id]) !== JSON.stringify(awal(r)));
-    if (!kerja.length) return setRalat(["Tiada perubahan untuk disimpan."]);
+    if (!kerja.length) return setRalat([tr("Tiada perubahan untuk disimpan.")]);
     setBusy(true);
     const gagal: string[] = [];
     for (const r of kerja) {
@@ -80,19 +81,17 @@ function DataTerkumpul() {
     }
     setBusy(false);
     if (gagal.length) setRalat(gagal);
-    else setOk(`${kerja.length} pekerja disimpan.`);
+    else setOk(tr("{0} pekerja disimpan.", kerja.length));
     setNilai({});
     d.reload();
   }
 
   return (
     <Screen>
-      <BackHeader title={`Data gaji terkumpul ${tahun}`} href="/pengurusan/gaji" />
+      <BackHeader title={tr("Data gaji terkumpul {0}", tahun)} href="/pengurusan/gaji" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         <span className="text-sm leading-normal text-subtle">
-          Jika syarikat mula menggunakan HRBoost pada pertengahan tahun, isi jumlah gaji kasar, KWSP pekerja dan PCB yang telah dibayar dalam sistem lama sejak Januari. Ini
-          diperlukan supaya PCB dikira dengan tepat (kaedah berkomputer LHDN). Gunakan angka daripada slip gaji / borang CP39 terdahulu.
-        </span>
+          {tr("Jika syarikat mula menggunakan HRBoost pada pertengahan tahun, isi jumlah gaji kasar, KWSP pekerja dan PCB yang telah dibayar dalam sistem lama sejak Januari. Ini diperlukan supaya PCB dikira dengan tepat (kaedah berkomputer LHDN). Gunakan angka daripada slip gaji / borang CP39 terdahulu.")}</span>
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         {d.data && (
@@ -100,11 +99,11 @@ function DataTerkumpul() {
             <table className="w-full min-w-[720px] border-collapse text-left text-[13px]">
               <thead>
                 <tr className="border-b border-[#EEF2F1] text-[11px] font-bold tracking-[0.03em] text-muted">
-                  <th className="px-4 py-3">PEKERJA</th>
-                  <th className="px-2 py-3">HINGGA BULAN</th>
-                  <th className="px-2 py-3 text-right">GAJI KASAR (RM)</th>
-                  <th className="px-2 py-3 text-right">KWSP PEKERJA (RM)</th>
-                  <th className="px-2 py-3 text-right">PCB (RM)</th>
+                  <th className="px-4 py-3">{tr("PEKERJA")}</th>
+                  <th className="px-2 py-3">{tr("HINGGA BULAN")}</th>
+                  <th className="px-2 py-3 text-right">{tr("GAJI KASAR (RM)")}</th>
+                  <th className="px-2 py-3 text-right">{tr("KWSP PEKERJA (RM)")}</th>
+                  <th className="px-2 py-3 text-right">{tr("PCB (RM)")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -117,17 +116,16 @@ function DataTerkumpul() {
                           <b className="text-sm">{r.name}</b>
                           <span className="text-[11px] text-muted">
                             {r.employee_no}
-                            {r.payroll_months ? ` · ${r.payroll_months} bulan dalam HRBoost` : ""}
-                            {r.up_to_month == null ? " · belum diisi" : ""}
+                            {r.payroll_months ? tr(" · {0} bulan dalam HRBoost", r.payroll_months) : ""}
+                            {r.up_to_month == null ? tr(" · belum diisi") : ""}
                           </span>
                         </span>
                       </td>
                       <td className="px-2 py-2">
-                        <select aria-label={`Hingga bulan ${r.name}`} className={`${inputKecil} w-36!`} value={x.bulan} onChange={(e) => ubah(r, "bulan", e.target.value)}>
+                        <select aria-label={tr("Hingga bulan {0}", r.name)} className={`${inputKecil} w-36!`} value={x.bulan} onChange={(e) => ubah(r, "bulan", e.target.value)}>
                           {BULAN_PENUH.slice(0, 11).map((b, i) => (
                             <option key={b} value={i + 1}>
-                              Jan – {b.slice(0, 3)}
-                            </option>
+                              {tr("Jan – {0}", b.slice(0, 3))}</option>
                           ))}
                         </select>
                       </td>
@@ -161,7 +159,7 @@ function DataTerkumpul() {
       </main>
       <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <button type="button" onClick={simpan} disabled={busy} className="flex h-12 w-full items-center justify-center rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
-          {busy ? "Menyimpan…" : "Simpan semua"}
+          {busy ? tr("Menyimpan…") : tr("Simpan semua")}
         </button>
       </div>
     </Screen>

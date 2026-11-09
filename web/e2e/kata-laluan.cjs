@@ -14,6 +14,7 @@ const path = require('path');
 const http = require('http');
 const { spawn, execSync } = require('child_process');
 const { chromium } = require('playwright');
+require('./_bahasa.cjs');
 
 const ROOT = path.join(__dirname, '../..');
 const BASE = process.env.E2E_BASE || 'http://localhost:3000';

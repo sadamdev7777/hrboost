@@ -1,5 +1,6 @@
 "use client";
 
+import { bahasa, bahasaDipilih, tetapkanBahasa, tr } from "@/lib/i18n";
 import { createContext, use, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { getSupabase } from "./supabase";
 import type { Database } from "./database.types";
@@ -65,11 +66,16 @@ async function loadMe(preferredCompany: string | null): Promise<State> {
 
   const { data: person, error: pErr } = await sb
     .from("persons")
-    .select("id, full_name, preferred_name, photo_path, email")
+    .select("id, full_name, preferred_name, photo_path, email, language")
     .eq("auth_user_id", user.id)
     .maybeSingle();
   if (pErr) return { status: "error", message: pErr.message };
   if (!person) return { status: "no-person", userId: user.id, phone: user.phone ?? null };
+  // Bahasa: pilihan pelayar ini didahulukan; jika belum dipilih, ikut pilihan yang disimpan pada akaun
+  if (!bahasaDipilih() && (person.language === "ms" || person.language === "en") && person.language !== bahasa()) {
+    tetapkanBahasa(person.language as "ms" | "en");
+    return { status: "loading" };
+  }
 
   const loginP = sb.rpc("my_login_status");
   const { data: emps, error: eErr } = await sb
@@ -179,14 +185,14 @@ export function MeProvider({ children }: { children: ReactNode }) {
 
 export function useMeContext(): Ctx {
   const ctx = use(MeContext);
-  if (!ctx) throw new Error("useMeContext mesti digunakan dalam MeProvider");
+  if (!ctx) throw new Error(tr("useMeContext mesti digunakan dalam MeProvider"));
   return ctx;
 }
 
 /** Pengguna semasa (hanya dalam halaman yang dilindungi, selepas status "ready"). */
 export function useMe(): Me {
   const { state } = useMeContext();
-  if (state.status !== "ready") throw new Error("Pengguna belum dimuatkan");
+  if (state.status !== "ready") throw new Error(tr("Pengguna belum dimuatkan"));
   return state.me;
 }
 

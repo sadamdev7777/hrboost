@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { useData } from "@/lib/useData";
 import { getSenaraiSemak, getTugasSemakSaya, padamSemak, tambahSemak, tandaSemak, type PerkaraSemak, type TugasSemak } from "@/lib/berkanun";
@@ -11,7 +12,7 @@ function Tarikh({ iso, siap }: { iso: string | null; siap: boolean }) {
   if (!iso) return null;
   const lewat = !siap && iso < todayISO();
   const hariIni = !siap && iso === todayISO();
-  return <span className={`text-xs ${lewat ? "font-bold text-danger" : hariIni ? "font-bold text-warning" : "text-muted"}`}>{lewat ? `Lewat · ${tarikh(iso)}` : hariIni ? "Hari ini" : tarikh(iso)}</span>;
+  return <span className={`text-xs ${lewat ? "font-bold text-danger" : hariIni ? "font-bold text-warning" : "text-muted"}`}>{lewat ? tr("Lewat · {0}", tarikh(iso)) : hariIni ? tr("Hari ini") : tarikh(iso)}</span>;
 }
 
 function KotakTanda({ siap, boleh, label, onTukar }: { siap: boolean; boleh: boolean; label: string; onTukar: () => void }) {
@@ -46,47 +47,46 @@ export function SenaraiSemakPekerja({ employmentId, hr }: { employmentId: string
       await tandaSemak(x.id, !x.done_at);
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
   async function tambah() {
-    const t = await mintaTeks({ tajuk: "Tambah perkara senarai semak", label: "Perkara (untuk HR)", ok: "Tambah" });
+    const t = await mintaTeks({ tajuk: tr("Tambah perkara senarai semak"), label: tr("Perkara (untuk HR)"), ok: tr("Tambah") });
     if (!t) return;
     try {
       await tambahSemak(employmentId, "hr", t, null);
-      beritahu("Perkara ditambah.");
+      beritahu(tr("Perkara ditambah."));
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
   async function padam(x: PerkaraSemak) {
     try {
       await padamSemak(x.id);
       d.reload();
-      beritahu("Perkara dipadam.", "ok", {
-        label: "Buat asal",
+      beritahu(tr("Perkara dipadam."), "ok", {
+        label: tr("Buat asal"),
         buat: async () => {
           await tambahSemak(employmentId, x.owner, x.title, x.due_date).catch(() => undefined);
           d.reload();
         },
       });
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
 
   const kumpulan: { owner: "hr" | "ketua"; tajuk: string }[] = [
     { owner: "hr", tajuk: "HR" },
-    { owner: "ketua", tajuk: "Ketua jabatan" },
+    { owner: "ketua", tajuk: tr("Ketua jabatan") },
   ];
   return (
-    <section aria-label="Senarai semak pekerja baharu" className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3">
+    <section aria-label={tr("Senarai semak pekerja baharu")} className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3">
       <div className="flex items-center justify-between gap-2">
-        <h2 className="m-0 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">SENARAI SEMAK PEKERJA BAHARU</h2>
+        <h2 className="m-0 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("SENARAI SEMAK PEKERJA BAHARU")}</h2>
         <span className={`text-xs font-bold ${siap === senarai.length && senarai.length ? "text-success" : "text-muted"}`}>
-          {siap}/{senarai.length} selesai
-        </span>
+          {tr("{0}/{1} selesai", siap, senarai.length)}</span>
       </div>
       {senarai.length > 0 && (
         <div className="h-1.5 overflow-hidden rounded-full bg-[#E4EAE8]">
@@ -106,17 +106,14 @@ export function SenaraiSemakPekerja({ employmentId, hr }: { employmentId: string
                   <span className={x.done_at ? "text-muted line-through" : ""}>{x.title}</span>
                   {x.done_at ? (
                     <span className="text-xs text-muted">
-                      Selesai {tarikh(x.done_at)}
-                      {x.done_by_name ? ` oleh ${x.done_by_name}` : ""}
-                    </span>
+                      {tr("Selesai {0}{1}", tarikh(x.done_at), x.done_by_name ? tr(" oleh {0}", x.done_by_name) : "")}</span>
                   ) : (
                     <Tarikh iso={x.due_date} siap={false} />
                   )}
                 </span>
                 {hr && (
-                  <button type="button" onClick={() => padam(x)} aria-label={`Padam ${x.title}`} className="flex size-9 shrink-0 items-center justify-center text-lg text-muted hover:text-danger">
-                    ×
-                  </button>
+                  <button type="button" onClick={() => padam(x)} aria-label={tr("Padam {0}", x.title)} className="flex size-9 shrink-0 items-center justify-center text-lg text-muted hover:text-danger">
+                    {tr("×")}</button>
                 )}
               </div>
             ))}
@@ -126,8 +123,7 @@ export function SenaraiSemakPekerja({ employmentId, hr }: { employmentId: string
       {ralat && <ErrorBox message={ralat} />}
       {hr && (
         <button type="button" onClick={tambah} className="flex min-h-10 items-center self-start text-[13px] font-bold text-primary">
-          + Tambah perkara
-        </button>
+          {tr("+ Tambah perkara")}</button>
       )}
     </section>
   );
@@ -143,8 +139,8 @@ export function TugasSemakKetua({ companyId }: { companyId: string }) {
     setRalat(null);
     try {
       await tandaSemak(id, true);
-      beritahu("Ditanda selesai.", "ok", {
-        label: "Buat asal",
+      beritahu(tr("Ditanda selesai."), "ok", {
+        label: tr("Buat asal"),
         buat: async () => {
           await tandaSemak(id, false).catch(() => undefined);
           d.reload();
@@ -152,12 +148,12 @@ export function TugasSemakKetua({ companyId }: { companyId: string }) {
       });
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
   return (
-    <section aria-label="Senarai semak pekerja baharu" className="flex flex-col gap-1 rounded-card bg-surface px-4 py-3">
-      <h2 className="m-0 pb-1 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">PEKERJA BAHARU · SENARAI SEMAK ANDA</h2>
+    <section aria-label={tr("Senarai semak pekerja baharu")} className="flex flex-col gap-1 rounded-card bg-surface px-4 py-3">
+      <h2 className="m-0 pb-1 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("PEKERJA BAHARU · SENARAI SEMAK ANDA")}</h2>
       {senarai.slice(0, 5).map((x) => (
         <div key={x.id} className="flex min-h-11 items-center gap-1 text-sm">
           <KotakTanda siap={false} boleh label={`${x.title} (${x.employee_name})`} onTukar={() => siap(x.id)} />
@@ -170,7 +166,7 @@ export function TugasSemakKetua({ companyId }: { companyId: string }) {
           </span>
         </div>
       ))}
-      {senarai.length > 5 && <span className="py-1 text-xs text-muted">dan {senarai.length - 5} perkara lagi</span>}
+      {senarai.length > 5 && <span className="py-1 text-xs text-muted">{tr("dan {0} perkara lagi", senarai.length - 5)}</span>}
       {ralat && <ErrorBox message={ralat} />}
     </section>
   );

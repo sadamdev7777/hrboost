@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { useMe } from "@/lib/me";
@@ -8,7 +9,7 @@ import { getProfil, sorokAkaun, sorokIC, sorokTelefon } from "@/lib/profil";
 import { paparTelefon, tarikh } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
 
-const BULAN = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogo", "Sep", "Okt", "Nov", "Dis"];
+const BULAN = [tr("Jan"), tr("Feb"), tr("Mac"), tr("Apr"), tr("Mei"), tr("Jun"), tr("Jul"), tr("Ogo"), tr("Sep"), tr("Okt"), tr("Nov"), tr("Dis")];
 
 // Rujukan reka bentuk: design/Profil.dc.html
 export default function ProfilPage() {
@@ -19,12 +20,11 @@ export default function ProfilPage() {
   return (
     <Screen>
       <BackHeader
-        title="Profil Saya"
+        title={tr("Profil Saya")}
         href="/saya"
         action={
           <Link href="/profil/ubah" className="p-3 text-sm font-bold">
-            Ubah
-          </Link>
+            {tr("Ubah")}</Link>
         }
       />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
@@ -34,67 +34,63 @@ export default function ProfilPage() {
           <>
 <div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6 lg:gap-y-5">
 <div className="flex flex-col gap-2.5">
-            <Seksyen>PERIBADI</Seksyen>
+            <Seksyen>{tr("PERIBADI")}</Seksyen>
             <Kotak>
-              <Medan label="Nama penuh (kad pengenalan)">{d.fullName}</Medan>
-              <Medan label="Nama panggilan">{d.preferredName}</Medan>
-              <Medan label="No. kad pengenalan">{sorokIC(d.icNo)}</Medan>
-              <Medan label="WhatsApp">{sorokTelefon(d.phone)}</Medan>
-              <Medan label="Alamat">{d.address || "Belum diisi"}</Medan>
+              <Medan label={tr("Nama penuh (kad pengenalan)")}>{d.fullName}</Medan>
+              <Medan label={tr("Nama panggilan")}>{d.preferredName}</Medan>
+              <Medan label={tr("No. kad pengenalan")}>{sorokIC(d.icNo)}</Medan>
+              <Medan label={tr("WhatsApp")}>{sorokTelefon(d.phone)}</Medan>
+              <Medan label={tr("Alamat")}>{d.address || tr("Belum diisi")}</Medan>
             </Kotak>
 </div>
 <div className="flex flex-col gap-2.5">
-            <Seksyen>LOG MASUK</Seksyen>
+            <Seksyen>{tr("LOG MASUK")}</Seksyen>
             <Kotak>
               <Link href="/akaun/kata-laluan" className="flex min-h-[50px] items-center justify-between gap-3 px-4 py-2 text-sm text-ink!">
-                <span className="text-muted">E-mel &amp; kata laluan</span>
-                <span className="truncate font-semibold">{me.loginEmail ?? "Belum ditetapkan"} ›</span>
+                <span className="text-muted">{tr("E-mel & kata laluan")}</span>
+                <span className="truncate font-semibold">{me.loginEmail ?? tr("Belum ditetapkan")} ›</span>
               </Link>
             </Kotak>
 </div>
 <div className="flex flex-col gap-2.5">
-            <Seksyen>BANK (UNTUK GAJI)</Seksyen>
+            <Seksyen>{tr("BANK (UNTUK GAJI)")}</Seksyen>
             <Kotak>
-              <Medan label="Bank">{d.bankName || "Belum diisi"}</Medan>
-              <Medan label="No. akaun">{sorokAkaun(d.bankAccountNo)}</Medan>
+              <Medan label={tr("Bank")}>{d.bankName || tr("Belum diisi")}</Medan>
+              <Medan label={tr("No. akaun")}>{sorokAkaun(d.bankAccountNo)}</Medan>
             </Kotak>
             {d.bankMenunggu && (
               <div className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] leading-normal text-warning">
-                Pertukaran ke {d.bankMenunggu.bankName} {sorokAkaun(d.bankMenunggu.bankAccountNo)} sedang menunggu pengesahan HR.
-              </div>
+                {tr("Pertukaran ke {0} {1} sedang menunggu pengesahan HR.", d.bankMenunggu.bankName, sorokAkaun(d.bankMenunggu.bankAccountNo))}</div>
             )}
             {d.bankDitolak && !d.bankMenunggu && (
               <div className="rounded-[14px] bg-danger-soft px-4 py-3 text-[13px] leading-normal text-danger">
-                Pertukaran akaun bank ditolak oleh HR pada {tarikh(d.bankDitolak.decidedAt)}
-                {d.bankDitolak.note ? `: ${d.bankDitolak.note}` : "."}
-              </div>
+                {tr("Pertukaran akaun bank ditolak oleh HR pada {0}{1}", tarikh(d.bankDitolak.decidedAt), d.bankDitolak.note ? `: ${d.bankDitolak.note}` : ".")}</div>
             )}
 </div>
 <div className="flex flex-col gap-2.5">
-            <Seksyen>PEKERJAAN</Seksyen>
+            <Seksyen>{tr("PEKERJAAN")}</Seksyen>
             <Kotak>
               {d.pekerjaan.map((e) => (
                 <Medan key={e.company} label={e.company}>
-                  {[e.position ?? e.department, `sejak ${BULAN[Number(e.joinDate.slice(5, 7)) - 1]} ${e.joinDate.slice(0, 4)}`].filter(Boolean).join(" · ")}
+                  {[e.position ?? e.department, tr("sejak {0} {1}", BULAN[Number(e.joinDate.slice(5, 7)) - 1], e.joinDate.slice(0, 4))].filter(Boolean).join(" · ")}
                 </Medan>
               ))}
             </Kotak>
 </div>
 <div className="flex flex-col gap-2.5">
-            <Seksyen>WARIS</Seksyen>
+            <Seksyen>{tr("WARIS")}</Seksyen>
             <Kotak>
               {d.waris ? (
                 <Medan label={d.waris.name}>{[d.waris.relationship, paparTelefon(d.waris.phone)].filter(Boolean).join(" · ")}</Medan>
               ) : (
-                <Medan label="Waris">Belum diisi</Medan>
+                <Medan label={tr("Waris")}>{tr("Belum diisi")}</Medan>
               )}
             </Kotak>
 
 
 </div>
 </div>            <span className="text-xs leading-normal text-muted">
-              Pertukaran akaun bank perlu disahkan oleh HR. Maklumat sensitif disembunyikan dan setiap akses direkodkan.
-            </span>
+              {tr("Pertukaran akaun bank perlu disahkan oleh HR. Maklumat sensitif disembunyikan dan setiap akses direkodkan.")}</span>
           </>
         )}
       </main>

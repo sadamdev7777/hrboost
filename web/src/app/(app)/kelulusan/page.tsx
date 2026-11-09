@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { beritahu } from "@/components/Dialog";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -18,14 +19,14 @@ import { useSkrinLebar } from "@/lib/skrin";
 // Rujukan reka bentuk: design/Kelulusan.dc.html
 type Filter = "all" | "leave" | "claim" | "attendance_correction" | "payroll_run" | "overtime" | "salary_advance";
 const FILTER_LABEL: Record<Exclude<Filter, "all">, string> = {
-  leave: "Cuti",
-  claim: "Tuntutan",
-  attendance_correction: "Pembetulan",
-  payroll_run: "Gaji",
-  overtime: "Lebih masa",
-  salary_advance: "Pendahuluan",
+  leave: tr("Cuti"),
+  claim: tr("Tuntutan"),
+  attendance_correction: tr("Pembetulan"),
+  payroll_run: tr("Gaji"),
+  overtime: tr("Lebih masa"),
+  salary_advance: tr("Pendahuluan"),
 };
-const ROLE_LABEL: Record<string, string> = { hr: "HR", ceo: "CEO", finance: "Kewangan", admin: "Pentadbir" };
+const ROLE_LABEL: Record<string, string> = { hr: "HR", ceo: "CEO", finance: tr("Kewangan"), admin: tr("Pentadbir") };
 
 export default function KelulusanPage() {
   const me = useMe();
@@ -62,7 +63,7 @@ export default function KelulusanPage() {
     setBusy(null);
     setRejecting(null);
     if (err) setError(mesejRalat(err.message, err.code));
-    else beritahu(action === "approve" ? "Diluluskan." : "Ditolak. Pemohon dimaklumkan.");
+    else beritahu(action === "approve" ? tr("Diluluskan.") : tr("Ditolak. Pemohon dimaklumkan."));
     if (pilih === taskId) setPilih(null);
     tasks.reload();
   }
@@ -116,8 +117,8 @@ export default function KelulusanPage() {
     setBusy(null);
     setTanda(new Set());
     setPilih(null);
-    if (gagal.length) setError(`${ids.length - gagal.length} diluluskan. Tidak berjaya: ${gagal.join("; ")}`);
-    else beritahu(`${ids.length} permohonan diluluskan.`);
+    if (gagal.length) setError(tr("{0} diluluskan. Tidak berjaya: {1}", ids.length - gagal.length, gagal.join("; ")));
+    else beritahu(tr("{0} permohonan diluluskan.", ids.length));
     tasks.reload();
   }
 
@@ -125,7 +126,7 @@ export default function KelulusanPage() {
     <Screen>
       <main className="flex grow flex-col gap-3 px-4 pt-4 pb-4">
         <div className="flex items-center justify-between gap-2">
-          <h1 className="m-0 text-2xl font-extrabold">Kelulusan</h1>
+          <h1 className="m-0 text-2xl font-extrabold">{tr("Kelulusan")}</h1>
           <span className="text-right text-[13px] font-semibold text-muted">{labelPeranan(me)}</span>
         </div>
 
@@ -136,19 +137,16 @@ export default function KelulusanPage() {
             onClick={() => setTab("pending")}
             className={`h-10 rounded-[10px] text-[13px] ${tab === "pending" ? "bg-surface font-extrabold text-ink" : "font-semibold text-subtle"}`}
           >
-            Menunggu · {list.length}
-          </button>
+            {tr("Menunggu · {0}", list.length)}</button>
           <Link href="/permohonan" className="flex h-10 items-center justify-center rounded-[10px] text-[13px] font-semibold whitespace-nowrap text-subtle!">
-            Permohonan Saya
-          </Link>
+            {tr("Permohonan Saya")}</Link>
           <button
             role="tab"
             aria-selected={tab === "history"}
             onClick={() => setTab("history")}
             className={`h-10 rounded-[10px] text-[13px] ${tab === "history" ? "bg-surface font-extrabold text-ink" : "font-semibold text-subtle"}`}
           >
-            Sejarah
-          </button>
+            {tr("Sejarah")}</button>
         </div>
 
         {error && <ErrorBox message={error} />}
@@ -159,8 +157,7 @@ export default function KelulusanPage() {
             {list.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 <Chip on={filter === "all"} onClick={() => setFilter("all")}>
-                  Semua
-                </Chip>
+                  {tr("Semua")}</Chip>
                 {(Object.keys(FILTER_LABEL) as Exclude<Filter, "all">[])
                   .filter((k) => counts[k])
                   .map((k) => (
@@ -174,11 +171,9 @@ export default function KelulusanPage() {
             {tasks.loading && !tasks.data && <Loading />}
             {tasks.data && list.length === 0 && (
               <Empty>
-                Tiada permohonan menunggu kelulusan anda.
-                {!me.isHead && !me.roles.some((r) => ["hr", "finance", "ceo", "admin"].includes(r)) && (
+                {tr("Tiada permohonan menunggu kelulusan anda.")}{!me.isHead && !me.roles.some((r) => ["hr", "finance", "ceo", "admin"].includes(r)) && (
                   <span className="mt-1 block text-xs">
-                    Permohonan akan muncul di sini jika anda dilantik sebagai ketua jabatan atau wakil kelulusan. Permohonan anda sendiri ada di tab &ldquo;Permohonan Saya&rdquo;.
-                  </span>
+                    {tr("Permohonan akan muncul di sini jika anda dilantik sebagai ketua jabatan atau wakil kelulusan. Permohonan anda sendiri ada di tab “Permohonan Saya”.")}</span>
                 )}
               </Empty>
             )}
@@ -194,20 +189,19 @@ export default function KelulusanPage() {
                         checked={tanda.size > 0 && shown.every((t) => tanda.has(t.taskId))}
                         onChange={(e) => setTanda(e.target.checked ? new Set(shown.filter((t) => t.type !== "payroll_run").map((t) => t.taskId)) : new Set())}
                       />
-                      Pilih semua
-                    </label>
+                      {tr("Pilih semua")}</label>
                     <button
                       type="button"
                       disabled={!tanda.size || busy === "pukal"}
                       onClick={lulusDitanda}
                       className="flex h-9 items-center rounded-full bg-primary px-4 text-[13px] font-bold text-white disabled:opacity-40"
                     >
-                      {busy === "pukal" ? "Meluluskan…" : `Lulus ${tanda.size || ""} dipilih`}
+                      {busy === "pukal" ? tr("Meluluskan…") : tr("Lulus {0} dipilih", tanda.size || "")}
                     </button>
                   </div>
                   <span className="px-1 text-[11px] text-muted">
-                    Pintasan: <kbd className="rounded border border-line px-1 font-sans">J</kbd>/<kbd className="rounded border border-line px-1 font-sans">K</kbd> pilih ·{" "}
-                    <kbd className="rounded border border-line px-1 font-sans">A</kbd> lulus · <kbd className="rounded border border-line px-1 font-sans">X</kbd> tanda
+                    {tr("Pintasan:")}{" "}<kbd className="rounded border border-line px-1 font-sans">J</kbd>/<kbd className="rounded border border-line px-1 font-sans">K</kbd> {" "}{tr("pilih ·")}{" "}
+                    <kbd className="rounded border border-line px-1 font-sans">A</kbd> {" "}{tr("lulus ·")}{" "}<kbd className="rounded border border-line px-1 font-sans">X</kbd> tanda
                   </span>
                   {shown.map((t, i) => {
                     const aktif = (pilih ?? shown[0].taskId) === t.taskId;
@@ -222,7 +216,7 @@ export default function KelulusanPage() {
                         {t.type !== "payroll_run" ? (
                           <input
                             type="checkbox"
-                            aria-label={`Pilih ${t.name}`}
+                            aria-label={tr("Pilih {0}", t.name)}
                             className="mt-1 size-[18px] shrink-0 accent-primary"
                             checked={tanda.has(t.taskId)}
                             onClick={(e) => e.stopPropagation()}
@@ -270,7 +264,7 @@ export default function KelulusanPage() {
                       </div>
                       <span className="text-sm font-semibold">{t.title}</span>
                       <BarisKonteks k={konteks.data?.get(t.taskId)} />
-                      {t.ai && <span className="text-[13px] text-ai">AI: {t.ai}</span>}
+                      {t.ai && <span className="text-[13px] text-ai">{tr("AI: {0}", t.ai)}</span>}
                     </div>
                   </Link>
                   <div className="grid grid-cols-2 gap-2">
@@ -280,15 +274,14 @@ export default function KelulusanPage() {
                       onClick={() => setRejecting(t.taskId)}
                       className="h-11 rounded-xl border-[1.5px] border-line bg-surface text-sm font-bold text-danger disabled:opacity-60"
                     >
-                      Tolak
-                    </button>
+                      {tr("Tolak")}</button>
                     <button
                       type="button"
                       disabled={busy === t.taskId}
                       onClick={() => act(t.taskId, "approve")}
                       className="h-11 rounded-xl bg-primary text-sm font-extrabold text-white hover:bg-primary-hover disabled:opacity-60"
                     >
-                      {busy === t.taskId ? "…" : "Lulus"}
+                      {busy === t.taskId ? "…" : tr("Lulus")}
                     </button>
                   </div>
                 </div>
@@ -302,7 +295,7 @@ export default function KelulusanPage() {
           <div className="flex flex-col gap-2.5">
             {history.error && <ErrorBox message={history.error} />}
             {history.loading && !history.data && <Loading />}
-            {history.data && history.data.length === 0 && <Empty>Belum ada keputusan direkodkan.</Empty>}
+            {history.data && history.data.length === 0 && <Empty>{tr("Belum ada keputusan direkodkan.")}</Empty>}
             {history.data?.map((h) => (
               <div key={h.taskId} className="flex items-center justify-between gap-2 rounded-card bg-surface px-4 py-3">
                 <span className="flex flex-col gap-0.5">
@@ -320,8 +313,8 @@ export default function KelulusanPage() {
       <TabNav />
       {rejecting && (
         <ReasonSheet
-          title="Tolak permohonan"
-          confirmLabel="Tolak"
+          title={tr("Tolak permohonan")}
+          confirmLabel={tr("Tolak")}
           danger
           onCancel={() => setRejecting(null)}
           onConfirm={(r) => act(rejecting, "reject", r)}
@@ -338,10 +331,10 @@ function BarisKonteks({ k }: { k: Konteks | undefined }) {
   if (!k) return null;
   const bah: { t: string; tone: string }[] = [];
   if (k.balance_after !== null && k.balance_after !== undefined)
-    bah.push({ t: `Baki selepas: ${hari(Number(k.balance_after))} hari`, tone: Number(k.balance_after) < 0 ? "text-danger" : "text-subtle" });
-  if (k.team_off > 0) bah.push({ t: `${k.team_off} rakan bercuti (${k.team_names})`, tone: "text-warning" });
-  else if (k.balance_after !== null) bah.push({ t: "Tiada rakan sejabatan bercuti", tone: "text-subtle" });
-  if (k.has_attachment) bah.push({ t: "Ada lampiran", tone: "text-subtle" });
+    bah.push({ t: tr("Baki selepas: {0} hari", hari(Number(k.balance_after))), tone: Number(k.balance_after) < 0 ? "text-danger" : "text-subtle" });
+  if (k.team_off > 0) bah.push({ t: tr("{0} rakan bercuti ({1})", k.team_off, k.team_names), tone: "text-warning" });
+  else if (k.balance_after !== null) bah.push({ t: tr("Tiada rakan sejabatan bercuti"), tone: "text-subtle" });
+  if (k.has_attachment) bah.push({ t: tr("Ada lampiran"), tone: "text-subtle" });
   if (!bah.length) return null;
   return (
     <span className="flex flex-wrap gap-x-2 text-xs">
@@ -356,7 +349,7 @@ function BarisKonteks({ k }: { k: Konteks | undefined }) {
 }
 
 function labelPeranan(me: Me): string {
-  if (me.isHead && me.active?.departmentName) return `${me.name} · Ketua ${me.active.departmentName}`;
+  if (me.isHead && me.active?.departmentName) return tr("{0} · Ketua {1}", me.name, me.active.departmentName);
   const r = me.roles.find((x) => ROLE_LABEL[x]);
   return r ? `${me.name} · ${ROLE_LABEL[r]}` : me.name;
 }
@@ -381,10 +374,10 @@ function SlaBanner({ tasks }: { tasks: Tugasan[] }) {
   if (!due) return null;
   const breached = tasks.some((t) => t.breached);
   const text = breached
-    ? "Ada permohonan yang melepasi had masa. Sila selesaikan segera."
+    ? tr("Ada permohonan yang melepasi had masa. Sila selesaikan segera.")
     : tarikhTempatan(due) === todayISO()
-      ? `Selesaikan sebelum ${masaPanjang(due)} hari ini`
-      : `Selesaikan sebelum ${hariTarikh(tarikhTempatan(due))}, ${masaPanjang(due)}`;
+      ? tr("Selesaikan sebelum {0} hari ini", masaPanjang(due))
+      : tr("Selesaikan sebelum {0}, {1}", hariTarikh(tarikhTempatan(due)), masaPanjang(due));
   return (
     <div className={`flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 ${breached ? "bg-danger-soft text-danger" : "bg-warning-soft text-warning"}`}>
       <IconClock size={18} />
@@ -412,14 +405,14 @@ async function loadPending(): Promise<Tugasan[]> {
     const v = paparPermohonan({ type: r.request_type!, title: r.title!, context: ctx, submittedAt: r.submitted_at! });
     const title =
       r.request_type === "leave"
-        ? `${v.title} · ${hari(Number(ctx.days ?? 0))} hari`
+        ? tr("{0} · {1} hari", v.title, hari(Number(ctx.days ?? 0)))
         : r.request_type === "claim"
           ? `${v.title} · ${ringgit(Number(ctx.amount ?? 0))}`
           : v.title;
     return {
       taskId: r.task_id!,
       type: r.request_type as Tugasan["type"],
-      name: r.requester_nickname || r.requester_name || "Pemohon",
+      name: r.requester_nickname || r.requester_name || tr("Pemohon"),
       title,
       ai: r.ai_summary,
       assignedAt: r.assigned_at!,
@@ -444,7 +437,7 @@ async function loadHistory(personId: string) {
     const r = t.approval_requests;
     const v = r
       ? paparPermohonan({ type: r.request_type, title: r.title, context: (r.context as Record<string, unknown>) ?? {}, submittedAt: r.submitted_at })
-      : { title: "Permohonan" };
+      : { title: tr("Permohonan") };
     return {
       taskId: t.id,
       title: v.title,

@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { beritahu } from "@/components/Dialog";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
@@ -15,11 +16,11 @@ import { muatNaikPeribadi } from "@/lib/upload";
 // Rujukan reka bentuk: design/MohonCuti.dc.html
 const JENIS = ["AL", "MC", "EL", "UL"] as const;
 const SUB: Record<string, string> = {
-  MC: "Perlu sijil cuti sakit",
-  EL: "Boleh mohon selepas",
-  UL: "Gaji dipotong",
+  MC: tr("Perlu sijil cuti sakit"),
+  EL: tr("Boleh mohon selepas"),
+  UL: tr("Gaji dipotong"),
 };
-const NAMA_PENDEK: Record<string, string> = { AL: "Tahunan", MC: "Sakit (MC)", EL: "Kecemasan", UL: "Tanpa Gaji" };
+const NAMA_PENDEK: Record<string, string> = { AL: tr("Tahunan"), MC: tr("Sakit (MC)"), EL: tr("Kecemasan"), UL: tr("Tanpa Gaji") };
 
 export default function MohonCutiPage() {
   const me = useMe();
@@ -57,25 +58,25 @@ export default function MohonCutiPage() {
 
   const jangkaan = useMemo(() => {
     if (!jenis || !info.data?.workflow) return null;
-    if (jenis.sla_exempt || info.data.workflow.sla === "none") return "Tiada had masa kelulusan untuk jenis cuti ini.";
+    if (jenis.sla_exempt || info.data.workflow.sla === "none") return tr("Tiada had masa kelulusan untuk jenis cuti ini.");
     const now = new Date();
     const hm = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Kuala_Lumpur", hour: "2-digit", minute: "2-digit", hour12: false }).format(now);
     const t = todayISO();
     const hariKerja = dow(t) !== 0 && dow(t) !== 6;
     const tamat = masaTeks(emp.workEnd);
     return hariKerja && hm < info.data.workflow.cutoff_time.slice(0, 5)
-      ? `Dijangka selesai hari ini sebelum ${tamat}`
-      : `Dijangka selesai pada hari bekerja berikutnya sebelum ${tamat}`;
+      ? tr("Dijangka selesai hari ini sebelum {0}", tamat)
+      : tr("Dijangka selesai pada hari bekerja berikutnya sebelum {0}", tamat);
   }, [jenis, info.data, emp.workEnd]);
 
   async function hantar() {
     setError(null);
     if (end < start) {
-      setError("Tarikh akhir mesti sama atau selepas tarikh mula.");
+      setError(tr("Tarikh akhir mesti sama atau selepas tarikh mula."));
       return;
     }
     if (jenis?.requires_attachment && !sijil) {
-      setError(`${jenis.name} memerlukan sijil sokongan. Sila ambil gambar atau muat naik sijil.`);
+      setError(tr("{0} memerlukan sijil sokongan. Sila ambil gambar atau muat naik sijil.", jenis.name));
       return;
     }
     setBusy(true);
@@ -105,14 +106,14 @@ export default function MohonCutiPage() {
       setError(mesejRalat(err.message, err.code));
       return;
     }
-    beritahu(info.data?.steps[0] ? `Permohonan dihantar kepada ${info.data.steps[0].label}.` : "Permohonan dihantar.");
+    beritahu(info.data?.steps[0] ? tr("Permohonan dihantar kepada {0}.", info.data.steps[0].label) : tr("Permohonan dihantar."));
     router.push("/permohonan");
   }
 
   if (info.loading && !info.data) {
     return (
       <Screen lebar="sederhana">
-        <BackHeader title="Mohon Cuti" href="/utama" />
+        <BackHeader title={tr("Mohon Cuti")} href="/utama" />
         <Loading />
       </Screen>
     );
@@ -123,16 +124,16 @@ export default function MohonCutiPage() {
 
   return (
     <Screen lebar="sederhana">
-      <BackHeader title="Mohon Cuti" href="/utama" />
+      <BackHeader title={tr("Mohon Cuti")} href="/utama" />
       <main className="flex grow flex-col gap-[18px] px-4 pt-2 pb-4">
         {info.error && <ErrorBox message={info.error} />}
 
         <fieldset className="m-0 flex flex-col gap-2.5 border-0 p-0">
-          <legend className="mb-2.5 text-sm font-bold">Jenis cuti</legend>
+          <legend className="mb-2.5 text-sm font-bold">{tr("Jenis cuti")}</legend>
           <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
             {JENIS.filter((c) => info.data?.types.some((t) => t.code === c)).map((c) => {
               const on = c === code;
-              const sub = c === "AL" ? (al ? `Baki ${hari(al.available)} hari` : "Cuti tahunan") : SUB[c];
+              const sub = c === "AL" ? (al ? tr("Baki {0} hari", hari(al.available)) : tr("Cuti tahunan")) : SUB[c];
               return (
                 <button
                   key={c}
@@ -152,8 +153,8 @@ export default function MohonCutiPage() {
         </fieldset>
 
         <div className="grid grid-cols-2 gap-2.5">
-          <DateField label="Dari" value={start} onChange={(v) => { setStart(v); if (end < v) setEnd(v); }} />
-          <DateField label="Hingga" value={end} min={start} onChange={setEnd} />
+          <DateField label={tr("Dari")} value={start} onChange={(v) => { setStart(v); if (end < v) setEnd(v); }} />
+          <DateField label={tr("Hingga")} value={end} min={start} onChange={setEnd} />
         </div>
 
         {rakan.data && (
@@ -161,8 +162,8 @@ export default function MohonCutiPage() {
             <span aria-hidden="true" className="pt-px">{rakan.data.length ? "!" : "✓"}</span>
             <span>
               {rakan.data.length
-                ? `Rakan sejabatan bercuti pada tarikh ini: ${rakan.data.map((r) => `${r.name} (${julatTarikh(r.start_date, r.end_date)}${r.status === "pending" ? ", menunggu" : ""})`).join(", ")}.`
-                : "Tiada rakan sejabatan bercuti pada tarikh ini."}
+                ? tr("Rakan sejabatan bercuti pada tarikh ini: {0}.", rakan.data.map((r) => `${r.name} (${julatTarikh(r.start_date, r.end_date)}${r.status === "pending" ? tr(", menunggu") : ""})`).join(", "))
+                : tr("Tiada rakan sejabatan bercuti pada tarikh ini.")}
             </span>
           </div>
         )}
@@ -170,10 +171,10 @@ export default function MohonCutiPage() {
         <div className="flex flex-col gap-1.5 rounded-card bg-primary-soft px-4 py-3">
           <div className="flex items-baseline justify-between">
             <span className="text-xl font-extrabold text-primary">
-              {n === null ? "…" : `${hari(n)} hari bekerja`}
+              {n === null ? "…" : tr("{0} hari bekerja", hari(n))}
             </span>
             {jenis && bakiJenis && n !== null && (
-              <span className="text-[13px] font-bold text-primary">Baki selepas: {hari(bakiJenis.available - n)} hari</span>
+              <span className="text-[13px] font-bold text-primary">{tr("Baki selepas: {0} hari", hari(bakiJenis.available - n))}</span>
             )}
           </div>
           <span className="text-[13px] text-[#33504B]">{kira.data?.note ?? " "}</span>
@@ -181,13 +182,12 @@ export default function MohonCutiPage() {
 
         <div className="grid grid-cols-2 gap-2.5">
           <label className="flex flex-col gap-1.5 text-sm font-bold">
-            Pengganti tugas
-            <select
+            {tr("Pengganti tugas")}<select
               value={cover}
               onChange={(e) => setCover(e.target.value)}
               className="h-12 rounded-xl border-[1.5px] border-primary bg-surface px-3 text-sm font-semibold text-ink"
             >
-              <option value="">Tiada</option>
+              <option value="">{tr("Tiada")}</option>
               {info.data?.colleagues.map((c) => (
                 <option key={c.person_id} value={c.person_id}>
                   {c.name}
@@ -196,8 +196,7 @@ export default function MohonCutiPage() {
             </select>
           </label>
           <label className="flex flex-col gap-1.5 text-sm font-bold">
-            Sebab (pilihan)
-            <input
+            {tr("Sebab (pilihan)")}<input
               type="text"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
@@ -208,13 +207,13 @@ export default function MohonCutiPage() {
 
         {info.data && info.data.steps.length > 0 && (
           <div className="flex flex-col gap-2">
-            <span className="text-sm font-bold">Akan diluluskan oleh</span>
+            <span className="text-sm font-bold">{tr("Akan diluluskan oleh")}</span>
             <div className="flex flex-wrap items-center gap-1.5">
               {info.data.steps.map((s, i) => (
                 <span key={s.label} className="flex items-center gap-1.5">
                   {i > 0 && <IconChevronRight size={14} className="text-muted" />}
                   <span className="rounded-[10px] border border-line bg-surface px-2.5 py-1.5 text-[13px] font-semibold">
-                    {i + 1} · {s.label}
+                    {i + 1} · {tr(s.label)}
                   </span>
                 </span>
               ))}
@@ -234,13 +233,10 @@ export default function MohonCutiPage() {
           disabled={busy || (perluSijil && !sijil) || n === 0}
           className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover disabled:opacity-60"
         >
-          {busy ? "Menghantar…" : "Hantar Permohonan"}
+          {busy ? tr("Menghantar…") : tr("Hantar Permohonan")}
         </button>
         <span className="text-center text-xs text-muted">
-          Atau hantar melalui WhatsApp: “Saya ingin memohon cuti {tarikh(start)}
-          {end !== start ? `–${tarikh(end)}` : ""}
-          {reason.trim() ? ` untuk ${reason.trim().toLowerCase()}` : ""}”
-        </span>
+          {tr("Atau hantar melalui WhatsApp: “Saya ingin memohon cuti {0}{1}{2}”", tarikh(start), end !== start ? `–${tarikh(end)}` : "", reason.trim() ? tr(" untuk {0}", reason.trim().toLowerCase()) : "")}</span>
       </div>
     </Screen>
   );
@@ -304,7 +300,7 @@ async function loadInfo(companyId: string, departmentId: string | null, myPerson
 }
 
 async function kiraHari(employmentId: string, companyId: string, start: string, end: string) {
-  if (end < start) return { days: 0, note: "Tarikh akhir mesti selepas tarikh mula." };
+  if (end < start) return { days: 0, note: tr("Tarikh akhir mesti selepas tarikh mula.") };
   const sb = getSupabase();
   const [days, hols] = await Promise.all([
     sb.rpc("leave_count_days", { p_employment: employmentId, p_start: start, p_end: end, p_half: "full" }),
@@ -323,9 +319,9 @@ async function kiraHari(employmentId: string, companyId: string, start: string, 
   const parts = cuti.map((h) => `${h.name} (${tarikh(h.holiday_date)})`);
   if (weekend) parts.push("hujung minggu");
   const note = parts.length
-    ? `${parts.join(", ").replace(/, ([^,]*)$/, " dan $1")} tidak dikira.`
-    : "Hanya hari bekerja dikira.";
-  return { days: n, note: n === 0 ? "Tarikh dipilih bukan hari bekerja." : note };
+    ? tr("{0} tidak dikira.", parts.join(", ").replace(/, ([^,]*)$/, " dan $1"))
+    : tr("Hanya hari bekerja dikira.");
+  return { days: n, note: n === 0 ? tr("Tarikh dipilih bukan hari bekerja.") : note };
 }
 
 /** Sijil sokongan (MC dll.): dua butang — Ambil gambar (kamera belakang) & Muat naik (galeri / PDF). */
@@ -339,19 +335,17 @@ function Sijil({ name, file, onFile }: { name: string; file: File | null; onFile
   };
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-sm font-bold">Sijil sokongan</span>
+      <span className="text-sm font-bold">{tr("Sijil sokongan")}</span>
       <input ref={kamera} type="file" accept="image/*" capture="environment" className="hidden" onChange={pilih} />
       <input ref={fail} type="file" accept="image/*,application/pdf" className="hidden" onChange={pilih} />
       <div className="grid grid-cols-2 gap-2">
         <button type="button" onClick={() => kamera.current?.click()} className="h-12 rounded-xl border-[1.5px] border-primary bg-surface text-sm font-bold text-primary">
-          Ambil gambar
-        </button>
+          {tr("Ambil gambar")}</button>
         <button type="button" onClick={() => fail.current?.click()} className="h-12 rounded-xl border border-line bg-surface text-sm font-bold text-ink">
-          Muat naik
-        </button>
+          {tr("Muat naik")}</button>
       </div>
       <span className={`text-xs ${file ? "font-semibold text-success" : "text-muted"}`}>
-        {file ? `Dilampirkan: ${file.name}` : `${name} memerlukan sijil. Gambar atau PDF, maksimum 10 MB.`}
+        {file ? tr("Dilampirkan: {0}", file.name) : tr("{0} memerlukan sijil. Gambar atau PDF, maksimum 10 MB.", name)}
       </span>
     </div>
   );

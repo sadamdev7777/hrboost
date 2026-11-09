@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { Langkah } from "@/components/LangkahDaftar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -42,7 +43,7 @@ export default function SahkanSyarikatPage() {
       setBusy(false);
       setKod("");
       ref.current?.focus();
-      return setRalat("Kod tidak sah atau telah tamat tempoh. Sila semak dan cuba lagi.");
+      return setRalat(tr("Kod tidak sah atau telah tamat tempoh. Sila semak dan cuba lagi."));
     }
     const { error: e2 } = await sb.rpc("register_company", { p_company_name: p.company, p_size: p.size, p_full_name: p.name, p_phone: p.phone, p_email: p.email });
     if (e2) {
@@ -63,7 +64,7 @@ export default function SahkanSyarikatPage() {
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-page text-ink">
       <header className="flex items-center px-3 pt-3 pb-1">
-        <Link href="/daftar" aria-label="Kembali" className="flex size-11 items-center justify-center rounded-full text-ink!">
+        <Link href="/daftar" aria-label={tr("Kembali")} className="flex size-11 items-center justify-center rounded-full text-ink!">
           <IconBack />
         </Link>
       </header>
@@ -76,17 +77,16 @@ export default function SahkanSyarikatPage() {
       >
         <div className="flex flex-col gap-2">
           <Langkah n={2} />
-          <h1 className="m-0 text-[22px] font-extrabold">Sahkan nombor anda</h1>
+          <h1 className="m-0 text-[22px] font-extrabold">{tr("Sahkan nombor anda")}</h1>
           <span className="text-sm leading-normal text-subtle">
-            Kod 6 digit dihantar ke WhatsApp <b className="text-ink">{p ? paparTelefon(p.phone) : ""}</b>. Ini memastikan hanya anda yang boleh mengurus {p?.company}.
-          </span>
+            {tr("Kod 6 digit dihantar ke WhatsApp")}{" "}<b className="text-ink">{p ? paparTelefon(p.phone) : ""}</b>{tr(". Ini memastikan hanya anda yang boleh mengurus {0}.", p?.company)}</span>
         </div>
         <input
           ref={ref}
           autoFocus
           inputMode="numeric"
           autoComplete="one-time-code"
-          aria-label="Kod 6 digit"
+          aria-label={tr("Kod 6 digit")}
           value={kod}
           onChange={(e) => {
             const d = e.target.value.replace(/\D/g, "").slice(0, 6);
@@ -100,15 +100,15 @@ export default function SahkanSyarikatPage() {
           </span>
         )}
         <span className="text-sm text-muted">
-          Tidak menerima kod?{" "}
+          {tr("Tidak menerima kod?")}{" "}
           <button type="button" onClick={hantarSemula} disabled={baki > 0} className="font-bold text-primary disabled:text-muted">
-            {baki > 0 ? `Hantar semula (${baki})` : "Hantar semula"}
+            {baki > 0 ? tr("Hantar semula ({0})", baki) : tr("Hantar semula")}
           </button>{" "}
-          · <Link href="/daftar">Tukar nombor</Link>
+          · <Link href="/daftar">{tr("Tukar nombor")}</Link>
         </span>
         <span className="grow" />
         <button type="submit" disabled={busy || kod.length !== 6} className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
-          {busy ? "Mencipta syarikat…" : "Sahkan & cipta syarikat"}
+          {busy ? tr("Mencipta syarikat…") : tr("Sahkan & cipta syarikat")}
         </button>
       </form>
     </div>

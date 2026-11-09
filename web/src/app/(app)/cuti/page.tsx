@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -10,7 +11,7 @@ import { hari, julatTarikh, namaPeringkat, todayISO } from "@/lib/format";
 import { IconBack, IconChevronRight } from "@/components/icons";
 import { BackHeader, ErrorBox, Loading, Screen, StatusPill } from "@/components/ui";
 
-const BULAN_PENUH = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+const BULAN_PENUH = [tr("Januari"), tr("Februari"), tr("Mac"), tr("April"), tr("Mei"), tr("Jun"), tr("Julai"), tr("Ogos"), tr("September"), tr("Oktober"), tr("November"), tr("Disember")];
 const HARI_SINGKAT = ["I", "S", "R", "K", "J", "S", "A"];
 
 function geserBulan(b: string, n: number) {
@@ -41,7 +42,7 @@ export default function CutiPage() {
 
   return (
     <Screen>
-      <BackHeader title="Cuti" href="/saya" />
+      <BackHeader title={tr("Cuti")} href="/saya" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         {baki.error && <ErrorBox message={baki.error} />}
         <div className="flex flex-col gap-3 lg:grid lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:items-start lg:gap-6">
@@ -58,20 +59,20 @@ export default function CutiPage() {
         <div className="flex flex-col gap-3 rounded-card bg-surface px-4 py-3">
           <div className="flex items-center justify-between gap-2">
             <div className="-ml-3 flex shrink-0 items-center">
-              <button type="button" aria-label="Bulan sebelumnya" onClick={() => setBulan(geserBulan(bulan, -1))} className="flex size-11 items-center justify-center rounded-full text-ink">
+              <button type="button" aria-label={tr("Bulan sebelumnya")} onClick={() => setBulan(geserBulan(bulan, -1))} className="flex size-11 items-center justify-center rounded-full text-ink">
                 <IconBack size={18} />
               </button>
               <h2 className="m-0 text-base font-extrabold whitespace-nowrap">
                 {BULAN_PENUH[m - 1]} {y}
               </h2>
-              <button type="button" aria-label="Bulan seterusnya" onClick={() => setBulan(geserBulan(bulan, 1))} className="flex size-11 items-center justify-center rounded-full text-ink">
+              <button type="button" aria-label={tr("Bulan seterusnya")} onClick={() => setBulan(geserBulan(bulan, 1))} className="flex size-11 items-center justify-center rounded-full text-ink">
                 <IconChevronRight size={18} />
               </button>
             </div>
-            {emp.departmentName && <span className="min-w-0 truncate text-xs font-bold text-muted">Pasukan {emp.departmentName}</span>}
+            {emp.departmentName && <span className="min-w-0 truncate text-xs font-bold text-muted">{tr("Pasukan {0}", emp.departmentName)}</span>}
           </div>
           {kal.error && <ErrorBox message={kal.error} />}
-          <div className="grid grid-cols-7 gap-1 text-center" aria-label="Kalendar cuti pasukan">
+          <div className="grid grid-cols-7 gap-1 text-center" aria-label={tr("Kalendar cuti pasukan")}>
             {HARI_SINGKAT.map((h, i) => (
               <span key={i} className="flex h-5 items-center justify-center text-[11px] font-bold text-muted">
                 {h}
@@ -94,18 +95,18 @@ export default function CutiPage() {
           </div>
           {kal.loading && !kal.data && <Loading />}
           <div className="flex flex-wrap gap-3 text-xs text-[#4A5A57]">
-            <Petunjuk warna="bg-primary">Saya</Petunjuk>
+            <Petunjuk warna="bg-primary">{tr("Saya")}</Petunjuk>
             {(kal.data?.rakan ?? []).length > 0 && <Petunjuk warna="bg-[#F2B266]">{kal.data!.rakan.join(", ")}</Petunjuk>}
-            <Petunjuk warna="bg-[#E8857C]">Cuti umum</Petunjuk>
+            <Petunjuk warna="bg-[#E8857C]">{tr("Cuti umum")}</Petunjuk>
           </div>
         </div>
 
         </div>
         <div className="flex flex-col gap-2">
-          <h2 className="m-0 text-base font-extrabold whitespace-nowrap">Sejarah {tahun}</h2>
+          <h2 className="m-0 text-base font-extrabold whitespace-nowrap">{tr("Sejarah {0}", tahun)}</h2>
           {sejarah.error && <ErrorBox message={sejarah.error} />}
           {sejarah.loading && !sejarah.data && <Loading />}
-          {sejarah.data?.length === 0 && <span className="text-sm text-muted">Belum ada permohonan cuti tahun ini.</span>}
+          {sejarah.data?.length === 0 && <span className="text-sm text-muted">{tr("Belum ada permohonan cuti tahun ini.")}</span>}
           {(sejarah.data ?? []).map((s) => {
             const isi = (
               <>
@@ -113,11 +114,11 @@ export default function CutiPage() {
                   <span className="text-sm font-bold">
                     {s.jenis} · {julatTarikh(s.start, s.end)}
                   </span>
-                  <span className="text-xs text-muted">{hari(s.days)} hari</span>
+                  <span className="text-xs text-muted">{tr("{0} hari", hari(s.days))}</span>
                 </div>
                 <StatusPill
                   status={s.status}
-                  label={s.status === "pending" && s.waitingFor ? `Di peringkat ${s.waitingFor.split(", ").map(namaPeringkat).join(", ")}` : undefined}
+                  label={s.status === "pending" && s.waitingFor ? tr("Di peringkat {0}", s.waitingFor.split(", ").map(namaPeringkat).join(", ")) : undefined}
                 />
               </>
             );
@@ -137,8 +138,7 @@ export default function CutiPage() {
 
       <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <Link href="/mohon/cuti" className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white!">
-          Mohon Cuti
-        </Link>
+          {tr("Mohon Cuti")}</Link>
       </div>
     </Screen>
   );

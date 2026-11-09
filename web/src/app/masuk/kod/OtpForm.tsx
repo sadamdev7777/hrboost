@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
@@ -51,7 +52,7 @@ export function OtpForm() {
     const { error: err } = await getSupabase().auth.verifyOtp({ phone, token, type: "sms" });
     setBusy(false);
     if (err) {
-      setError("Kod tidak sah atau telah tamat tempoh. Sila semak dan cuba lagi.");
+      setError(tr("Kod tidak sah atau telah tamat tempoh. Sila semak dan cuba lagi."));
       setCode("");
       inputRef.current?.focus();
       return;
@@ -71,10 +72,10 @@ export function OtpForm() {
         router.replace("/orientasi");
         return;
       }
-      const msg = aErr?.message ?? r?.error ?? "Akaun tidak dapat diaktifkan.";
+      const msg = aErr?.message ?? r?.error ?? tr("Akaun tidak dapat diaktifkan.");
       simpanJemputan({
         ...jemputan,
-        error: r?.attempts_left !== undefined ? `${msg}. Baki cubaan: ${r.attempts_left}.` : msg,
+        error: r?.attempts_left !== undefined ? tr("{0}. Baki cubaan: {1}.", msg, r.attempts_left) : msg,
       });
       router.replace(`/jemputan/${jemputan.token}`);
       return;
@@ -86,7 +87,7 @@ export function OtpForm() {
     if (!phone || left > 0) return;
     setError(null);
     const { error: err } = await getSupabase().auth.signInWithOtp({ phone, options: { channel: "sms" } });
-    if (err) setError("Kod tidak dapat dihantar semula. Sila cuba sebentar lagi.");
+    if (err) setError(tr("Kod tidak dapat dihantar semula. Sila cuba sebentar lagi."));
     setLeft(RESEND_SECONDS);
   }
 
@@ -101,7 +102,7 @@ export function OtpForm() {
   return (
     <>
       <header className="flex items-center px-3 pt-3 pb-1">
-        <Link href="/masuk/telefon" aria-label="Kembali" className="flex size-11 items-center justify-center rounded-full text-ink!">
+        <Link href="/masuk/telefon" aria-label={tr("Kembali")} className="flex size-11 items-center justify-center rounded-full text-ink!">
           <IconBack />
         </Link>
       </header>
@@ -115,13 +116,13 @@ export function OtpForm() {
       >
         <div className="flex grow flex-col gap-5 px-6 py-4">
           <div className="flex flex-col gap-2">
-            <h1 className="m-0 text-[22px] font-extrabold">Masukkan kod</h1>
+            <h1 className="m-0 text-[22px] font-extrabold">{tr("Masukkan kod")}</h1>
             <span className="text-sm leading-normal text-subtle">
-              Kod 6 digit dihantar ke WhatsApp <b className="text-ink">{phone ? paparTelefon(phone) : ""}</b>
+              {tr("Kod 6 digit dihantar ke WhatsApp")}{" "}<b className="text-ink">{phone ? paparTelefon(phone) : ""}</b>
             </span>
           </div>
 
-          <label className="relative block cursor-text" aria-label="Kod 6 digit">
+          <label className="relative block cursor-text" aria-label={tr("Kod 6 digit")}>
             <input
               ref={inputRef}
               autoFocus
@@ -164,15 +165,13 @@ export function OtpForm() {
           )}
 
           <span className="text-sm text-muted">
-            Tidak menerima kod?{" "}
+            {tr("Tidak menerima kod?")}{" "}
             {left > 0 ? (
               <>
-                <b className="text-primary">Hantar semula</b> dalam {mmss}
-              </>
+                <b className="text-primary">{tr("Hantar semula")}</b> {" "}{tr("dalam {0}", mmss)}</>
             ) : (
               <button type="button" onClick={resend} className="font-bold text-primary">
-                Hantar semula
-              </button>
+                {tr("Hantar semula")}</button>
             )}
           </span>
 
@@ -183,8 +182,7 @@ export function OtpForm() {
               onChange={(e) => setKeep(e.target.checked)}
               className="size-5 accent-primary"
             />
-            Kekalkan log masuk di telefon ini
-          </label>
+            {tr("Kekalkan log masuk di telefon ini")}</label>
         </div>
 
         <div className="px-6 pt-3 pb-8">
@@ -193,7 +191,7 @@ export function OtpForm() {
             disabled={busy || code.length !== 6}
             className="flex h-12 w-full items-center justify-center rounded-button bg-primary text-base font-extrabold text-on-primary hover:bg-primary-hover disabled:opacity-60"
           >
-            {busy ? "Mengesahkan…" : "Sahkan"}
+            {busy ? tr("Mengesahkan…") : tr("Sahkan")}
           </button>
         </div>
       </form>

@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -19,7 +20,7 @@ export function LoginForm() {
     setError(null);
     const full = telefonPenuh(phone);
     if (!full) {
-      setError("Sila masukkan nombor telefon bimbit Malaysia yang sah, contohnya 12 345 6789.");
+      setError(tr("Sila masukkan nombor telefon bimbit Malaysia yang sah, contohnya 12 345 6789."));
       return;
     }
     setBusy(true);
@@ -28,8 +29,8 @@ export function LoginForm() {
     if (err) {
       setError(
         err.status === 429
-          ? "Terlalu banyak cubaan. Sila tunggu sebentar sebelum meminta kod baharu."
-          : "Kod tidak dapat dihantar. Sila cuba lagi.",
+          ? tr("Terlalu banyak cubaan. Sila tunggu sebentar sebelum meminta kod baharu.")
+          : tr("Kod tidak dapat dihantar. Sila cuba lagi."),
       );
       return;
     }
@@ -44,8 +45,7 @@ export function LoginForm() {
   return (
     <form onSubmit={submit} className="flex grow flex-col gap-4 px-6 pt-7 pb-4 lg:grow-0" noValidate>
       <label className="flex flex-col gap-2 text-sm leading-[normal] font-bold">
-        No. telefon WhatsApp
-        <div className="flex gap-2">
+        {tr("No. telefon WhatsApp")}<div className="flex gap-2">
           <span className="box-content flex h-12 items-center rounded-field border border-line bg-surface px-[14px] text-base font-bold">
             +60
           </span>
@@ -63,8 +63,7 @@ export function LoginForm() {
         </div>
       </label>
       <span className="text-[13px] leading-normal text-muted">
-        Kami akan menghantar kod 6 digit ke WhatsApp anda untuk mengesahkan nombor telefon. Selepas itu anda akan menetapkan e-mel dan kata laluan.
-      </span>
+        {tr("Kami akan menghantar kod 6 digit ke WhatsApp anda untuk mengesahkan nombor telefon. Selepas itu anda akan menetapkan e-mel dan kata laluan.")}</span>
       {error && (
         <span role="alert" className="text-[13px] font-semibold text-danger">
           {error}
@@ -76,11 +75,10 @@ export function LoginForm() {
         disabled={busy}
         className="mt-2 flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-on-primary hover:bg-primary-hover disabled:opacity-60"
       >
-        {busy ? "Menghantar…" : "Hantar kod"}
+        {busy ? tr("Menghantar…") : tr("Hantar kod")}
       </button>
       <Link href="/masuk" className="flex h-touch items-center justify-center text-sm font-bold">
-        Log masuk dengan e-mel &amp; kata laluan
-      </Link>
+        {tr("Log masuk dengan e-mel & kata laluan")}</Link>
     </form>
   );
 }

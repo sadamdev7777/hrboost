@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { getSupabase } from "./supabase";
 import { must } from "./useData";
 import type { Database } from "./database.types";
@@ -8,20 +9,20 @@ type EmpType = Database["public"]["Enums"]["employment_type"];
 type EmpStatus = Database["public"]["Enums"]["employment_status"];
 
 export const JENIS_PEKERJAAN: { value: EmpType; label: string }[] = [
-  { value: "permanent", label: "Tetap" },
-  { value: "contract", label: "Kontrak" },
-  { value: "part_time", label: "Separuh masa" },
-  { value: "intern", label: "Pelatih" },
+  { value: "permanent", label: tr("Tetap") },
+  { value: "contract", label: tr("Kontrak") },
+  { value: "part_time", label: tr("Separuh masa") },
+  { value: "intern", label: tr("Pelatih") },
 ];
 export const labelJenis = (t: string) => JENIS_PEKERJAAN.find((j) => j.value === t)?.label ?? t;
 
 export const LABEL_PERANAN: Record<string, string> = {
   hr: "HR",
-  finance: "Kewangan",
+  finance: tr("Kewangan"),
   ceo: "CEO",
-  admin: "Pentadbir",
-  dept_head: "Ketua Jabatan",
-  staff: "Pekerja",
+  admin: tr("Pentadbir"),
+  dept_head: tr("Ketua Jabatan"),
+  staff: tr("Pekerja"),
 };
 
 // ---------------------------------------------------------------- Papan pemuka
@@ -178,7 +179,7 @@ export async function getButiranPekerja(employmentId: string): Promise<ButiranPe
       .eq("id", employmentId)
       .maybeSingle(),
   );
-  if (!e) throw new Error("Pekerja tidak dijumpai atau anda tidak mempunyai akses.");
+  if (!e) throw new Error(tr("Pekerja tidak dijumpai atau anda tidak mempunyai akses."));
   const [head, lain, inv] = await Promise.all([
     e.departments?.head_person_id
       ? sb.from("persons").select("preferred_name, full_name").eq("id", e.departments.head_person_id).maybeSingle()
@@ -288,12 +289,12 @@ export async function simpanDokumen(employmentId: string, personId: string, docT
 }
 
 export const JENIS_DOKUMEN = [
-  { value: "offer_letter", label: "Surat tawaran" },
-  { value: "contract", label: "Kontrak" },
-  { value: "confirmation_letter", label: "Surat pengesahan" },
-  { value: "certificate", label: "Sijil" },
-  { value: "warning_letter", label: "Surat amaran" },
-  { value: "other", label: "Lain-lain" },
+  { value: "offer_letter", label: tr("Surat tawaran") },
+  { value: "contract", label: tr("Kontrak") },
+  { value: "confirmation_letter", label: tr("Surat pengesahan") },
+  { value: "certificate", label: tr("Sijil") },
+  { value: "warning_letter", label: tr("Surat amaran") },
+  { value: "other", label: tr("Lain-lain") },
 ];
 
 export async function batalPenamatan(employmentId: string) {

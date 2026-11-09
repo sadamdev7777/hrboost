@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { mintaTeks } from "@/components/Dialog";
 import { useState } from "react";
 import { useData } from "@/lib/useData";
@@ -24,14 +25,14 @@ export default function SaPengguna() {
       setInfo(ok);
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
 
   return (
     <>
-      <h1 className="m-0 text-2xl font-extrabold">Pengguna</h1>
-      <span className="text-sm text-muted">Cari pengguna untuk menyahaktifkan akaun atau memaksa log keluar. Profil peribadi tidak dipaparkan.</span>
+      <h1 className="m-0 text-2xl font-extrabold">{tr("Pengguna")}</h1>
+      <span className="text-sm text-muted">{tr("Cari pengguna untuk menyahaktifkan akaun atau memaksa log keluar. Profil peribadi tidak dipaparkan.")}</span>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -43,13 +44,12 @@ export default function SaPengguna() {
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Cari nama atau no. WhatsApp"
-          aria-label="Cari pengguna"
+          placeholder={tr("Cari nama atau no. WhatsApp")}
+          aria-label={tr("Cari pengguna")}
           className="h-11 min-w-0 grow rounded-[12px] border border-line bg-surface px-3.5 text-sm outline-none focus:border-primary"
         />
         <button type="submit" className="h-11 rounded-[12px] bg-primary px-4 text-sm font-bold text-white">
-          Cari
-        </button>
+          {tr("Cari")}</button>
       </form>
       {info && <span className="rounded-[12px] bg-success-soft px-3 py-2 text-sm font-semibold text-success">{info}</span>}
       {ralat && <ErrorBox message={ralat} />}
@@ -60,12 +60,12 @@ export default function SaPengguna() {
           <table className="w-full min-w-[760px] text-sm">
             <thead>
               <tr className="text-left text-xs tracking-[0.04em] text-muted">
-                <th className="py-2 font-bold">NAMA</th>
+                <th className="py-2 font-bold">{tr("NAMA")}</th>
                 <th className="py-2 font-bold">WHATSAPP</th>
-                <th className="py-2 font-bold">SYARIKAT · PERANAN</th>
-                <th className="py-2 font-bold">LOG MASUK</th>
-                <th className="py-2 font-bold">STATUS</th>
-                <th className="py-2 font-bold">TINDAKAN</th>
+                <th className="py-2 font-bold">{tr("SYARIKAT · PERANAN")}</th>
+                <th className="py-2 font-bold">{tr("LOG MASUK")}</th>
+                <th className="py-2 font-bold">{tr("STATUS")}</th>
+                <th className="py-2 font-bold">{tr("TINDAKAN")}</th>
               </tr>
             </thead>
             <tbody>
@@ -73,13 +73,13 @@ export default function SaPengguna() {
                 <tr key={u.person_id} className="border-t border-[#EEF2F1]">
                   <td className="py-2.5 font-bold">
                     {u.name}
-                    {u.is_platform_admin && <span className="ml-1 text-xs text-ai">(Pentadbir Platform)</span>}
+                    {u.is_platform_admin && <span className="ml-1 text-xs text-ai">{tr("(Pentadbir Platform)")}</span>}
                   </td>
                   <td className="py-2.5 tabular-nums">{u.whatsapp ?? "-"}</td>
                   <td className="py-2.5">{u.companies ?? "-"}</td>
-                  <td className="py-2.5">{u.last_sign_in ? `${masaRelatif(u.last_sign_in)} lalu` : "Belum"}</td>
+                  <td className="py-2.5">{u.last_sign_in ? tr("{0} lalu", masaRelatif(u.last_sign_in)) : tr("Belum")}</td>
                   <td className="py-2.5">
-                    <span className={`rounded-lg px-2 py-0.5 text-xs font-bold ${u.active ? "bg-success-soft text-success" : "bg-danger-soft text-danger"}`}>{u.active ? "Aktif" : "Dinyahaktif"}</span>
+                    <span className={`rounded-lg px-2 py-0.5 text-xs font-bold ${u.active ? "bg-success-soft text-success" : "bg-danger-soft text-danger"}`}>{u.active ? tr("Aktif") : tr("Dinyahaktif")}</span>
                   </td>
                   <td className="py-2.5">
                     <span className="flex gap-2">
@@ -95,11 +95,10 @@ export default function SaPengguna() {
                         }}
                         className={`h-9 rounded-[10px] border px-3 text-[13px] font-bold ${u.active ? "border-danger text-danger" : "border-primary text-primary"}`}
                       >
-                        {u.active ? "Nyahaktifkan" : "Aktifkan"}
+                        {u.active ? tr("Nyahaktifkan") : tr("Aktifkan")}
                       </button>
                       <button type="button" onClick={() => buat(() => rpc("sa_force_logout", { p_person: u.person_id }), `${u.name} telah dilog keluar.`)} className="h-9 rounded-[10px] border border-line px-3 text-[13px] font-bold">
-                        Log keluar
-                      </button>
+                        {tr("Log keluar")}</button>
                     </span>
                   </td>
                 </tr>
@@ -108,7 +107,7 @@ export default function SaPengguna() {
           </table>
         </div>
       )}
-      <span className="text-xs text-muted">Pengguna yang dinyahaktifkan tidak boleh log masuk ke mana-mana syarikat. Rekod HR mereka kekal disimpan untuk syarikat.</span>
+      <span className="text-xs text-muted">{tr("Pengguna yang dinyahaktifkan tidak boleh log masuk ke mana-mana syarikat. Rekod HR mereka kekal disimpan untuk syarikat.")}</span>
     </>
   );
 }

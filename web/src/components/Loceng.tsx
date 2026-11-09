@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
@@ -33,7 +34,7 @@ export function Loceng({ className = "" }: { className?: string }) {
       <button
         type="button"
         onClick={togol}
-        aria-label={belum ? `Pemberitahuan, ${belum} belum dibaca` : "Pemberitahuan"}
+        aria-label={belum ? tr("Pemberitahuan, {0} belum dibaca", belum) : tr("Pemberitahuan")}
         aria-expanded={buka}
         className="relative flex size-10 items-center justify-center rounded-full bg-surface text-ink hover:bg-[#EEF2F1]"
       >
@@ -49,17 +50,17 @@ export function Loceng({ className = "" }: { className?: string }) {
           <div className="fixed inset-0 z-40" onClick={() => setBuka(false)} />
           <div
             role="dialog"
-            aria-label="Pemberitahuan"
+            aria-label={tr("Pemberitahuan")}
             className="absolute right-0 z-50 mt-2 flex max-h-[70vh] w-[min(360px,calc(100vw-32px))] flex-col overflow-hidden rounded-[16px] border border-line bg-surface shadow-xl"
           >
-            <b className="border-b border-line-soft px-4 py-3 text-sm">Pemberitahuan</b>
+            <b className="border-b border-line-soft px-4 py-3 text-sm">{tr("Pemberitahuan")}</b>
             <div className="flex flex-col overflow-y-auto [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-              {(d.data ?? []).length === 0 && <span className="px-4 py-4 text-sm text-muted">Tiada pemberitahuan.</span>}
+              {(d.data ?? []).length === 0 && <span className="px-4 py-4 text-sm text-muted">{tr("Tiada pemberitahuan.")}</span>}
               {(d.data ?? []).map((n) => (
                 <div key={n.id} className={`flex flex-col gap-1 px-4 py-3 text-[13px] leading-snug ${n.read_at ? "" : "bg-[#F2F8F7]"}`}>
                   <span className="whitespace-pre-line">{n.message}</span>
                   <span className="text-[11px] text-muted">
-                    {tarikhTempatan(n.created_at) === todayISO() ? "Hari ini" : tarikh(tarikhTempatan(n.created_at))}, {masa(n.created_at)}
+                    {tarikhTempatan(n.created_at) === todayISO() ? tr("Hari ini") : tarikh(tarikhTempatan(n.created_at))}, {masa(n.created_at)}
                   </span>
                 </div>
               ))}

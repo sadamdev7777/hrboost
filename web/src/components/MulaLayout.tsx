@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { IconBack } from "./icons";
@@ -10,10 +11,10 @@ export function MulaLayout({ n, title, back, children, footer }: { n: number; ti
   return (
     <Screen lebar="sederhana">
       <header className="flex items-center gap-2 px-3 pt-4 pb-1">
-        <Link href={back} aria-label="Kembali" className="flex size-11 items-center justify-center rounded-full text-ink!">
+        <Link href={back} aria-label={tr("Kembali")} className="flex size-11 items-center justify-center rounded-full text-ink!">
           <IconBack />
         </Link>
-        <span className="text-[13px] font-bold text-muted">Langkah {n} daripada 6</span>
+        <span className="text-[13px] font-bold text-muted">{tr("Langkah {0} daripada 6", n)}</span>
       </header>
       <div className="mx-5 mb-2 h-1.5 rounded-full bg-[#E4EAE8]" aria-hidden="true">
         <div className="h-full rounded-full bg-primary" style={{ width: `${(n / 6) * 100}%` }} />

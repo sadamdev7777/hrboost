@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { mintaTeks, sahkan } from "@/components/Dialog";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
@@ -38,7 +39,7 @@ import { HadPeranan, Kotak, Lembaran, Medan, MedanBorang, Seksyen, Tag, inputKec
 
 const TABS = ["Maklumat", "Cuti", "Tuntutan", "Kehadiran", "Gaji", "Dokumen", "Sejarah"] as const;
 type TabId = (typeof TABS)[number];
-const BULAN = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogo", "Sep", "Okt", "Nov", "Dis"];
+const BULAN = [tr("Jan"), tr("Feb"), tr("Mac"), tr("Apr"), tr("Mei"), tr("Jun"), tr("Jul"), tr("Ogo"), tr("Sep"), tr("Okt"), tr("Nov"), tr("Dis")];
 const tarikhPenuh = (iso: string) => `${Number(iso.slice(8, 10))} ${BULAN[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
 
 // Rujukan reka bentuk: design/ProfilPekerja.dc.html
@@ -88,7 +89,7 @@ function Profil() {
         {p.data && tab === "Kehadiran" && <TabKehadiran id={id} />}
         {p.data && tab === "Gaji" && <TabGaji id={id} nama={p.data.name} tarikhMula={p.data.joinDate} />}
         {p.data && tab === "Dokumen" && <TabDokumen p={p.data} bolehUbah={bolehUbah} />}
-        {p.data && tab === "Sejarah" && (bolehUbah ? <SejarahPekerja employmentId={id} /> : <span className="text-sm text-muted">Sejarah perubahan hanya untuk HR.</span>)}
+        {p.data && tab === "Sejarah" && (bolehUbah ? <SejarahPekerja employmentId={id} /> : <span className="text-sm text-muted">{tr("Sejarah perubahan hanya untuk HR.")}</span>)}
       </main>
     </Screen>
   );
@@ -120,12 +121,12 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
   const pautan = pautanBaru ?? simpanan;
   const tamat = !["probation", "active"].includes(p.status);
   const status = tamat
-    ? { label: { resigned: "Letak jawatan", terminated: "Ditamatkan", retired: "Bersara" }[p.status as string] ?? "Tamat", tone: "neutral" as const }
+    ? { label: { resigned: tr("Letak jawatan"), terminated: tr("Ditamatkan"), retired: tr("Bersara") }[p.status as string] ?? tr("Tamat"), tone: "neutral" as const }
     : !p.activated
-      ? { label: "Belum aktif", tone: "neutral" as const }
+      ? { label: tr("Belum aktif"), tone: "neutral" as const }
       : p.status === "probation"
-        ? { label: "Percubaan", tone: "warning" as const }
-        : { label: "Aktif", tone: "success" as const };
+        ? { label: tr("Percubaan"), tone: "warning" as const }
+        : { label: tr("Aktif"), tone: "success" as const };
 
   async function jemputSemula() {
     setRalat(null);
@@ -139,54 +140,53 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
       setPautanBaru(url);
       reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
     setBusy(false);
   }
 
   async function bank(lulus: boolean) {
     if (!sensitif?.bank_change) return;
-    const nota = lulus ? "" : ((await mintaTeks({ tajuk: "Tolak pertukaran akaun bank", mesej: "Sebab ini dihantar kepada pekerja.", label: "Sebab", ok: "Tolak", bahaya: true })) ?? "");
+    const nota = lulus ? "" : ((await mintaTeks({ tajuk: tr("Tolak pertukaran akaun bank"), mesej: tr("Sebab ini dihantar kepada pekerja."), label: tr("Sebab"), ok: tr("Tolak"), bahaya: true })) ?? "");
     if (!lulus && !nota.trim()) return;
     setRalat(null);
     try {
       await putuskanBank(sensitif.bank_change.id, lulus, nota);
       sd.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
 
   return (
     <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-5">
       <div className="flex flex-col gap-3">
-      {baru && <div className="rounded-[14px] bg-success-soft px-4 py-3 text-[13px] font-semibold text-success">Pekerja ditambah. Jemputan WhatsApp telah dimasukkan ke barisan penghantaran.</div>}
+      {baru && <div className="rounded-[14px] bg-success-soft px-4 py-3 text-[13px] font-semibold text-success">{tr("Pekerja ditambah. Jemputan WhatsApp telah dimasukkan ke barisan penghantaran.")}</div>}
       <div className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3">
         <div className="flex items-center justify-between gap-2">
           <b className="text-sm font-extrabold uppercase">{p.companyName}</b>
-          <Tag tone={status.tone}>{status.label}</Tag>
+          <Tag tone={status.tone}>{tr(status.label)}</Tag>
         </div>
         <div className="grid grid-cols-2 gap-2.5">
-          <Butir label="No. pekerja">{p.employeeNo}</Butir>
-          <Butir label="Jabatan">{p.department ?? "-"}</Butir>
-          <Butir label="Ketua">{p.headName ?? "-"}</Butir>
-          <Butir label="Mula">{tarikhPenuh(p.joinDate)}</Butir>
-          <Butir label="Jenis">{labelJenis(p.type)}</Butir>
-          <Butir label="Masuk kerja">{(p.workStart ?? p.companyWorkStart).slice(0, 5)}</Butir>
-          {p.position && <Butir label="Jawatan">{p.position}</Butir>}
-          {p.status === "probation" && p.probationEnd && <Butir label="Tamat percubaan">{tarikhPenuh(p.probationEnd)}</Butir>}
-          {tamat && p.endDate && <Butir label="Tarikh akhir">{tarikhPenuh(p.endDate)}</Butir>}
-          {p.contractEnd && <Butir label="Kontrak tamat"><TarikhAmaran iso={p.contractEnd} /></Butir>}
-          {p.permitExpiry && <Butir label="Permit kerja tamat"><TarikhAmaran iso={p.permitExpiry} /></Butir>}
-          {p.passportExpiry && <Butir label="Pasport tamat"><TarikhAmaran iso={p.passportExpiry} /></Butir>}
+          <Butir label={tr("No. pekerja")}>{p.employeeNo}</Butir>
+          <Butir label={tr("Jabatan")}>{p.department ?? "-"}</Butir>
+          <Butir label={tr("Ketua")}>{p.headName ?? "-"}</Butir>
+          <Butir label={tr("Mula")}>{tarikhPenuh(p.joinDate)}</Butir>
+          <Butir label={tr("Jenis")}>{labelJenis(p.type)}</Butir>
+          <Butir label={tr("Masuk kerja")}>{(p.workStart ?? p.companyWorkStart).slice(0, 5)}</Butir>
+          {p.position && <Butir label={tr("Jawatan")}>{p.position}</Butir>}
+          {p.status === "probation" && p.probationEnd && <Butir label={tr("Tamat percubaan")}>{tarikhPenuh(p.probationEnd)}</Butir>}
+          {tamat && p.endDate && <Butir label={tr("Tarikh akhir")}>{tarikhPenuh(p.endDate)}</Butir>}
+          {p.contractEnd && <Butir label={tr("Kontrak tamat")}><TarikhAmaran iso={p.contractEnd} /></Butir>}
+          {p.permitExpiry && <Butir label={tr("Permit kerja tamat")}><TarikhAmaran iso={p.permitExpiry} /></Butir>}
+          {p.passportExpiry && <Butir label={tr("Pasport tamat")}><TarikhAmaran iso={p.passportExpiry} /></Butir>}
         </div>
       </div>
 
       {!tamat && p.endStatus && p.endDate && (
         <div className="flex items-center gap-2.5 rounded-[14px] bg-danger-soft px-3.5 py-3 text-[13px] font-semibold text-danger">
           <span className="grow">
-            {{ resigned: "Letak jawatan", terminated: "Ditamatkan", retired: "Bersara" }[p.endStatus as string]} · hari bekerja terakhir {tarikhPenuh(p.endDate)}
-          </span>
+            {tr("{0} · hari bekerja terakhir {1}", { resigned: tr("Letak jawatan"), terminated: tr("Ditamatkan"), retired: tr("Bersara") }[p.endStatus as string], tarikhPenuh(p.endDate))}</span>
           {bolehUbah && (
             <button
               type="button"
@@ -200,28 +200,25 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
                 }
               }}
             >
-              Batal
-            </button>
+              {tr("Batal")}</button>
           )}
         </div>
       )}
 
       {p.otherCompanies > 0 && (
         <div className="flex items-center gap-2.5 rounded-[14px] bg-surface px-3.5 py-3 text-[13px] text-[#4A5A57]">
-          {p.name} juga bekerja di {p.otherCompanies} syarikat lain. Butiran di sana hanya boleh dilihat oleh HR syarikat tersebut.
-        </div>
+          {tr("{0} juga bekerja di {1} syarikat lain. Butiran di sana hanya boleh dilihat oleh HR syarikat tersebut.", p.name, p.otherCompanies)}</div>
       )}
 
       {!p.activated && !tamat && (pautan || p.inviteSentAt) && (
         <div className="flex flex-col gap-2 rounded-[14px] bg-surface px-4 py-3 text-[13px] text-[#4A5A57]">
-          {p.inviteSentAt && <span>Jemputan terakhir: {tarikh(p.inviteSentAt)}, {masa(p.inviteSentAt)}</span>}
+          {p.inviteSentAt && <span>{tr("Jemputan terakhir: {0}, {1}", tarikh(p.inviteSentAt), masa(p.inviteSentAt))}</span>}
           {pautan && (
             <>
               <span className="font-mono text-xs break-all text-ink">{pautan}</span>
               <div className="flex gap-2">
                 <button type="button" onClick={() => navigator.clipboard?.writeText(pautan)} className="h-10 grow rounded-[12px] border border-line text-[13px] font-bold">
-                  Salin pautan
-                </button>
+                  {tr("Salin pautan")}</button>
               </div>
             </>
           )}
@@ -231,8 +228,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
       {bolehUbah && !tamat && (
         <div className="flex flex-wrap gap-2">
           <button type="button" onClick={() => setLembaran("ubah")} className="flex h-11 items-center rounded-full bg-primary px-4 text-sm font-bold text-white">
-            Ubah gaji &amp; jawatan
-          </button>
+            {tr("Ubah gaji & jawatan")}</button>
           {p.status === "probation" && (
             <button
               type="button"
@@ -247,31 +243,25 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
               }}
               className="flex h-11 items-center rounded-full border border-line bg-surface px-4 text-sm font-bold"
             >
-              Sahkan jawatan
-            </button>
+              {tr("Sahkan jawatan")}</button>
           )}
           <button type="button" onClick={keDokumen} className="flex h-11 items-center rounded-full border border-line bg-surface px-4 text-sm font-bold">
-            Dokumen
-          </button>
+            {tr("Dokumen")}</button>
           <details className="relative">
             <summary className="flex h-11 cursor-pointer list-none items-center rounded-full border border-line bg-surface px-4 text-sm font-bold [&::-webkit-details-marker]:hidden">
-              ⋯ Lagi
-            </summary>
+              {tr("⋯ Lagi")}</summary>
             <div className="absolute right-0 z-20 mt-1 flex w-64 flex-col overflow-hidden rounded-[14px] border border-line bg-surface shadow-lg [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {!p.activated && (
                 <button type="button" onClick={jemputSemula} disabled={busy} className="min-h-11 px-4 text-left text-sm font-semibold disabled:opacity-60">
-                  {busy ? "Menghantar…" : "Hantar semula jemputan"}
+                  {busy ? tr("Menghantar…") : tr("Hantar semula jemputan")}
                 </button>
               )}
               <Link href={`/pembantu-ai?pekerja=${p.id}&surat=1`} className="flex min-h-11 items-center px-4 text-sm font-semibold text-[#4A3B8C]!">
-                Draf surat (AI): pengesahan, amaran…
-              </Link>
+                {tr("Draf surat (AI): pengesahan, amaran…")}</Link>
               <button type="button" onClick={() => setLembaran("tarikh")} className="min-h-11 px-4 text-left text-sm font-semibold">
-                Tarikh tamat kontrak, permit &amp; pasport
-              </button>
+                {tr("Tarikh tamat kontrak, permit & pasport")}</button>
               <button type="button" onClick={() => setLembaran("tamat")} disabled={!!p.endStatus} className="min-h-11 px-4 text-left text-sm font-semibold text-danger disabled:opacity-50">
-                Tamatkan pekerjaan
-              </button>
+                {tr("Tamatkan pekerjaan")}</button>
             </div>
           </details>
         </div>
@@ -282,23 +272,23 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
       <div className="flex flex-col gap-3">
       {bolehUbah && (
         <>
-          <Seksyen>MAKLUMAT PERIBADI</Seksyen>
+          <Seksyen>{tr("MAKLUMAT PERIBADI")}</Seksyen>
           {sd.error && <ErrorBox message={sd.error} />}
           {!sensitif ? (
             !sd.error && <Loading />
           ) : (
             <>
               <Kotak>
-                <Medan label="Nama penuh">{sensitif.full_name}</Medan>
-                <Medan label="No. kad pengenalan">{sensitif.ic_no ?? "-"}</Medan>
-                <Medan label="WhatsApp">{sensitif.phone ? paparTelefon(sensitif.phone) : "-"}</Medan>
-                <Medan label="Alamat">{sensitif.address ?? "-"}</Medan>
-                <Medan label="Status perkahwinan">{sensitif.marital_status ?? "-"}</Medan>
-                <Medan label="Anak (PCB)">{sensitif.children_count}</Medan>
-                <Medan label="Bank">{sensitif.bank_name ? `${sensitif.bank_name} · ${sensitif.bank_account_no}` : "-"}</Medan>
-                <Medan label="KWSP / PERKESO / Cukai">{[sensitif.epf_no, sensitif.socso_no, sensitif.tax_no].map((x) => x ?? "-").join(" / ")}</Medan>
+                <Medan label={tr("Nama penuh")}>{sensitif.full_name}</Medan>
+                <Medan label={tr("No. kad pengenalan")}>{sensitif.ic_no ?? "-"}</Medan>
+                <Medan label={tr("WhatsApp")}>{sensitif.phone ? paparTelefon(sensitif.phone) : "-"}</Medan>
+                <Medan label={tr("Alamat")}>{sensitif.address ?? "-"}</Medan>
+                <Medan label={tr("Status perkahwinan")}>{sensitif.marital_status ?? "-"}</Medan>
+                <Medan label={tr("Anak (PCB)")}>{sensitif.children_count}</Medan>
+                <Medan label={tr("Bank")}>{sensitif.bank_name ? `${sensitif.bank_name} · ${sensitif.bank_account_no}` : "-"}</Medan>
+                <Medan label={tr("KWSP / PERKESO / Cukai")}>{[sensitif.epf_no, sensitif.socso_no, sensitif.tax_no].map((x) => x ?? "-").join(" / ")}</Medan>
                 {(sensitif.emergency ?? []).map((w, i) => (
-                  <Medan key={i} label={`Waris: ${w.name}`}>
+                  <Medan key={i} label={tr("Waris: {0}", w.name)}>
                     {[w.relationship, w.phone].filter(Boolean).join(" · ")}
                   </Medan>
                 ))}
@@ -306,15 +296,12 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
               {sensitif.bank_change && (
                 <div className="flex flex-col gap-2.5 rounded-[14px] bg-warning-soft px-4 py-3">
                   <span className="text-[13px] font-semibold text-warning">
-                    Mohon tukar akaun bank ke {sensitif.bank_change.bank_name} · {sensitif.bank_change.bank_account_no} ({tarikh(sensitif.bank_change.requested_at)})
-                  </span>
+                    {tr("Mohon tukar akaun bank ke {0} · {1} ({2})", sensitif.bank_change.bank_name, sensitif.bank_change.bank_account_no, tarikh(sensitif.bank_change.requested_at))}</span>
                   <div className="grid grid-cols-2 gap-2">
                     <button type="button" onClick={() => bank(false)} className="h-11 rounded-[12px] border border-danger bg-surface text-sm font-bold text-danger">
-                      Tolak
-                    </button>
+                      {tr("Tolak")}</button>
                     <button type="button" onClick={() => bank(true)} className="h-11 rounded-[12px] bg-primary text-sm font-bold text-white">
-                      Sahkan akaun
-                    </button>
+                      {tr("Sahkan akaun")}</button>
                   </div>
                 </div>
               )}
@@ -324,7 +311,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
         </>
       )}
       {ralat && <ErrorBox message={ralat} />}
-      <span className="text-xs text-muted">Kad pengenalan, akaun bank dan rekod cuti sakit hanya boleh dilihat oleh HR. Setiap akses direkodkan.</span>
+      <span className="text-xs text-muted">{tr("Kad pengenalan, akaun bank dan rekod cuti sakit hanya boleh dilihat oleh HR. Setiap akses direkodkan.")}</span>
       </div>
 
       {lembaran === "ubah" && (
@@ -394,9 +381,9 @@ function RingkasanPekerja({ id, grace }: { id: string; grace: number }) {
   if (!x) return null;
   return (
     <div className="-mx-0 flex gap-2 overflow-x-auto px-4 pb-3 lg:grid lg:max-w-[760px] lg:grid-cols-3 lg:overflow-visible lg:px-0">
-      <KadRingkas l="Baki cuti tahunan" v={x.baki === null ? "—" : `${hari(x.baki)} hari`} />
-      <KadRingkas l="Hadir bulan ini" v={`${x.hadir} hari`} s={x.lewat ? `${x.lewat} kali lewat` : undefined} tone={x.lewat ? "text-warning" : ""} />
-      <KadRingkas l="Tuntutan menunggu" v={String(x.tuntutan)} s={x.tuntutan ? ringgit(x.jumlah) : undefined} />
+      <KadRingkas l={tr("Baki cuti tahunan")} v={x.baki === null ? "—" : tr("{0} hari", hari(x.baki))} />
+      <KadRingkas l={tr("Hadir bulan ini")} v={tr("{0} hari", x.hadir)} s={x.lewat ? tr("{0} kali lewat", x.lewat) : undefined} tone={x.lewat ? "text-warning" : ""} />
+      <KadRingkas l={tr("Tuntutan menunggu")} v={String(x.tuntutan)} s={x.tuntutan ? ringgit(x.jumlah) : undefined} />
     </div>
   );
 }
@@ -405,19 +392,19 @@ function RingkasanPekerja({ id, grace }: { id: string; grace: number }) {
 function KepalaPekerja({ p }: { p: ButiranPekerja }) {
   const tamat = !["probation", "active"].includes(p.status);
   const st = tamat
-    ? { label: "Tamat", tone: "neutral" as const }
+    ? { label: tr("Tamat"), tone: "neutral" as const }
     : !p.activated
-      ? { label: "Belum aktif", tone: "neutral" as const }
+      ? { label: tr("Belum aktif"), tone: "neutral" as const }
       : p.status === "probation"
-        ? { label: "Percubaan", tone: "warning" as const }
-        : { label: "Aktif", tone: "success" as const };
+        ? { label: tr("Percubaan"), tone: "warning" as const }
+        : { label: tr("Aktif"), tone: "success" as const };
   return (
     <div className="flex items-center gap-3 px-4 pt-1 pb-3 lg:px-0">
       <Avatar name={p.name} size={56} />
       <div className="flex min-w-0 grow flex-col gap-0.5">
         <span className="flex flex-wrap items-center gap-2">
           <h1 className="m-0 text-xl font-extrabold lg:text-2xl">{p.name}</h1>
-          <Tag tone={st.tone}>{st.label}</Tag>
+          <Tag tone={st.tone}>{tr(st.label)}</Tag>
         </span>
         <span className="truncate text-[13px] text-muted">
           {[p.position, p.department, p.employeeNo].filter(Boolean).join(" · ")}
@@ -461,16 +448,16 @@ function UbahPekerjaan({ p, onClose, onDone }: { p: ButiranPekerja; onClose: () 
       await kemasKiniPekerjaan(p.id, d);
       onDone();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
       setBusy(false);
     }
   }
   return (
-    <Lembaran title="Ubah gaji & jawatan" onClose={onClose}>
+    <Lembaran title={tr("Ubah gaji & jawatan")} onClose={onClose}>
       <div className="grid grid-cols-2 gap-2.5">
-        <MedanBorang label="Jabatan">
+        <MedanBorang label={tr("Jabatan")}>
           <select className={inputKecil} value={f.department_id} onChange={(e) => setF({ ...f, department_id: e.target.value })}>
-            <option value="">Tiada</option>
+            <option value="">{tr("Tiada")}</option>
             {(jab.data ?? []).map((d) => (
               <option key={d.id} value={d.id}>
                 {d.name}
@@ -478,31 +465,31 @@ function UbahPekerjaan({ p, onClose, onDone }: { p: ButiranPekerja; onClose: () 
             ))}
           </select>
         </MedanBorang>
-        <MedanBorang label="Jawatan">
+        <MedanBorang label={tr("Jawatan")}>
           <input className={inputKecil} value={f.position} onChange={(e) => setF({ ...f, position: e.target.value })} />
         </MedanBorang>
-        <MedanBorang label="Jenis">
+        <MedanBorang label={tr("Jenis")}>
           <select className={inputKecil} value={f.employment_type} onChange={(e) => setF({ ...f, employment_type: e.target.value })}>
             {JENIS_PEKERJAAN.map((j) => (
               <option key={j.value} value={j.value}>
-                {j.label}
+                {tr(j.label)}
               </option>
             ))}
           </select>
         </MedanBorang>
-        <MedanBorang label="Masuk kerja" nota={`Kosong = ikut syarikat (${p.companyWorkStart.slice(0, 5)})`}>
+        <MedanBorang label={tr("Masuk kerja")} nota={tr("Kosong = ikut syarikat ({0})", p.companyWorkStart.slice(0, 5))}>
           <input className={inputKecil} type="time" value={f.work_start} onChange={(e) => setF({ ...f, work_start: e.target.value })} />
         </MedanBorang>
-        <MedanBorang label="Gaji pokok baharu (RM)" nota="Kosong = tiada perubahan">
+        <MedanBorang label={tr("Gaji pokok baharu (RM)")} nota={tr("Kosong = tiada perubahan")}>
           <input className={inputKecil} inputMode="decimal" value={f.basic} onChange={(e) => setF({ ...f, basic: e.target.value.replace(/[^\d.]/g, "") })} />
         </MedanBorang>
-        <MedanBorang label="Berkuat kuasa">
+        <MedanBorang label={tr("Berkuat kuasa")}>
           <input className={inputKecil} type="date" value={f.effective_from} onChange={(e) => setF({ ...f, effective_from: e.target.value })} />
         </MedanBorang>
       </div>
       {ralat && <ErrorBox message={ralat} />}
       <button type="button" onClick={simpan} disabled={busy} className="h-12 rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
-        {busy ? "Menyimpan…" : "Simpan"}
+        {busy ? tr("Menyimpan…") : tr("Simpan")}
       </button>
     </Lembaran>
   );
@@ -515,7 +502,7 @@ function TarikhAmaran({ iso }: { iso: string }) {
   return (
     <span className={warna}>
       {tarikhPenuh(iso)}
-      {baki < 0 ? " (telah tamat)" : baki <= 60 ? ` (${baki} hari lagi)` : ""}
+      {baki < 0 ? tr(" (telah tamat)") : baki <= 60 ? tr(" ({0} hari lagi)", baki) : ""}
     </span>
   );
 }
@@ -531,27 +518,27 @@ function UbahTarikhTamat({ p, onClose, onDone }: { p: ButiranPekerja; onClose: (
       await setTarikhTamat(p.id, f.kontrak || null, f.pasport || null, f.permit || null);
       onDone();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
       setBusy(false);
     }
   }
   return (
-    <Lembaran title="Tarikh tamat" onClose={onClose}>
-      <span className="text-[13px] leading-snug text-subtle">Anda akan diingatkan dalam Papan Pemuka sebelum tarikh ini (kontrak 30 hari, permit &amp; pasport 60 hari).</span>
-      <MedanBorang label="Kontrak tamat" nota="Untuk pekerja kontrak atau pelatih">
+    <Lembaran title={tr("Tarikh tamat")} onClose={onClose}>
+      <span className="text-[13px] leading-snug text-subtle">{tr("Anda akan diingatkan dalam Papan Pemuka sebelum tarikh ini (kontrak 30 hari, permit & pasport 60 hari).")}</span>
+      <MedanBorang label={tr("Kontrak tamat")} nota={tr("Untuk pekerja kontrak atau pelatih")}>
         <input className={inputKecil} type="date" value={f.kontrak} onChange={(e) => setF({ ...f, kontrak: e.target.value })} />
       </MedanBorang>
       <div className="grid grid-cols-2 gap-2.5">
-        <MedanBorang label="Permit kerja tamat">
+        <MedanBorang label={tr("Permit kerja tamat")}>
           <input className={inputKecil} type="date" value={f.permit} onChange={(e) => setF({ ...f, permit: e.target.value })} />
         </MedanBorang>
-        <MedanBorang label="Pasport tamat">
+        <MedanBorang label={tr("Pasport tamat")}>
           <input className={inputKecil} type="date" value={f.pasport} onChange={(e) => setF({ ...f, pasport: e.target.value })} />
         </MedanBorang>
       </div>
       {ralat && <ErrorBox message={ralat} />}
       <button type="button" onClick={simpan} disabled={busy} className="h-12 rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
-        {busy ? "Menyimpan…" : "Simpan"}
+        {busy ? tr("Menyimpan…") : tr("Simpan")}
       </button>
     </Lembaran>
   );
@@ -570,29 +557,29 @@ function Tamatkan({ p, onClose, onDone }: { p: ButiranPekerja; onClose: () => vo
       await tamatkanPekerjaan(p.id, status, tarikhAkhir, sebab);
       onDone();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
       setBusy(false);
     }
   }
   return (
-    <Lembaran title={`Tamatkan pekerjaan ${p.name}`} onClose={onClose}>
-      <MedanBorang label="Sebab tamat">
+    <Lembaran title={tr("Tamatkan pekerjaan {0}", p.name)} onClose={onClose}>
+      <MedanBorang label={tr("Sebab tamat")}>
         <select className={inputKecil} value={status} onChange={(e) => setStatus(e.target.value as typeof status)}>
-          <option value="resigned">Letak jawatan</option>
-          <option value="terminated">Ditamatkan</option>
-          <option value="retired">Bersara</option>
+          <option value="resigned">{tr("Letak jawatan")}</option>
+          <option value="terminated">{tr("Ditamatkan")}</option>
+          <option value="retired">{tr("Bersara")}</option>
         </select>
       </MedanBorang>
-      <MedanBorang label="Hari bekerja terakhir">
+      <MedanBorang label={tr("Hari bekerja terakhir")}>
         <input className={inputKecil} type="date" value={tarikhAkhir} onChange={(e) => setTarikhAkhir(e.target.value)} />
       </MedanBorang>
-      <MedanBorang label="Catatan (pilihan)">
+      <MedanBorang label={tr("Catatan (pilihan)")}>
         <textarea className={`${inputKecil} h-20 py-2`} value={sebab} onChange={(e) => setSebab(e.target.value)} />
       </MedanBorang>
-      <span className="text-xs text-muted">Pekerja kekal aktif hingga hari bekerja terakhir. Selepas itu peranan dan jemputan dalam syarikat ini dibatalkan. Rekod gaji dan cuti kekal untuk audit.</span>
+      <span className="text-xs text-muted">{tr("Pekerja kekal aktif hingga hari bekerja terakhir. Selepas itu peranan dan jemputan dalam syarikat ini dibatalkan. Rekod gaji dan cuti kekal untuk audit.")}</span>
       {ralat && <ErrorBox message={ralat} />}
       <button type="button" onClick={sahkan} disabled={busy} className="h-12 rounded-button bg-danger text-base font-extrabold text-white disabled:opacity-60">
-        {busy ? "Memproses…" : "Tamatkan pekerjaan"}
+        {busy ? tr("Memproses…") : tr("Tamatkan pekerjaan")}
       </button>
     </Lembaran>
   );
@@ -628,14 +615,14 @@ function TabCuti({ id }: { id: string }) {
           </div>
         ))}
       </div>
-      <Seksyen>PERMOHONAN</Seksyen>
-      <Senarai kosong="Tiada permohonan cuti.">
+      <Seksyen>{tr("PERMOHONAN")}</Seksyen>
+      <Senarai kosong={tr("Tiada permohonan cuti.")}>
         {d.data.req.map((r) => (
           <BarisRekod
             key={r.id}
             href={r.approval_request_id ? `/permohonan/${r.approval_request_id}` : undefined}
-            tajuk={`${r.leave_types?.name ?? "Cuti"} · ${julatTarikh(r.start_date, r.end_date)}`}
-            kecil={`${hari(Number(r.days))} hari`}
+            tajuk={`${r.leave_types?.name ?? tr("Cuti")} · ${julatTarikh(r.start_date, r.end_date)}`}
+            kecil={tr("{0} hari", hari(Number(r.days)))}
             status={r.status as StatusPermohonan}
           />
         ))}
@@ -661,13 +648,13 @@ function TabTuntutan({ id }: { id: string }) {
   if (d.error) return <ErrorBox message={d.error} />;
   if (!d.data) return <Loading />;
   return (
-    <Senarai kosong="Tiada tuntutan.">
+    <Senarai kosong={tr("Tiada tuntutan.")}>
       {d.data.map((c) => (
         <BarisRekod
           key={c.id}
           href={c.approval_request_id ? `/permohonan/${c.approval_request_id}` : undefined}
           tajuk={c.title}
-          kecil={`${ringgit(Number(c.total_amount))} · ${tarikh(c.created_at)}${c.paid_at ? " · Dibayar" : ""}`}
+          kecil={`${ringgit(Number(c.total_amount))} · ${tarikh(c.created_at)}${c.paid_at ? tr(" · Dibayar") : ""}`}
           status={c.status as StatusPermohonan}
         />
       ))}
@@ -697,21 +684,21 @@ function TabKehadiran({ id }: { id: string }) {
       <div className="grid grid-cols-2 gap-2">
         <div className="flex flex-col gap-0.5 rounded-[14px] bg-surface px-3.5 py-3">
           <b className="text-lg font-extrabold">{d.data.length}</b>
-          <span className="text-xs text-muted">Hari hadir bulan ini</span>
+          <span className="text-xs text-muted">{tr("Hari hadir bulan ini")}</span>
         </div>
         <div className={`flex flex-col gap-0.5 rounded-[14px] px-3.5 py-3 ${lewat ? "bg-warning-soft text-warning" : "bg-surface"}`}>
           <b className="text-lg font-extrabold">{lewat}</b>
-          <span className="text-xs">Lewat masuk</span>
+          <span className="text-xs">{tr("Lewat masuk")}</span>
         </div>
       </div>
-      <Senarai kosong="Tiada rekod kehadiran bulan ini.">
+      <Senarai kosong={tr("Tiada rekod kehadiran bulan ini.")}>
         {d.data.map((r) => (
           <div key={r.work_date} className="flex min-h-[50px] items-center justify-between gap-2 py-2 text-sm">
             <span className="font-bold">{tarikh(r.work_date)}</span>
             <span className="text-muted">
               {r.clock_in ? masa(r.clock_in) : "-"} – {r.clock_out ? masa(r.clock_out) : "-"}
             </span>
-            {r.late_minutes > 0 ? <Tag tone="warning">Lewat {r.late_minutes} min</Tag> : <Tag tone="success">Tepat</Tag>}
+            {r.late_minutes > 0 ? <Tag tone="warning">{tr("Lewat {0} min", r.late_minutes)}</Tag> : <Tag tone="success">{tr("Tepat")}</Tag>}
           </div>
         ))}
       </Senarai>
@@ -737,23 +724,22 @@ function TabGaji({ id, nama, tarikhMula }: { id: string; nama: string; tarikhMul
   );
   const semasa = d.data ? Object.fromEntries(d.data.filter((c) => c.effective_from <= todayISO()).map((c) => [c.code, Number(c.amount)])) : null;
   const pr = usePratonton(id, semasa && semasa.BASIC ? semasa : null);
-  if (!boleh) return <span className="text-sm text-muted">Maklumat gaji hanya untuk HR dan Kewangan.</span>;
+  if (!boleh) return <span className="text-sm text-muted">{tr("Maklumat gaji hanya untuk HR dan Kewangan.")}</span>;
   if (d.error) return <ErrorBox message={d.error} />;
   if (!d.data) return <Loading />;
   return (
     <>
-      <Senarai kosong="Tiada komponen gaji direkodkan.">
+      <Senarai kosong={tr("Tiada komponen gaji direkodkan.")}>
         {d.data.map((c, i) => (
-          <Medan key={i} label={`${c.name}${c.effective_from > todayISO() ? ` (mulai ${tarikh(c.effective_from)})` : ""}`}>
+          <Medan key={i} label={`${c.name}${c.effective_from > todayISO() ? tr(" (mulai {0})", tarikh(c.effective_from)) : ""}`}>
             {ringgit(Number(c.amount))}
           </Medan>
         ))}
       </Senarai>
       <RingkasanKiraan k={semasa?.BASIC ? pr.k : null} mengira={pr.mengira} />
       <button type="button" onClick={() => setUbah(true)} disabled={!komp.data} className="min-h-12 rounded-button bg-primary text-sm font-extrabold text-white disabled:opacity-60 lg:w-60">
-        Ubah gaji &amp; elaun
-      </button>
-      <span className="text-xs text-muted">Akses ini direkodkan. Slip gaji bulanan dijana melalui Proses Gaji.</span>
+        {tr("Ubah gaji & elaun")}</button>
+      <span className="text-xs text-muted">{tr("Akses ini direkodkan. Slip gaji bulanan dijana melalui Proses Gaji.")}</span>
       {ubah && komp.data && (
         <UbahGaji
           employmentId={id}
@@ -784,7 +770,7 @@ function BakiAwal({ id }: { id: string }) {
   const [ralat, setRalat] = useState<string | null>(null);
   const [ok, setOk] = useState(false);
   const v = f ?? (d.data ? { m: String(d.data.up_to_month), g: String(d.data.gross), e: String(d.data.epf), p: String(d.data.pcb) } : { m: String(Math.max(1, Number(todayISO().slice(5, 7)) - 1)), g: "", e: "", p: "" });
-  const BULAN = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogo", "Sep", "Okt", "Nov"];
+  const BULAN = [tr("Jan"), tr("Feb"), tr("Mac"), tr("Apr"), tr("Mei"), tr("Jun"), tr("Jul"), tr("Ogo"), tr("Sep"), tr("Okt"), tr("Nov")];
   async function simpan() {
     setRalat(null);
     try {
@@ -792,7 +778,7 @@ function BakiAwal({ id }: { id: string }) {
       setOk(true);
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
   const num = (k: "g" | "e" | "p") => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -801,33 +787,31 @@ function BakiAwal({ id }: { id: string }) {
   };
   return (
     <div className="mt-2 flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3">
-      <b className="text-sm font-extrabold">Data terkumpul {y} daripada sistem lama</b>
-      <span className="text-xs text-muted">Untuk syarikat yang mula menggunakan HRBoost pada pertengahan tahun — diperlukan supaya PCB dikira dengan tepat.</span>
+      <b className="text-sm font-extrabold">{tr("Data terkumpul {0} daripada sistem lama", y)}</b>
+      <span className="text-xs text-muted">{tr("Untuk syarikat yang mula menggunakan HRBoost pada pertengahan tahun — diperlukan supaya PCB dikira dengan tepat.")}</span>
       <div className="grid grid-cols-2 gap-2.5">
-        <MedanBorang label="Hingga bulan">
+        <MedanBorang label={tr("Hingga bulan")}>
           <select className={inputKecil} value={v.m} onChange={(e) => setF({ ...v, m: e.target.value })}>
             {BULAN.map((b, i) => (
               <option key={b} value={i + 1}>
-                Jan – {b}
-              </option>
+                {tr("Jan – {0}", b)}</option>
             ))}
           </select>
         </MedanBorang>
-        <MedanBorang label="Saraan kasar (RM)">
+        <MedanBorang label={tr("Saraan kasar (RM)")}>
           <input className={inputKecil} inputMode="decimal" value={v.g} onChange={num("g")} />
         </MedanBorang>
-        <MedanBorang label="KWSP pekerja (RM)">
+        <MedanBorang label={tr("KWSP pekerja (RM)")}>
           <input className={inputKecil} inputMode="decimal" value={v.e} onChange={num("e")} />
         </MedanBorang>
-        <MedanBorang label="PCB dibayar (RM)">
+        <MedanBorang label={tr("PCB dibayar (RM)")}>
           <input className={inputKecil} inputMode="decimal" value={v.p} onChange={num("p")} />
         </MedanBorang>
       </div>
       {ralat && <ErrorBox message={ralat} />}
-      {ok && <span className="text-sm font-semibold text-success">Disimpan.</span>}
+      {ok && <span className="text-sm font-semibold text-success">{tr("Disimpan.")}</span>}
       <button type="button" onClick={simpan} className="h-11 rounded-[12px] border border-primary text-sm font-bold text-primary">
-        Simpan data terkumpul
-      </button>
+        {tr("Simpan data terkumpul")}</button>
     </div>
   );
 }
@@ -848,12 +832,12 @@ function TabDokumen({ p, bolehUbah }: { p: ButiranPekerja; bolehUbah: boolean })
     setRalat(null);
     try {
       const path = await muatNaikPeribadi(p.personId, `dokumen-${jenis}`, file);
-      await simpanDokumen(p.id, me.personId, jenis, tajuk.trim() || (JENIS_DOKUMEN.find((j) => j.value === jenis)?.label ?? "Dokumen"), path, tamatDok);
+      await simpanDokumen(p.id, me.personId, jenis, tajuk.trim() || (JENIS_DOKUMEN.find((j) => j.value === jenis)?.label ?? tr("Dokumen")), path, tamatDok);
       setTajuk("");
       setTamatDok("");
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
     setBusy(false);
     if (fail.current) fail.current.value = "";
@@ -871,26 +855,26 @@ function TabDokumen({ p, bolehUbah }: { p: ButiranPekerja; bolehUbah: boolean })
       {bolehUbah && (
         <div className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3">
           <div className="grid grid-cols-2 gap-2.5">
-            <MedanBorang label="Jenis dokumen">
+            <MedanBorang label={tr("Jenis dokumen")}>
               <select className={inputKecil} value={jenis} onChange={(e) => setJenis(e.target.value)}>
                 {JENIS_DOKUMEN.map((j) => (
                   <option key={j.value} value={j.value}>
-                    {j.label}
+                    {tr(j.label)}
                   </option>
                 ))}
               </select>
             </MedanBorang>
-            <MedanBorang label="Tajuk (pilihan)">
+            <MedanBorang label={tr("Tajuk (pilihan)")}>
               <input className={inputKecil} value={tajuk} onChange={(e) => setTajuk(e.target.value)} />
             </MedanBorang>
-            <MedanBorang label="Tarikh tamat (pilihan)" nota="Cth. sijil, lesen, permit">
+            <MedanBorang label={tr("Tarikh tamat (pilihan)")} nota={tr("Cth. sijil, lesen, permit")}>
               <input className={inputKecil} type="date" value={tamatDok} onChange={(e) => setTamatDok(e.target.value)} />
             </MedanBorang>
           </div>
           <button type="button" disabled={busy} onClick={() => fail.current?.click()} className="h-12 rounded-button bg-primary text-sm font-bold text-white disabled:opacity-60">
-            {busy ? "Memuat naik…" : "Muat naik dokumen"}
+            {busy ? tr("Memuat naik…") : tr("Muat naik dokumen")}
           </button>
-          <input ref={fail} type="file" accept="image/*,application/pdf" className="hidden" aria-label="Pilih fail dokumen" onChange={(e) => muatNaik(e.target.files?.[0])} />
+          <input ref={fail} type="file" accept="image/*,application/pdf" className="hidden" aria-label={tr("Pilih fail dokumen")} onChange={(e) => muatNaik(e.target.files?.[0])} />
         </div>
       )}
       {ralat && <ErrorBox message={ralat} />}
@@ -898,7 +882,7 @@ function TabDokumen({ p, bolehUbah }: { p: ButiranPekerja; bolehUbah: boolean })
       {!d.data ? (
         <Loading />
       ) : (
-        <Senarai kosong="Tiada dokumen.">
+        <Senarai kosong={tr("Tiada dokumen.")}>
           {d.data.map((x) => (
             <button key={x.id} type="button" onClick={() => buka(x.storage_path)} className="flex min-h-12 items-center justify-between gap-2 py-2 text-left text-sm">
               <span className="flex flex-col gap-0.5">
@@ -907,13 +891,13 @@ function TabDokumen({ p, bolehUbah }: { p: ButiranPekerja; bolehUbah: boolean })
                   {JENIS_DOKUMEN.find((j) => j.value === x.doc_type)?.label ?? x.doc_type} · {tarikh(x.created_at)}
                   {x.expiry_date && (
                     <>
-                      {" · tamat "}
+                      {tr(" · tamat ")}
                       <TarikhAmaran iso={x.expiry_date} />
                     </>
                   )}
                 </span>
               </span>
-              <span className="text-[13px] font-bold text-primary">Buka</span>
+              <span className="text-[13px] font-bold text-primary">{tr("Buka")}</span>
             </button>
           ))}
         </Senarai>

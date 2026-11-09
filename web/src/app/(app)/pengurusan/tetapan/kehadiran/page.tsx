@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
@@ -51,11 +52,11 @@ function Integrasi() {
     setMesej(null);
     try {
       const { data, error } = await getSupabase().functions.invoke("crosschex-sync", { body: { company_id: cid, mode } });
-      if (error) throw new Error("Fungsi penyegerakan belum dipasang atau tidak dapat dihubungi.");
-      setMesej({ ok: !!data?.ok, text: data?.message ?? "Selesai" });
+      if (error) throw new Error(tr("Fungsi penyegerakan belum dipasang atau tidak dapat dihubungi."));
+      setMesej({ ok: !!data?.ok, text: data?.message ?? tr("Selesai") });
       d.reload();
     } catch (e) {
-      setMesej({ ok: false, text: e instanceof Error ? e.message : "Ralat" });
+      setMesej({ ok: false, text: e instanceof Error ? e.message : tr("Ralat") });
     }
     setBusy(null);
   }
@@ -66,7 +67,7 @@ function Integrasi() {
       must(await getSupabase().rpc("set_attendance_integration", { p_company: cid, p_api_url: s.api_url, p_key: "", p_secret: "", p_minutes: min }));
       d.reload();
     } catch (e) {
-      setMesej({ ok: false, text: e instanceof Error ? e.message : "Ralat" });
+      setMesej({ ok: false, text: e instanceof Error ? e.message : tr("Ralat") });
     }
   }
 
@@ -74,7 +75,7 @@ function Integrasi() {
 
   return (
     <Screen lebar="sederhana">
-      <BackHeader title="Integrasi Kehadiran" href="/pengurusan/tetapan" />
+      <BackHeader title={tr("Integrasi Kehadiran")} href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-4">
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
@@ -83,39 +84,36 @@ function Integrasi() {
             <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3">
               <div className="flex items-center gap-3">
                 <span className="flex grow flex-col gap-0.5">
-                  <b className="text-sm font-extrabold">CrossChex Cloud</b>
-                  <span className="text-xs text-muted">Anviz · pelayan {/\.eu\./.test(s.api_url) ? "EU" : "global"}</span>
+                  <b className="text-sm font-extrabold">{tr("CrossChex Cloud")}</b>
+                  <span className="text-xs text-muted">{tr("Anviz · pelayan {0}", /\.eu\./.test(s.api_url) ? "EU" : "global")}</span>
                 </span>
-                <Tag tone={bersambung ? "success" : s.last_error ? "danger" : "neutral"}>{bersambung ? "Bersambung" : s.last_error ? "Ralat" : s.configured ? "Belum ditarik" : "Belum disambung"}</Tag>
+                <Tag tone={bersambung ? "success" : s.last_error ? "danger" : "neutral"}>{bersambung ? tr("Bersambung") : s.last_error ? tr("Ralat") : s.configured ? tr("Belum ditarik") : tr("Belum disambung")}</Tag>
               </div>
               {s.last_synced_at && (
                 <span className="text-xs text-[#4A5A57]">
-                  Tarikan terakhir {masa(s.last_synced_at)}
-                  {s.log[0]?.ok ? ` · ${s.log[0].message.toLowerCase()}` : ""}
-                  {s.next_run_at ? ` · seterusnya ${masa(s.next_run_at)}` : ""}
-                </span>
+                  {tr("Tarikan terakhir {0}{1}{2}", masa(s.last_synced_at), s.log[0]?.ok ? ` · ${s.log[0].message.toLowerCase()}` : "", s.next_run_at ? tr(" · seterusnya {0}", masa(s.next_run_at)) : "")}</span>
               )}
               {s.last_error && <span className="text-xs font-semibold text-danger">{s.last_error}</span>}
             </div>
 
-            <Seksyen className="pt-1">SAMBUNGAN</Seksyen>
+            <Seksyen className="pt-1">{tr("SAMBUNGAN")}</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-              <Baris label="URL API">{s.api_url.replace(/^https:\/\//, "")}</Baris>
-              <Baris label="Kunci API">{s.configured ? "••••••••" : "Belum diisi"}</Baris>
+              <Baris label={tr("URL API")}>{s.api_url.replace(/^https:\/\//, "")}</Baris>
+              <Baris label={tr("Kunci API")}>{s.configured ? "••••••••" : tr("Belum diisi")}</Baris>
               <div className="flex min-h-[48px] items-center gap-2">
-                <span className="grow text-muted">Rahsia API</span>
-                <b>{s.configured ? "••••••••" : "Belum diisi"}</b>
+                <span className="grow text-muted">{tr("Rahsia API")}</span>
+                <b>{s.configured ? "••••••••" : tr("Belum diisi")}</b>
                 <button type="button" onClick={() => setKunci(true)} className="min-h-11 pl-2 text-[13px] font-bold text-primary">
-                  {s.configured ? "Tukar" : "Isi"}
+                  {s.configured ? tr("Tukar") : tr("Isi")}
                 </button>
               </div>
-              <Baris label="Token">{s.token_valid ? "Diperbaharui secara automatik" : "Akan diminta semasa tarikan"}</Baris>
+              <Baris label={tr("Token")}>{s.token_valid ? tr("Diperbaharui secara automatik") : tr("Akan diminta semasa tarikan")}</Baris>
             </div>
 
-            <Seksyen className="pt-1">TARIK DATA</Seksyen>
+            <Seksyen className="pt-1">{tr("TARIK DATA")}</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               <div className="flex min-h-12 items-center gap-2">
-                <span className="grow text-muted">Kekerapan</span>
+                <span className="grow text-muted">{tr("Kekerapan")}</span>
                 {[5, 15, 30].map((m) => (
                   <button
                     key={m}
@@ -124,36 +122,33 @@ function Integrasi() {
                     onClick={() => kekerapan(m)}
                     className={`h-8 rounded-full px-2.5 text-xs font-bold disabled:opacity-50 ${s.sync_minutes === m ? "bg-primary text-white" : "border border-[#D5DEDC]"}`}
                   >
-                    {m} min
-                  </button>
+                    {tr("{0} min", m)}</button>
                 ))}
               </div>
-              <Baris label="Masuk / keluar">Imbasan pertama / terakhir</Baris>
+              <Baris label={tr("Masuk / keluar")}>{tr("Imbasan pertama / terakhir")}</Baris>
             </div>
 
-            <Seksyen className="pt-1">PADANAN PEKERJA</Seksyen>
+            <Seksyen className="pt-1">{tr("PADANAN PEKERJA")}</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-              <Baris label="Dipadankan">
+              <Baris label={tr("Dipadankan")}>
                 {s.matched} / {s.employees}
               </Baris>
               {s.unmatched.map((u) => (
                 <div key={u.workno} className="flex min-h-12 items-center gap-2">
                   <span className="flex grow flex-col">
-                    <b>ID mesin {u.workno}</b>
+                    <b>{tr("ID mesin {0}", u.workno)}</b>
                     <span className="text-xs text-muted">
-                      belum dipadankan · {u.punches} imbasan, terakhir {tarikh(u.last)}
-                    </span>
+                      {tr("belum dipadankan · {0} imbasan, terakhir {1}", u.punches, tarikh(u.last))}</span>
                   </span>
                   <button type="button" onClick={() => setPadan(u.workno)} className="min-h-11 text-[13px] font-bold text-primary">
-                    Pilih pekerja
-                  </button>
+                    {tr("Pilih pekerja")}</button>
                 </div>
               ))}
             </div>
 
             {s.log.length > 0 && (
               <>
-                <Seksyen className="pt-1">LOG TERKINI</Seksyen>
+                <Seksyen className="pt-1">{tr("LOG TERKINI")}</Seksyen>
                 <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
                   {s.log.map((l, i) => (
                     <div key={i} className="flex min-h-[44px] items-center gap-3">
@@ -171,10 +166,10 @@ function Integrasi() {
       {s?.configured && (
         <div className="bar-bawah sticky bottom-0 grid grid-cols-2 gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <button type="button" disabled={!!busy} onClick={() => panggil("test")} className="h-12 rounded-button border-2 border-primary text-sm font-extrabold text-primary disabled:opacity-60">
-            {busy === "test" ? "Menguji…" : "Uji sambungan"}
+            {busy === "test" ? tr("Menguji…") : tr("Uji sambungan")}
           </button>
           <button type="button" disabled={!!busy} onClick={() => panggil("pull")} className="h-12 rounded-button bg-primary text-sm font-extrabold text-white disabled:opacity-60">
-            {busy === "pull" ? "Menarik…" : "Tarik sekarang"}
+            {busy === "pull" ? tr("Menarik…") : tr("Tarik sekarang")}
           </button>
         </div>
       )}
@@ -221,32 +216,31 @@ function Kunci({ cid, s, onClose, onDone }: { cid: string; s: Status; onClose: (
   const [ralat, setRalat] = useState<string | null>(null);
   async function simpan() {
     setRalat(null);
-    if (!s.configured && (!key.trim() || !secret.trim())) return setRalat("Sila isi kunci dan rahsia API.");
+    if (!s.configured && (!key.trim() || !secret.trim())) return setRalat(tr("Sila isi kunci dan rahsia API."));
     setBusy(true);
     try {
       must(await getSupabase().rpc("set_attendance_integration", { p_company: cid, p_api_url: url.trim(), p_key: key.trim(), p_secret: secret.trim(), p_minutes: s.sync_minutes }));
       onDone();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
       setBusy(false);
     }
   }
   return (
-    <Lembaran title={s.configured ? "Tukar kunci CrossChex" : "Sambung CrossChex Cloud"} onClose={onClose}>
-      <MedanBorang label="URL API">
+    <Lembaran title={s.configured ? tr("Tukar kunci CrossChex") : tr("Sambung CrossChex Cloud")} onClose={onClose}>
+      <MedanBorang label={tr("URL API")}>
         <input className={inputKecil} value={url} onChange={(e) => setUrl(e.target.value)} />
       </MedanBorang>
-      <MedanBorang label="Kunci API" nota={s.configured ? "Kosong = kekalkan kunci semasa" : undefined}>
+      <MedanBorang label={tr("Kunci API")} nota={s.configured ? tr("Kosong = kekalkan kunci semasa") : undefined}>
         <input className={inputKecil} value={key} onChange={(e) => setKey(e.target.value)} autoComplete="off" />
       </MedanBorang>
-      <MedanBorang label="Rahsia API" nota={s.configured ? "Kosong = kekalkan rahsia semasa" : undefined}>
+      <MedanBorang label={tr("Rahsia API")} nota={s.configured ? tr("Kosong = kekalkan rahsia semasa") : undefined}>
         <input className={inputKecil} type="password" value={secret} onChange={(e) => setSecret(e.target.value)} autoComplete="new-password" />
       </MedanBorang>
-      <span className="text-xs leading-normal text-muted">Kunci disimpan dalam peti rahsia (Vault) dan tidak akan dipaparkan semula. Hanya boleh ditukar.</span>
+      <span className="text-xs leading-normal text-muted">{tr("Kunci disimpan dalam peti rahsia (Vault) dan tidak akan dipaparkan semula. Hanya boleh ditukar.")}</span>
       {ralat && <ErrorBox message={ralat} />}
       <ButangUtama onClick={simpan} busy={busy}>
-        Simpan
-      </ButangUtama>
+        {tr("Simpan")}</ButangUtama>
     </Lembaran>
   );
 }
@@ -261,13 +255,13 @@ function Padan({ workno, ppl, onClose, onDone }: { workno: string; ppl: { id: st
       must(await getSupabase().rpc("match_attendance_workno", { p_employment: emp, p_workno: workno }));
       onDone();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
       setBusy(false);
     }
   }
   return (
-    <Lembaran title={`Padankan ID mesin ${workno}`} onClose={onClose}>
-      <MedanBorang label="Pekerja">
+    <Lembaran title={tr("Padankan ID mesin {0}", workno)} onClose={onClose}>
+      <MedanBorang label={tr("Pekerja")}>
         <select className={inputKecil} value={emp} onChange={(e) => setEmp(e.target.value)}>
           {ppl.map((p) => (
             <option key={p.id} value={p.id}>
@@ -276,11 +270,10 @@ function Padan({ workno, ppl, onClose, onDone }: { workno: string; ppl: { id: st
           ))}
         </select>
       </MedanBorang>
-      <span className="text-xs text-muted">Imbasan lama bagi ID ini akan dibina semula sebagai rekod kehadiran pekerja tersebut.</span>
+      <span className="text-xs text-muted">{tr("Imbasan lama bagi ID ini akan dibina semula sebagai rekod kehadiran pekerja tersebut.")}</span>
       {ralat && <ErrorBox message={ralat} />}
       <ButangUtama onClick={simpan} busy={busy}>
-        Padankan
-      </ButangUtama>
+        {tr("Padankan")}</ButangUtama>
     </Lembaran>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { Langkah } from "@/components/LangkahDaftar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -31,15 +32,15 @@ export default function DaftarSyarikatPage() {
     e.preventDefault();
     setRalat(null);
     const phone = telefonPenuh(f.phone);
-    if (!f.company.trim()) return setRalat("Sila isi nama syarikat.", "company");
-    if (!f.name.trim()) return setRalat("Sila isi nama penuh anda.", "name");
-    if (!phone) return setRalat("Sila masukkan nombor WhatsApp Malaysia yang sah, contohnya 012-345 6789.", "phone");
-    if (f.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email)) return setRalat("E-mel tidak sah.", "email");
-    if (!setuju) return setRalat("Sila bersetuju dengan Terma dan Notis Privasi.", "setuju");
+    if (!f.company.trim()) return setRalat(tr("Sila isi nama syarikat."), "company");
+    if (!f.name.trim()) return setRalat(tr("Sila isi nama penuh anda."), "name");
+    if (!phone) return setRalat(tr("Sila masukkan nombor WhatsApp Malaysia yang sah, contohnya 012-345 6789."), "phone");
+    if (f.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email)) return setRalat(tr("E-mel tidak sah."), "email");
+    if (!setuju) return setRalat(tr("Sila bersetuju dengan Terma dan Notis Privasi."), "setuju");
     setBusy(true);
     const { error } = await getSupabase().auth.signInWithOtp({ phone, options: { channel: "sms" } });
     setBusy(false);
-    if (error) return setRalat(error.status === 429 ? "Terlalu banyak cubaan. Sila tunggu sebentar." : "Kod tidak dapat dihantar. Sila cuba lagi.");
+    if (error) return setRalat(error.status === 429 ? tr("Terlalu banyak cubaan. Sila tunggu sebentar.") : tr("Kod tidak dapat dihantar. Sila cuba lagi."));
     simpanPendaftaran({ ...f, phone, company: f.company.trim(), name: f.name.trim(), email: f.email.trim() });
     router.push("/daftar/sahkan");
   }
@@ -47,24 +48,22 @@ export default function DaftarSyarikatPage() {
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-page text-ink">
       <header className="flex items-center px-3 pt-3 pb-1">
-        <Link href="/" aria-label="Kembali ke laman utama" className="flex size-11 items-center justify-center rounded-full text-ink!">
+        <Link href="/" aria-label={tr("Kembali ke laman utama")} className="flex size-11 items-center justify-center rounded-full text-ink!">
           <IconBack />
         </Link>
       </header>
       <form onSubmit={hantar} className="flex grow flex-col gap-4 px-6 pb-8" noValidate>
         <div className="flex flex-col gap-1.5">
           <Langkah n={1} />
-          <h1 className="m-0 text-[22px] font-extrabold">Daftar syarikat</h1>
-          <span className="text-sm text-subtle">Percuma dan hanya 2 minit. Anda akan menjadi Pentadbir syarikat ini.</span>
+          <h1 className="m-0 text-[22px] font-extrabold">{tr("Daftar syarikat")}</h1>
+          <span className="text-sm text-subtle">{tr("Percuma dan hanya 2 minit. Anda akan menjadi Pentadbir syarikat ini.")}</span>
         </div>
-        <span className="pt-1 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">SYARIKAT</span>
+        <span className="pt-1 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("SYARIKAT")}</span>
         <label className="flex flex-col gap-1.5 text-sm font-bold">
-          Nama syarikat
-          <input className={input} value={f.company} onChange={set("company")} aria-invalid={salah === "company" || undefined} placeholder="Contoh: Syarikat ABC Sdn Bhd" autoComplete="organization" />
+          {tr("Nama syarikat")}<input className={input} value={f.company} onChange={set("company")} aria-invalid={salah === "company" || undefined} placeholder={tr("Contoh: Syarikat ABC Sdn Bhd")} autoComplete="organization" />
         </label>
         <div className="flex flex-col gap-1.5 text-sm font-bold">
-          Bilangan pekerja
-          <div className="grid grid-cols-4 gap-2">
+          {tr("Bilangan pekerja")}<div className="grid grid-cols-4 gap-2">
             {SAIZ.map((s) => (
               <button
                 key={s}
@@ -78,23 +77,21 @@ export default function DaftarSyarikatPage() {
             ))}
           </div>
         </div>
-        <span className="pt-1 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">ANDA</span>
+        <span className="pt-1 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("ANDA")}</span>
         <label className="flex flex-col gap-1.5 text-sm font-bold">
-          Nama penuh
-          <input className={input} value={f.name} onChange={set("name")} aria-invalid={salah === "name" || undefined} placeholder="Nama anda" autoComplete="name" />
+          {tr("Nama penuh")}<input className={input} value={f.name} onChange={set("name")} aria-invalid={salah === "name" || undefined} placeholder={tr("Nama anda")} autoComplete="name" />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-bold">
-          No. WhatsApp
-          <input className={input} type="tel" value={f.phone} onChange={set("phone")} aria-invalid={salah === "phone" || undefined} placeholder="+60 1x-xxx xxxx" autoComplete="tel" />
+          {tr("No. WhatsApp")}<input className={input} type="tel" value={f.phone} onChange={set("phone")} aria-invalid={salah === "phone" || undefined} placeholder={tr("+60 1x-xxx xxxx")} autoComplete="tel" />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-bold">
           E-mel
-          <input className={input} type="email" value={f.email} onChange={set("email")} aria-invalid={salah === "email" || undefined} placeholder="nama@syarikat.com" autoComplete="email" />
+          <input className={input} type="email" value={f.email} onChange={set("email")} aria-invalid={salah === "email" || undefined} placeholder={tr("nama@syarikat.com")} autoComplete="email" />
         </label>
         <label className="flex min-h-11 items-start gap-3 text-sm leading-normal">
           <input type="checkbox" checked={setuju} onChange={(e) => setSetuju(e.target.checked)} className="mt-0.5 size-5 shrink-0 accent-primary" />
           <span>
-            Saya bersetuju dengan <Link href="/privasi#terma">Terma</Link> dan <Link href="/privasi#privasi">Notis Privasi</Link>.
+            {tr("Saya bersetuju dengan")}{" "}<Link href="/privasi#terma">{tr("Terma")}</Link> dan <Link href="/privasi#privasi">{tr("Notis Privasi")}</Link>.
           </span>
         </label>
         {ralat && (
@@ -103,10 +100,10 @@ export default function DaftarSyarikatPage() {
           </span>
         )}
         <button type="submit" disabled={busy} className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
-          {busy ? "Menghantar…" : "Daftar & hantar kod WhatsApp"}
+          {busy ? tr("Menghantar…") : tr("Daftar & hantar kod WhatsApp")}
         </button>
         <span className="text-center text-sm text-muted">
-          Sudah mempunyai akaun? <Link href="/masuk">Log masuk</Link>
+          {tr("Sudah mempunyai akaun?")}{" "}<Link href="/masuk">{tr("Log masuk")}</Link>
         </span>
       </form>
     </div>

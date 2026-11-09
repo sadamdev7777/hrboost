@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
@@ -8,7 +9,7 @@ import { tarikh, todayISO } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
 import { ButangUtama, HadPeranan, Seksyen, Suis } from "@/components/Senarai";
 
-const NEGERI_RINGKAS: Record<string, string> = { "WP Kuala Lumpur": "WP KL" };
+const NEGERI_RINGKAS: Record<string, string> = { "WP Kuala Lumpur": tr("WP KL") };
 
 // Rujukan reka bentuk: design/CutiUmum.dc.html
 export default function CutiUmumPage() {
@@ -53,7 +54,7 @@ function CutiUmum() {
       setPilih(null);
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
     setBusy(false);
   }
@@ -61,7 +62,7 @@ function CutiUmum() {
   return (
     <Screen lebar="sederhana">
       <BackHeader
-        title={`Cuti Umum ${tahun}`}
+        title={tr("Cuti Umum {0}", tahun)}
         href="/pengurusan/tetapan"
         action={
           d.data && <span className="mr-2 flex h-9 items-center rounded-full bg-[#E3F1EE] px-3 text-[13px] font-extrabold text-primary">{NEGERI_RINGKAS[d.data.state] ?? d.data.state}</span>
@@ -78,22 +79,20 @@ function CutiUmum() {
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         {d.data && semua.length === 0 && (
-          <span className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] text-warning">Tarikh cuti umum {tahun} belum dimuatkan mengikut warta. HRBoost akan menambahnya apabila diwartakan.</span>
+          <span className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] text-warning">{tr("Tarikh cuti umum {0} belum dimuatkan mengikut warta. HRBoost akan menambahnya apabila diwartakan.", tahun)}</span>
         )}
         {d.data && semua.length > 0 && (
           <>
             <div className={`flex items-center justify-between gap-3 rounded-card px-4 py-3 ${cukup ? "bg-[#E3F1EE] text-primary" : "bg-danger-soft text-danger"}`}>
               <span className="flex flex-col gap-0.5">
-                <b className="text-lg font-extrabold">{jumlah} hari dipilih</b>
-                <span className="text-xs">{cukup ? "Memenuhi minimum Akta Kerja. Boleh disimpan." : `Kurang ${11 - jumlah} hari lagi untuk memenuhi minimum.`}</span>
+                <b className="text-lg font-extrabold">{tr("{0} hari dipilih", jumlah)}</b>
+                <span className="text-xs">{cukup ? tr("Memenuhi minimum Akta Kerja. Boleh disimpan.") : tr("Kurang {0} hari lagi untuk memenuhi minimum.", 11 - jumlah)}</span>
               </span>
               <span className="text-right text-xs font-bold">
-                Minimum
-                <br />
-                11 hari
-              </span>
+                {tr("Minimum")}<br />
+                {tr("11 hari")}</span>
             </div>
-            <Seksyen>WAJIB · TIDAK BOLEH DIBUANG</Seksyen>
+            <Seksyen>{tr("WAJIB · TIDAK BOLEH DIBUANG")}</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {wajib.map((h) => (
                 <div key={h.id} className="flex min-h-12 items-center justify-between gap-2 py-2 text-sm">
@@ -102,7 +101,7 @@ function CutiUmum() {
                 </div>
               ))}
             </div>
-            <Seksyen className="pt-1">PILIHAN SYARIKAT</Seksyen>
+            <Seksyen className="pt-1">{tr("PILIHAN SYARIKAT")}</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {opsyen.map((h) => {
                 const on = dipilih.has(h.id);
@@ -114,7 +113,7 @@ function CutiUmum() {
                     </span>
                     <Suis
                       on={on}
-                      label={`${on ? "Buang" : "Pilih"} ${h.name}`}
+                      label={`${on ? tr("Buang") : tr("Pilih")} ${h.name}`}
                       onChange={(v) => {
                         const s = new Set(dipilih);
                         if (v) s.add(h.id);
@@ -127,17 +126,16 @@ function CutiUmum() {
                 );
               })}
             </div>
-            <span className="text-xs text-muted">Cuti umum tambahan yang diumumkan oleh kerajaan akan ditambah secara automatik dan boleh digantikan dengan hari lain.</span>
+            <span className="text-xs text-muted">{tr("Cuti umum tambahan yang diumumkan oleh kerajaan akan ditambah secara automatik dan boleh digantikan dengan hari lain.")}</span>
             {ralat && <ErrorBox message={ralat} />}
-            {ok && <span className="text-sm font-semibold text-success">Disimpan. Pekerja akan dimaklumkan.</span>}
+            {ok && <span className="text-sm font-semibold text-success">{tr("Disimpan. Pekerja akan dimaklumkan.")}</span>}
           </>
         )}
       </main>
       {d.data && semua.length > 0 && (
         <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <ButangUtama onClick={simpan} busy={busy} disabled={!cukup}>
-            Simpan &amp; maklumkan pekerja
-          </ButangUtama>
+            {tr("Simpan & maklumkan pekerja")}</ButangUtama>
         </div>
       )}
     </Screen>

@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 /**
@@ -16,14 +17,14 @@ const umum = () => pendengar.forEach((f) => f());
 
 export function sahkan(o: { tajuk: string; mesej?: string; ok?: string; bahaya?: boolean }): Promise<boolean> {
   return new Promise((selesai) => {
-    semasa = { jenis: "sahkan", ok: o.ok ?? "Teruskan", ...o, selesai };
+    semasa = { jenis: "sahkan", ok: o.ok ?? tr("Teruskan"), ...o, selesai };
     umum();
   });
 }
 
 export function mintaTeks(o: { tajuk: string; mesej?: string; label: string; ok?: string; wajib?: boolean; bahaya?: boolean }): Promise<string | null> {
   return new Promise((selesai) => {
-    semasa = { jenis: "teks", ok: o.ok ?? "Hantar", wajib: o.wajib ?? true, ...o, selesai };
+    semasa = { jenis: "teks", ok: o.ok ?? tr("Hantar"), wajib: o.wajib ?? true, ...o, selesai };
     umum();
   });
 }
@@ -95,7 +96,7 @@ export function HosDialog() {
         {p.mesej && <p className="m-0 text-sm leading-normal text-subtle">{p.mesej}</p>}
         {p.jenis === "teks" && (
           <label className="flex flex-col gap-1.5 text-[13px] font-bold text-[#4A5A57]">
-            {p.label}
+            {tr(p.label)}
             <textarea
               ref={input}
               rows={3}
@@ -106,13 +107,12 @@ export function HosDialog() {
               }}
               className="rounded-[12px] border border-[#D5DEDC] bg-surface px-3 py-2.5 text-sm font-normal text-ink outline-none focus:border-primary"
             />
-            {ralat && <span className="text-xs font-semibold text-danger">Sila isi sebab.</span>}
+            {ralat && <span className="text-xs font-semibold text-danger">{tr("Sila isi sebab.")}</span>}
           </label>
         )}
         <div className="grid grid-cols-2 gap-2 pt-1">
           <button type="button" onClick={batal} className="h-12 rounded-button border border-line bg-surface text-sm font-bold">
-            Batal
-          </button>
+            {tr("Batal")}</button>
           <button
             ref={okBtn}
             type="button"

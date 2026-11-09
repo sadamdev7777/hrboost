@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
@@ -35,15 +36,14 @@ export default function OrientasiPage() {
     <Screen lebar="sederhana">
       <main className="flex grow flex-col gap-3 px-4 pt-7 pb-3">
         <div className="flex flex-col gap-1.5">
-          <h1 className="m-0 text-2xl font-extrabold">Lengkapkan akaun anda</h1>
-          <span className="text-sm text-subtle">Lebih kurang 10 minit. Boleh disambung kemudian.</span>
+          <h1 className="m-0 text-2xl font-extrabold">{tr("Lengkapkan akaun anda")}</h1>
+          <span className="text-sm text-subtle">{tr("Lebih kurang 10 minit. Boleh disambung kemudian.")}</span>
         </div>
 
         <div className="flex flex-col gap-1.5">
           <div className="flex justify-between text-[13px] font-bold">
             <span>
-              {n} daripada {LANGKAH.length} selesai
-            </span>
+              {tr("{0} daripada {1} selesai", n, LANGKAH.length)}</span>
             <span className="text-primary">{pct}%</span>
           </div>
           <div className="h-2 overflow-hidden rounded bg-[#DCE3E1]" aria-hidden="true">
@@ -64,10 +64,10 @@ export default function OrientasiPage() {
                 >
                   {ok && <IconCheck size={14} />}
                 </span>
-                <span className={ok ? "text-muted line-through" : ""}>{l.label}</span>
+                <span className={ok ? "text-muted line-through" : ""}>{tr(l.label)}</span>
                 {!ok && (
                   <span className={`ml-auto text-xs whitespace-nowrap ${now ? "font-bold text-primary" : "text-muted"}`}>
-                    {now ? "Mulakan →" : l.masa}
+                    {now ? tr("Mulakan →") : l.masa}
                   </span>
                 )}
               </>
@@ -89,7 +89,7 @@ export default function OrientasiPage() {
 
         {hp && hp.joinDate >= todayISO() && (
           <div className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3">
-            <span className="text-xs font-bold tracking-[0.04em] text-subtle">HARI PERTAMA ANDA</span>
+            <span className="text-xs font-bold tracking-[0.04em] text-subtle">{tr("HARI PERTAMA ANDA")}</span>
             <div className="flex items-center gap-3">
               <span className="flex h-12 w-[52px] shrink-0 flex-col items-center justify-center rounded-xl bg-primary-soft text-primary">
                 <b className="text-lg leading-none font-extrabold">{Number(hp.joinDate.slice(8, 10))}</b>
@@ -98,7 +98,7 @@ export default function OrientasiPage() {
               <div className="flex flex-col gap-0.5 text-sm">
                 <b className="font-bold">
                   {masaTeks(emp.workStart)}
-                  {hp.head ? ` · lapor diri kepada ${hp.head}` : ""}
+                  {hp.head ? tr(" · lapor diri kepada {0}", hp.head) : ""}
                 </b>
                 <span className="text-muted">{emp.companyName}</span>
               </div>
@@ -112,11 +112,10 @@ export default function OrientasiPage() {
           href={seterusnya}
           className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white! hover:bg-primary-hover"
         >
-          {n === LANGKAH.length ? "Lihat ringkasan" : "Teruskan"}
+          {n === LANGKAH.length ? tr("Lihat ringkasan") : tr("Teruskan")}
         </Link>
         <Link href="/utama" className="flex h-10 items-center justify-center text-sm font-bold">
-          Lakukan kemudian
-        </Link>
+          {tr("Lakukan kemudian")}</Link>
       </div>
     </Screen>
   );

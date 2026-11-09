@@ -300,6 +300,17 @@ npm --prefix web run lint
 npm --prefix web run build
 ```
 
+## Bahasa (English / Bahasa Melayu)
+
+English ialah lalai; pengguna boleh menukar kepada Bahasa Melayu di **Saya → Bahasa** (disimpan dalam `persons.language` melalui `set_my_language`).
+
+- `web/src/lib/i18n.ts`: `tr("teks BM", ...nilai)` memulangkan English daripada `web/src/lib/kamus/en.ts`; `trRalat()` menterjemah mesej pangkalan data (`web/src/lib/kamus/ralat.ts`, `%` = nilai, `[%]` = peratus).
+- Bahasa dibaca daripada kuki `hrb_bahasa` di pelayan (`app/layout.tsx` → `<BahasaAwal>`) supaya HTML awal sepadan dengan pelayar.
+- `web/scripts/i18n-codemod.cjs`: membalut teks JSX/rentetan dengan `tr()`; `--keys` menyenaraikan kunci untuk kamus.
+- WhatsApp: `message_i18n` + `translate_message()`; pencetus `notifications` menterjemah mengikut bahasa penerima. Balasan `APPROVE` / `REJECT <reason>` diterima bersama `LULUS` / `TOLAK`.
+- Pembantu AI dan draf surat ikut bahasa pengguna (pembolehubah `bahasa` dihantar oleh aplikasi).
+- Ujian: e2e dijalankan dalam BM (`e2e/_bahasa.cjs`); `node web/e2e/bahasa-en.cjs` mengimbas skrin English untuk teks BM yang tertinggal (`--ketat` untuk gagal jika ada).
+
 ## Tema
 
 Token warna dan bentuk ditakrif dalam `web/src/app/globals.css` (`@theme`) mengikut `CLAUDE.md` §2 dan warna dalam `design/`: `primary` #0F6B5F, `page` #F4F6F5, `ink` #14211F, `muted` #5B6B68, `warning` #92400E / `warning-soft` #FEF3E2, `danger` #B42318, `ai` #5B4A9E / `ai-soft` #F3F0FC, dan lain-lain. Font Plus Jakarta Sans dimuat melalui `next/font/google`.

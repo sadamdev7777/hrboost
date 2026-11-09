@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 /** Medan yang difahami oleh import_employees. */
 export type BarisImport = {
   full_name: string;
@@ -115,7 +116,7 @@ export async function bacaFailPekerja(file: File): Promise<{ rows: BarisImport[]
   let h = data.findIndex((r) => padanLajur(r.map(teks)).includes("full_name"));
   if (h < 0) h = 0;
   const map = padanLajur(data[h].map(teks));
-  if (!map.includes("full_name")) throw new Error("Lajur nama tidak ditemui. Pastikan baris pertama ialah tajuk lajur (contoh: Nama, WhatsApp, Jabatan).");
+  if (!map.includes("full_name")) throw new Error(tr("Lajur nama tidak ditemui. Pastikan baris pertama ialah tajuk lajur (contoh: Nama, WhatsApp, Jabatan)."));
   const out: BarisImport[] = [];
   for (const r of data.slice(h + 1)) {
     const g = (m: Medan) => {
@@ -157,8 +158,8 @@ export async function bacaFailPekerja(file: File): Promise<{ rows: BarisImport[]
 
 export function templatCSV(): string {
   return [
-    "Nama penuh,Nama panggilan,No. WhatsApp,No. kad pengenalan,Jabatan,Jawatan,Ketua,Tarikh mula,Gaji pokok",
-    "SITI AMINAH BINTI ALI,Siti,0123456789,900101-14-5678,Operasi,Ketua Jabatan,,01/03/2020,4500",
-    "AHMAD FIRDAUS BIN RAHMAN,Firdaus,0198765432,950505-10-1234,Operasi,Eksekutif,Siti Aminah Binti Ali,15/01/2024,3000",
+    tr("Nama penuh,Nama panggilan,No. WhatsApp,No. kad pengenalan,Jabatan,Jawatan,Ketua,Tarikh mula,Gaji pokok"),
+    tr("SITI AMINAH BINTI ALI,Siti,0123456789,900101-14-5678,Operasi,Ketua Jabatan,,01/03/2020,4500"),
+    tr("AHMAD FIRDAUS BIN RAHMAN,Firdaus,0198765432,950505-10-1234,Operasi,Eksekutif,Siti Aminah Binti Ali,15/01/2024,3000"),
   ].join("\n");
 }

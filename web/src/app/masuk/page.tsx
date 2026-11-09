@@ -1,9 +1,10 @@
+import { tr } from "@/lib/i18n";
 import type { Metadata } from "next";
 import { KerangkaMasuk } from "./Pengepala";
 import { EmelForm } from "./EmelForm";
 
 export const metadata: Metadata = {
-  title: "Log masuk · HRBoost.io",
+  title: tr("Log masuk · HRBoost.io"),
 };
 
 export default function LoginPage() {

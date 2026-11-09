@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useState } from "react";
 import { useData } from "@/lib/useData";
@@ -8,10 +9,10 @@ import { ErrorBox, Loading } from "@/components/ui";
 
 type Row = { company_id: string; name: string; code: string; status: string; admins: string | null; staff_active: number; onboarding_steps: number; created_at: string };
 const TAPIS = [
-  { id: "all", l: "Semua" },
-  { id: "active", l: "Aktif" },
-  { id: "onboarding", l: "Persediaan" },
-  { id: "suspended", l: "Dinyahaktif" },
+  { id: "all", l: tr("Semua") },
+  { id: "active", l: tr("Aktif") },
+  { id: "onboarding", l: tr("Persediaan") },
+  { id: "suspended", l: tr("Dinyahaktif") },
 ];
 
 // Rujukan reka bentuk: design/SA_Syarikat.dc.html
@@ -25,14 +26,14 @@ export default function SaSyarikat() {
   );
   return (
     <>
-      <h1 className="m-0 text-2xl font-extrabold">Syarikat</h1>
+      <h1 className="m-0 text-2xl font-extrabold">{tr("Syarikat")}</h1>
       <div className="flex flex-wrap items-center gap-2">
         <input
           type="search"
           value={cari}
           onChange={(e) => setCari(e.target.value)}
-          placeholder="Cari nama syarikat, kod atau Pentadbir"
-          aria-label="Cari syarikat"
+          placeholder={tr("Cari nama syarikat, kod atau Pentadbir")}
+          aria-label={tr("Cari syarikat")}
           className="h-11 min-w-[260px] grow rounded-[12px] border border-line bg-surface px-3.5 text-sm outline-none focus:border-primary"
         />
         {TAPIS.map((t) => (
@@ -48,12 +49,12 @@ export default function SaSyarikat() {
           <table className="w-full min-w-[720px] text-sm">
             <thead>
               <tr className="text-left text-xs tracking-[0.04em] text-muted">
-                <th className="py-2 font-bold">SYARIKAT</th>
-                <th className="py-2 font-bold">PENTADBIR</th>
-                <th className="py-2 font-bold">PEKERJA AKTIF</th>
-                <th className="py-2 font-bold">PERSEDIAAN</th>
-                <th className="py-2 font-bold">TARIKH DAFTAR</th>
-                <th className="py-2 font-bold">STATUS</th>
+                <th className="py-2 font-bold">{tr("SYARIKAT")}</th>
+                <th className="py-2 font-bold">{tr("PENTADBIR")}</th>
+                <th className="py-2 font-bold">{tr("PEKERJA AKTIF")}</th>
+                <th className="py-2 font-bold">{tr("PERSEDIAAN")}</th>
+                <th className="py-2 font-bold">{tr("TARIKH DAFTAR")}</th>
+                <th className="py-2 font-bold">{tr("STATUS")}</th>
                 <th />
               </tr>
             </thead>
@@ -66,30 +67,28 @@ export default function SaSyarikat() {
                   </td>
                   <td className="py-3">{r.admins ?? "-"}</td>
                   <td className="py-3">{r.staff_active}</td>
-                  <td className="py-3">{r.onboarding_steps >= 6 ? "Selesai" : `Langkah ${r.onboarding_steps}/6`}</td>
+                  <td className="py-3">{r.onboarding_steps >= 6 ? tr("Selesai") : tr("Langkah {0}/6", r.onboarding_steps)}</td>
                   <td className="py-3">{tarikhPendek(r.created_at)}</td>
                   <td className="py-3">
                     <span className={`rounded-lg px-2 py-0.5 text-xs font-bold ${LABEL_STATUS_SYARIKAT[st(r)].c}`}>{LABEL_STATUS_SYARIKAT[st(r)].l}</span>
                   </td>
                   <td className="py-3 text-right">
                     <Link href={`/admin/syarikat/${r.company_id}`} className="font-bold">
-                      Lihat
-                    </Link>
+                      {tr("Lihat")}</Link>
                   </td>
                 </tr>
               ))}
               {rows.length === 0 && (
                 <tr>
                   <td colSpan={7} className="py-4 text-muted">
-                    Tiada syarikat sepadan.
-                  </td>
+                    {tr("Tiada syarikat sepadan.")}</td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
       )}
-      <span className="text-xs text-muted">Pentadbir platform hanya melihat bilangan dan status — bukan senarai nama pekerja, gaji atau dokumen.</span>
+      <span className="text-xs text-muted">{tr("Pentadbir platform hanya melihat bilangan dan status — bukan senarai nama pekerja, gaji atau dokumen.")}</span>
     </>
   );
 }

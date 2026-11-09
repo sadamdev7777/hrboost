@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -85,24 +86,23 @@ function Borang({ emp, asal }: { emp: string; asal: Asal }) {
     <OnboardingLayout
       step={6}
       back="/orientasi/kad-pengenalan"
-      title="Peribadi, KWSP & cukai"
-      sub="Supaya potongan gaji anda dikira dengan betul."
+      title={tr("Peribadi, KWSP & cukai")}
+      sub={tr("Supaya potongan gaji anda dikira dengan betul.")}
       error={error}
       footer={<NextButton busy={busy} disabled={!status} onClick={simpan} />}
     >
       <label className="flex flex-col gap-1.5 text-[13px] font-bold">
-        Alamat rumah semasa
-        <input
+        {tr("Alamat rumah semasa")}<input
           type="text"
           autoComplete="street-address"
-          placeholder="Alamat seperti dalam kad pengenalan, atau alamat semasa"
+          placeholder={tr("Alamat seperti dalam kad pengenalan, atau alamat semasa")}
           value={alamat}
           onChange={(e) => setAlamat(e.target.value)}
           className={fld}
         />
       </label>
 
-      <Seksyen>STATUS PERKAHWINAN</Seksyen>
+      <Seksyen>{tr("STATUS PERKAHWINAN")}</Seksyen>
       <div className="grid grid-cols-3 gap-1.5">
         {STATUS.map((s) => (
           <button
@@ -114,7 +114,7 @@ function Borang({ emp, asal }: { emp: string; asal: Asal }) {
               status === s.id ? "border-[1.5px] border-primary bg-primary-soft text-primary" : "border border-line bg-surface text-ink"
             }`}
           >
-            {s.label}
+            {tr(s.label)}
           </button>
         ))}
       </div>
@@ -128,44 +128,38 @@ function Borang({ emp, asal }: { emp: string; asal: Asal }) {
                 onChange={(e) => setPasanganTakKerja(e.target.checked)}
                 className="size-5 accent-primary"
               />
-              Pasangan tidak bekerja
-            </label>
+              {tr("Pasangan tidak bekerja")}</label>
           )}
           <div className="flex items-center gap-2.5">
             <span className="grow text-[13px] font-bold">
-              Bilangan anak
-              <br />
-              <span className="text-[11px] font-medium text-muted">di bawah 18 tahun, atau masih belajar</span>
+              {tr("Bilangan anak")}<br />
+              <span className="text-[11px] font-medium text-muted">{tr("di bawah 18 tahun, atau masih belajar")}</span>
             </span>
-            <Stepper label="Kurangkan anak" onClick={() => setAnak((n) => Math.max(0, n - 1))}>
+            <Stepper label={tr("Kurangkan anak")} onClick={() => setAnak((n) => Math.max(0, n - 1))}>
               −
             </Stepper>
             <b className="w-7 text-center text-lg">{anak}</b>
-            <Stepper label="Tambah anak" onClick={() => setAnak((n) => n + 1)}>
+            <Stepper label={tr("Tambah anak")} onClick={() => setAnak((n) => n + 1)}>
               +
             </Stepper>
           </div>
         </div>
       )}
 
-      <Seksyen>NO. BERKANUN</Seksyen>
+      <Seksyen>{tr("NO. BERKANUN")}</Seksyen>
       <div className="grid grid-cols-2 gap-2">
         <label className="flex flex-col gap-1.5 text-[13px] font-bold">
-          No. KWSP
-          <input type="text" inputMode="numeric" placeholder="Contoh: 12345678" value={kwsp} onChange={(e) => setKwsp(e.target.value)} className={fld} />
+          {tr("No. KWSP")}<input type="text" inputMode="numeric" placeholder={tr("Contoh: 12345678")} value={kwsp} onChange={(e) => setKwsp(e.target.value)} className={fld} />
         </label>
         <label className="flex flex-col gap-1.5 text-[13px] font-bold">
-          No. cukai (TIN)
-          <input type="text" placeholder="IG..." value={tin} onChange={(e) => setTin(e.target.value.toUpperCase())} className={fld} />
+          {tr("No. cukai (TIN)")}<input type="text" placeholder="IG..." value={tin} onChange={(e) => setTin(e.target.value.toUpperCase())} className={fld} />
         </label>
       </div>
       <label className="flex items-center gap-2.5 text-[13px] font-semibold">
         <input type="checkbox" checked={bantuan} onChange={(e) => setBantuan(e.target.checked)} className="size-5 accent-primary" />
-        Belum ada — minta bantuan HR untuk mendaftar
-      </label>
+        {tr("Belum ada — minta bantuan HR untuk mendaftar")}</label>
       <span className="text-[11px] font-medium text-muted">
-        No. PERKESO menggunakan no. kad pengenalan anda — tiada maklumat perlu diisi.
-      </span>
+        {tr("No. PERKESO menggunakan no. kad pengenalan anda — tiada maklumat perlu diisi.")}</span>
     </OnboardingLayout>
   );
 }

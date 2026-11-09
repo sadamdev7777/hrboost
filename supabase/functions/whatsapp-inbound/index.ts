@@ -10,9 +10,14 @@ import { hantarWhatsApp, tafsirWebhook, webhookSah } from "../_shared/murpati.ts
 import { aiTersedia } from "../_shared/ai.ts";
 import { jawab, sediaKonteks } from "../_shared/pembantu.ts";
 
-const PANDUAN =
-  "Maaf, mesej ini belum dapat difahami. Untuk permohonan yang menunggu kelulusan anda, balas LULUS atau TOLAK <sebab>. " +
-  "Untuk perkara lain, sila gunakan aplikasi HRBoost.";
+const PANDUAN = {
+  ms:
+    "Maaf, mesej ini belum dapat difahami. Untuk permohonan yang menunggu kelulusan anda, balas LULUS atau TOLAK <sebab>. " +
+    "Untuk perkara lain, sila gunakan aplikasi HRBoost.",
+  en:
+    "Sorry, this message could not be understood. For requests waiting for your approval, reply APPROVE or REJECT <reason>. " +
+    "For anything else, please use the HRBoost app.",
+};
 
 Deno.serve(async (req) => {
   if (req.method !== "POST") return new Response("Kaedah tidak dibenarkan", { status: 405 });
@@ -31,16 +36,17 @@ Deno.serve(async (req) => {
   const r = data as { action: string; reply?: string };
   let balas = r.reply;
   if (r.action === "ai") {
-    balas = PANDUAN;
+    const tel = msg.from.replace(/\D/g, "");
+    const { data: p } = await sb.from("persons").select("id, language").eq("phone_whatsapp", tel).eq("is_active", true).maybeSingle();
+    const panduan = p?.language === "ms" ? PANDUAN.ms : PANDUAN.en;
+    balas = panduan;
     if (aiTersedia()) {
-      const tel = msg.from.replace(/\D/g, "");
-      const { data: p } = await sb.from("persons").select("id").eq("phone_whatsapp", tel).eq("is_active", true).maybeSingle();
       if (p) {
         try {
           const k = await sediaKonteks(sb, p.id, null, "whatsapp");
           balas = await jawab(k, msg.text);
         } catch (e) {
-          balas = e instanceof Error ? e.message : PANDUAN;
+          balas = e instanceof Error ? e.message : panduan;
         }
       }
     }

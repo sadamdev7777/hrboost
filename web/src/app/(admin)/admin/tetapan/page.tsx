@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
@@ -26,10 +27,10 @@ export default function SaTetapan() {
     setInfo(null);
     try {
       await rpc("sa_set_setting", { p_key: key, p_value: value });
-      setInfo("Disimpan.");
+      setInfo(tr("Disimpan."));
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
   const nombor = (v: string) => (v.trim() === "" ? null : Number(v.replace(/\D/g, "")));
@@ -40,45 +41,45 @@ export default function SaTetapan() {
 
   return (
     <>
-      <h1 className="m-0 text-2xl font-extrabold">Tetapan platform</h1>
+      <h1 className="m-0 text-2xl font-extrabold">{tr("Tetapan platform")}</h1>
       {info && <span className="rounded-[12px] bg-success-soft px-3 py-2 text-sm font-semibold text-success">{info}</span>}
       {ralat && <ErrorBox message={ralat} />}
-      <span className="text-xs font-bold tracking-[0.04em] text-[#4A5A57]">PENDAFTARAN &amp; HAD</span>
+      <span className="text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("PENDAFTARAN & HAD")}</span>
       <section className="flex max-w-[760px] flex-col rounded-card bg-surface px-5 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-        <Baris t="Pendaftaran syarikat baharu" s="Tutup buat sementara jika berlaku serangan spam">
-          <Suis on={terbuka} label={terbuka ? "Tutup pendaftaran" : "Buka pendaftaran"} onChange={(v) => set("registration_open", v)} />
+        <Baris t={tr("Pendaftaran syarikat baharu")} s={tr("Tutup buat sementara jika berlaku serangan spam")}>
+          <Suis on={terbuka} label={terbuka ? tr("Tutup pendaftaran") : tr("Buka pendaftaran")} onChange={(v) => set("registration_open", v)} />
         </Baris>
-        <Baris t="Had WhatsApp lalai" s="Mesej sebulan bagi setiap syarikat (kosong = tiada had)">
-          <Input aria="Had WhatsApp lalai" nilai={t.default_wa_limit} onSave={(v) => set("default_wa_limit", nombor(v))} />
+        <Baris t={tr("Had WhatsApp lalai")} s={tr("Mesej sebulan bagi setiap syarikat (kosong = tiada had)")}>
+          <Input aria={tr("Had WhatsApp lalai")} nilai={t.default_wa_limit} onSave={(v) => set("default_wa_limit", nombor(v))} />
         </Baris>
-        <Baris t="Had AI lalai" s="Bacaan resit, kad pengenalan & ringkasan sebulan">
-          <Input aria="Had AI lalai" nilai={t.default_ai_limit} onSave={(v) => set("default_ai_limit", nombor(v))} />
+        <Baris t={tr("Had AI lalai")} s={tr("Bacaan resit, kad pengenalan & ringkasan sebulan")}>
+          <Input aria={tr("Had AI lalai")} nilai={t.default_ai_limit} onSave={(v) => set("default_ai_limit", nombor(v))} />
         </Baris>
-        <Baris t="Amaran kepada Pentadbir syarikat" s="Apabila penggunaan mencapai (%)">
-          <Input aria="Peratus amaran" nilai={t.warn_pct} onSave={(v) => set("warn_pct", nombor(v))} />
+        <Baris t={tr("Amaran kepada Pentadbir syarikat")} s={tr("Apabila penggunaan mencapai (%)")}>
+          <Input aria={tr("Peratus amaran")} nilai={t.warn_pct} onSave={(v) => set("warn_pct", nombor(v))} />
         </Baris>
       </section>
-      <span className="text-xs font-bold tracking-[0.04em] text-[#4A5A57]">WHATSAPP PLATFORM</span>
+      <span className="text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("WHATSAPP PLATFORM")}</span>
       <section className="flex max-w-[760px] flex-col rounded-card bg-surface px-5 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-        <Baris t="Nombor HRBoost" s="Dihantar melalui Murpati · semua pemberitahuan lalai">
-          <span className="rounded-lg bg-warning-soft px-2 py-0.5 text-xs font-bold text-warning">Menunggu konfigurasi Murpati</span>
+        <Baris t={tr("Nombor HRBoost")} s={tr("Dihantar melalui Murpati · semua pemberitahuan lalai")}>
+          <span className="rounded-lg bg-warning-soft px-2 py-0.5 text-xs font-bold text-warning">{tr("Menunggu konfigurasi Murpati")}</span>
         </Baris>
       </section>
-      <span className="text-xs font-bold tracking-[0.04em] text-[#4A5A57]">DATA &amp; KESELAMATAN</span>
+      <span className="text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("DATA & KESELAMATAN")}</span>
       <section className="flex max-w-[760px] flex-col rounded-card bg-surface px-5 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-        <Baris t="Simpan data syarikat yang dinyahaktifkan" s="Selepas tempoh ini, Pentadbir dimaklumkan dan data akan dipadam (hari)">
-          <Input aria="Tempoh simpanan" nilai={t.retention_days} onSave={(v) => set("retention_days", nombor(v))} />
+        <Baris t={tr("Simpan data syarikat yang dinyahaktifkan")} s={tr("Selepas tempoh ini, Pentadbir dimaklumkan dan data akan dipadam (hari)")}>
+          <Input aria={tr("Tempoh simpanan")} nilai={t.retention_days} onSave={(v) => set("retention_days", nombor(v))} />
         </Baris>
         <div className="flex flex-col gap-2 py-3.5">
-          <b>Pentadbir Platform</b>
-          <span className="text-xs text-muted">Log masuk memerlukan OTP setiap kali.</span>
+          <b>{tr("Pentadbir Platform")}</b>
+          <span className="text-xs text-muted">{tr("Log masuk memerlukan OTP setiap kali.")}</span>
           {(admins.data ?? []).map((a) => (
             <span key={a.person_id}>
               {a.name} · <span className="text-muted">{a.whatsapp}</span>
             </span>
           ))}
           <div className="flex gap-2">
-            <input value={baru} onChange={(e) => setBaru(e.target.value)} placeholder="No. WhatsApp pengguna sedia ada" className="h-10 min-w-0 grow rounded-[10px] border border-line px-2.5" />
+            <input value={baru} onChange={(e) => setBaru(e.target.value)} placeholder={tr("No. WhatsApp pengguna sedia ada")} className="h-10 min-w-0 grow rounded-[10px] border border-line px-2.5" />
             <button
               type="button"
               disabled={!baru.trim()}
@@ -95,14 +96,13 @@ export default function SaTetapan() {
               }}
               className="h-10 rounded-[10px] border border-primary px-3 font-bold text-primary disabled:opacity-50"
             >
-              Tambah Pentadbir Platform
-            </button>
+              {tr("Tambah Pentadbir Platform")}</button>
           </div>
         </div>
         <div className="flex flex-col gap-2 py-3.5">
-          <b>Mod penyelenggaraan</b>
-          <span className="text-xs text-muted">Papar notis kepada semua pengguna (kosong = tiada notis).</span>
-          <Input aria="Notis penyelenggaraan" nilai={notis} lebar onSave={(v) => set("maintenance_notice", v.trim() ? v.trim() : null)} />
+          <b>{tr("Mod penyelenggaraan")}</b>
+          <span className="text-xs text-muted">{tr("Papar notis kepada semua pengguna (kosong = tiada notis).")}</span>
+          <Input aria={tr("Notis penyelenggaraan")} nilai={notis} lebar onSave={(v) => set("maintenance_notice", v.trim() ? v.trim() : null)} />
         </div>
       </section>
     </>
@@ -128,7 +128,7 @@ function Input({ aria, nilai, onSave, lebar }: { aria: string; nilai: unknown; o
       key={awal}
       aria-label={aria}
       defaultValue={awal}
-      placeholder={lebar ? "Contoh: Penyelenggaraan dijadualkan 1:00–2:00 pagi" : "Tiada had"}
+      placeholder={lebar ? tr("Contoh: Penyelenggaraan dijadualkan 1:00–2:00 pagi") : tr("Tiada had")}
       onBlur={(e) => e.target.value !== awal && onSave(e.target.value)}
       className={`h-10 rounded-[10px] border border-line px-2.5 ${lebar ? "w-full" : "w-[120px] text-right"}`}
     />

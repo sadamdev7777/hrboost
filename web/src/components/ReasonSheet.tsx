@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useEffect, useRef, useState } from "react";
 
 /** Lembaran bawah untuk memasukkan sebab (wajib untuk Tolak / Kembalikan). */
@@ -34,8 +35,7 @@ export function ReasonSheet({
       >
         <h2 className="m-0 text-lg font-extrabold">{title}</h2>
         <label className="flex flex-col gap-1.5 text-sm font-bold">
-          Sebab
-          <textarea
+          {tr("Sebab")}<textarea
             ref={ref}
             rows={3}
             value={reason}
@@ -49,8 +49,7 @@ export function ReasonSheet({
             onClick={onCancel}
             className="h-12 rounded-[14px] border border-line bg-surface text-sm font-bold text-ink"
           >
-            Batal
-          </button>
+            {tr("Batal")}</button>
           <button
             type="button"
             disabled={busy || !reason.trim()}

@@ -3,6 +3,7 @@
 // Jalankan: node web/e2e/aliran-cuti.cjs   (tangkapan skrin ke $E2E_SHOTS, lalai folder tmp)
 
 const { chromium } = require('playwright');
+require('./_bahasa.cjs');
 const BASE = process.env.E2E_BASE || 'http://localhost:3000';
 const shots = process.env.E2E_SHOTS || require('os').tmpdir();
 const log = (...a) => console.log(...a);

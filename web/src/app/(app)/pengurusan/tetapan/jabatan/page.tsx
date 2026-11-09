@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -51,25 +52,23 @@ function SenaraiJabatan() {
   return (
     <Screen lebar="sederhana">
       <BackHeader
-        title="Jabatan"
+        title={tr("Jabatan")}
         href="/pengurusan/tetapan"
         action={
           <button type="button" onClick={() => setBaru(true)} className="mr-1 flex h-10 items-center rounded-full bg-primary px-4 text-[13px] font-bold text-white">
-            + Tambah jabatan
-          </button>
+            {tr("+ Tambah jabatan")}</button>
         }
       />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         <span className="text-sm leading-normal text-subtle">
-          Ketua jabatan menjadi pelulus pertama bagi pasukannya. Untuk memindahkan pekerja ke jabatan lain, buka profil pekerja → Ubah gaji &amp; jawatan.
-        </span>
+          {tr("Ketua jabatan menjadi pelulus pertama bagi pasukannya. Untuk memindahkan pekerja ke jabatan lain, buka profil pekerja → Ubah gaji & jawatan.")}</span>
         {d.error && <ErrorBox message={d.error} />}
         {ralat && <ErrorBox message={ralat} />}
         {d.loading && !d.data && <Loading />}
         {d.data && (
           <>
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-              {d.data.jab.length === 0 && <span className="py-4 text-sm text-muted">Belum ada jabatan. Tekan &ldquo;+ Tambah jabatan&rdquo;.</span>}
+              {d.data.jab.length === 0 && <span className="py-4 text-sm text-muted">{tr("Belum ada jabatan. Tekan “+ Tambah jabatan”.")}</span>}
               {d.data.jab.map((j) => {
                 const n = kira(j.id);
                 return (
@@ -77,8 +76,7 @@ function SenaraiJabatan() {
                     <span className="flex min-w-0 grow basis-40 flex-col gap-0.5">
                       <b className="text-sm font-bold">{j.name}</b>
                       <span className={`text-xs ${!j.headPersonId && n ? "text-warning" : "text-muted"}`}>
-                        {n} pekerja{!j.headPersonId && n ? " · tiada ketua" : ""}
-                      </span>
+                        {tr("{0} pekerja{1}", n, !j.headPersonId && n ? tr(" · tiada ketua") : "")}</span>
                     </span>
                     <button
                       type="button"
@@ -88,19 +86,18 @@ function SenaraiJabatan() {
                       {j.headPersonId ? (
                         <>
                           <span className="flex size-8 items-center justify-center rounded-full bg-primary text-xs text-white">{inisial(j.headName ?? "")}</span>
-                          {j.headPersonId === me.personId ? "Anda" : j.headName}
+                          {j.headPersonId === me.personId ? tr("Anda") : j.headName}
                         </>
                       ) : (
-                        "Pilih ketua"
+                        tr("Pilih ketua")
                       )}
                     </button>
                     <span className="flex gap-1">
                       <button type="button" onClick={() => setNama(j)} className="flex h-10 items-center px-2.5 text-[13px] font-bold text-primary">
-                        Namakan semula
-                      </button>
+                        {tr("Namakan semula")}</button>
                       {n === 0 && (
                         <button type="button" onClick={() => buang(j)} className="flex h-10 items-center px-2.5 text-[13px] font-bold text-danger">
-                          {padam === j.id ? "Sahkan padam" : "Padam"}
+                          {padam === j.id ? tr("Sahkan padam") : tr("Padam")}
                         </button>
                       )}
                     </span>
@@ -110,10 +107,9 @@ function SenaraiJabatan() {
             </div>
             {tanpaJabatan > 0 && (
               <div className="flex items-center justify-between gap-2 rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] text-warning">
-                <span>{tanpaJabatan} pekerja belum mempunyai jabatan.</span>
+                <span>{tr("{0} pekerja belum mempunyai jabatan.", tanpaJabatan)}</span>
                 <Link href="/pengurusan/pekerja" className="font-bold text-warning!">
-                  Lihat pekerja
-                </Link>
+                  {tr("Lihat pekerja")}</Link>
               </div>
             )}
           </>

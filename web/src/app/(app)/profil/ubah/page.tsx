@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { beritahu } from "@/components/Dialog";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type ReactNode } from "react";
@@ -19,7 +20,7 @@ export default function ProfilUbahPage() {
   const p = useData(() => getProfil(me.personId), [me.personId]);
   return (
     <Screen lebar="sederhana">
-      <BackHeader title="Ubah profil" href="/profil" />
+      <BackHeader title={tr("Ubah profil")} href="/profil" />
       {p.error && <ErrorBox message={p.error} />}
       {p.loading && !p.data && <Loading />}
       {p.data && <Borang profil={p.data} />}
@@ -61,23 +62,23 @@ function Borang({ profil }: { profil: Profil }) {
       setFoto("ok");
     } catch (e) {
       setFoto("idle");
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
 
   async function simpan() {
     setRalat(null);
-    if (!/^\d{1,2}$/.test(f.children_count.trim())) return setRalat("Bilangan anak tidak sah.");
-    if ((akaun.trim() && !bank) || (bank && !akaun.trim())) return setRalat("Sila pilih bank dan isi nombor akaun baharu.");
+    if (!/^\d{1,2}$/.test(f.children_count.trim())) return setRalat(tr("Bilangan anak tidak sah."));
+    if ((akaun.trim() && !bank) || (bank && !akaun.trim())) return setRalat(tr("Sila pilih bank dan isi nombor akaun baharu."));
     setBusy(true);
     try {
       await simpanProfil({ ...f, children_count: f.children_count.trim() });
       if (bank && akaun.trim()) await mohonTukarBank(bank, akaun);
       ctx.reload();
-      beritahu("Profil dikemas kini.");
+      beritahu(tr("Profil dikemas kini."));
       router.replace("/profil");
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
       setBusy(false);
     }
   }
@@ -88,43 +89,43 @@ function Borang({ profil }: { profil: Profil }) {
         <div className="flex items-center gap-3">
           <span className="flex size-14 items-center justify-center rounded-full bg-primary text-xl font-extrabold text-white">{inisial(f.preferred_name || profil.fullName)}</span>
           <button type="button" onClick={() => fail.current?.click()} disabled={foto === "upload"} className="py-3 text-sm font-bold text-primary">
-            {foto === "upload" ? "Memuat naik…" : foto === "ok" ? "Swafoto dikemas kini" : "Ambil swafoto baharu"}
+            {foto === "upload" ? tr("Memuat naik…") : foto === "ok" ? tr("Swafoto dikemas kini") : tr("Ambil swafoto baharu")}
           </button>
-          <input ref={fail} type="file" accept="image/*" capture="user" className="hidden" aria-label="Ambil swafoto baharu" onChange={(e) => gantiFoto(e.target.files?.[0])} />
+          <input ref={fail} type="file" accept="image/*" capture="user" className="hidden" aria-label={tr("Ambil swafoto baharu")} onChange={(e) => gantiFoto(e.target.files?.[0])} />
         </div>
 
-        <Seksyen>BOLEH DIUBAH SENDIRI</Seksyen>
+        <Seksyen>{tr("BOLEH DIUBAH SENDIRI")}</Seksyen>
         <Kotak>
-          <Baris label="Nama panggilan">
+          <Baris label={tr("Nama panggilan")}>
             <input className={inputCls} value={f.preferred_name} onChange={set("preferred_name")} maxLength={40} />
           </Baris>
-          <Baris label="Alamat">
-            <input className={inputCls} value={f.address} onChange={set("address")} placeholder="Alamat semasa" />
+          <Baris label={tr("Alamat")}>
+            <input className={inputCls} value={f.address} onChange={set("address")} placeholder={tr("Alamat semasa")} />
           </Baris>
-          <Baris label="Waris">
-            <input className={inputCls} value={f.contact_name} onChange={set("contact_name")} placeholder="Nama waris" />
+          <Baris label={tr("Waris")}>
+            <input className={inputCls} value={f.contact_name} onChange={set("contact_name")} placeholder={tr("Nama waris")} />
           </Baris>
-          <Baris label="Hubungan">
+          <Baris label={tr("Hubungan")}>
             <select className={inputCls} value={f.contact_relationship} onChange={set("contact_relationship")}>
-              <option value="">Pilih</option>
+              <option value="">{tr("Pilih")}</option>
               {HUBUNGAN.map((h) => (
                 <option key={h}>{h}</option>
               ))}
             </select>
           </Baris>
-          <Baris label="Telefon waris">
-            <input className={inputCls} value={f.contact_phone} onChange={set("contact_phone")} inputMode="tel" placeholder="01x-xxx xxxx" />
+          <Baris label={tr("Telefon waris")}>
+            <input className={inputCls} value={f.contact_phone} onChange={set("contact_phone")} inputMode="tel" placeholder={tr("01x-xxx xxxx")} />
           </Baris>
-          <Baris label="Anak (PCB)">
+          <Baris label={tr("Anak (PCB)")}>
             <input className={inputCls} value={f.children_count} onChange={set("children_count")} inputMode="numeric" />
           </Baris>
           <div className="flex min-h-12 items-center gap-2.5 text-sm">
-            <span className="grow text-muted">Sembunyikan hari jadi</span>
+            <span className="grow text-muted">{tr("Sembunyikan hari jadi")}</span>
             <button
               type="button"
               role="switch"
               aria-checked={f.hide_birthday}
-              aria-label={f.hide_birthday ? "Paparkan hari jadi" : "Sembunyikan hari jadi"}
+              aria-label={f.hide_birthday ? tr("Paparkan hari jadi") : tr("Sembunyikan hari jadi")}
               onClick={() => setF({ ...f, hide_birthday: !f.hide_birthday })}
               className="flex h-11 w-[52px] items-center justify-end"
             >
@@ -135,28 +136,28 @@ function Borang({ profil }: { profil: Profil }) {
           </div>
         </Kotak>
 
-        <Seksyen>PERLU DISAHKAN HR</Seksyen>
+        <Seksyen>{tr("PERLU DISAHKAN HR")}</Seksyen>
         <Kotak>
-          <Baris label="Bank">
-            <select className={inputCls} value={bank} onChange={(e) => setBank(e.target.value)} aria-label="Bank baharu">
-              <option value="">{profil.bankName ? `${profil.bankName} (semasa)` : "Pilih bank"}</option>
+          <Baris label={tr("Bank")}>
+            <select className={inputCls} value={bank} onChange={(e) => setBank(e.target.value)} aria-label={tr("Bank baharu")}>
+              <option value="">{profil.bankName ? tr("{0} (semasa)", profil.bankName) : tr("Pilih bank")}</option>
               {BANK.map((b) => (
                 <option key={b}>{b}</option>
               ))}
             </select>
           </Baris>
-          <Baris label="Akaun bank">
-            <input className={inputCls} value={akaun} onChange={(e) => setAkaun(e.target.value)} inputMode="numeric" placeholder={sorokAkaun(profil.bankAccountNo)} aria-label="No. akaun baharu" />
+          <Baris label={tr("Akaun bank")}>
+            <input className={inputCls} value={akaun} onChange={(e) => setAkaun(e.target.value)} inputMode="numeric" placeholder={sorokAkaun(profil.bankAccountNo)} aria-label={tr("No. akaun baharu")} />
           </Baris>
         </Kotak>
-        {profil.bankMenunggu && <span className="text-xs text-warning">Satu pertukaran sedang menunggu HR. Permohonan baharu akan menggantikannya.</span>}
+        {profil.bankMenunggu && <span className="text-xs text-warning">{tr("Satu pertukaran sedang menunggu HR. Permohonan baharu akan menggantikannya.")}</span>}
 
-        <Seksyen>HANYA HR BOLEH MENGUBAH</Seksyen>
+        <Seksyen>{tr("HANYA HR BOLEH MENGUBAH")}</Seksyen>
         <Kotak>
-          <Baris label="Nama penuh">
+          <Baris label={tr("Nama penuh")}>
             <span className="grow font-bold">{profil.fullName}</span>
           </Baris>
-          <Baris label="No. kad pengenalan">
+          <Baris label={tr("No. kad pengenalan")}>
             <span className="grow font-bold">{sorokIC(profil.icNo)}</span>
           </Baris>
         </Kotak>
@@ -165,7 +166,7 @@ function Borang({ profil }: { profil: Profil }) {
 
       <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-2.5 pb-[26px]">
         <button type="button" onClick={simpan} disabled={busy} className="h-12 w-full rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
-          {busy ? "Menyimpan…" : "Simpan"}
+          {busy ? tr("Menyimpan…") : tr("Simpan")}
         </button>
       </div>
     </>

@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n";
 import { getSupabase } from "./supabase";
 import { kiraLogMasuk } from "@/components/CadanganPasang";
 
@@ -32,5 +33,5 @@ export async function panggilSetSemula(body: Record<string, string>): Promise<{ 
       /* abaikan */
     }
   }
-  return { error: "Permintaan tidak dapat dihantar. Sila cuba lagi." };
+  return { error: tr("Permintaan tidak dapat dihantar. Sila cuba lagi.") };
 }

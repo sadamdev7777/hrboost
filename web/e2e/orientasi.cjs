@@ -8,6 +8,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const { chromium } = require('playwright');
+require('./_bahasa.cjs');
 const { createClient } = require(path.join(__dirname, '../node_modules/@supabase/supabase-js'));
 
 const BASE = process.env.E2E_BASE || 'http://localhost:3000';

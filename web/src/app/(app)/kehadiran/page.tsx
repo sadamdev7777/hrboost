@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -10,8 +11,8 @@ import { IconBack, IconChevronRight } from "@/components/icons";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
 import { Tag } from "@/components/Senarai";
 
-const BULAN = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogo", "Sep", "Okt", "Nov", "Dis"];
-const CUTI: Record<string, string> = { AL: "Cuti tahunan", MC: "Cuti sakit", HL: "Hospital", EL: "Kecemasan", UL: "Tanpa gaji", ML: "Bersalin", PL: "Paterniti" };
+const BULAN = [tr("Jan"), tr("Feb"), tr("Mac"), tr("Apr"), tr("Mei"), tr("Jun"), tr("Jul"), tr("Ogo"), tr("Sep"), tr("Okt"), tr("Nov"), tr("Dis")];
+const CUTI: Record<string, string> = { AL: tr("Cuti tahunan"), MC: tr("Cuti sakit"), HL: tr("Hospital"), EL: tr("Kecemasan"), UL: tr("Tanpa gaji"), ML: tr("Bersalin"), PL: tr("Paterniti") };
 
 function geser(b: string, n: number) {
   const [y, m] = b.split("-").map(Number);
@@ -38,11 +39,11 @@ export default function KehadiranPage() {
   return (
     <Screen>
       <BackHeader
-        title="Kehadiran"
+        title={tr("Kehadiran")}
         href="/saya"
         action={
           <div className="mr-1 flex items-center">
-            <button type="button" aria-label="Bulan sebelumnya" onClick={() => setBulan(geser(bulan, -1))} className="flex size-11 items-center justify-center rounded-full">
+            <button type="button" aria-label={tr("Bulan sebelumnya")} onClick={() => setBulan(geser(bulan, -1))} className="flex size-11 items-center justify-center rounded-full">
               <IconBack size={18} />
             </button>
             <span className="text-sm font-bold whitespace-nowrap">
@@ -50,7 +51,7 @@ export default function KehadiranPage() {
             </span>
             <button
               type="button"
-              aria-label="Bulan seterusnya"
+              aria-label={tr("Bulan seterusnya")}
               disabled={bulan >= kini}
               onClick={() => setBulan(geser(bulan, 1))}
               className="flex size-11 items-center justify-center rounded-full disabled:opacity-30"
@@ -63,17 +64,16 @@ export default function KehadiranPage() {
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         {sambung.data === false ? (
           <div className="flex flex-col gap-1.5 rounded-card bg-surface px-4 py-4">
-            <b className="text-sm">Kehadiran belum disambung</b>
+            <b className="text-sm">{tr("Kehadiran belum disambung")}</b>
             <span className="text-[13px] leading-normal text-subtle">
-              Syarikat anda belum menyambungkan mesin atau sistem kehadiran ke HRBoost. Rekod masuk dan keluar akan dipaparkan di sini selepas HR menyambungkannya.
-            </span>
+              {tr("Syarikat anda belum menyambungkan mesin atau sistem kehadiran ke HRBoost. Rekod masuk dan keluar akan dipaparkan di sini selepas HR menyambungkannya.")}</span>
           </div>
         ) : (
           <>
         <div className="grid grid-cols-3 gap-2">
-          <Kad n={hadir} label="Hari hadir" />
-          <Kad n={lewat} label="Kali lewat" tone={lewat ? "warning" : undefined} />
-          <Kad n={tidakHadir} label="Tidak hadir" tone={tidakHadir ? "danger" : undefined} />
+          <Kad n={hadir} label={tr("Hari hadir")} />
+          <Kad n={lewat} label={tr("Kali lewat")} tone={lewat ? "warning" : undefined} />
+          <Kad n={tidakHadir} label={tr("Tidak hadir")} tone={tidakHadir ? "danger" : undefined} />
         </div>
 
         {d.error && <ErrorBox message={d.error} />}
@@ -81,12 +81,12 @@ export default function KehadiranPage() {
         {d.data && (
           <div className="flex flex-col rounded-card bg-surface px-4 py-1">
             <div className="grid grid-cols-[1.1fr_1fr_1fr_auto] items-center gap-2 py-2 text-xs font-bold text-muted">
-              <span>Hari</span>
-              <span>Masuk</span>
-              <span>Keluar</span>
+              <span>{tr("Hari")}</span>
+              <span>{tr("Masuk")}</span>
+              <span>{tr("Keluar")}</span>
               <span className="w-[70px]" />
             </div>
-            {hari.length === 0 && <span className="border-t border-[#EEF2F1] py-3 text-sm text-muted">Tiada rekod bagi bulan ini.</span>}
+            {hari.length === 0 && <span className="border-t border-[#EEF2F1] py-3 text-sm text-muted">{tr("Tiada rekod bagi bulan ini.")}</span>}
             {hari.map((h) => (
               <Baris key={h.date} h={h} today={today} grace={emp.graceMinutes} />
             ))}
@@ -95,8 +95,7 @@ export default function KehadiranPage() {
           </>
         )}
         <span className="text-xs leading-normal text-muted">
-          Data daripada sistem kehadiran syarikat. Waktu masuk {emp.workStart.slice(0, 5).replace(/^0/, "")}, kelonggaran {emp.graceMinutes} minit. Terlupa mendaftar masuk? Tekan “Betulkan” untuk kelulusan ketua.
-        </span>
+          {tr("Data daripada sistem kehadiran syarikat. Waktu masuk {0}, kelonggaran {1} minit. Terlupa mendaftar masuk? Tekan “Betulkan” untuk kelulusan ketua.", emp.workStart.slice(0, 5).replace(/^0/, ""), emp.graceMinutes)}</span>
       </main>
     </Screen>
   );
@@ -110,10 +109,10 @@ function Baris({ h, today, grace }: { h: HariHadir; today: string; grace: number
     <div className="grid grid-cols-[1.1fr_1fr_1fr_auto] items-center gap-2 border-t border-[#EEF2F1] py-2.5 text-sm">
       <span className="flex flex-col">
         <b className="font-bold">{tarikhLabel}</b>
-        {h.date === today && <span className="text-[11px] text-muted">hari ini</span>}
+        {h.date === today && <span className="text-[11px] text-muted">{tr("hari ini")}</span>}
       </span>
       {rehat && !h.clockIn ? (
-        <span className="col-span-2 text-[13px] text-muted">{h.holiday ?? (h.leave ? (CUTI[h.leave] ?? "Cuti") : "Hujung minggu")}</span>
+        <span className="col-span-2 text-[13px] text-muted">{h.holiday ?? (h.leave ? (CUTI[h.leave] ?? tr("Cuti")) : tr("Hujung minggu"))}</span>
       ) : (
         <>
           <span className={`font-semibold ${h.late > grace && h.correction !== "approved" ? "text-warning" : ""}`}>{h.clockIn ? jam(h.clockIn) : "—"}</span>
@@ -122,13 +121,12 @@ function Baris({ h, today, grace }: { h: HariHadir; today: string; grace: number
       )}
       <span className="flex w-[70px] justify-end">
         {h.correction === "pending" ? (
-          <Tag tone="warning">Menunggu</Tag>
+          <Tag tone="warning">{tr("Menunggu")}</Tag>
         ) : h.correction === "approved" ? (
-          <Tag tone="success">Dibetulkan</Tag>
+          <Tag tone="success">{tr("Dibetulkan")}</Tag>
         ) : bolehBetul ? (
           <Link href={`/kehadiran/betulkan?tarikh=${h.date}`} className="flex min-h-11 items-center text-[13px] font-bold">
-            Betulkan
-          </Link>
+            {tr("Betulkan")}</Link>
         ) : null}
       </span>
     </div>

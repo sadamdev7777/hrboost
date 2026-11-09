@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useData } from "@/lib/useData";
 import { LABEL_STATUS_SYARIKAT, masaRelatif, rpc } from "@/lib/admin";
@@ -18,8 +19,8 @@ type Dash = {
   top_usage: { company_id: string; name: string; status: string; staff: number; wa: number; wa_limit: number | null; ai: number }[];
 };
 type Grant = { id: string; who: string; who_from: string | null; role: string; target: string; days: number; status: string };
-const PERANAN: Record<string, string> = { hr: "HR", ceo: "paparan CEO", admin: "Pentadbir", finance: "Kewangan", staff: "lihat sahaja" };
-const BULAN = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+const PERANAN: Record<string, string> = { hr: "HR", ceo: tr("paparan CEO"), admin: tr("Pentadbir"), finance: tr("Kewangan"), staff: tr("lihat sahaja") };
+const BULAN = [tr("Januari"), tr("Februari"), tr("Mac"), tr("April"), tr("Mei"), tr("Jun"), tr("Julai"), tr("Ogos"), tr("September"), tr("Oktober"), tr("November"), tr("Disember")];
 
 // Rujukan reka bentuk: design/SA_Dashboard.dc.html
 export default function SaDashboard() {
@@ -31,8 +32,8 @@ export default function SaDashboard() {
     <>
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h1 className="m-0 text-2xl font-extrabold">Ringkasan platform</h1>
-          <span className="text-sm text-muted">Data agregat sahaja. Butiran peribadi pekerja tidak dipaparkan di sini.</span>
+          <h1 className="m-0 text-2xl font-extrabold">{tr("Ringkasan platform")}</h1>
+          <span className="text-sm text-muted">{tr("Data agregat sahaja. Butiran peribadi pekerja tidak dipaparkan di sini.")}</span>
         </div>
         <span className="rounded-full bg-surface px-3 py-1.5 text-sm font-bold">
           {BULAN[now.getMonth()]} {now.getFullYear()}
@@ -43,29 +44,28 @@ export default function SaDashboard() {
       {x && (
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-            <Kad l="Syarikat aktif" v={x.companies_active} s={`+${x.companies_new_week} minggu ini`} />
-            <Kad l="Pekerja aktif" v={x.staff_active} s={`${x.staff_login_30d} log masuk dalam 30 hari`} />
-            <Kad l="Persediaan belum selesai" v={x.onboarding_incomplete} s="syarikat" />
-            <Kad l="Mesej WhatsApp" v={x.wa_month} s="bulan ini" />
-            <Kad l="Panggilan AI" v={x.ai_month} s="bulan ini" />
+            <Kad l={tr("Syarikat aktif")} v={x.companies_active} s={tr("+{0} minggu ini", x.companies_new_week)} />
+            <Kad l={tr("Pekerja aktif")} v={x.staff_active} s={tr("{0} log masuk dalam 30 hari", x.staff_login_30d)} />
+            <Kad l={tr("Persediaan belum selesai")} v={x.onboarding_incomplete} s="syarikat" />
+            <Kad l={tr("Mesej WhatsApp")} v={x.wa_month} s={tr("bulan ini")} />
+            <Kad l={tr("Panggilan AI")} v={x.ai_month} s={tr("bulan ini")} />
           </div>
           <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
             <section className="flex flex-col gap-3 rounded-card bg-surface p-5">
               <div className="flex items-center justify-between">
-                <b className="text-base font-extrabold">Perlu perhatian</b>
+                <b className="text-base font-extrabold">{tr("Perlu perhatian")}</b>
                 <Link href="/admin/syarikat" className="text-sm font-bold">
-                  Semua syarikat
-                </Link>
+                  {tr("Semua syarikat")}</Link>
               </div>
               {x.attention.length === 0 ? (
-                <span className="text-sm text-muted">Tiada isu.</span>
+                <span className="text-sm text-muted">{tr("Tiada isu.")}</span>
               ) : (
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left text-xs text-muted">
-                      <th className="py-2 font-bold">Syarikat</th>
-                      <th className="py-2 font-bold">Isu</th>
-                      <th className="py-2 font-bold">Sejak</th>
+                      <th className="py-2 font-bold">{tr("Syarikat")}</th>
+                      <th className="py-2 font-bold">{tr("Isu")}</th>
+                      <th className="py-2 font-bold">{tr("Sejak")}</th>
                       <th />
                     </tr>
                   </thead>
@@ -77,8 +77,7 @@ export default function SaDashboard() {
                         <td className="py-2.5 text-muted">{masaRelatif(a.since)}</td>
                         <td className="py-2.5 text-right">
                           <Link href={`/admin/syarikat/${a.company_id}`} className="font-bold">
-                            Lihat
-                          </Link>
+                            {tr("Lihat")}</Link>
                         </td>
                       </tr>
                     ))}
@@ -88,12 +87,11 @@ export default function SaDashboard() {
             </section>
             <section className="flex flex-col gap-3 rounded-card bg-surface p-5">
               <div className="flex items-center justify-between">
-                <b className="text-base font-extrabold">Permohonan akses</b>
+                <b className="text-base font-extrabold">{tr("Permohonan akses")}</b>
                 <Link href="/admin/akses" className="text-sm font-bold">
-                  Semak
-                </Link>
+                  {tr("Semak")}</Link>
               </div>
-              {(g.data ?? []).filter((r) => r.status === "pending").length === 0 && <span className="text-sm text-muted">Tiada permohonan menunggu.</span>}
+              {(g.data ?? []).filter((r) => r.status === "pending").length === 0 && <span className="text-sm text-muted">{tr("Tiada permohonan menunggu.")}</span>}
               {(g.data ?? [])
                 .filter((r) => r.status === "pending")
                 .slice(0, 4)
@@ -103,23 +101,22 @@ export default function SaDashboard() {
                       {r.who} ({r.who_from ?? "-"})
                     </b>
                     <span className="text-muted">
-                      Mohon akses {PERANAN[r.role] ?? r.role} ke {r.target} · {r.days} hari
-                    </span>
+                      {tr("Mohon akses {0} ke {1} · {2} hari", PERANAN[r.role] ?? r.role, r.target, r.days)}</span>
                   </div>
                 ))}
             </section>
           </div>
           <section className="flex flex-col gap-3 rounded-card bg-surface p-5">
-            <b className="text-base font-extrabold">Penggunaan bulan ini — syarikat teratas</b>
+            <b className="text-base font-extrabold">{tr("Penggunaan bulan ini — syarikat teratas")}</b>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[560px] text-sm">
                 <thead>
                   <tr className="text-left text-xs text-muted">
-                    <th className="py-2 font-bold">Syarikat</th>
-                    <th className="py-2 font-bold">Pekerja</th>
-                    <th className="py-2 font-bold">WhatsApp (had)</th>
+                    <th className="py-2 font-bold">{tr("Syarikat")}</th>
+                    <th className="py-2 font-bold">{tr("Pekerja")}</th>
+                    <th className="py-2 font-bold">{tr("WhatsApp (had)")}</th>
                     <th className="py-2 font-bold">AI</th>
-                    <th className="py-2 font-bold">Status</th>
+                    <th className="py-2 font-bold">{tr("Status")}</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { must } from "@/lib/useData";
@@ -11,9 +12,9 @@ type Orang = { personId: string; name: string; departmentId: string | null; empl
 
 function ralatJabatan(e: unknown): string {
   const m = e instanceof Error ? e.message : String(e);
-  if (/duplicate|unique|departments_company_id_name|sudah wujud/i.test(m)) return "Nama jabatan ini sudah wujud.";
-  if (/foreign key|violates|masih digunakan/i.test(m)) return "Jabatan ini masih dikaitkan dengan rekod pekerja (termasuk bekas pekerja). Pindahkan pekerja ke jabatan lain dahulu.";
-  return m || "Ralat";
+  if (/duplicate|unique|departments_company_id_name|sudah wujud/i.test(m)) return tr("Nama jabatan ini sudah wujud.");
+  if (/foreign key|violates|masih digunakan/i.test(m)) return tr("Jabatan ini masih dikaitkan dengan rekod pekerja (termasuk bekas pekerja). Pindahkan pekerja ke jabatan lain dahulu.");
+  return m || tr("Ralat");
 }
 
 /** Pilih / tukar ketua jabatan (ketua menjadi pelulus pertama pasukannya). */
@@ -37,7 +38,7 @@ export function PilihKetua({
     setRalat(null);
     try {
       must(await getSupabase().rpc("set_department_head", { p_department: jabatan.id, p_person: orang || (null as unknown as string) }));
-      beritahu(orang ? `Ketua ${jabatan.name} ditetapkan.` : `Ketua ${jabatan.name} dibuang.`);
+      beritahu(orang ? tr("Ketua {0} ditetapkan.", jabatan.name) : tr("Ketua {0} dibuang.", jabatan.name));
       onDone();
     } catch (e) {
       setRalat(ralatJabatan(e));
@@ -45,22 +46,21 @@ export function PilihKetua({
     }
   }
   return (
-    <Lembaran title={`Ketua ${jabatan.name}`} onClose={onClose}>
-      <MedanBorang label="Pekerja" nota="Ketua jabatan menjadi pelulus pertama bagi cuti, tuntutan dan pembetulan masa pasukannya.">
+    <Lembaran title={tr("Ketua {0}", jabatan.name)} onClose={onClose}>
+      <MedanBorang label={tr("Pekerja")} nota={tr("Ketua jabatan menjadi pelulus pertama bagi cuti, tuntutan dan pembetulan masa pasukannya.")}>
         <select className={inputKecil} value={orang} onChange={(e) => setOrang(e.target.value)}>
-          {jabatan.headPersonId && <option value="">Tiada ketua</option>}
+          {jabatan.headPersonId && <option value="">{tr("Tiada ketua")}</option>}
           {susun.map((p) => (
             <option key={p.personId} value={p.personId}>
               {p.name} · {p.employeeNo}
-              {p.departmentId === jabatan.id ? "" : " (jabatan lain)"}
+              {p.departmentId === jabatan.id ? "" : tr(" (jabatan lain)")}
             </option>
           ))}
         </select>
       </MedanBorang>
       {ralat && <ErrorBox message={ralat} />}
       <ButangUtama onClick={simpan} busy={busy}>
-        Tetapkan ketua
-      </ButangUtama>
+        {tr("Tetapkan ketua")}</ButangUtama>
     </Lembaran>
   );
 }
@@ -82,15 +82,15 @@ export function BorangJabatan({
   const [ralat, setRalat] = useState<string | null>(null);
   async function simpan() {
     const n = nama.trim();
-    if (!n) return setRalat("Sila isi nama jabatan.");
-    if (n.length > 60) return setRalat("Nama jabatan terlalu panjang (maksimum 60 aksara).");
+    if (!n) return setRalat(tr("Sila isi nama jabatan."));
+    if (n.length > 60) return setRalat(tr("Nama jabatan terlalu panjang (maksimum 60 aksara)."));
     setBusy(true);
     setRalat(null);
     try {
       const sb = getSupabase();
       if (jabatan) must(await sb.from("departments").update({ name: n }).eq("id", jabatan.id));
       else must(await sb.from("departments").insert({ company_id: cid, name: n }));
-      beritahu(jabatan ? "Nama jabatan dikemas kini." : `Jabatan ${n} ditambah.`);
+      beritahu(jabatan ? tr("Nama jabatan dikemas kini.") : tr("Jabatan {0} ditambah.", n));
       onDone();
     } catch (e) {
       setRalat(ralatJabatan(e));
@@ -98,13 +98,13 @@ export function BorangJabatan({
     }
   }
   return (
-    <Lembaran title={jabatan ? "Namakan semula jabatan" : "Jabatan baharu"} onClose={onClose}>
-      <MedanBorang label="Nama jabatan">
-        <input className={inputKecil} value={nama} onChange={(e) => setNama(e.target.value)} placeholder="Contoh: Operasi" autoFocus />
+    <Lembaran title={jabatan ? tr("Namakan semula jabatan") : tr("Jabatan baharu")} onClose={onClose}>
+      <MedanBorang label={tr("Nama jabatan")}>
+        <input className={inputKecil} value={nama} onChange={(e) => setNama(e.target.value)} placeholder={tr("Contoh: Operasi")} autoFocus />
       </MedanBorang>
       {ralat && <ErrorBox message={ralat} />}
       <ButangUtama onClick={simpan} busy={busy}>
-        {jabatan ? "Simpan" : "Tambah"}
+        {jabatan ? tr("Simpan") : tr("Tambah")}
       </ButangUtama>
     </Lembaran>
   );
@@ -114,7 +114,7 @@ export function BorangJabatan({
 export async function padamJabatan(id: string): Promise<string | null> {
   try {
     must(await getSupabase().from("departments").delete().eq("id", id));
-    beritahu("Jabatan dipadam.");
+    beritahu(tr("Jabatan dipadam."));
     return null;
   } catch (e) {
     return ralatJabatan(e);

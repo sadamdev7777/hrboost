@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { hasRole, useMe } from "@/lib/me";
@@ -62,8 +63,8 @@ export function HadPeranan({ roles, children, back = "/saya" }: { roles: Role[];
   if (!me.active || !hasRole(me, roles)) {
     return (
       <Screen lebar="sederhana">
-        <BackHeader title="Tiada akses" href={back} />
-        <main className="px-4 pt-2 text-sm text-muted">Skrin ini hanya untuk {roles.map((r) => ({ hr: "HR", finance: "Kewangan", ceo: "CEO", admin: "Pentadbir" })[r as string] ?? r).join(", ")} syarikat ini.</main>
+        <BackHeader title={tr("Tiada akses")} href={back} />
+        <main className="px-4 pt-2 text-sm text-muted">{tr("Skrin ini hanya untuk {0} syarikat ini.", roles.map((r) => ({ hr: "HR", finance: tr("Kewangan"), ceo: "CEO", admin: tr("Pentadbir") })[r as string] ?? r).join(", "))}</main>
       </Screen>
     );
   }
@@ -142,7 +143,7 @@ export function ButangUtama({ children, onClick, busy, disabled, danger }: { chi
       disabled={busy || disabled}
       className={`h-12 w-full rounded-button text-base font-extrabold text-white disabled:opacity-60 ${danger ? "bg-danger" : "bg-primary"}`}
     >
-      {busy ? "Menyimpan…" : children}
+      {busy ? tr("Menyimpan…") : children}
     </button>
   );
 }

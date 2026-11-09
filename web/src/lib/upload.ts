@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { getSupabase } from "./supabase";
 
 const MAX_SIDE = 1600;
@@ -29,13 +30,13 @@ export async function mampatkanGambar(file: File): Promise<Blob> {
  */
 export async function muatNaikPeribadi(personId: string, nama: string, file: File): Promise<string> {
   const blob = await mampatkanGambar(file);
-  if (blob.size > MAX_BYTES) throw new Error("Saiz fail melebihi 10 MB.");
+  if (blob.size > MAX_BYTES) throw new Error(tr("Saiz fail melebihi 10 MB."));
   const ext = blob.type === "application/pdf" ? "pdf" : "jpg";
   const path = `${personId}/${nama}-${Date.now()}.${ext}`;
   const { error } = await getSupabase()
     .storage.from("peribadi")
     .upload(path, blob, { contentType: blob.type || "image/jpeg", upsert: false });
-  if (error) throw new Error("Fail tidak dapat dimuat naik. Sila cuba lagi.");
+  if (error) throw new Error(tr("Fail tidak dapat dimuat naik. Sila cuba lagi."));
   return path;
 }
 

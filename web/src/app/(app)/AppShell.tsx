@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Suspense, useEffect, useState, type ReactNode } from "react";
@@ -47,7 +48,7 @@ function Guard({ children }: { children: ReactNode }) {
     return (
       <Screen>
         <div className="p-6">
-          <ErrorBox message={`Maklumat akaun tidak dapat dimuatkan. ${state.message}`} />
+          <ErrorBox message={tr("Maklumat akaun tidak dapat dimuatkan. {0}", state.message)} />
         </div>
       </Screen>
     );
@@ -57,18 +58,15 @@ function Guard({ children }: { children: ReactNode }) {
     return (
       <Screen>
         <div className="flex grow flex-col justify-center gap-4 p-6">
-          <h1 className="m-0 text-2xl font-extrabold">Akaun belum diaktifkan</h1>
+          <h1 className="m-0 text-2xl font-extrabold">{tr("Akaun belum diaktifkan")}</h1>
           <p className="m-0 text-sm leading-normal text-subtle">
-            Nombor {state.phone ? paparTelefon(state.phone) : "ini"} belum dipautkan kepada mana-mana pekerja. Semak
-            WhatsApp anda untuk pautan jemputan daripada HR, atau hubungi HR syarikat anda.
-          </p>
+            {tr("Nombor {0} belum dipautkan kepada mana-mana pekerja. Semak WhatsApp anda untuk pautan jemputan daripada HR, atau hubungi HR syarikat anda.", state.phone ? paparTelefon(state.phone) : "ini")}</p>
           <button
             type="button"
             onClick={() => void getSupabase().auth.signOut()}
             className="h-12 rounded-[14px] border border-line bg-surface text-sm font-bold text-danger"
           >
-            Log keluar
-          </button>
+            {tr("Log keluar")}</button>
         </div>
       </Screen>
     );
@@ -122,8 +120,7 @@ function Notis() {
       )}
       {n.mula && !path.startsWith("/mula") && (
         <Link href="/mula" className="block bg-[#E3F1EE] px-4 py-2.5 text-center text-[13px] font-bold text-primary!">
-          Persediaan syarikat belum selesai — teruskan
-        </Link>
+          {tr("Persediaan syarikat belum selesai — teruskan")}</Link>
       )}
     </>
   );

@@ -1,8 +1,9 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useSyncExternalStore } from "react";
 
-const MQ = "(min-width: 1024px)";
+const MQ = tr("(min-width: 1024px)");
 
 function langgan(cb: () => void) {
   const m = window.matchMedia(MQ);

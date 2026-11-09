@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
@@ -26,6 +27,7 @@ import {
   IconOrg,
 } from "@/components/icons";
 import { Screen } from "@/components/ui";
+import { PilihBahasa } from "@/components/PilihBahasa";
 import { TabNav, TukarMod } from "@/components/TabNav";
 import { useSkrinLebar } from "@/lib/skrin";
 
@@ -67,45 +69,53 @@ export default function SayaPage() {
         {!lebar && <TukarMod />}
 
         <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
-        <Kumpulan tajuk="MENU SAYA">
-          <Baris href="/cuti" icon={<IconCalendar size={18} />} label="Cuti">
-            {baki.data?.AL && <span className="text-[13px] text-muted">Baki {hari(baki.data.AL.available)}</span>}
+        <Kumpulan tajuk={tr("MENU SAYA")}>
+          <Baris href="/cuti" icon={<IconCalendar size={18} />} label={tr("Cuti")}>
+            {baki.data?.AL && <span className="text-[13px] text-muted">{tr("Baki {0}", hari(baki.data.AL.available))}</span>}
           </Baris>
-          <Baris href="/tuntutan" icon={<IconReceipt size={18} />} label="Tuntutan" />
-          <Baris href="/kehadiran" icon={<IconClock size={18} />} label="Kehadiran" />
-          <Baris href="/gaji" icon={<IconWallet size={18} />} label="Slip Gaji" />
-          <Baris href="/kalendar" icon={<IconCalendar size={18} />} label="Kalendar pasukan" />
-          <Baris href="/pengumuman" icon={<IconBell size={18} />} label="Pengumuman" />
-          <Baris href="/tanya-hr" icon={<IconChat size={18} />} label="Tanya HR" />
-          <Baris href="/pembantu-ai" icon={<IconSparkle size={18} />} tone="bg-[#EDE9F8] text-ai" label="Pembantu AI" />
-          <Baris href="/hari-jadi" icon={<IconCake size={18} />} tone="bg-[#FDEBD7] text-warning" label="Hari Jadi">
+          <Baris href="/tuntutan" icon={<IconReceipt size={18} />} label={tr("Tuntutan")} />
+          <Baris href="/kehadiran" icon={<IconClock size={18} />} label={tr("Kehadiran")} />
+          <Baris href="/gaji" icon={<IconWallet size={18} />} label={tr("Slip Gaji")} />
+          <Baris href="/kalendar" icon={<IconCalendar size={18} />} label={tr("Kalendar pasukan")} />
+          <Baris href="/pengumuman" icon={<IconBell size={18} />} label={tr("Pengumuman")} />
+          <Baris href="/tanya-hr" icon={<IconChat size={18} />} label={tr("Tanya HR")} />
+          <Baris href="/pembantu-ai" icon={<IconSparkle size={18} />} tone="bg-[#EDE9F8] text-ai" label={tr("Pembantu AI")} />
+          <Baris href="/hari-jadi" icon={<IconCake size={18} />} tone="bg-[#FDEBD7] text-warning" label={tr("Hari Jadi")}>
             {hariIni.length > 0 && (
               <span className="text-[13px] font-bold text-warning">
-                {hariIni.length === 1 ? `${hariIni[0].name} hari ini` : `${hariIni.length} orang hari ini`}
+                {hariIni.length === 1 ? tr("{0} hari ini", hariIni[0].name) : tr("{0} orang hari ini", hariIni.length)}
               </span>
             )}
           </Baris>
         </Kumpulan>
 
         {pengurusan && (
-          <Kumpulan tajuk="PENGURUSAN · HR / CEO SAHAJA">
-            <Baris href="/pengurusan" icon={<IconChart size={18} />} tone="bg-[#FDEBD7] text-warning" label="Papan Pemuka Syarikat" />
-            <Baris href="/pengurusan/pekerja" icon={<IconUsers size={18} />} tone="bg-[#FDEBD7] text-warning" label="Pekerja" />
-            {hasRole(me, ["hr", "admin"]) && <Baris href="/pengurusan/tetapan/jabatan" icon={<IconOrg size={18} />} tone="bg-[#FDEBD7] text-warning" label="Jabatan & Ketua" />}
+          <Kumpulan tajuk={tr("PENGURUSAN · HR / CEO SAHAJA")}>
+            <Baris href="/pengurusan" icon={<IconChart size={18} />} tone="bg-[#FDEBD7] text-warning" label={tr("Papan Pemuka Syarikat")} />
+            <Baris href="/pengurusan/pekerja" icon={<IconUsers size={18} />} tone="bg-[#FDEBD7] text-warning" label={tr("Pekerja")} />
+            {hasRole(me, ["hr", "admin"]) && <Baris href="/pengurusan/tetapan/jabatan" icon={<IconOrg size={18} />} tone="bg-[#FDEBD7] text-warning" label={tr("Jabatan & Ketua")} />}
             {hasRole(me, ["hr", "finance", "admin"]) && (
               <>
-                <Baris href="/pengurusan/gaji" icon={<IconCard size={18} />} tone="bg-[#FDEBD7] text-warning" label="Proses Gaji" />
-                <Baris href="/pengurusan/gaji/pekerja" icon={<IconWallet size={18} />} tone="bg-[#FDEBD7] text-warning" label="Gaji Pekerja" />
+                <Baris href="/pengurusan/gaji" icon={<IconCard size={18} />} tone="bg-[#FDEBD7] text-warning" label={tr("Proses Gaji")} />
+                <Baris href="/pengurusan/gaji/pekerja" icon={<IconWallet size={18} />} tone="bg-[#FDEBD7] text-warning" label={tr("Gaji Pekerja")} />
               </>
             )}
-            {hasRole(me, ["hr", "admin"]) && <Baris href="/pengurusan/surat" icon={<IconDocument size={18} />} tone="bg-[#FDEBD7] text-warning" label="Surat" />}
-            {hasRole(me, ["hr", "admin"]) && <Baris href="/pengurusan/soalan" icon={<IconChat size={18} />} tone="bg-[#FDEBD7] text-warning" label="Soalan HR" />}
-            {hasRole(me, ["hr", "admin"]) && <Baris href="/pengurusan/kerja-fleksibel" icon={<IconCalendar size={18} />} tone="bg-[#FDEBD7] text-warning" label="Kerja fleksibel" />}
-            {hasRole(me, ["hr", "ceo", "admin"]) && <Baris href="/pengurusan/pengumuman" icon={<IconBell size={18} />} tone="bg-[#FDEBD7] text-warning" label="Pengumuman" />}
-            <Baris href="/pengurusan/laporan" icon={<IconChart size={18} />} tone="bg-[#FDEBD7] text-warning" label="Laporan" />
-            <Baris href="/pengurusan/tetapan" icon={<IconSettings size={18} />} tone="bg-[#FDEBD7] text-warning" label="Tetapan" />
+            {hasRole(me, ["hr", "admin"]) && <Baris href="/pengurusan/surat" icon={<IconDocument size={18} />} tone="bg-[#FDEBD7] text-warning" label={tr("Surat")} />}
+            {hasRole(me, ["hr", "admin"]) && <Baris href="/pengurusan/soalan" icon={<IconChat size={18} />} tone="bg-[#FDEBD7] text-warning" label={tr("Soalan HR")} />}
+            {hasRole(me, ["hr", "admin"]) && <Baris href="/pengurusan/kerja-fleksibel" icon={<IconCalendar size={18} />} tone="bg-[#FDEBD7] text-warning" label={tr("Kerja fleksibel")} />}
+            {hasRole(me, ["hr", "ceo", "admin"]) && <Baris href="/pengurusan/pengumuman" icon={<IconBell size={18} />} tone="bg-[#FDEBD7] text-warning" label={tr("Pengumuman")} />}
+            <Baris href="/pengurusan/laporan" icon={<IconChart size={18} />} tone="bg-[#FDEBD7] text-warning" label={tr("Laporan")} />
+            <Baris href="/pengurusan/tetapan" icon={<IconSettings size={18} />} tone="bg-[#FDEBD7] text-warning" label={tr("Tetapan")} />
           </Kumpulan>
         )}
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-surface px-4 py-3 lg:max-w-[480px]">
+          <span className="flex flex-col">
+            <b className="text-sm font-bold">{tr("Bahasa")}</b>
+            <span className="text-xs text-muted">{tr("Skrin, mesej WhatsApp dan slip gaji")}</span>
+          </span>
+          <PilihBahasa simpan />
         </div>
 
         <button
@@ -113,8 +123,7 @@ export default function SayaPage() {
           onClick={logKeluar}
           className="h-12 rounded-[14px] border lg:w-60 border-line bg-surface text-sm font-bold text-danger"
         >
-          Log keluar
-        </button>
+          {tr("Log keluar")}</button>
       </main>
       <TabNav />
     </Screen>

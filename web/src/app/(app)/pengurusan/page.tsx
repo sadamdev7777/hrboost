@@ -1,5 +1,6 @@
 "use client";
 
+import { tr, trRalat } from "@/lib/i18n";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { hasRole, useMe } from "@/lib/me";
@@ -23,12 +24,12 @@ import { getKalendarBerkanun, getTarikhTamat, tandaDihantar, type KewajipanBerka
 import { beritahu, mintaTeks } from "@/components/Dialog";
 
 const AV = ["bg-[#FDEBD7] text-warning", "bg-[#E3F1EE] text-primary", "bg-[#EDE9F8] text-ai"];
-const JENIS: Record<string, string> = { leave: "Cuti", claim: "Tuntutan", attendance_correction: "Pembetulan", payroll_run: "Gaji", overtime: "Lebih masa", salary_advance: "Pendahuluan" };
+const JENIS: Record<string, string> = { leave: tr("Cuti"), claim: tr("Tuntutan"), attendance_correction: tr("Pembetulan"), payroll_run: tr("Gaji"), overtime: tr("Lebih masa"), salary_advance: tr("Pendahuluan") };
 const PERHATIAN: Record<Dashboard["attention"][number]["kind"], { tag: string; tone: "danger" | "warning" | "ai" | "primary"; aksi: string }> = {
-  sla: { tag: "Tertangguh", tone: "danger", aksi: "Lihat" },
-  probation: { tag: "Percubaan", tone: "warning", aksi: "Sahkan" },
-  bank: { tag: "Bank", tone: "primary", aksi: "Semak" },
-  late: { tag: "Kehadiran", tone: "ai", aksi: "Profil" },
+  sla: { tag: tr("Tertangguh"), tone: "danger", aksi: tr("Lihat") },
+  probation: { tag: tr("Percubaan"), tone: "warning", aksi: tr("Sahkan") },
+  bank: { tag: tr("Bank"), tone: "primary", aksi: tr("Semak") },
+  late: { tag: tr("Kehadiran"), tone: "ai", aksi: tr("Profil") },
 };
 
 // Rujukan reka bentuk: design/DashboardHR.dc.html (disusun semula sebagai "Pusat Tindakan")
@@ -85,15 +86,15 @@ function Kandungan() {
 
   async function tanda(k: KewajipanBerkanun) {
     const ruj = await mintaTeks({
-      tajuk: `Tanda ${k.label} telah dihantar`,
-      label: "No. rujukan / resit (pilihan)",
-      ok: "Tanda dihantar",
+      tajuk: tr("Tanda {0} telah dihantar", k.label),
+      label: tr("No. rujukan / resit (pilihan)"),
+      ok: tr("Tanda dihantar"),
       wajib: false,
     });
     if (ruj === null) return;
     try {
       await tandaDihantar(emp.companyId, k, ruj);
-      beritahu(`${k.label} ditanda telah dihantar.`);
+      beritahu(tr("{0} ditanda telah dihantar.", k.label));
       d.reload();
     } catch (e) {
       setRalat(e instanceof Error ? e.message : String(e));
@@ -111,7 +112,7 @@ function Kandungan() {
         </div>
         <span className="flex items-center gap-2">
           {!lebar && (
-            <button type="button" onClick={bukaCari} aria-label="Cari pekerja" className="flex size-10 items-center justify-center rounded-full bg-surface">
+            <button type="button" onClick={bukaCari} aria-label={tr("Cari pekerja")} className="flex size-10 items-center justify-center rounded-full bg-surface">
               <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <circle cx="11" cy="11" r="7" />
                 <path d="M20 20l-3.5-3.5" />
@@ -130,22 +131,22 @@ function Kandungan() {
         {x && a && t && (
           <>
             <div className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-3 lg:overflow-visible lg:px-0 lg:pb-0">
-              <Kad label="Pekerja aktif" nilai={String(a.headcount)} href="/pengurusan/pekerja" />
+              <Kad label={tr("Pekerja aktif")} nilai={String(a.headcount)} href="/pengurusan/pekerja" />
               {t.attendance_connected ? (
                 <Kad
-                  label="Hadir hari ini"
+                  label={tr("Hadir hari ini")}
                   nilai={`${t.present_today}/${dijangka}`}
-                  kecil={a.late_today ? `${a.late_today} lewat masuk` : dijangka ? `${Math.round((t.present_today / dijangka) * 100)}%` : undefined}
+                  kecil={a.late_today ? tr("{0} lewat masuk", a.late_today) : dijangka ? `${Math.round((t.present_today / dijangka) * 100)}%` : undefined}
                   tone={a.late_today ? "warning" : undefined}
                 />
               ) : (
-                <Kad label="Hadir hari ini" nilai="—" kecil="Sambung mesin kehadiran" href="/pengurusan/tetapan/kehadiran" />
+                <Kad label={tr("Hadir hari ini")} nilai="—" kecil={tr("Sambung mesin kehadiran")} href="/pengurusan/tetapan/kehadiran" />
               )}
-              <Kad label="Cuti / MC hari ini" nilai={String(a.on_leave.length)} />
+              <Kad label={tr("Cuti / MC hari ini")} nilai={String(a.on_leave.length)} />
               <Kad
-                label="Menunggu kelulusan anda"
+                label={tr("Menunggu kelulusan anda")}
                 nilai={String(x.tugas.length)}
-                kecil={a.sla_breached ? `${a.sla_breached} melepasi tempoh` : undefined}
+                kecil={a.sla_breached ? tr("{0} melepasi tempoh", a.sla_breached) : undefined}
                 tone={a.sla_breached ? "danger" : x.tugas.length ? "primary" : undefined}
                 href="/kelulusan"
               />
@@ -153,15 +154,15 @@ function Kandungan() {
 
             <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:items-start lg:gap-5">
               <div className="flex flex-col gap-4">
-                <Panel tajuk={`PERLU TINDAKAN ANDA${tindakan ? ` (${tindakan})` : ""}`}>
-                  {tindakan === 0 && <span className="py-4 text-sm text-muted">Tiada tindakan diperlukan. Semua urusan terkini.</span>}
+                <Panel tajuk={tr("PERLU TINDAKAN ANDA{0}", tindakan ? ` (${tindakan})` : "")}>
+                  {tindakan === 0 && <span className="py-4 text-sm text-muted">{tr("Tiada tindakan diperlukan. Semua urusan terkini.")}</span>}
                   {x.tugas.slice(0, 6).map((k) => (
                     <div key={k.task_id} className="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-2 py-2.5 text-sm">
-                      <Tag tone={k.sla_breached ? "danger" : "primary"}>{JENIS[k.request_type] ?? "Permohonan"}</Tag>
+                      <Tag tone={k.sla_breached ? "danger" : "primary"}>{JENIS[k.request_type] ?? tr("Permohonan")}</Tag>
                       <span className="flex min-w-0 grow basis-40 flex-col">
                         <b className="truncate font-bold">{k.title}</b>
                         <span className="truncate text-xs text-muted">
-                          {[k.requester_nickname, `peringkat ${k.step_name}`, tarikh(k.submitted_at)].filter(Boolean).join(" · ")}
+                          {[k.requester_nickname, tr("peringkat {0}", k.step_name), tarikh(k.submitted_at)].filter(Boolean).join(" · ")}
                         </span>
                       </span>
                       <span className="ml-auto flex gap-2">
@@ -172,43 +173,41 @@ function Kandungan() {
                             disabled={sibuk === k.task_id}
                             className="flex h-10 items-center rounded-full bg-primary px-4 text-[13px] font-bold text-white disabled:opacity-60"
                           >
-                            {sibuk === k.task_id ? "…" : "Lulus"}
+                            {sibuk === k.task_id ? "…" : tr("Lulus")}
                           </button>
                         )}
                         <Link href={`/kelulusan/${k.task_id}`} className="flex h-10 items-center rounded-full border border-line px-4 text-[13px] font-bold">
-                          Butiran
-                        </Link>
+                          {tr("Butiran")}</Link>
                       </span>
                     </div>
                   ))}
                   {x.tugas.length > 6 && (
                     <Link href="/kelulusan" className="flex min-h-11 items-center text-[13px] font-bold">
-                      Lihat semua {x.tugas.length} permohonan
-                    </Link>
+                      {tr("Lihat semua {0} permohonan", x.tugas.length)}</Link>
                   )}
                   {t.no_salary ? (
-                    <Baris tag="Gaji" tone="warning" teks={`${t.no_salary} pekerja belum mempunyai gaji pokok`} href="/pengurusan/gaji/pekerja" aksi="Tetapkan" />
+                    <Baris tag={tr("Gaji")} tone="warning" teks={tr("{0} pekerja belum mempunyai gaji pokok", t.no_salary)} href="/pengurusan/gaji/pekerja" aksi={tr("Tetapkan")} />
                   ) : null}
-                  {x.soalan > 0 && <Baris tag="Soalan" tone="primary" teks={`${x.soalan} soalan pekerja belum dijawab`} href="/pengurusan/soalan" aksi="Jawab" />}
+                  {x.soalan > 0 && <Baris tag={tr("Soalan")} tone="primary" teks={tr("{0} soalan pekerja belum dijawab", x.soalan)} href="/pengurusan/soalan" aksi={tr("Jawab")} />}
                   {x.fleksibel.map((f) => (
                     <Baris
                       key={"fwa" + f.id}
-                      tag="Fleksibel"
+                      tag={tr("Fleksibel")}
                       tone={f.days_left <= 14 ? "danger" : "warning"}
-                      teks={`${f.name} memohon kerja fleksibel · jawapan bertulis sebelum ${tarikh(f.due_date)} (${f.days_left} hari)`}
+                      teks={tr("{0} memohon kerja fleksibel · jawapan bertulis sebelum {1} ({2} hari)", f.name, tarikh(f.due_date), f.days_left)}
                       href="/pengurusan/kerja-fleksibel"
-                      aksi="Putuskan"
+                      aksi={tr("Putuskan")}
                     />
                   ))}
-                  {x.surat > 0 && <Baris tag="Surat" tone="primary" teks={`${x.surat} permohonan surat pengesahan menunggu dikeluarkan`} href="/pengurusan/surat" aksi="Keluarkan" />}
+                  {x.surat > 0 && <Baris tag={tr("Surat")} tone="primary" teks={tr("{0} permohonan surat pengesahan menunggu dikeluarkan", x.surat)} href="/pengurusan/surat" aksi={tr("Keluarkan")} />}
                   {x.semak.map((s) => (
                     <Baris
                       key={"semak" + s.employment_id}
-                      tag="Orientasi"
+                      tag={tr("Orientasi")}
                       tone={s.lewat ? "danger" : "primary"}
-                      teks={`${s.name}: ${s.n} perkara senarai semak pekerja baharu${s.lewat ? ` (${s.lewat} lewat)` : ""}`}
+                      teks={tr("{0}: {1} perkara senarai semak pekerja baharu{2}", s.name, s.n, s.lewat ? tr(" ({0} lewat)", s.lewat) : "")}
                       href={`/pengurusan/pekerja/${s.employment_id}`}
-                      aksi="Semak"
+                      aksi={tr("Semak")}
                     />
                   ))}
                   {x.tamat.map((m) => (
@@ -216,9 +215,9 @@ function Kandungan() {
                       key={m.kind + m.employment_id + m.expiry}
                       tag={TAMAT[m.kind]}
                       tone={m.days_left <= 7 ? "danger" : "warning"}
-                      teks={`${m.text} (${m.days_left < 0 ? `lewat ${-m.days_left} hari` : m.days_left === 0 ? "hari ini" : `${m.days_left} hari lagi`})`}
+                      teks={`${m.text} (${m.days_left < 0 ? tr("lewat {0} hari", -m.days_left) : m.days_left === 0 ? tr("hari ini") : tr("{0} hari lagi", m.days_left)})`}
                       href={`/pengurusan/pekerja/${m.employment_id}`}
-                      aksi="Profil"
+                      aksi={tr("Profil")}
                     />
                   ))}
                   {a.attention.map((p, i) => (
@@ -239,27 +238,27 @@ function Kandungan() {
               <div className="flex flex-col gap-4">
                 <KadPengumuman companyId={emp.companyId} />
                 {x.berkanun.length > 0 && <PanelBerkanun senarai={x.berkanun} boleh={urusGaji} onTanda={tanda} />}
-                <Panel tajuk="SIAPA TIADA HARI INI">
-                  {a.on_leave.length === 0 && t.late_names.length === 0 && <span className="py-4 text-sm text-muted">Semua pekerja bertugas hari ini.</span>}
+                <Panel tajuk={tr("SIAPA TIADA HARI INI")}>
+                  {a.on_leave.length === 0 && t.late_names.length === 0 && <span className="py-4 text-sm text-muted">{tr("Semua pekerja bertugas hari ini.")}</span>}
                   {a.on_leave.map((c, i) => (
                     <Orang
                       key={c.employment_id + i}
                       i={i}
                       nama={c.name}
                       href={`/pengurusan/pekerja/${c.employment_id}`}
-                      kanan={c.half_day !== "full" ? "Separuh hari" : c.leave === "MC" ? "MC" : c.leave === "AL" ? "Cuti tahunan" : c.leave_name}
+                      kanan={c.half_day !== "full" ? tr("Separuh hari") : c.leave === "MC" ? "MC" : c.leave === "AL" ? tr("Cuti tahunan") : trRalat(c.leave_name)}
                       kecil={c.department}
                     />
                   ))}
                   {t.late_names.map((l, i) => (
-                    <Orang key={l.employment_id} i={i + 1} nama={l.name} href={`/pengurusan/pekerja/${l.employment_id}`} kanan={`Lewat · ${masa(l.clock_in)}`} kananTone="text-warning" />
+                    <Orang key={l.employment_id} i={i + 1} nama={l.name} href={`/pengurusan/pekerja/${l.employment_id}`} kanan={tr("Lewat · {0}", masa(l.clock_in))} kananTone="text-warning" />
                   ))}
                 </Panel>
 
-                <Panel tajuk="MINGGU INI">
-                  {x.jadi.length === 0 && t.joiners.length === 0 && <span className="py-4 text-sm text-muted">Tiada hari jadi atau pekerja baharu minggu ini.</span>}
+                <Panel tajuk={tr("MINGGU INI")}>
+                  {x.jadi.length === 0 && t.joiners.length === 0 && <span className="py-4 text-sm text-muted">{tr("Tiada hari jadi atau pekerja baharu minggu ini.")}</span>}
                   {x.jadi.map((b, i) => (
-                    <Orang key={b.person_id} i={i} nama={b.name} kecil={b.department} kanan={`Hari jadi · ${b.day} ${BULAN_PENUH[b.month - 1].slice(0, 3)}`} />
+                    <Orang key={b.person_id} i={i} nama={b.name} kecil={b.department} kanan={tr("Hari jadi · {0} {1}", b.day, BULAN_PENUH[b.month - 1].slice(0, 3))} />
                   ))}
                   {t.joiners.map((j, i) => (
                     <Orang
@@ -268,19 +267,18 @@ function Kandungan() {
                       nama={j.name}
                       kecil={j.department}
                       href={`/pengurusan/pekerja/${j.employment_id}`}
-                      kanan={`${j.join_date <= hariIni ? "Mula bekerja" : "Akan mula"} · ${tarikh(j.join_date)}`}
+                      kanan={`${j.join_date <= hariIni ? tr("Mula bekerja") : tr("Akan mula")} · ${tarikh(j.join_date)}`}
                     />
                   ))}
                 </Panel>
 
-                <Panel tajuk="BULAN INI">
+                <Panel tajuk={tr("BULAN INI")}>
                   <div className="flex min-h-12 items-center justify-between text-sm">
-                    <span className="text-subtle">Tuntutan diluluskan</span>
+                    <span className="text-subtle">{tr("Tuntutan diluluskan")}</span>
                     <b>{ringgit(a.claims_approved_month)}</b>
                   </div>
                   <Link href="/pengurusan/akses" className="flex min-h-11 items-center text-[13px] font-bold">
-                    Anda hanya boleh melihat {a.company_code}. Mohon akses syarikat lain
-                  </Link>
+                    {tr("Anda hanya boleh melihat {0}. Mohon akses syarikat lain", a.company_code)}</Link>
                 </Panel>
               </div>
             </div>
@@ -290,7 +288,7 @@ function Kandungan() {
       {!lebar && hasRole(me, ["hr", "admin"]) && (
         <Link
           href="/pengurusan/pekerja/baru"
-          aria-label="Tambah pekerja"
+          aria-label={tr("Tambah pekerja")}
           className="fixed right-4 bottom-[92px] z-20 flex size-14 items-center justify-center rounded-full bg-primary text-white! shadow-lg"
         >
           <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
@@ -364,47 +362,43 @@ function Orang({ i, nama, kecil, kanan, kananTone, href }: { i: number; nama: st
   );
 }
 
-const TAMAT: Record<string, string> = { contract: "Kontrak", permit: "Permit", passport: "Pasport", document: "Dokumen" };
+const TAMAT: Record<string, string> = { contract: tr("Kontrak"), permit: tr("Permit"), passport: tr("Pasport"), document: tr("Dokumen") };
 
 function PanelBerkanun({ senarai, boleh, onTanda }: { senarai: KewajipanBerkanun[]; boleh: boolean; onTanda: (k: KewajipanBerkanun) => void }) {
   return (
-    <Panel tajuk="TARIKH AKHIR BERKANUN">
+    <Panel tajuk={tr("TARIKH AKHIR BERKANUN")}>
       {senarai.map((k) => {
         const lewat = k.days_left < 0;
         const dekat = k.days_left <= 5;
         return (
           <div key={`${k.kind}-${k.period_year}-${k.period_month}`} className="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-1.5 py-2.5 text-sm">
             <span className="flex min-w-0 grow basis-40 flex-col">
-              <b className="font-bold">{k.label}</b>
+              <b className="font-bold">{tr(k.label)}</b>
               <span className="text-xs text-muted">
-                {k.period_month ? `Gaji ${BULAN_PENUH[k.period_month - 1]} ${k.period_year}` : `Tahun ${k.period_year}`} · akhir {tarikh(k.due_date)}
-                {!k.payroll_ready && k.period_month ? " · gaji belum diluluskan" : ""}
-              </span>
+                {tr("{0} · akhir {1}{2}", k.period_month ? tr("Gaji {0} {1}", BULAN_PENUH[k.period_month - 1], k.period_year) : tr("Tahun {0}", k.period_year), tarikh(k.due_date), !k.payroll_ready && k.period_month ? tr(" · gaji belum diluluskan") : "")}</span>
             </span>
             <span className={`text-xs font-bold ${lewat ? "text-danger" : dekat ? "text-warning" : "text-subtle"}`}>
-              {lewat ? `Lewat ${-k.days_left} hari` : k.days_left === 0 ? "Hari ini" : `${k.days_left} hari lagi`}
+              {lewat ? tr("Lewat {0} hari", -k.days_left) : k.days_left === 0 ? tr("Hari ini") : tr("{0} hari lagi", k.days_left)}
             </span>
             {boleh && (
               <span className="flex gap-2">
                 {k.payroll_ready && (
                   <Link href="/pengurusan/gaji/sejarah" className="flex h-9 items-center rounded-full border border-line px-3 text-xs font-bold">
-                    Fail
-                  </Link>
+                    {tr("Fail")}</Link>
                 )}
                 <button type="button" onClick={() => onTanda(k)} className="flex h-9 items-center rounded-full border border-line px-3 text-xs font-bold text-primary">
-                  Tanda dihantar
-                </button>
+                  {tr("Tanda dihantar")}</button>
               </span>
             )}
           </div>
         );
       })}
-      <span className="py-2 text-[11px] leading-snug text-muted">Peringatan WhatsApp dihantar kepada HR dan Kewangan 5 hari dan 1 hari sebelum tarikh akhir.</span>
+      <span className="py-2 text-[11px] leading-snug text-muted">{tr("Peringatan WhatsApp dihantar kepada HR dan Kewangan 5 hari dan 1 hari sebelum tarikh akhir.")}</span>
     </Panel>
   );
 }
 
-const LANGKAH_GAJI = ["Semak data", "Kira", "Kelulusan", "Bayar"];
+const LANGKAH_GAJI = [tr("Semak data"), tr("Kira"), tr("Kelulusan"), tr("Bayar")];
 
 type StatusGaji = { year: number; month: number; status: string | null; gross: number | null; net: number | null; employer: number | null };
 
@@ -413,27 +407,26 @@ function KadGaji({ p, boleh }: { p: StatusGaji; boleh: boolean }) {
   const n = !s || s === "draft" ? 1 : s === "calculated" || s === "returned" ? 2 : s === "pending" ? 3 : s === "approved" ? 4 : 5;
   const label =
     !s || s === "draft"
-      ? "Belum dikira"
+      ? tr("Belum dikira")
       : s === "calculated"
-        ? "Dikira — belum dihantar"
+        ? tr("Dikira — belum dihantar")
         : s === "returned"
-          ? "Dikembalikan untuk semakan"
+          ? tr("Dikembalikan untuk semakan")
           : s === "pending"
-            ? "Menunggu kelulusan"
+            ? tr("Menunggu kelulusan")
             : s === "approved"
-              ? "Diluluskan — sedia dibayar"
+              ? tr("Diluluskan — sedia dibayar")
               : s === "rejected"
-                ? "Ditolak"
-                : "Telah dibayar";
+                ? tr("Ditolak")
+                : tr("Telah dibayar");
   return (
     <section className="flex flex-col gap-3 rounded-card bg-surface px-4 py-4 lg:px-5">
       <div className="flex items-center justify-between gap-2">
         <h2 className="m-0 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">
-          GAJI {BULAN_PENUH[p.month - 1].toUpperCase()} {p.year}
-        </h2>
+          {tr("GAJI {0} {1}", BULAN_PENUH[p.month - 1].toUpperCase(), p.year)}</h2>
         <span className={`text-xs font-bold ${s === "returned" || s === "rejected" ? "text-danger" : n >= 5 ? "text-primary" : "text-warning"}`}>{label}</span>
       </div>
-      <ol className="m-0 grid list-none grid-cols-4 gap-1.5 p-0" aria-label="Langkah proses gaji">
+      <ol className="m-0 grid list-none grid-cols-4 gap-1.5 p-0" aria-label={tr("Langkah proses gaji")}>
         {LANGKAH_GAJI.map((l, i) => {
           const siap = n > i + 1;
           const kini = n === i + 1;
@@ -448,15 +441,15 @@ function KadGaji({ p, boleh }: { p: StatusGaji; boleh: boolean }) {
       {p.gross != null && (
         <div className="grid grid-cols-3 gap-2 text-sm">
           <span className="flex flex-col">
-            <span className="text-xs text-muted">Kasar</span>
+            <span className="text-xs text-muted">{tr("Kasar")}</span>
             <b className="tabular-nums">{ringgit(p.gross)}</b>
           </span>
           <span className="flex flex-col">
-            <span className="text-xs text-muted">Bersih</span>
+            <span className="text-xs text-muted">{tr("Bersih")}</span>
             <b className="tabular-nums">{ringgit(p.net)}</b>
           </span>
           <span className="flex flex-col">
-            <span className="text-xs text-muted">Caruman majikan</span>
+            <span className="text-xs text-muted">{tr("Caruman majikan")}</span>
             <b className="tabular-nums">{ringgit(p.employer)}</b>
           </span>
         </div>
@@ -464,11 +457,10 @@ function KadGaji({ p, boleh }: { p: StatusGaji; boleh: boolean }) {
       {boleh && n < 5 && (
         <div className="flex flex-wrap gap-2">
           <Link href="/pengurusan/gaji" className="flex h-10 items-center rounded-full bg-primary px-4 text-[13px] font-bold text-white!">
-            {n === 1 ? "Mula proses gaji" : "Teruskan"}
+            {n === 1 ? tr("Mula proses gaji") : tr("Teruskan")}
           </Link>
           <Link href="/pengurusan/gaji/pekerja" className="flex h-10 items-center rounded-full border border-line px-4 text-[13px] font-bold">
-            Gaji pekerja
-          </Link>
+            {tr("Gaji pekerja")}</Link>
         </div>
       )}
     </section>

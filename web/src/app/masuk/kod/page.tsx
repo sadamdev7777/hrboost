@@ -1,8 +1,9 @@
+import { tr } from "@/lib/i18n";
 import type { Metadata } from "next";
 import { OtpForm } from "./OtpForm";
 
 export const metadata: Metadata = {
-  title: "Kod OTP · HRBoost.io",
+  title: tr("Kod OTP · HRBoost.io"),
 };
 
 // Rujukan reka bentuk: design/OTP.dc.html

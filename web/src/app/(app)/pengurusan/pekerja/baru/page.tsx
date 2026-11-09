@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -46,11 +47,11 @@ function Borang() {
   async function simpan() {
     setRalat(null);
     const phone = telefonPenuh(f.phone);
-    if (!f.fullName.trim()) return setRalat("Sila isi nama penuh seperti dalam kad pengenalan.");
-    if (!f.preferredName.trim()) return setRalat("Sila isi nama panggilan.");
-    if (!phone) return setRalat("Nombor WhatsApp tidak sah.");
-    if (!/^\d{6}-?\d{2}-?\d{4}$/.test(f.ic.trim())) return setRalat("No. kad pengenalan tidak sah (contoh: 981128-14-5521).");
-    if (f.basic && !(Number(f.basic) >= 0)) return setRalat("Gaji pokok tidak sah.");
+    if (!f.fullName.trim()) return setRalat(tr("Sila isi nama penuh seperti dalam kad pengenalan."));
+    if (!f.preferredName.trim()) return setRalat(tr("Sila isi nama panggilan."));
+    if (!phone) return setRalat(tr("Nombor WhatsApp tidak sah."));
+    if (!/^\d{6}-?\d{2}-?\d{4}$/.test(f.ic.trim())) return setRalat(tr("No. kad pengenalan tidak sah (contoh: 981128-14-5521)."));
+    if (f.basic && !(Number(f.basic) >= 0)) return setRalat(tr("Gaji pokok tidak sah."));
     setBusy(true);
     try {
       const ic = f.ic.replace(/\D/g, "").replace(/^(\d{6})(\d{2})(\d{4})$/, "$1-$2-$3");
@@ -61,9 +62,9 @@ function Borang() {
           sessionStorage.setItem(`hrb_pautan_jemputan:${id}`, `${window.location.origin}/jemputan/${tok}`);
         } catch {}
       }
-      router.replace(`/pengurusan/pekerja/${id}${jemput ? "?jemput=1" : ""}`);
+      router.replace(`/pengurusan/pekerja/${id}${jemput ? tr("?jemput=1") : ""}`);
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
       setBusy(false);
     }
   }
@@ -71,34 +72,33 @@ function Borang() {
   return (
     <Screen>
       <BackHeader
-        title="Tambah pekerja"
+        title={tr("Tambah pekerja")}
         href="/pengurusan/pekerja"
         action={
           <Link href="/mula/import" className="p-3 text-sm font-bold">
-            Import Excel
-          </Link>
+            {tr("Import Excel")}</Link>
         }
       />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
-        <Seksyen>MAKLUMAT PERIBADI</Seksyen>
-        <MedanBorang label="Nama penuh (seperti dalam kad pengenalan)">
-          <input className={inputKecil} value={f.fullName} onChange={(e) => set("fullName", e.target.value)} placeholder="Nama seperti dalam kad pengenalan" />
+        <Seksyen>{tr("MAKLUMAT PERIBADI")}</Seksyen>
+        <MedanBorang label={tr("Nama penuh (seperti dalam kad pengenalan)")}>
+          <input className={inputKecil} value={f.fullName} onChange={(e) => set("fullName", e.target.value)} placeholder={tr("Nama seperti dalam kad pengenalan")} />
         </MedanBorang>
-        <MedanBorang label="Nama panggilan">
-          <input className={inputKecil} value={f.preferredName} onChange={(e) => set("preferredName", e.target.value)} placeholder="Contoh: Nurin" />
+        <MedanBorang label={tr("Nama panggilan")}>
+          <input className={inputKecil} value={f.preferredName} onChange={(e) => set("preferredName", e.target.value)} placeholder={tr("Contoh: Nurin")} />
         </MedanBorang>
         <div className="grid grid-cols-2 gap-2.5">
-          <MedanBorang label="No. WhatsApp">
-            <input className={inputKecil} type="tel" value={f.phone} onChange={(e) => set("phone", e.target.value)} placeholder="01x-xxx xxxx" />
+          <MedanBorang label={tr("No. WhatsApp")}>
+            <input className={inputKecil} type="tel" value={f.phone} onChange={(e) => set("phone", e.target.value)} placeholder={tr("01x-xxx xxxx")} />
           </MedanBorang>
-          <MedanBorang label="No. kad pengenalan">
+          <MedanBorang label={tr("No. kad pengenalan")}>
             <input className={inputKecil} value={f.ic} onChange={(e) => set("ic", e.target.value)} inputMode="numeric" placeholder="981128-14-5521" />
           </MedanBorang>
         </div>
 
-        <Seksyen className="pt-1">PEKERJAAN DI {emp.companyCode}</Seksyen>
+        <Seksyen className="pt-1">{tr("PEKERJAAN DI {0}", emp.companyCode)}</Seksyen>
         <div className="grid grid-cols-2 gap-2.5">
-          <MedanBorang label="Jabatan">
+          <MedanBorang label={tr("Jabatan")}>
             <select className={inputKecil} value={deptId} onChange={(e) => set("departmentId", e.target.value)}>
               {(jab.data ?? []).map((d) => (
                 <option key={d.id} value={d.id}>
@@ -107,44 +107,42 @@ function Borang() {
               ))}
             </select>
           </MedanBorang>
-          <MedanBorang label="Jawatan">
-            <input className={inputKecil} value={f.position} onChange={(e) => set("position", e.target.value)} placeholder="Eksekutif" />
+          <MedanBorang label={tr("Jawatan")}>
+            <input className={inputKecil} value={f.position} onChange={(e) => set("position", e.target.value)} placeholder={tr("Eksekutif")} />
           </MedanBorang>
-          <MedanBorang label="Tarikh mula">
+          <MedanBorang label={tr("Tarikh mula")}>
             <input className={inputKecil} type="date" value={f.joinDate} onChange={(e) => set("joinDate", e.target.value)} />
           </MedanBorang>
-          <MedanBorang label="Jenis">
+          <MedanBorang label={tr("Jenis")}>
             <select className={inputKecil} value={f.type} onChange={(e) => set("type", e.target.value as BorangPekerja["type"])}>
               {JENIS_PEKERJAAN.map((j) => (
                 <option key={j.value} value={j.value}>
-                  {j.label}
+                  {tr(j.label)}
                 </option>
               ))}
             </select>
           </MedanBorang>
-          <MedanBorang label="Percubaan">
+          <MedanBorang label={tr("Percubaan")}>
             <select className={inputKecil} value={f.probationMonths} onChange={(e) => set("probationMonths", Number(e.target.value))}>
-              <option value={3}>3 bulan</option>
-              <option value={6}>6 bulan</option>
-              <option value={0}>Tiada</option>
+              <option value={3}>{tr("3 bulan")}</option>
+              <option value={6}>{tr("6 bulan")}</option>
+              <option value={0}>{tr("Tiada")}</option>
             </select>
           </MedanBorang>
-          <MedanBorang label="Gaji pokok (RM)">
+          <MedanBorang label={tr("Gaji pokok (RM)")}>
             <input className={inputKecil} inputMode="decimal" value={f.basic} onChange={(e) => set("basic", e.target.value.replace(/[^\d.]/g, ""))} placeholder="0.00" />
           </MedanBorang>
         </div>
         <div className="rounded-[14px] bg-surface px-4 py-3 text-[13px] text-[#4A5A57]">
-          <b className="text-ink">Ketua: {ketua?.headName ?? "Belum ditetapkan"}</b> (ketua jabatan {ketua?.name ?? "-"}) · boleh ditukar kemudian
-        </div>
+          <b className="text-ink">{tr("Ketua: {0}", ketua?.headName ?? tr("Belum ditetapkan"))}</b> {" "}{tr("(ketua jabatan {0}) · boleh ditukar kemudian", ketua?.name ?? "-")}</div>
         <label className="flex min-h-11 items-center gap-3 text-sm font-semibold">
           <input type="checkbox" checked={jemput} onChange={(e) => setJemput(e.target.checked)} className="size-5 accent-primary" />
-          Hantar jemputan WhatsApp sekarang
-        </label>
+          {tr("Hantar jemputan WhatsApp sekarang")}</label>
         {ralat && <ErrorBox message={ralat} />}
       </main>
       <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
         <button type="button" onClick={simpan} disabled={busy} className="h-12 w-full rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
-          {busy ? "Menyimpan…" : jemput ? "Simpan & jemput" : "Simpan"}
+          {busy ? tr("Menyimpan…") : jemput ? tr("Simpan & jemput") : tr("Simpan")}
         </button>
       </div>
     </Screen>

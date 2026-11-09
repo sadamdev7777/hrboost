@@ -16,6 +16,8 @@ type Konteks = {
   companyName: string;
   conversationId: string;
   channel: "web" | "whatsapp";
+  /** Bahasa balasan: persons.language (atau bahasa antara muka semasa bagi aplikasi). */
+  bahasa: "en" | "ms";
 };
 
 const hariIni = () => new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kuala_Lumpur" });
@@ -176,7 +178,9 @@ function sistem(k: Konteks): string {
   return [
     `Anda ialah Pembantu AI HRBoost bagi ${k.companyName}. Anda bercakap dengan ${k.nama} melalui ${k.channel === "whatsapp" ? "WhatsApp" : "aplikasi HRBoost"}.`,
     `Tarikh hari ini (waktu Malaysia): ${hariIni()}.`,
-    "Jawab dalam bahasa Melayu rasmi (tiada bahasa pasar, tiada istilah Indonesia), ringkas dan mesra. Gunakan istilah: tuntutan, pekerja, pelulus, pengganti tugas, Kewangan.",
+    k.bahasa === "ms"
+      ? "Jawab dalam bahasa Melayu rasmi (tiada bahasa pasar, tiada istilah Indonesia), ringkas dan mesra. Gunakan istilah: tuntutan, pekerja, pelulus, pengganti tugas, Kewangan."
+      : "Reply in clear, friendly English, concisely. If the employee writes in Bahasa Melayu, reply in formal Bahasa Melayu instead. Data from tools may be in Bahasa Melayu: translate it in your reply.",
     "Anda hanya boleh melihat data pekerja ini sendiri melalui alat yang disediakan. Jangan dedahkan atau meneka data pekerja lain.",
     "Untuk soalan polisi, gunakan cari_polisi dan tetapan_syarikat. Jangan meneka polisi: jika jawapan tiada dalam hasil alat, katakan anda tidak pasti, sarankan bertanya kepada HR, dan panggil catat_soalan_tidak_terjawab.",
     "Sebelum menghantar permohonan atau permintaan bagi pihak pekerja, nyatakan butirannya dan minta pengesahan. Hanya selepas pekerja bersetuju, panggil alat dengan sahkan=true.",
@@ -226,7 +230,10 @@ export async function jawab(k: Konteks, mesej: string): Promise<string> {
     }
     messages.push({ role: "user", content: hasil });
   }
-  if (!balasan) balasan = "Maaf, saya tidak dapat menyelesaikan permintaan ini. Sila cuba lagi atau hubungi HR.";
+  if (!balasan)
+    balasan = k.bahasa === "ms"
+      ? "Maaf, saya tidak dapat menyelesaikan permintaan ini. Sila cuba lagi atau hubungi HR."
+      : "Sorry, I could not complete this request. Please try again or contact HR.";
   await k.sb.from("ai_messages").insert([
     { conversation_id: k.conversationId, role: "user", content: mesej },
     { conversation_id: k.conversationId, role: "assistant", content: balasan },
@@ -236,10 +243,17 @@ export async function jawab(k: Konteks, mesej: string): Promise<string> {
 }
 
 /** Cari / cipta perbualan bagi pekerja + saluran. */
-export async function sediaKonteks(sb: SupabaseClient, personId: string, companyId: string | null, channel: "web" | "whatsapp", conversationId?: string | null): Promise<Konteks> {
+export async function sediaKonteks(
+  sb: SupabaseClient,
+  personId: string,
+  companyId: string | null,
+  channel: "web" | "whatsapp",
+  conversationId?: string | null,
+  bahasa?: string | null,
+): Promise<Konteks> {
   let q = sb
     .from("employments")
-    .select("id, company_id, companies(name, status), persons!employments_person_id_fkey(preferred_name, full_name)")
+    .select("id, company_id, companies(name, status), persons!employments_person_id_fkey(preferred_name, full_name, language)")
     .eq("person_id", personId)
     .in("status", ["probation", "active"]);
   if (companyId) q = q.eq("company_id", companyId);
@@ -270,6 +284,7 @@ export async function sediaKonteks(sb: SupabaseClient, personId: string, company
     companyName: e.companies?.name ?? "",
     conversationId: cid!,
     channel,
+    bahasa: (bahasa ?? e.persons?.language) === "ms" ? "ms" : "en",
   };
 }
 
@@ -277,7 +292,7 @@ export async function sediaKonteks(sb: SupabaseClient, personId: string, company
 export async function drafSurat(sb: SupabaseClient, hrPersonId: string, employmentId: string, jenis: string, nota: string): Promise<string> {
   const { data: e } = await sb
     .from("employments")
-    .select("company_id, person_id, employee_no, join_date, confirm_date, status, employment_type, departments(name), positions(title), companies(name, reg_no), persons!employments_person_id_fkey(full_name, ic_no)")
+    .select("company_id, person_id, employee_no, join_date, confirm_date, status, employment_type, departments(name), positions(title), companies(name, reg_no), persons!employments_person_id_fkey(full_name, ic_no, language)")
     .eq("id", employmentId)
     .maybeSingle();
   // deno-lint-ignore no-explicit-any
@@ -291,7 +306,10 @@ export async function drafSurat(sb: SupabaseClient, hrPersonId: string, employme
     max_tokens: 6000,
     output_config: { effort: "medium" },
     system:
-      "Anda menyediakan draf surat rasmi HR dalam bahasa Melayu rasmi untuk syarikat di Malaysia. Gunakan nama penuh mengikut kad pengenalan. Jangan reka fakta yang tiada dalam data; gunakan [ ] untuk maklumat yang perlu diisi oleh HR. Surat amaran mesti adil, menyatakan fakta dan peluang untuk memberi penjelasan. Keluarkan teks surat sahaja, tanpa markdown.",
+      (x.persons?.language === "ms"
+        ? "Tulis surat dalam bahasa Melayu rasmi. "
+        : "Write the letter in formal English (the employee's chosen language). ") +
+      "Anda menyediakan draf surat rasmi HR untuk syarikat di Malaysia. Gunakan nama penuh mengikut kad pengenalan. Jangan reka fakta yang tiada dalam data; gunakan [ ] untuk maklumat yang perlu diisi oleh HR. Surat amaran mesti adil, menyatakan fakta dan peluang untuk memberi penjelasan. Keluarkan teks surat sahaja, tanpa markdown.",
     messages: [
       {
         role: "user",

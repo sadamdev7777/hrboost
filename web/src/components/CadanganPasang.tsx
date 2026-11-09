@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import { useSkrinLebar } from "@/lib/skrin";
@@ -12,7 +13,7 @@ const noSub = () => () => {};
 
 function boleh(): boolean {
   try {
-    const dipasang = window.matchMedia("(display-mode: standalone)").matches || (navigator as Navigator & { standalone?: boolean }).standalone === true;
+    const dipasang = window.matchMedia(tr("(display-mode: standalone)")).matches || (navigator as Navigator & { standalone?: boolean }).standalone === true;
     if (dipasang) return false;
     if (Number(localStorage.getItem(KUNCI_BIL) ?? 0) < 2) return false;
     const tolak = Number(localStorage.getItem(KUNCI_TOLAK) ?? 0);
@@ -66,11 +67,11 @@ export function CadanganPasang() {
   }
 
   return (
-    <div role="region" aria-label="Pasang HRBoost" className={`fixed inset-x-3 z-30 mx-auto flex max-w-[456px] ${path === "/pengurusan" ? "bottom-[164px]" : "bottom-[92px]"} items-center gap-3 rounded-[16px] bg-ink px-4 py-3 text-white shadow-xl`}>
+    <div role="region" aria-label={tr("Pasang HRBoost")} className={`fixed inset-x-3 z-30 mx-auto flex max-w-[456px] ${path === "/pengurusan" ? "bottom-[164px]" : "bottom-[92px]"} items-center gap-3 rounded-[16px] bg-ink px-4 py-3 text-white shadow-xl`}>
       <span className="flex size-10 shrink-0 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold">HR</span>
       <span className="flex grow flex-col text-[13px] leading-snug">
-        <b className="text-sm">Pasang HRBoost di telefon</b>
-        {ios && !evt ? <span className="opacity-85">Tekan Kongsi, kemudian &ldquo;Tambah ke Skrin Utama&rdquo;.</span> : <span className="opacity-85">Buka dengan sekali tekan, seperti aplikasi.</span>}
+        <b className="text-sm">{tr("Pasang HRBoost di telefon")}</b>
+        {ios && !evt ? <span className="opacity-85">{tr("Tekan Kongsi, kemudian “Tambah ke Skrin Utama”.")}</span> : <span className="opacity-85">{tr("Buka dengan sekali tekan, seperti aplikasi.")}</span>}
       </span>
       {evt && (
         <button
@@ -83,12 +84,10 @@ export function CadanganPasang() {
           }}
           className="h-9 shrink-0 rounded-full bg-white px-3.5 text-[13px] font-bold text-ink"
         >
-          Pasang
-        </button>
+          {tr("Pasang")}</button>
       )}
       <button type="button" onClick={nanti} className="h-9 shrink-0 px-1.5 text-[13px] font-bold text-white/80">
-        Nanti
-      </button>
+        {tr("Nanti")}</button>
     </div>
   );
 }

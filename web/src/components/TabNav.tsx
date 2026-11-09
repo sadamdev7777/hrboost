@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
@@ -94,7 +95,7 @@ export function TukarMod({ className = "" }: { className?: string }) {
       }}
       className={`flex min-h-11 items-center justify-center rounded-[12px] border border-line bg-surface px-3 text-[13px] font-bold text-primary ${className}`}
     >
-      {sasaran === "pekerja" ? "Tukar ke Mod Pekerja" : "Tukar ke Mod HR"}
+      {sasaran === "pekerja" ? tr("Tukar ke Mod Pekerja") : tr("Tukar ke Mod HR")}
     </button>
   );
 }
@@ -124,14 +125,14 @@ export function MenuSisi() {
         className={`flex h-11 items-center gap-3 rounded-[12px] px-3 text-sm ${on ? "bg-[#E3F1EE] font-extrabold text-primary!" : "font-semibold text-ink! hover:bg-[#EEF2F1]"}`}
       >
         <Ikon size={20} />
-        <span className="grow">{n.label}</span>
+        <span className="grow">{tr(n.label)}</span>
         {n.href === "/kelulusan" && (data ?? 0) > 0 && <Lencana n={data ?? 0} />}
       </Link>
     );
   };
 
   return (
-    <aside aria-label="Menu sisi" className="sticky top-0 hidden h-dvh w-[248px] shrink-0 flex-col gap-1 border-r border-line-soft bg-surface px-3 py-5 lg:flex print:hidden!">
+    <aside aria-label={tr("Menu sisi")} className="sticky top-0 hidden h-dvh w-[248px] shrink-0 flex-col gap-1 border-r border-line-soft bg-surface px-3 py-5 lg:flex print:hidden!">
       <div className="flex items-center gap-2.5 px-2 pb-4">
         <span className="flex size-9 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold text-white">HR</span>
         <span className="flex min-w-0 flex-col">
@@ -139,7 +140,7 @@ export function MenuSisi() {
             {me.active?.companyName ?? "HRBoost"}
           </b>
           <span className="text-xs text-muted">
-            {me.active?.companyCode} · {mod === "hr" ? "Mod HR" : "Mod Pekerja"}
+            {me.active?.companyCode} · {mod === "hr" ? tr("Mod HR") : tr("Mod Pekerja")}
           </span>
         </span>
       </div>
@@ -153,13 +154,13 @@ export function MenuSisi() {
             <circle cx="11" cy="11" r="7" />
             <path d="M20 20l-3.5-3.5" />
           </svg>
-          <span className="grow">Cari pekerja…</span>
-          <kbd className="rounded border border-line px-1.5 font-sans text-[11px]">Ctrl K</kbd>
+          <span className="grow">{tr("Cari pekerja…")}</span>
+          <kbd className="rounded border border-line px-1.5 font-sans text-[11px]">{tr("Ctrl K")}</kbd>
         </button>
       )}
-      <nav className="flex flex-col gap-0.5" aria-label="Menu utama">
+      <nav className="flex flex-col gap-0.5" aria-label={tr("Menu utama")}>
         {utama.map(pautan)}
-        {lagi.length > 0 && <span className="px-3 pt-4 pb-1 text-[11px] font-bold tracking-[0.04em] text-muted">PENGURUSAN</span>}
+        {lagi.length > 0 && <span className="px-3 pt-4 pb-1 text-[11px] font-bold tracking-[0.04em] text-muted">{tr("PENGURUSAN")}</span>}
         {lagi.map(pautan)}
       </nav>
       <div className="mt-auto flex flex-col gap-2 border-t border-line-soft pt-3">
@@ -167,8 +168,7 @@ export function MenuSisi() {
         <div className="flex items-center justify-between gap-2 px-2">
           <span className="truncate text-[13px] font-bold">{me.name}</span>
           <button type="button" onClick={() => void getSupabase().auth.signOut()} className="flex min-h-11 items-center text-[13px] font-bold text-danger">
-            Log keluar
-          </button>
+            {tr("Log keluar")}</button>
         </div>
       </div>
     </aside>

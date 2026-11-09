@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe, useMeContext } from "@/lib/me";
@@ -14,9 +15,9 @@ import type { Database } from "@/lib/database.types";
 
 type Role = Database["public"]["Enums"]["app_role"];
 const PERANAN: { role: Role; label: string; sub: string }[] = [
-  { role: "hr", label: "HR", sub: "Menyemak cuti, mengurus pekerja" },
-  { role: "finance", label: "Kewangan", sub: "Meluluskan tuntutan, menyemak gaji" },
-  { role: "ceo", label: "Pengurusan / CEO", sub: "Kelulusan akhir" },
+  { role: "hr", label: "HR", sub: tr("Menyemak cuti, mengurus pekerja") },
+  { role: "finance", label: tr("Kewangan"), sub: tr("Meluluskan tuntutan, menyemak gaji") },
+  { role: "ceo", label: tr("Pengurusan / CEO"), sub: tr("Kelulusan akhir") },
 ];
 
 // Rujukan reka bentuk: design/SyarikatPeranan.dc.html
@@ -63,7 +64,7 @@ function Peranan() {
       must(await getSupabase().rpc("save_workflow", { p_company: cid, p_type: "leave", p_steps: steps as never }));
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
 
@@ -75,7 +76,7 @@ function Peranan() {
       ctx.reload();
       router.push("/mula/jemput");
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
       setBusy(false);
     }
   }
@@ -83,34 +84,33 @@ function Peranan() {
   return (
     <MulaLayout
       n={5}
-      title="Siapa meluluskan apa?"
+      title={tr("Siapa meluluskan apa?")}
       back="/mula/jabatan"
       footer={
         <ButangUtama onClick={simpan} busy={busy}>
-          Simpan &amp; seterusnya
-        </ButangUtama>
+          {tr("Simpan & seterusnya")}</ButangUtama>
       }
     >
-      <span className="text-sm leading-normal text-subtle">Tetapkan peranan. Aliran kelulusan telah disediakan — anda hanya perlu menyemak.</span>
-      <Seksyen>PERANAN</Seksyen>
+      <span className="text-sm leading-normal text-subtle">{tr("Tetapkan peranan. Aliran kelulusan telah disediakan — anda hanya perlu menyemak.")}</span>
+      <Seksyen>{tr("PERANAN")}</Seksyen>
       <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
         {PERANAN.map((r) => {
           const orang = d.data!.ppl.filter((p) => p.roles.includes(r.role));
           return (
             <div key={r.role} className="flex min-h-[52px] items-center gap-2 py-2">
               <span className="flex grow flex-col gap-0.5">
-                <b className="text-sm font-bold">{r.label}</b>
+                <b className="text-sm font-bold">{tr(r.label)}</b>
                 <span className="text-xs text-muted">{r.sub}</span>
               </span>
               <span className="flex flex-wrap justify-end gap-1">
                 {orang.map((p) => (
                   <span key={p.id} className="rounded-full bg-[#E3F1EE] px-2.5 py-1 text-xs font-bold text-primary">
-                    {p.personId === me.personId ? "Anda" : p.name}
+                    {p.personId === me.personId ? tr("Anda") : p.name}
                   </span>
                 ))}
-                {orang.length === 0 && <span className="text-xs text-warning">Belum ditetapkan</span>}
+                {orang.length === 0 && <span className="text-xs text-warning">{tr("Belum ditetapkan")}</span>}
               </span>
-              <button type="button" aria-label={`Tambah ${r.label}`} onClick={() => setTambah(r.role)} className="flex size-10 shrink-0 items-center justify-center rounded-full border border-line text-lg font-bold text-primary">
+              <button type="button" aria-label={tr("Tambah {0}", r.label)} onClick={() => setTambah(r.role)} className="flex size-10 shrink-0 items-center justify-center rounded-full border border-line text-lg font-bold text-primary">
                 +
               </button>
             </div>
@@ -118,24 +118,24 @@ function Peranan() {
         })}
       </div>
 
-      <Seksyen className="pt-1">ALIRAN KELULUSAN</Seksyen>
+      <Seksyen className="pt-1">{tr("ALIRAN KELULUSAN")}</Seksyen>
       <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
         <div className="flex min-h-12 items-center gap-2">
-          <span className="w-[90px] shrink-0 font-bold">Cuti</span>
-          <span className="grow text-[13px] text-[#4A5A57]">Ketua → HR{ceo ? " → CEO" : ""}</span>
-          <Suis on={ceo} label={ceo ? "Buang peringkat CEO untuk cuti" : "Tambah peringkat CEO untuk cuti"} onChange={togolCeo} />
+          <span className="w-[90px] shrink-0 font-bold">{tr("Cuti")}</span>
+          <span className="grow text-[13px] text-[#4A5A57]">{tr("Ketua → HR{0}", ceo ? tr(" → CEO") : "")}</span>
+          <Suis on={ceo} label={ceo ? tr("Buang peringkat CEO untuk cuti") : tr("Tambah peringkat CEO untuk cuti")} onChange={togolCeo} />
         </div>
         <div className="flex min-h-12 items-center gap-2">
-          <span className="w-[90px] shrink-0 font-bold">Tuntutan</span>
-          <span className="grow text-[13px] text-[#4A5A57]">Ketua → Kewangan → CEO jika &gt; RM1,000</span>
+          <span className="w-[90px] shrink-0 font-bold">{tr("Tuntutan")}</span>
+          <span className="grow text-[13px] text-[#4A5A57]">{tr("Ketua → Kewangan → CEO jika > RM1,000")}</span>
         </div>
         <div className="flex min-h-12 items-center gap-2">
-          <span className="w-[90px] shrink-0 font-bold">Betul masa &amp; Gaji</span>
-          <span className="grow text-[13px] text-[#4A5A57]">Ketua · Kewangan → CEO</span>
+          <span className="w-[90px] shrink-0 font-bold">{tr("Betul masa & Gaji")}</span>
+          <span className="grow text-[13px] text-[#4A5A57]">{tr("Ketua · Kewangan → CEO")}</span>
         </div>
       </div>
-      {!finance && <span className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] text-warning">Tetapkan sekurang-kurangnya seorang Kewangan untuk meluluskan tuntutan dan gaji.</span>}
-      <span className="text-xs text-muted">Cuti melalui {ceo ? 3 : 2} peringkat dan selesai pada hari yang sama. Semua tetapan boleh diubah kemudian di Tetapan.</span>
+      {!finance && <span className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] text-warning">{tr("Tetapkan sekurang-kurangnya seorang Kewangan untuk meluluskan tuntutan dan gaji.")}</span>}
+      <span className="text-xs text-muted">{tr("Cuti melalui {0} peringkat dan selesai pada hari yang sama. Semua tetapan boleh diubah kemudian di Tetapan.", ceo ? 3 : 2)}</span>
       {ralat && <ErrorBox message={ralat} />}
       {tambah && (
         <TambahPeranan
@@ -161,15 +161,15 @@ function TambahPeranan({ cid, role, ppl, onClose, onDone }: { cid: string; role:
       must(await getSupabase().from("user_roles").insert({ company_id: cid, person_id: orang, role }));
       onDone();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
   return (
-    <Lembaran title={`Tambah ${PERANAN.find((r) => r.role === role)?.label}`} onClose={onClose}>
+    <Lembaran title={tr("Tambah {0}", PERANAN.find((r) => r.role === role)?.label)} onClose={onClose}>
       {ppl.length === 0 ? (
-        <span className="text-sm text-muted">Semua pekerja sudah mempunyai peranan ini.</span>
+        <span className="text-sm text-muted">{tr("Semua pekerja sudah mempunyai peranan ini.")}</span>
       ) : (
-        <MedanBorang label="Pekerja">
+        <MedanBorang label={tr("Pekerja")}>
           <select className={inputKecil} value={orang} onChange={(e) => setOrang(e.target.value)}>
             {ppl.map((p) => (
               <option key={p.personId} value={p.personId}>
@@ -181,8 +181,7 @@ function TambahPeranan({ cid, role, ppl, onClose, onDone }: { cid: string; role:
       )}
       {ralat && <ErrorBox message={ralat} />}
       <ButangUtama onClick={simpan} disabled={!ppl.length}>
-        Tambah
-      </ButangUtama>
+        {tr("Tambah")}</ButangUtama>
     </Lembaran>
   );
 }

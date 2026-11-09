@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -44,7 +45,7 @@ function Jabatan() {
       await selesaiLangkah(cid, "departments");
       router.push("/mula/peranan");
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
       setBusy(false);
     }
   }
@@ -52,30 +53,27 @@ function Jabatan() {
   return (
     <MulaLayout
       n={4}
-      title="Jabatan & ketua"
+      title={tr("Jabatan & ketua")}
       back="/mula/import"
       footer={
         tanpaKetua.length ? (
           <button type="button" disabled className="h-12 w-full rounded-button bg-[#DCE3E1] text-base font-extrabold text-[#4A5A57]">
-            {tanpaKetua.length} jabatan belum mempunyai ketua
-          </button>
+            {tr("{0} jabatan belum mempunyai ketua", tanpaKetua.length)}</button>
         ) : (
           <ButangUtama onClick={simpan} busy={busy}>
-            Simpan &amp; seterusnya
-          </ButangUtama>
+            {tr("Simpan & seterusnya")}</ButangUtama>
         )
       }
     >
-      <span className="text-sm leading-normal text-subtle">Dicipta daripada fail Excel anda. Ketua jabatan akan menjadi pelulus pertama bagi pasukan mereka.</span>
+      <span className="text-sm leading-normal text-subtle">{tr("Dicipta daripada fail Excel anda. Ketua jabatan akan menjadi pelulus pertama bagi pasukan mereka.")}</span>
       <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-        {d.data.jab.length === 0 && <span className="py-3 text-sm text-muted">Belum ada jabatan.</span>}
+        {d.data.jab.length === 0 && <span className="py-3 text-sm text-muted">{tr("Belum ada jabatan.")}</span>}
         {d.data.jab.map((j) => (
           <div key={j.id} className="flex min-h-[52px] items-center gap-3 py-2">
             <span className="flex grow flex-col gap-0.5">
               <b className="text-sm font-bold">{j.name}</b>
               <span className={`text-xs ${!j.headPersonId && kira(j.id) ? "text-warning" : "text-muted"}`}>
-                {kira(j.id)} pekerja{!j.headPersonId && kira(j.id) ? " · tiada ketua" : ""}
-              </span>
+                {tr("{0} pekerja{1}", kira(j.id), !j.headPersonId && kira(j.id) ? tr(" · tiada ketua") : "")}</span>
             </span>
             <button
               type="button"
@@ -85,19 +83,18 @@ function Jabatan() {
               {j.headPersonId ? (
                 <>
                   <span className="flex size-8 items-center justify-center rounded-full bg-primary text-xs text-white">{inisial(j.headName ?? "")}</span>
-                  {j.headPersonId === me.personId ? "Anda" : j.headName}
+                  {j.headPersonId === me.personId ? tr("Anda") : j.headName}
                 </>
               ) : (
-                "Pilih ketua"
+                tr("Pilih ketua")
               )}
             </button>
           </div>
         ))}
       </div>
       <button type="button" onClick={() => setBaru(true)} className="h-12 rounded-[14px] border-2 border-dashed border-[#C9D3D1] text-sm font-bold text-primary">
-        + Tambah jabatan
-      </button>
-      <span className="text-xs leading-normal text-muted">Apabila ketua jabatan sendiri memohon cuti, permohonan akan terus dihantar ke peringkat seterusnya.</span>
+        {tr("+ Tambah jabatan")}</button>
+      <span className="text-xs leading-normal text-muted">{tr("Apabila ketua jabatan sendiri memohon cuti, permohonan akan terus dihantar ke peringkat seterusnya.")}</span>
       {ralat && <ErrorBox message={ralat} />}
       {pilih && (
         <PilihKetua

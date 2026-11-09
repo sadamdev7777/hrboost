@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { IconBack } from "./icons";
@@ -26,10 +27,10 @@ export function OnboardingLayout({
   return (
     <Screen lebar="sederhana">
       <header className="flex items-center gap-2 px-3 pt-4 pb-1">
-        <Link href={back} aria-label="Kembali" className="flex size-11 items-center justify-center rounded-full text-ink!">
+        <Link href={back} aria-label={tr("Kembali")} className="flex size-11 items-center justify-center rounded-full text-ink!">
           <IconBack />
         </Link>
-        <span className="text-[13px] font-bold text-subtle">Langkah {step} daripada 8</span>
+        <span className="text-[13px] font-bold text-subtle">{tr("Langkah {0} daripada 8", step)}</span>
       </header>
       <div className="grid grid-cols-8 gap-1 px-4 pb-2" aria-hidden="true">
         {Array.from({ length: 8 }, (_, i) => (
@@ -50,7 +51,7 @@ export function OnboardingLayout({
 }
 
 export function NextButton({
-  children = "Simpan & seterusnya",
+  children = tr("Simpan & seterusnya"),
   busy,
   disabled,
   onClick,
@@ -69,7 +70,7 @@ export function NextButton({
       disabled={busy || disabled}
       className="flex h-12 w-full items-center justify-center rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover disabled:bg-[#DCE3E1] disabled:text-subtle"
     >
-      {busy ? "Menyimpan…" : children}
+      {busy ? tr("Menyimpan…") : children}
     </button>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
@@ -20,32 +21,32 @@ type Peringkat = {
 };
 
 const JENIS: { id: ReqType; label: string }[] = [
-  { id: "leave", label: "Cuti" },
-  { id: "claim", label: "Tuntutan" },
-  { id: "attendance_correction", label: "Kehadiran" },
-  { id: "payroll_run", label: "Gaji" },
-  { id: "salary_advance", label: "Pendahuluan gaji" },
-  { id: "overtime", label: "Lebih masa" },
+  { id: "leave", label: tr("Cuti") },
+  { id: "claim", label: tr("Tuntutan") },
+  { id: "attendance_correction", label: tr("Kehadiran") },
+  { id: "payroll_run", label: tr("Gaji") },
+  { id: "salary_advance", label: tr("Pendahuluan gaji") },
+  { id: "overtime", label: tr("Lebih masa") },
 ];
-const PERANAN: Record<string, string> = { hr: "HR", finance: "Kewangan", ceo: "CEO", admin: "Pentadbir" };
+const PERANAN: Record<string, string> = { hr: "HR", finance: tr("Kewangan"), ceo: "CEO", admin: tr("Pentadbir") };
 
 function keterangan(s: Peringkat, nama: Record<string, string>, jenis: ReqType): string {
   const siapa =
     s.approver === "dept_head"
-      ? "Dikesan secara automatik"
+      ? tr("Dikesan secara automatik")
       : s.approver === "direct_manager"
-        ? "Pengurus terus pemohon"
+        ? tr("Pengurus terus pemohon")
         : s.approver === "role"
-          ? `Peranan ${PERANAN[s.approver_role ?? ""] ?? s.approver_role} · kelulusan seorang sudah memadai`
-          : `Ditetapkan: ${nama[s.approver_person_id ?? ""] ?? "pekerja"}`;
-  const langkau = s.skip_if_requester ? " · dilangkau jika pelulus sendiri yang memohon" : "";
+          ? tr("Peranan {0} · kelulusan seorang sudah memadai", PERANAN[s.approver_role ?? ""] ?? s.approver_role)
+          : tr("Ditetapkan: {0}", nama[s.approver_person_id ?? ""] ?? "pekerja");
+  const langkau = s.skip_if_requester ? tr(" · dilangkau jika pelulus sendiri yang memohon") : "";
   const syarat =
     s.condition?.field === "amount" && s.condition.op === ">"
-      ? ` · hanya jika melebihi RM${Number(s.condition.value).toLocaleString("en-MY")}`
+      ? tr(" · hanya jika melebihi RM{0}", Number(s.condition.value).toLocaleString("en-MY"))
       : s.condition?.field === "days" && s.condition.op === ">"
-        ? ` · hanya jika melebihi ${s.condition.value} hari`
+        ? tr(" · hanya jika melebihi {0} hari", s.condition.value)
         : jenis === "leave" && !s.condition?.field
-          ? " · semua permohonan"
+          ? tr(" · semua permohonan")
           : "";
   return siapa + syarat + (s.approver === "dept_head" ? langkau : "");
 }
@@ -103,14 +104,14 @@ function Aliran() {
       setOk(true);
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
     setBusy(false);
   }
 
   return (
     <Screen lebar="sederhana">
-      <BackHeader title="Aliran Kelulusan" href="/pengurusan/tetapan" />
+      <BackHeader title={tr("Aliran Kelulusan")} href="/pengurusan/tetapan" />
       <div role="tablist" className="mx-5 grid grid-cols-4 gap-1 rounded-[14px] bg-[#E4EAE8] p-1">
         {JENIS.map((j) => (
           <button
@@ -124,7 +125,7 @@ function Aliran() {
             }}
             className={`h-10 rounded-[10px] text-sm ${jenis === j.id ? "bg-surface font-extrabold" : "font-semibold text-[#4A5A57]"}`}
           >
-            {j.label}
+            {tr(j.label)}
           </button>
         ))}
       </div>
@@ -138,7 +139,7 @@ function Aliran() {
               <b className="text-sm font-bold">{namaPeringkat(s.name)}</b>
               <span className="text-xs leading-snug text-muted">{keterangan(s, nama, jenis)}</span>
             </div>
-            <button type="button" aria-label={`Ubah peringkat ${i + 1}`} onClick={() => setUbah(i)} className="flex size-11 shrink-0 items-center justify-center rounded-full text-[#4A5A57]">
+            <button type="button" aria-label={tr("Ubah peringkat {0}", i + 1)} onClick={() => setUbah(i)} className="flex size-11 shrink-0 items-center justify-center rounded-full text-[#4A5A57]">
               <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
               </svg>
@@ -154,39 +155,36 @@ function Aliran() {
             }}
             className="h-12 rounded-[14px] border-2 border-dashed border-[#C9D3D1] text-sm font-bold text-primary"
           >
-            + Tambah peringkat
-          </button>
+            {tr("+ Tambah peringkat")}</button>
         )}
 
         {d.data?.w && (
           <div className="mt-1 flex flex-col rounded-card bg-surface px-4 py-1 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
             <div className="flex flex-col gap-0.5 py-3">
-              <b className="font-bold">{d.data.w.sla === "none" ? "Tiada tempoh sasaran" : "Selesai hari yang sama"}</b>
+              <b className="font-bold">{d.data.w.sla === "none" ? tr("Tiada tempoh sasaran") : tr("Selesai hari yang sama")}</b>
               <span className="text-xs text-muted">
-                Permohonan selepas {d.data.w.cutoff_time.slice(0, 5) === "17:00" ? "5:00 ptg" : d.data.w.cutoff_time.slice(0, 5)} dikira pada hari bekerja berikutnya
-              </span>
+                {tr("Permohonan selepas {0} dikira pada hari bekerja berikutnya", d.data.w.cutoff_time.slice(0, 5) === "17:00" ? tr("5:00 ptg") : d.data.w.cutoff_time.slice(0, 5))}</span>
             </div>
             <div className="flex items-center justify-between gap-2 py-3">
-              <b className="font-bold">Peringatan kepada pelulus</b>
-              <span className="text-muted">setiap {d.data.w.reminder_every_hours} jam</span>
+              <b className="font-bold">{tr("Peringatan kepada pelulus")}</b>
+              <span className="text-muted">{tr("setiap {0} jam", d.data.w.reminder_every_hours)}</span>
             </div>
             {jenis === "leave" && d.data.kecuali.length > 0 && (
               <div className="flex items-center justify-between gap-2 py-3">
-                <b className="font-bold">Dikecualikan daripada tempoh sasaran</b>
+                <b className="font-bold">{tr("Dikecualikan daripada tempoh sasaran")}</b>
                 <span className="text-right text-muted">{d.data.kecuali.join(", ")}</span>
               </div>
             )}
           </div>
         )}
-        <span className="text-xs text-muted">Tiada kelulusan automatik. Perubahan terpakai kepada permohonan baharu dan peringkat seterusnya bagi permohonan yang sedang berjalan.</span>
+        <span className="text-xs text-muted">{tr("Tiada kelulusan automatik. Perubahan terpakai kepada permohonan baharu dan peringkat seterusnya bagi permohonan yang sedang berjalan.")}</span>
         {ralat && <ErrorBox message={ralat} />}
-        {ok && <span className="text-sm font-semibold text-success">Aliran kelulusan disimpan.</span>}
+        {ok && <span className="text-sm font-semibold text-success">{tr("Aliran kelulusan disimpan.")}</span>}
       </main>
       {draf?.jenis === jenis && (
         <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <ButangUtama onClick={simpan} busy={busy}>
-            Simpan aliran
-          </ButangUtama>
+            {tr("Simpan aliran")}</ButangUtama>
         </div>
       )}
       {ubah !== null && steps[ubah] && (
@@ -244,14 +242,14 @@ function UbahPeringkat({
   onUp?: () => void;
 }) {
   const [f, setF] = useState<Peringkat>(s);
-  const pilihan = f.approver === "role" ? `role:${f.approver_role}` : f.approver;
+  const pilihan = f.approver === "role" ? tr("role:{0}", f.approver_role) : f.approver;
   const medanSyarat = jenis === "claim" || jenis === "payroll_run" ? "amount" : jenis === "leave" ? "days" : null;
   return (
-    <Lembaran title={`Peringkat ${n}`} onClose={onClose}>
-      <MedanBorang label="Nama peringkat">
+    <Lembaran title={tr("Peringkat {0}", n)} onClose={onClose}>
+      <MedanBorang label={tr("Nama peringkat")}>
         <input className={inputKecil} value={namaPeringkat(f.name)} onChange={(e) => setF({ ...f, name: e.target.value })} />
       </MedanBorang>
-      <MedanBorang label="Pelulus">
+      <MedanBorang label={tr("Pelulus")}>
         <select
           className={inputKecil}
           value={pilihan}
@@ -261,16 +259,16 @@ function UbahPeringkat({
             else setF({ ...f, approver: v as Peringkat["approver"], approver_role: null, approver_person_id: v === "specific_person" ? (ppl[0]?.person_id ?? null) : null });
           }}
         >
-          <option value="dept_head">Ketua Jabatan pemohon</option>
-          <option value="direct_manager">Pengurus terus pemohon</option>
-          <option value="role:hr">Peranan HR</option>
-          <option value="role:finance">Peranan Kewangan</option>
-          <option value="role:ceo">Peranan CEO</option>
-          <option value="specific_person">Pekerja tertentu</option>
+          <option value="dept_head">{tr("Ketua Jabatan pemohon")}</option>
+          <option value="direct_manager">{tr("Pengurus terus pemohon")}</option>
+          <option value="role:hr">{tr("Peranan HR")}</option>
+          <option value="role:finance">{tr("Peranan Kewangan")}</option>
+          <option value="role:ceo">{tr("Peranan CEO")}</option>
+          <option value="specific_person">{tr("Pekerja tertentu")}</option>
         </select>
       </MedanBorang>
       {f.approver === "specific_person" && (
-        <MedanBorang label="Pekerja">
+        <MedanBorang label={tr("Pekerja")}>
           <select className={inputKecil} value={f.approver_person_id ?? ""} onChange={(e) => setF({ ...f, approver_person_id: e.target.value })}>
             {ppl.map((p) => (
               <option key={p.person_id} value={p.person_id}>
@@ -281,7 +279,7 @@ function UbahPeringkat({
         </MedanBorang>
       )}
       {medanSyarat && (
-        <MedanBorang label={medanSyarat === "amount" ? "Hanya jika jumlah melebihi (RM)" : "Hanya jika tempoh melebihi (hari)"} nota="Kosong = semua permohonan">
+        <MedanBorang label={medanSyarat === "amount" ? tr("Hanya jika jumlah melebihi (RM)") : tr("Hanya jika tempoh melebihi (hari)")} nota={tr("Kosong = semua permohonan")}>
           <input
             className={inputKecil}
             inputMode="decimal"
@@ -295,19 +293,16 @@ function UbahPeringkat({
       )}
       <label className="flex min-h-11 items-center gap-3 text-sm font-semibold">
         <input type="checkbox" className="size-5 accent-primary" checked={f.skip_if_requester} onChange={(e) => setF({ ...f, skip_if_requester: e.target.checked })} />
-        Langkau jika pelulus sendiri yang memohon
-      </label>
-      <ButangUtama onClick={() => onSave(f)}>Guna</ButangUtama>
+        {tr("Langkau jika pelulus sendiri yang memohon")}</label>
+      <ButangUtama onClick={() => onSave(f)}>{tr("Guna")}</ButangUtama>
       <div className="grid grid-cols-2 gap-2">
         {onUp && (
           <button type="button" onClick={onUp} className="h-11 rounded-[12px] border border-line text-sm font-bold">
-            Naikkan ke atas
-          </button>
+            {tr("Naikkan ke atas")}</button>
         )}
         {onDelete && (
           <button type="button" onClick={onDelete} className="h-11 rounded-[12px] border border-danger text-sm font-bold text-danger">
-            Buang peringkat
-          </button>
+            {tr("Buang peringkat")}</button>
         )}
       </div>
     </Lembaran>

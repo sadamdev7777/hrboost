@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n";
 import type { MetadataRoute } from "next";
 
 // PWA (CLAUDE.md §2): boleh dipasang di skrin utama telefon.
@@ -5,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "HRBoost.io",
     short_name: "HRBoost",
-    description: "Sistem HR percuma untuk syarikat di Malaysia, terus melalui WhatsApp.",
+    description: tr("Sistem HR percuma untuk syarikat di Malaysia, terus melalui WhatsApp."),
     lang: "ms",
     start_url: "/utama",
     scope: "/",

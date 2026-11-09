@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useMe, type Me } from "@/lib/me";
 import { useData } from "@/lib/useData";
@@ -51,22 +52,21 @@ function StaffUtama({ me }: { me: Me }) {
       {emp && <OrientasiBanner employmentId={emp.id} />}
       {emp && <KadPengumuman companyId={emp.companyId} />}
 
-      {!emp && <ErrorBox message="Tiada pekerjaan aktif ditemui untuk akaun ini. Sila hubungi HR." />}
+      {!emp && <ErrorBox message={tr("Tiada pekerjaan aktif ditemui untuk akaun ini. Sila hubungi HR.")} />}
 
       <div className="flex flex-col gap-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
         <div className="contents lg:flex lg:flex-col lg:gap-5">
           <section className="flex flex-col gap-3 rounded-[20px] bg-primary p-5 text-white">
             <div className="flex items-start justify-between">
               <div className="flex flex-col gap-1">
-                <span className="text-[13px] opacity-90">Baki cuti tahunan {year}</span>
+                <span className="text-[13px] opacity-90">{tr("Baki cuti tahunan {0}", year)}</span>
                 <span className="text-[40px] leading-none font-extrabold">
                   {al ? hari(al.available) : "–"} <span className="text-lg font-semibold">hari</span>
                 </span>
               </div>
               {al && al.pending > 0 && (
                 <span className="rounded-xl bg-white/16 px-2.5 py-1.5 text-xs font-semibold">
-                  {hari(al.pending)} hari menunggu
-                </span>
+                  {tr("{0} hari menunggu", hari(al.pending))}</span>
               )}
             </div>
             <div className="flex h-2 overflow-hidden rounded bg-white/22" aria-hidden="true">
@@ -74,15 +74,15 @@ function StaffUtama({ me }: { me: Me }) {
               <div className="bg-[#9ED9CE]" style={{ width: `${pendPct}%` }} />
             </div>
             <span className="text-[13px] opacity-90">
-              {al ? `Kelayakan ${hari(al.entitled)} hari` : "Memuatkan baki…"}
-              {mc ? ` · baki MC ${hari(mc.available)} hari` : ""}
+              {al ? tr("Kelayakan {0} hari", hari(al.entitled)) : tr("Memuatkan baki…")}
+              {mc ? tr(" · baki MC {0} hari", hari(mc.available)) : ""}
             </span>
           </section>
 
           <div className="grid grid-cols-3 gap-2.5">
-            <QuickAction href="/mohon/cuti" label="Mohon Cuti" icon={<IconCalendar size={22} />} />
-            <QuickAction href="/tuntutan/baru" label="Buat Tuntutan" icon={<IconReceipt size={22} />} />
-            <QuickAction href="/kehadiran/betulkan" label="Betulkan Masa" icon={<IconClock size={22} />} />
+            <QuickAction href="/mohon/cuti" label={tr("Mohon Cuti")} icon={<IconCalendar size={22} />} />
+            <QuickAction href="/tuntutan/baru" label={tr("Buat Tuntutan")} icon={<IconReceipt size={22} />} />
+            <QuickAction href="/kehadiran/betulkan" label={tr("Betulkan Masa")} icon={<IconClock size={22} />} />
           </div>
           {cutiUmum.data && (
             <div className="flex items-center gap-3 rounded-card bg-surface px-4 py-3 text-sm">
@@ -90,7 +90,7 @@ function StaffUtama({ me }: { me: Me }) {
                 <IconCalendar size={18} />
               </span>
               <span className="flex grow flex-col">
-                <span className="text-xs text-muted">Cuti umum seterusnya</span>
+                <span className="text-xs text-muted">{tr("Cuti umum seterusnya")}</span>
                 <b className="font-bold">{cutiUmum.data.name}</b>
               </span>
               <span className="text-[13px] font-semibold text-subtle">{hariTarikh(cutiUmum.data.holiday_date)}</span>
@@ -99,8 +99,8 @@ function StaffUtama({ me }: { me: Me }) {
           {emp && sambung.data === true && (
             <section className="order-2 flex flex-col gap-3 rounded-card bg-surface px-4 py-3 lg:order-none">
               <div className="flex items-center justify-between">
-                <h2 className="m-0 text-base font-extrabold">Kehadiran minggu ini</h2>
-                <span className="text-xs text-muted">Waktu masuk {emp.workStart.replace(/^0/, "")}</span>
+                <h2 className="m-0 text-base font-extrabold">{tr("Kehadiran minggu ini")}</h2>
+                <span className="text-xs text-muted">{tr("Waktu masuk {0}", emp.workStart.replace(/^0/, ""))}</span>
               </div>
               <div className="grid grid-cols-5 gap-1.5">
                 {(hadir.data ?? []).map((d) => {
@@ -126,14 +126,13 @@ function StaffUtama({ me }: { me: Me }) {
         </div>
           <section className="order-1 flex flex-col gap-2.5 lg:order-none">
             <div className="flex items-center justify-between">
-              <h2 className="m-0 text-base font-extrabold">Permohonan saya</h2>
+              <h2 className="m-0 text-base font-extrabold">{tr("Permohonan saya")}</h2>
               <Link href="/permohonan" className="text-[13px] font-bold">
-                Lihat semua
-              </Link>
+                {tr("Lihat semua")}</Link>
             </div>
             {mohon.error && <ErrorBox message={mohon.error} />}
             {mohon.data?.length === 0 && (
-              <div className="rounded-card bg-surface px-4 py-3 text-[13px] text-muted">Tiada permohonan lagi.</div>
+              <div className="rounded-card bg-surface px-4 py-3 text-[13px] text-muted">{tr("Tiada permohonan lagi.")}</div>
             )}
             {mohon.data?.map((p) => {
               const v = paparPermohonan(p);

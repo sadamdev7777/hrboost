@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { BackHeader, ErrorBox, Loading } from "./ui";
 import { SlipGaji } from "./SlipGaji";
 import type { Slip } from "@/lib/gaji";
@@ -10,7 +11,7 @@ export function SlipGajiCetak({ d, back }: { d: { data: Slip | null; error: stri
     <div className="min-h-dvh bg-page print:bg-white">
       <style>{`@media print { @page { size: A4; margin: 12mm } .no-print { display: none !important } .slip { padding: 0 !important; max-width: none !important } }`}</style>
       <div className="no-print mx-auto max-w-[794px]">
-        <BackHeader title="Slip gaji" href={back} />
+        <BackHeader title={tr("Slip gaji")} href={back} />
       </div>
       {d.error && (
         <div className="px-4">
@@ -25,8 +26,7 @@ export function SlipGajiCetak({ d, back }: { d: { data: Slip | null; error: stri
           </div>
           <div className="no-print fixed inset-x-0 bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
             <button type="button" onClick={() => window.print()} className="mx-auto block h-12 w-full max-w-[440px] rounded-button bg-primary text-base font-extrabold text-white">
-              Simpan sebagai PDF / Cetak
-            </button>
+              {tr("Simpan sebagai PDF / Cetak")}</button>
           </div>
         </>
       )}

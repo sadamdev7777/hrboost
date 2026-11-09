@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
@@ -7,12 +8,12 @@ import { getSupabase } from "@/lib/supabase";
 import { Loading } from "@/components/ui";
 
 const MENU = [
-  { href: "/admin", label: "Ringkasan" },
-  { href: "/admin/syarikat", label: "Syarikat" },
-  { href: "/admin/pengguna", label: "Pengguna" },
-  { href: "/admin/akses", label: "Permohonan akses" },
-  { href: "/admin/log", label: "Log audit" },
-  { href: "/admin/tetapan", label: "Tetapan platform" },
+  { href: "/admin", label: tr("Ringkasan") },
+  { href: "/admin/syarikat", label: tr("Syarikat") },
+  { href: "/admin/pengguna", label: tr("Pengguna") },
+  { href: "/admin/akses", label: tr("Permohonan akses") },
+  { href: "/admin/log", label: tr("Log audit") },
+  { href: "/admin/tetapan", label: tr("Tetapan platform") },
 ];
 
 type Keadaan = "loading" | "keluar" | "bukan" | "ok";
@@ -55,22 +56,21 @@ export function AdminShell({ children }: { children: ReactNode }) {
   if (k === "bukan")
     return (
       <div className="mx-auto max-w-[480px] p-8">
-        <h1 className="text-2xl font-extrabold">Tiada akses</h1>
-        <p className="text-subtle">Halaman ini hanya untuk Pentadbir Platform HRBoost.</p>
+        <h1 className="text-2xl font-extrabold">{tr("Tiada akses")}</h1>
+        <p className="text-subtle">{tr("Halaman ini hanya untuk Pentadbir Platform HRBoost.")}</p>
         <Link href="/utama" className="font-bold">
-          Kembali ke aplikasi
-        </Link>
+          {tr("Kembali ke aplikasi")}</Link>
       </div>
     );
 
   return (
     <div className="flex min-h-dvh flex-col bg-page text-ink md:flex-row">
-      <nav aria-label="Menu pentadbir platform" className="flex shrink-0 flex-col gap-1 bg-surface p-4 md:min-h-dvh md:w-[240px] md:border-r md:border-line-soft">
+      <nav aria-label={tr("Menu pentadbir platform")} className="flex shrink-0 flex-col gap-1 bg-surface p-4 md:min-h-dvh md:w-[240px] md:border-r md:border-line-soft">
         <div className="mb-4 flex items-center gap-2 px-2">
           <span className="flex size-9 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold text-white">HR</span>
           <span className="flex flex-col">
             <b className="text-[15px] font-extrabold">HRBoost.io</b>
-            <span className="text-xs text-muted">Pentadbir Platform</span>
+            <span className="text-xs text-muted">{tr("Pentadbir Platform")}</span>
           </span>
         </div>
         <div className="flex gap-1 overflow-x-auto md:flex-col">
@@ -82,7 +82,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 href={m.href}
                 className={`flex min-h-11 shrink-0 items-center justify-between gap-2 rounded-[10px] px-3 text-sm font-bold ${on ? "bg-[#E3F1EE] text-primary!" : "text-[#4A5A57]!"}`}
               >
-                {m.label}
+                {tr(m.label)}
                 {m.href === "/admin/akses" && pending > 0 && <span className="rounded-full bg-warning px-2 text-xs text-white">{pending}</span>}
               </Link>
             );
@@ -97,8 +97,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           }}
           className="mt-2 hidden min-h-11 rounded-[10px] px-3 text-left text-sm font-bold text-danger md:block"
         >
-          Log keluar
-        </button>
+          {tr("Log keluar")}</button>
       </nav>
       <main className="flex min-w-0 grow flex-col gap-5 p-5 md:p-8">{children}</main>
     </div>

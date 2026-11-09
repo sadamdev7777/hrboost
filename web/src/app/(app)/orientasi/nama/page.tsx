@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe, useMeContext } from "@/lib/me";
@@ -35,14 +36,13 @@ export default function OrientasiNamaPage() {
     <OnboardingLayout
       step={2}
       back="/orientasi"
-      title="Nama anda"
-      sub="Nama penuh untuk dokumen rasmi. Nama panggilan untuk semua tempat lain."
+      title={tr("Nama anda")}
+      sub={tr("Nama penuh untuk dokumen rasmi. Nama panggilan untuk semua tempat lain.")}
       error={error}
       footer={<NextButton busy={busy} disabled={!full.trim() || !nick.trim()} onClick={simpan} />}
     >
       <label className="flex flex-col gap-1.5 text-sm font-bold">
-        Nama penuh (seperti dalam kad pengenalan)
-        <input
+        {tr("Nama penuh (seperti dalam kad pengenalan)")}<input
           type="text"
           value={full}
           onChange={(e) => setFull(e.target.value)}
@@ -50,29 +50,27 @@ export default function OrientasiNamaPage() {
           className="h-[50px] rounded-xl border border-line bg-surface px-3.5 text-sm font-bold tracking-[0.01em] text-ink uppercase"
         />
         <span className="text-xs font-medium text-muted">
-          Untuk slip gaji, Borang EA, KWSP dan surat rasmi. Mesti sama seperti dalam kad pengenalan.
-        </span>
+          {tr("Untuk slip gaji, Borang EA, KWSP dan surat rasmi. Mesti sama seperti dalam kad pengenalan.")}</span>
       </label>
 
       <label className="flex flex-col gap-1.5 text-sm font-bold">
-        Nama panggilan
-        <input
+        {tr("Nama panggilan")}<input
           type="text"
           value={nick}
           onChange={(e) => setNick(e.target.value)}
           autoComplete="nickname"
           className="h-12 rounded-xl border-[1.5px] border-primary bg-surface px-3.5 text-lg font-extrabold text-ink"
         />
-        <span className="text-xs font-medium text-muted">Nama yang biasa digunakan oleh rakan sekerja untuk memanggil anda.</span>
+        <span className="text-xs font-medium text-muted">{tr("Nama yang biasa digunakan oleh rakan sekerja untuk memanggil anda.")}</span>
       </label>
 
       <div className="flex flex-col gap-2">
-        <Seksyen>BEGINI NAMA ANDA AKAN DIPAPARKAN</Seksyen>
+        <Seksyen>{tr("BEGINI NAMA ANDA AKAN DIPAPARKAN")}</Seksyen>
         <div className="flex flex-col rounded-card bg-surface px-4 py-1">
-          <Contoh label="Skrin Utama">Selamat pagi, {papar}</Contoh>
-          <Contoh label="WhatsApp">Assalamualaikum {papar}, …</Contoh>
-          <Contoh label="Kelulusan">{papar} · Cuti Tahunan</Contoh>
-          <Contoh label="Slip gaji" small>
+          <Contoh label={tr("Skrin Utama")}>{tr("Selamat pagi, {0}", papar)}</Contoh>
+          <Contoh label={tr("WhatsApp")}>{tr("Assalamualaikum {0}, …", papar)}</Contoh>
+          <Contoh label={tr("Kelulusan")}>{tr("{0} · Cuti Tahunan", papar)}</Contoh>
+          <Contoh label={tr("Slip gaji")} small>
             {full.trim().toUpperCase() || "…"}
           </Contoh>
         </div>

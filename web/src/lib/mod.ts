@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useCallback, useSyncExternalStore } from "react";
 import { hasRole, useMeContext, type Me } from "./me";
 
@@ -53,30 +54,30 @@ export function useMod(): { mod: Mod; boleh: boolean; tukar: (m: Mod) => void } 
 export type ItemNav = { href: string; label: string; pendek?: string; ikon: "home" | "plus" | "check" | "user" | "chart" | "users" | "card" | "settings" | "org" | "calendar" | "document" | "bell" | "chat"; roles?: string[] };
 
 export const NAV_PEKERJA: ItemNav[] = [
-  { href: "/utama", label: "Utama", ikon: "home" },
-  { href: "/mohon", label: "Mohon", ikon: "plus" },
-  { href: "/kelulusan", label: "Kelulusan", ikon: "check" },
-  { href: "/saya", label: "Saya", ikon: "user" },
+  { href: "/utama", label: tr("Utama"), ikon: "home" },
+  { href: "/mohon", label: tr("Mohon"), ikon: "plus" },
+  { href: "/kelulusan", label: tr("Kelulusan"), ikon: "check" },
+  { href: "/saya", label: tr("Saya"), ikon: "user" },
 ];
 
 export const NAV_HR: ItemNav[] = [
-  { href: "/pengurusan", label: "Papan Pemuka", pendek: "Utama", ikon: "chart" },
-  { href: "/pengurusan/pekerja", label: "Pekerja", ikon: "users", roles: ["hr", "ceo", "admin"] },
-  { href: "/kelulusan", label: "Kelulusan", ikon: "check" },
-  { href: "/pengurusan/gaji", label: "Gaji", ikon: "card", roles: ["hr", "finance", "admin"] },
-  { href: "/saya", label: "Saya", ikon: "user" },
+  { href: "/pengurusan", label: tr("Papan Pemuka"), pendek: tr("Utama"), ikon: "chart" },
+  { href: "/pengurusan/pekerja", label: tr("Pekerja"), ikon: "users", roles: ["hr", "ceo", "admin"] },
+  { href: "/kelulusan", label: tr("Kelulusan"), ikon: "check" },
+  { href: "/pengurusan/gaji", label: tr("Gaji"), ikon: "card", roles: ["hr", "finance", "admin"] },
+  { href: "/saya", label: tr("Saya"), ikon: "user" },
 ];
 
 /** Item tambahan dalam menu sisi (desktop) Mod HR. */
 export const NAV_HR_LAGI: ItemNav[] = [
-  { href: "/kalendar", label: "Kalendar pasukan", ikon: "calendar" },
-  { href: "/pengurusan/surat", label: "Surat", ikon: "document", roles: ["hr", "admin"] },
-  { href: "/pengurusan/pengumuman", label: "Pengumuman", ikon: "bell", roles: ["hr", "ceo", "admin"] },
-  { href: "/pengurusan/soalan", label: "Soalan HR", ikon: "chat", roles: ["hr", "admin"] },
-  { href: "/pengurusan/kerja-fleksibel", label: "Kerja fleksibel", ikon: "calendar", roles: ["hr", "admin"] },
-  { href: "/pengurusan/laporan", label: "Laporan", ikon: "chart" },
-  { href: "/pengurusan/tetapan/jabatan", label: "Jabatan", ikon: "org", roles: ["hr", "admin"] },
-  { href: "/pengurusan/tetapan", label: "Tetapan", ikon: "settings" },
+  { href: "/kalendar", label: tr("Kalendar pasukan"), ikon: "calendar" },
+  { href: "/pengurusan/surat", label: tr("Surat"), ikon: "document", roles: ["hr", "admin"] },
+  { href: "/pengurusan/pengumuman", label: tr("Pengumuman"), ikon: "bell", roles: ["hr", "ceo", "admin"] },
+  { href: "/pengurusan/soalan", label: tr("Soalan HR"), ikon: "chat", roles: ["hr", "admin"] },
+  { href: "/pengurusan/kerja-fleksibel", label: tr("Kerja fleksibel"), ikon: "calendar", roles: ["hr", "admin"] },
+  { href: "/pengurusan/laporan", label: tr("Laporan"), ikon: "chart" },
+  { href: "/pengurusan/tetapan/jabatan", label: tr("Jabatan"), ikon: "org", roles: ["hr", "admin"] },
+  { href: "/pengurusan/tetapan", label: tr("Tetapan"), ikon: "settings" },
 ];
 
 export function navUntuk(me: Me | null, mod: Mod): ItemNav[] {

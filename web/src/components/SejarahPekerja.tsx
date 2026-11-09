@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
@@ -10,55 +11,55 @@ import { Suis } from "./Senarai";
 
 type Baris = { at: string; kind: "change" | "event" | "access"; field: string; old_value: string | null; new_value: string | null; note: string | null; actor: string | null };
 
-const STATUS: Record<string, string> = { probation: "Percubaan", active: "Aktif", resigned: "Letak jawatan", terminated: "Ditamatkan", retired: "Bersara" };
-const CADANGAN: Record<string, string> = { confirm: "sahkan jawatan", extend: "lanjutkan percubaan", terminate: "tamatkan perkhidmatan" };
+const STATUS: Record<string, string> = { probation: tr("Percubaan"), active: tr("Aktif"), resigned: tr("Letak jawatan"), terminated: tr("Ditamatkan"), retired: tr("Bersara") };
+const CADANGAN: Record<string, string> = { confirm: tr("sahkan jawatan"), extend: tr("lanjutkan percubaan"), terminate: tr("tamatkan perkhidmatan") };
 const AKSES: Record<string, string> = {
-  salary: "Melihat / mengubah gaji",
-  profile: "Melihat profil & maklumat peribadi",
-  sensitive: "Melihat maklumat peribadi",
-  payslip: "Membuka slip gaji",
-  bank: "Melihat akaun bank",
-  ic: "Melihat kad pengenalan",
-  mc: "Melihat sijil cuti sakit",
-  document: "Membuka dokumen",
-  payroll_report: "Laporan kos gaji",
-  salary_letter: "Mengeluarkan surat pengesahan gaji",
+  salary: tr("Melihat / mengubah gaji"),
+  profile: tr("Melihat profil & maklumat peribadi"),
+  sensitive: tr("Melihat maklumat peribadi"),
+  payslip: tr("Membuka slip gaji"),
+  bank: tr("Melihat akaun bank"),
+  ic: tr("Melihat kad pengenalan"),
+  mc: tr("Melihat sijil cuti sakit"),
+  document: tr("Membuka dokumen"),
+  payroll_report: tr("Laporan kos gaji"),
+  salary_letter: tr("Mengeluarkan surat pengesahan gaji"),
 };
-const BLN = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogo", "Sep", "Okt", "Nov", "Dis"];
+const BLN = [tr("Jan"), tr("Feb"), tr("Mac"), tr("Apr"), tr("Mei"), tr("Jun"), tr("Jul"), tr("Ogo"), tr("Sep"), tr("Okt"), tr("Nov"), tr("Dis")];
 const tk = (iso: string | null) => (iso ? `${Number(iso.slice(8, 10))} ${BLN[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}` : "tiada");
 
 /** Ayat BM bagi satu baris sejarah. */
 function ayat(b: Baris): { tajuk: string; butiran?: string } {
   const lama = b.old_value;
   const baru = b.new_value;
-  if (b.kind === "access") return { tajuk: AKSES[b.field] ?? `Akses: ${b.field}`, butiran: b.note === "web" ? undefined : `melalui ${b.note}` };
+  if (b.kind === "access") return { tajuk: AKSES[b.field] ?? tr("Akses: {0}", b.field), butiran: b.note === "web" ? undefined : tr("melalui {0}", b.note) };
   if (b.kind === "event") {
-    if (b.field === "joined") return { tajuk: "Rekod pekerja dicipta", butiran: `Tarikh mula bekerja ${tk(baru)}` };
-    if (b.field === "letter") return { tajuk: `${b.note} dikeluarkan`, butiran: `Rujukan ${baru}` };
-    if (b.field === "probation_review") return { tajuk: `Penilaian percubaan: cadangan ${CADANGAN[baru ?? ""] ?? baru}`, butiran: b.note ?? undefined };
-    if (b.field === "document") return { tajuk: `Dokumen dimuat naik: ${baru}` };
+    if (b.field === "joined") return { tajuk: tr("Rekod pekerja dicipta"), butiran: tr("Tarikh mula bekerja {0}", tk(baru)) };
+    if (b.field === "letter") return { tajuk: tr("{0} dikeluarkan", b.note), butiran: tr("Rujukan {0}", baru) };
+    if (b.field === "probation_review") return { tajuk: tr("Penilaian percubaan: cadangan {0}", CADANGAN[baru ?? ""] ?? baru), butiran: b.note ?? undefined };
+    if (b.field === "document") return { tajuk: tr("Dokumen dimuat naik: {0}", baru) };
   }
   if (b.field.startsWith("pay:"))
-    return { tajuk: lama ? `${b.note?.split(" mulai ")[0]}: RM${lama} → RM${baru}` : `${b.note?.split(" mulai ")[0]} ditetapkan RM${baru}`, butiran: b.note?.includes(" mulai ") ? `Berkuat kuasa ${b.note.split(" mulai ")[1]}` : undefined };
+    return { tajuk: lama ? tr("{0}: RM{1} → RM{2}", b.note?.split(" mulai ")[0], lama, baru) : tr("{0} ditetapkan RM{1}", b.note?.split(" mulai ")[0], baru), butiran: b.note?.includes(" mulai ") ? tr("Berkuat kuasa {0}", b.note.split(" mulai ")[1]) : undefined };
   switch (b.field) {
     case "department":
-      return { tajuk: `Jabatan: ${lama ?? "tiada"} → ${baru ?? "tiada"}` };
+      return { tajuk: tr("Jabatan: {0} → {1}", lama ?? "tiada", baru ?? "tiada") };
     case "position":
-      return { tajuk: `Jawatan: ${lama ?? "tiada"} → ${baru ?? "tiada"}` };
+      return { tajuk: tr("Jawatan: {0} → {1}", lama ?? "tiada", baru ?? "tiada") };
     case "employment_type":
-      return { tajuk: `Jenis pekerjaan: ${lama ? labelJenis(lama) : "-"} → ${baru ? labelJenis(baru) : "-"}` };
+      return { tajuk: tr("Jenis pekerjaan: {0} → {1}", lama ? labelJenis(lama) : "-", baru ? labelJenis(baru) : "-") };
     case "status":
-      return { tajuk: `Status: ${STATUS[lama ?? ""] ?? lama} → ${STATUS[baru ?? ""] ?? baru}` };
+      return { tajuk: tr("Status: {0} → {1}", STATUS[lama ?? ""] ?? lama, STATUS[baru ?? ""] ?? baru) };
     case "probation_end":
-      return { tajuk: `Tamat percubaan: ${tk(lama)} → ${tk(baru)}` };
+      return { tajuk: tr("Tamat percubaan: {0} → {1}", tk(lama), tk(baru)) };
     case "contract_end":
-      return { tajuk: `Tamat kontrak: ${tk(lama)} → ${tk(baru)}` };
+      return { tajuk: tr("Tamat kontrak: {0} → {1}", tk(lama), tk(baru)) };
     case "end_date":
-      return { tajuk: baru ? `Hari bekerja terakhir ditetapkan ${tk(baru)}` : "Penamatan dibatalkan", butiran: baru && b.note ? STATUS[b.note] : undefined };
+      return { tajuk: baru ? tr("Hari bekerja terakhir ditetapkan {0}", tk(baru)) : tr("Penamatan dibatalkan"), butiran: baru && b.note ? STATUS[b.note] : undefined };
     case "work_start":
-      return { tajuk: `Waktu masuk kerja: ${lama ?? "ikut syarikat"} → ${baru ?? "ikut syarikat"}` };
+      return { tajuk: tr("Waktu masuk kerja: {0} → {1}", lama ?? tr("ikut syarikat"), baru ?? tr("ikut syarikat")) };
     case "role":
-      return { tajuk: baru ? `Peranan ${LABEL_PERANAN[baru] ?? baru} diberi` : `Peranan ${LABEL_PERANAN[lama ?? ""] ?? lama} ditarik balik` };
+      return { tajuk: baru ? tr("Peranan {0} diberi", LABEL_PERANAN[baru] ?? baru) : tr("Peranan {0} ditarik balik", LABEL_PERANAN[lama ?? ""] ?? lama) };
   }
   return { tajuk: `${b.field}: ${lama ?? "-"} → ${baru ?? "-"}` };
 }
@@ -74,16 +75,16 @@ export function SejarahPekerja({ employmentId }: { employmentId: string }) {
     <div className="flex flex-col gap-3 lg:max-w-[760px]">
       <div className="flex items-center gap-3 rounded-card bg-surface px-4 py-2">
         <span className="flex grow flex-col gap-0.5">
-          <b className="text-sm font-bold">Termasuk log akses data</b>
-          <span className="text-xs text-muted">Siapa melihat gaji dan maklumat peribadi pekerja ini (PDPA).</span>
+          <b className="text-sm font-bold">{tr("Termasuk log akses data")}</b>
+          <span className="text-xs text-muted">{tr("Siapa melihat gaji dan maklumat peribadi pekerja ini (PDPA).")}</span>
         </span>
-        <Suis on={akses} onChange={setAkses} label="Termasuk log akses data" />
+        <Suis on={akses} onChange={setAkses} label={tr("Termasuk log akses data")} />
       </div>
       {d.error && <ErrorBox message={d.error} />}
       {!d.data && !d.error && <Loading />}
-      {d.data && d.data.length === 0 && <span className="text-sm text-muted">Tiada sejarah.</span>}
+      {d.data && d.data.length === 0 && <span className="text-sm text-muted">{tr("Tiada sejarah.")}</span>}
       {d.data && d.data.length > 0 && (
-        <ol aria-label="Sejarah perubahan" className="m-0 flex list-none flex-col rounded-card bg-surface px-4 py-1 lg:px-5">
+        <ol aria-label={tr("Sejarah perubahan")} className="m-0 flex list-none flex-col rounded-card bg-surface px-4 py-1 lg:px-5">
           {d.data.map((b, i) => {
             const a = ayat(b);
             return (
@@ -94,7 +95,7 @@ export function SejarahPekerja({ employmentId }: { employmentId: string }) {
                   {a.butiran && <span className="text-xs text-subtle">{a.butiran}</span>}
                   <span className="text-xs text-muted">
                     {tarikh(tarikhTempatan(b.at))}, {masa(b.at)}
-                    {b.actor ? ` · ${b.actor}` : b.kind === "change" ? " · sistem" : ""}
+                    {b.actor ? ` · ${b.actor}` : b.kind === "change" ? tr(" · sistem") : ""}
                   </span>
                 </span>
               </li>
@@ -102,7 +103,7 @@ export function SejarahPekerja({ employmentId }: { employmentId: string }) {
           })}
         </ol>
       )}
-      <span className="text-xs text-muted">Sejarah perubahan direkodkan mulai November 2026. Rekod gaji terdahulu dipaparkan daripada data gaji sedia ada.</span>
+      <span className="text-xs text-muted">{tr("Sejarah perubahan direkodkan mulai November 2026. Rekod gaji terdahulu dipaparkan daripada data gaji sedia ada.")}</span>
     </div>
   );
 }

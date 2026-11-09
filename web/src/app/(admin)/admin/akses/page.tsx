@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { mintaTeks, sahkan } from "@/components/Dialog";
 import { useState } from "react";
 import { useData } from "@/lib/useData";
@@ -19,7 +20,7 @@ type Grant = {
   decided_at: string | null;
   expires_at: string | null;
 };
-const PERANAN: Record<string, string> = { hr: "HR", ceo: "paparan CEO", admin: "Pentadbir", finance: "Kewangan", staff: "lihat sahaja" };
+const PERANAN: Record<string, string> = { hr: "HR", ceo: tr("paparan CEO"), admin: tr("Pentadbir"), finance: tr("Kewangan"), staff: tr("lihat sahaja") };
 
 // Rujukan reka bentuk: design/SA_Akses.dc.html
 export default function SaAkses() {
@@ -29,7 +30,7 @@ export default function SaAkses() {
   const aktif = (d.data ?? []).filter((g) => g.status === "approved");
 
   async function putus(id: string, lulus: boolean) {
-    const nota = lulus ? null : await mintaTeks({ tajuk: "Tolak permohonan akses", label: "Sebab (dimaklumkan kepada pemohon)", ok: "Tolak", bahaya: true });
+    const nota = lulus ? null : await mintaTeks({ tajuk: tr("Tolak permohonan akses"), label: tr("Sebab (dimaklumkan kepada pemohon)"), ok: tr("Tolak"), bahaya: true });
     if (!lulus && nota === null) return;
     if (!lulus && !nota?.trim()) return;
     setRalat(null);
@@ -37,66 +38,62 @@ export default function SaAkses() {
       await rpc("decide_company_access", { p_grant: id, p_approve: lulus, p_note: nota });
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
   async function tarik(id: string) {
-    if (!(await sahkan({ tajuk: "Tarik balik akses ini?", ok: "Tarik balik", bahaya: true }))) return;
+    if (!(await sahkan({ tajuk: tr("Tarik balik akses ini?"), ok: tr("Tarik balik"), bahaya: true }))) return;
     try {
       await rpc("revoke_company_access", { p_grant: id });
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
 
   return (
     <>
-      <h1 className="m-0 text-2xl font-extrabold">Permohonan akses syarikat</h1>
+      <h1 className="m-0 text-2xl font-extrabold">{tr("Permohonan akses syarikat")}</h1>
       <span className="max-w-[720px] text-sm text-muted">
-        Sesiapa yang ingin melihat atau mengurus syarikat selain tempat dia bekerja memerlukan kelulusan anda. Akses tamat secara automatik mengikut tempoh.
-      </span>
+        {tr("Sesiapa yang ingin melihat atau mengurus syarikat selain tempat dia bekerja memerlukan kelulusan anda. Akses tamat secara automatik mengikut tempoh.")}</span>
       {ralat && <ErrorBox message={ralat} />}
       {d.error && <ErrorBox message={d.error} />}
       {!d.data && !d.error && <Loading />}
-      <span className="text-xs font-bold tracking-[0.04em] text-[#4A5A57]">MENUNGGU KELULUSAN</span>
-      {d.data && pending.length === 0 && <span className="text-sm text-muted">Tiada permohonan menunggu.</span>}
+      <span className="text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("MENUNGGU KELULUSAN")}</span>
+      {d.data && pending.length === 0 && <span className="text-sm text-muted">{tr("Tiada permohonan menunggu.")}</span>}
       <div className="grid gap-4 lg:grid-cols-2">
         {pending.map((g) => (
           <section key={g.id} className="flex flex-col gap-2.5 rounded-card bg-surface p-5 text-sm">
             <div className="flex items-start justify-between gap-2">
               <b className="text-base font-extrabold">
-                {g.who} memohon akses {PERANAN[g.role] ?? g.role} ke {g.target}
-              </b>
-              <span className="rounded-lg bg-warning-soft px-2 py-0.5 text-xs font-bold text-warning">Menunggu</span>
+                {tr("{0} memohon akses {1} ke {2}", g.who, PERANAN[g.role] ?? g.role, g.target)}</b>
+              <span className="rounded-lg bg-warning-soft px-2 py-0.5 text-xs font-bold text-warning">{tr("Menunggu")}</span>
             </div>
-            <Row k="Pemohon" v={`${g.who} · ${g.who_from ?? "-"}`} />
-            <Row k="Akses diminta" v={`${PERANAN[g.role] ?? g.role} di ${g.target}`} />
-            <Row k="Tempoh" v={`${g.days} hari`} />
-            <Row k={`Pentadbir ${g.target}`} v={`${g.target_admins ?? "-"} (dimaklumkan)`} />
+            <Row k={tr("Pemohon")} v={`${g.who} · ${g.who_from ?? "-"}`} />
+            <Row k={tr("Akses diminta")} v={tr("{0} di {1}", PERANAN[g.role] ?? g.role, g.target)} />
+            <Row k={tr("Tempoh")} v={tr("{0} hari", g.days)} />
+            <Row k={tr("Pentadbir {0}", g.target)} v={tr("{0} (dimaklumkan)", g.target_admins ?? "-")} />
             <p className="m-0 rounded-[10px] bg-page p-3">
-              <b>Sebab:</b> {g.reason}
+              <b>{tr("Sebab:")}</b> {g.reason}
             </p>
             <div className="flex gap-2">
               <button type="button" onClick={() => putus(g.id, false)} className="h-11 grow rounded-[12px] border border-danger font-bold text-danger">
-                Tolak
-              </button>
+                {tr("Tolak")}</button>
               <button type="button" onClick={() => putus(g.id, true)} className="h-11 grow rounded-[12px] bg-primary font-bold text-white">
-                Lulus {g.days} hari
-              </button>
+                {tr("Lulus {0} hari", g.days)}</button>
             </div>
           </section>
         ))}
       </div>
-      <span className="pt-2 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">AKSES AKTIF</span>
+      <span className="pt-2 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("AKSES AKTIF")}</span>
       <div className="overflow-x-auto rounded-card bg-surface p-4">
         <table className="w-full min-w-[600px] text-sm">
           <thead>
             <tr className="text-left text-xs text-muted">
-              <th className="py-2 font-bold">PENGGUNA</th>
-              <th className="py-2 font-bold">AKSES</th>
-              <th className="py-2 font-bold">DILULUSKAN</th>
-              <th className="py-2 font-bold">TAMAT</th>
+              <th className="py-2 font-bold">{tr("PENGGUNA")}</th>
+              <th className="py-2 font-bold">{tr("AKSES")}</th>
+              <th className="py-2 font-bold">{tr("DILULUSKAN")}</th>
+              <th className="py-2 font-bold">{tr("TAMAT")}</th>
               <th />
             </tr>
           </thead>
@@ -104,8 +101,7 @@ export default function SaAkses() {
             {aktif.length === 0 && (
               <tr>
                 <td colSpan={5} className="py-3 text-muted">
-                  Tiada akses aktif.
-                </td>
+                  {tr("Tiada akses aktif.")}</td>
               </tr>
             )}
             {aktif.map((g) => (
@@ -114,14 +110,12 @@ export default function SaAkses() {
                   <b>{g.who}</b> <span className="text-muted">· {g.who_from}</span>
                 </td>
                 <td className="py-2.5">
-                  {PERANAN[g.role] ?? g.role} di {g.target}
-                </td>
+                  {tr("{0} di {1}", PERANAN[g.role] ?? g.role, g.target)}</td>
                 <td className="py-2.5">{tarikhPendek(g.decided_at)}</td>
-                <td className="py-2.5">{g.expires_at ? tarikhPendek(g.expires_at) : "Tiada had"}</td>
+                <td className="py-2.5">{g.expires_at ? tarikhPendek(g.expires_at) : tr("Tiada had")}</td>
                 <td className="py-2.5 text-right">
                   <button type="button" onClick={() => tarik(g.id)} className="font-bold text-danger">
-                    Tarik balik
-                  </button>
+                    {tr("Tarik balik")}</button>
                 </td>
               </tr>
             ))}

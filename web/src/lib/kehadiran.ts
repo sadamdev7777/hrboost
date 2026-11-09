@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { getSupabase } from "./supabase";
 import { must } from "./useData";
 import type { StatusPermohonan } from "./format";
@@ -36,10 +37,10 @@ export async function getKehadiranBulan(employmentId: string, bulan: string): Pr
 }
 
 export const SEBAB_PEMBETULAN = [
-  { id: "lupa", label: "Terlupa mengimbas" },
-  { id: "mesin", label: "Mesin rosak" },
-  { id: "luar", label: "Bertugas di luar pejabat" },
-  { id: "lain", label: "Lain-lain" },
+  { id: "lupa", label: tr("Terlupa mengimbas") },
+  { id: "mesin", label: tr("Mesin rosak") },
+  { id: "luar", label: tr("Bertugas di luar pejabat") },
+  { id: "lain", label: tr("Lain-lain") },
 ];
 
 /** "2026-11-06" + "08:55" (waktu Malaysia) → ISO UTC */

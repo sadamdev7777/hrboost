@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore } from "react";
@@ -10,8 +11,8 @@ import { NextButton, OnboardingLayout } from "@/components/OnboardingLayout";
 
 // Rujukan reka bentuk: design/OnboardingPasang.dc.html
 const LANGKAH = {
-  ios: ["Buka pautan HRBoost dalam Safari", "Tekan butang Kongsi di bawah", "Pilih “Tambah ke Skrin Utama”"],
-  and: ["Buka pautan HRBoost dalam Chrome", "Tekan menu ⋮ di penjuru kanan atas", "Pilih “Pasang aplikasi”"],
+  ios: [tr("Buka pautan HRBoost dalam Safari"), tr("Tekan butang Kongsi di bawah"), tr("Pilih “Tambah ke Skrin Utama”")],
+  and: [tr("Buka pautan HRBoost dalam Chrome"), tr("Tekan menu ⋮ di penjuru kanan atas"), tr("Pilih “Pasang aplikasi”")],
 };
 
 // Nombor WhatsApp platform HRBoost (Murpati). Kosong = kad "Simpan nombor" disembunyikan.
@@ -62,17 +63,15 @@ export default function OrientasiPasangPage() {
     <OnboardingLayout
       step={8}
       back="/orientasi/buku-panduan"
-      title="Letak HRBoost di skrin telefon"
-      sub="Buka dengan sekali tekan, seperti aplikasi biasa. Tidak perlu Play Store atau App Store."
+      title={tr("Letak HRBoost di skrin telefon")}
+      sub={tr("Buka dengan sekali tekan, seperti aplikasi biasa. Tidak perlu Play Store atau App Store.")}
       error={error}
       footer={
         <>
           <NextButton busy={busy} onClick={selesai}>
-            Sudah dipasang — selesai
-          </NextButton>
+            {tr("Sudah dipasang — selesai")}</NextButton>
           <Link href="/orientasi/selesai" className="flex h-10 items-center justify-center text-sm font-bold">
-            Langkau buat masa ini
-          </Link>
+            {tr("Langkau buat masa ini")}</Link>
         </>
       }
     >
@@ -80,7 +79,7 @@ export default function OrientasiPasangPage() {
         {(
           [
             ["ios", "iPhone"],
-            ["and", "Android"],
+            ["and", tr("Android")],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -115,8 +114,7 @@ export default function OrientasiPasangPage() {
           }}
           className="h-12 rounded-[14px] border-[1.5px] border-primary bg-surface text-sm font-bold text-primary"
         >
-          Pasang sekarang
-        </button>
+          {tr("Pasang sekarang")}</button>
       )}
 
       {vcf && (
@@ -125,12 +123,11 @@ export default function OrientasiPasangPage() {
             <IconChat size={20} />
           </span>
           <span className="flex grow flex-col gap-0.5">
-            <b className="text-sm font-bold">Simpan nombor HRBoost</b>
-            <span className="text-xs text-muted">Supaya mesej kelulusan &amp; notis tidak dianggap spam</span>
+            <b className="text-sm font-bold">{tr("Simpan nombor HRBoost")}</b>
+            <span className="text-xs text-muted">{tr("Supaya mesej kelulusan & notis tidak dianggap spam")}</span>
           </span>
           <a href={vcf} download="HRBoost.vcf" className="text-[13px] font-bold">
-            Simpan
-          </a>
+            {tr("Simpan")}</a>
         </div>
       )}
     </OnboardingLayout>

@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useState } from "react";
 
 export const medanMasuk =
@@ -34,10 +35,10 @@ export function MedanKataLaluan({
         <button
           type="button"
           onClick={() => setPapar(!papar)}
-          aria-label={papar ? "Sorok kata laluan" : "Papar kata laluan"}
+          aria-label={papar ? tr("Sorok kata laluan") : tr("Papar kata laluan")}
           className="absolute inset-y-0 right-1 flex min-w-11 items-center justify-center px-3 text-[13px] font-bold text-primary"
         >
-          {papar ? "Sorok" : "Papar"}
+          {papar ? tr("Sorok") : tr("Papar")}
         </button>
       </span>
       {bantuan && <span className="text-xs font-normal text-muted">{bantuan}</span>}

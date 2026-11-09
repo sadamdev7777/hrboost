@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -72,54 +73,49 @@ function Borang({
     <OnboardingLayout
       step={4}
       back="/orientasi/swafoto"
-      title="Bank & waris"
-      sub="Untuk bayaran gaji dan kecemasan."
+      title={tr("Bank & waris")}
+      sub={tr("Untuk bayaran gaji dan kecemasan.")}
       error={error}
       footer={<NextButton busy={busy} disabled={!lengkap} onClick={simpan} />}
     >
-      <Seksyen>AKAUN BANK GAJI</Seksyen>
+      <Seksyen>{tr("AKAUN BANK GAJI")}</Seksyen>
       <label className="flex flex-col gap-1.5 text-sm font-bold">
-        Bank
-        <select value={bank} onChange={(e) => setBank(e.target.value)} className={inputCls}>
-          <option value="">Pilih bank</option>
+        {tr("Bank")}<select value={bank} onChange={(e) => setBank(e.target.value)} className={inputCls}>
+          <option value="">{tr("Pilih bank")}</option>
           {BANK.map((b) => (
             <option key={b}>{b}</option>
           ))}
         </select>
       </label>
       <label className="flex flex-col gap-1.5 text-sm font-bold">
-        No. akaun
-        <input
+        {tr("No. akaun")}<input
           type="text"
           inputMode="numeric"
-          placeholder="Contoh: 1234 5678 9012"
+          placeholder={tr("Contoh: 1234 5678 9012")}
           value={akaun}
           onChange={(e) => setAkaun(e.target.value.replace(/[^\d\s-]/g, ""))}
           className={inputCls}
         />
       </label>
-      <span className="-mt-1.5 text-xs text-muted">Nama akaun mesti sama dengan nama dalam kad pengenalan.</span>
+      <span className="-mt-1.5 text-xs text-muted">{tr("Nama akaun mesti sama dengan nama dalam kad pengenalan.")}</span>
 
-      <Seksyen className="mt-1">WARIS UNTUK KECEMASAN</Seksyen>
+      <Seksyen className="mt-1">{tr("WARIS UNTUK KECEMASAN")}</Seksyen>
       <label className="flex flex-col gap-1.5 text-sm font-bold">
-        Nama
-        <input type="text" placeholder="Nama penuh waris" value={waris} onChange={(e) => setWaris(e.target.value)} className={inputCls} />
+        {tr("Nama")}<input type="text" placeholder={tr("Nama penuh waris")} value={waris} onChange={(e) => setWaris(e.target.value)} className={inputCls} />
       </label>
       <div className="grid grid-cols-2 gap-2.5">
         <label className="flex flex-col gap-1.5 text-sm font-bold">
-          Hubungan
-          <select value={hubungan} onChange={(e) => setHubungan(e.target.value)} className={inputCls}>
+          {tr("Hubungan")}<select value={hubungan} onChange={(e) => setHubungan(e.target.value)} className={inputCls}>
             {HUBUNGAN.map((h) => (
               <option key={h}>{h}</option>
             ))}
           </select>
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-bold">
-          No. telefon
-          <input
+          {tr("No. telefon")}<input
             type="tel"
             inputMode="tel"
-            placeholder="01x-xxx xxxx"
+            placeholder={tr("01x-xxx xxxx")}
             value={telefon}
             onChange={(e) => setTelefon(e.target.value)}
             className={inputCls}

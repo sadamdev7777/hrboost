@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useMe } from "@/lib/me";
@@ -24,9 +25,9 @@ export default function TuntutanPage() {
   if (list.data && !t) {
     return (
       <Screen lebar="sederhana">
-        <BackHeader title="Tuntutan" href="/tuntutan" />
+        <BackHeader title={tr("Tuntutan")} href="/tuntutan" />
         <div className="p-5">
-          <ErrorBox message="Tuntutan tidak dijumpai." />
+          <ErrorBox message={tr("Tuntutan tidak dijumpai.")} />
         </div>
       </Screen>
     );
@@ -34,7 +35,7 @@ export default function TuntutanPage() {
   if (!t || !bolehUbah || !t.item) {
     return (
       <Screen lebar="sederhana">
-        <BackHeader title="Tuntutan" href="/tuntutan" />
+        <BackHeader title={tr("Tuntutan")} href="/tuntutan" />
         <Loading />
       </Screen>
     );

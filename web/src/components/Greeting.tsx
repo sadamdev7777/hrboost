@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useMeContext, type Me } from "@/lib/me";
 import { ucapan } from "@/lib/format";
 import { IconChevronDown } from "./icons";
@@ -23,7 +24,7 @@ export function Greeting({ me }: { me: Me }) {
           {multi && <IconChevronDown size={16} className="text-muted" />}
           {multi && (
             <select
-              aria-label="Tukar syarikat"
+              aria-label={tr("Tukar syarikat")}
               value={me.active.companyId}
               onChange={(e) => setActiveCompany(e.target.value)}
               className="absolute inset-0 cursor-pointer opacity-0"

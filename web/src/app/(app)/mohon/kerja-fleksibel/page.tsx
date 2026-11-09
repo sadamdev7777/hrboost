@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
@@ -24,30 +25,29 @@ export default function KerjaFleksibelPage() {
   const togol = (k: JenisFleksibel) => setJenis(jenis.includes(k) ? jenis.filter((x) => x !== k) : [...jenis, k]);
 
   async function hantar() {
-    if (!jenis.length) return setRalat("Pilih sekurang-kurangnya satu perubahan.");
-    if (butiran.trim().length < 5) return setRalat("Sila terangkan susunan kerja yang dimohon.");
+    if (!jenis.length) return setRalat(tr("Pilih sekurang-kurangnya satu perubahan."));
+    if (butiran.trim().length < 5) return setRalat(tr("Sila terangkan susunan kerja yang dimohon."));
     setBusy(true);
     setRalat(null);
     try {
       await mohonFleksibel(emp.id, jenis, butiran.trim(), mula, tamat || null);
-      beritahu("Permohonan dihantar kepada HR.");
+      beritahu(tr("Permohonan dihantar kepada HR."));
       setJenis([]);
       setButiran("");
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
     setBusy(false);
   }
 
   return (
     <Screen lebar="sederhana">
-      <BackHeader title="Kerja fleksibel" href="/mohon" />
+      <BackHeader title={tr("Kerja fleksibel")} href="/mohon" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         <span className="text-sm leading-snug text-subtle">
-          Di bawah Akta Kerja 1955, anda boleh memohon secara bertulis untuk mengubah waktu, hari atau tempat bekerja. Majikan wajib memberi jawapan bertulis dalam tempoh 60 hari, beserta sebab jika tidak diluluskan.
-        </span>
-        <MedanBorang label="Perkara yang ingin diubah">
+          {tr("Di bawah Akta Kerja 1955, anda boleh memohon secara bertulis untuk mengubah waktu, hari atau tempat bekerja. Majikan wajib memberi jawapan bertulis dalam tempoh 60 hari, beserta sebab jika tidak diluluskan.")}</span>
+        <MedanBorang label={tr("Perkara yang ingin diubah")}>
           <div className="flex flex-wrap gap-2">
             {(Object.keys(LABEL_FLEKSIBEL) as JenisFleksibel[]).map((k) => (
               <Cip key={k} on={jenis.includes(k)} onClick={() => togol(k)}>
@@ -56,31 +56,30 @@ export default function KerjaFleksibelPage() {
             ))}
           </div>
         </MedanBorang>
-        <MedanBorang label="Susunan kerja yang dimohon">
+        <MedanBorang label={tr("Susunan kerja yang dimohon")}>
           <textarea
             rows={4}
             value={butiran}
             onChange={(e) => setButiran(e.target.value)}
-            placeholder="Contoh: Bekerja dari rumah setiap Jumaat, 8 pagi hingga 5 petang, untuk menjaga anak."
+            placeholder={tr("Contoh: Bekerja dari rumah setiap Jumaat, 8 pagi hingga 5 petang, untuk menjaga anak.")}
             className="rounded-[12px] border border-[#D5DEDC] bg-surface px-3 py-2.5 text-sm text-ink outline-none focus:border-primary"
           />
         </MedanBorang>
         <div className="grid grid-cols-2 gap-2.5">
-          <MedanBorang label="Mula">
+          <MedanBorang label={tr("Mula")}>
             <input className={inputKecil} type="date" min={t} value={mula} onChange={(e) => setMula(e.target.value)} />
           </MedanBorang>
-          <MedanBorang label="Tamat (pilihan)">
+          <MedanBorang label={tr("Tamat (pilihan)")}>
             <input className={inputKecil} type="date" min={mula} value={tamat} onChange={(e) => setTamat(e.target.value)} />
           </MedanBorang>
         </div>
         {ralat && <ErrorBox message={ralat} />}
         <ButangUtama onClick={hantar} busy={busy}>
-          Hantar permohonan
-        </ButangUtama>
+          {tr("Hantar permohonan")}</ButangUtama>
 
         {(d.data ?? []).length > 0 && (
           <>
-            <Seksyen className="pt-2">PERMOHONAN SAYA</Seksyen>
+            <Seksyen className="pt-2">{tr("PERMOHONAN SAYA")}</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {(d.data ?? []).map((f) => (
                 <div key={f.id} className="flex flex-col gap-1 py-3 text-sm">
@@ -90,11 +89,8 @@ export default function KerjaFleksibelPage() {
                   </div>
                   <span className="leading-snug text-[#33433F]">{f.details}</span>
                   <span className="text-xs text-muted">
-                    Mulai {tarikh(f.start_date)}
-                    {f.end_date ? ` hingga ${tarikh(f.end_date)}` : ""}
-                    {f.status === "pending" ? ` · keputusan sebelum ${tarikh(f.due_date)}` : ""}
-                  </span>
-                  {f.decision_note && <span className="rounded-[10px] bg-page px-3 py-2 text-[13px]">HR: {f.decision_note}</span>}
+                    {tr("Mulai {0}{1}{2}", tarikh(f.start_date), f.end_date ? tr(" hingga {0}", tarikh(f.end_date)) : "", f.status === "pending" ? tr(" · keputusan sebelum {0}", tarikh(f.due_date)) : "")}</span>
+                  {f.decision_note && <span className="rounded-[10px] bg-page px-3 py-2 text-[13px]">{tr("HR: {0}", f.decision_note)}</span>}
                   {f.status === "pending" && (
                     <button
                       type="button"
@@ -108,8 +104,7 @@ export default function KerjaFleksibelPage() {
                       }}
                       className="flex min-h-9 items-center self-start text-xs font-bold text-muted"
                     >
-                      Tarik balik
-                    </button>
+                      {tr("Tarik balik")}</button>
                   )}
                 </div>
               ))}

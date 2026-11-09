@@ -1,10 +1,11 @@
-// Format tarikh, masa, nombor telefon dan label dalam bahasa Melayu.
+import { tr, trRalat } from "@/lib/i18n";
+// Format tarikh, masa, nombor telefon dan label (ikut bahasa antara muka, lib/i18n).
 // Semua masa dipaparkan mengikut zon Asia/Kuala_Lumpur.
 
 export const TZ = "Asia/Kuala_Lumpur";
 
-const BULAN = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogo", "Sep", "Okt", "Nov", "Dis"];
-const HARI = ["Ahd", "Isn", "Sel", "Rab", "Kha", "Jum", "Sab"];
+const BULAN = [tr("Jan"), tr("Feb"), tr("Mac"), tr("Apr"), tr("Mei"), tr("Jun"), tr("Jul"), tr("Ogo"), tr("Sep"), tr("Okt"), tr("Nov"), tr("Dis")];
+const HARI = [tr("Ahd"), tr("Isn"), tr("Sel"), tr("Rab"), tr("Kha"), tr("Jum"), tr("Sab")];
 
 /** Bahagian tarikh tempatan (Malaysia) bagi satu timestamp. */
 function localParts(d: Date) {
@@ -81,7 +82,7 @@ export function julatTarikh(start: string, end: string): string {
 export function masa(ts: string | Date): string {
   const t = localParts(typeof ts === "string" ? new Date(ts) : ts);
   const h12 = t.h % 12 === 0 ? 12 : t.h % 12;
-  return `${h12}:${String(t.min).padStart(2, "0")} ${t.h < 12 ? "pg" : "ptg"}`;
+  return `${h12}:${String(t.min).padStart(2, "0")} ${t.h < 12 ? tr("pg") : tr("ptg")}`;
 }
 
 /** Masa penuh: "6:00 petang", "9:30 pagi" (untuk ayat). */
@@ -100,7 +101,7 @@ export function masaRingkas(ts: string): string {
 export function masaTeks(time: string): string {
   const [h, m] = time.split(":").map(Number);
   const h12 = h % 12 === 0 ? 12 : h % 12;
-  const bhg = h < 12 ? "pagi" : h < 14 ? "tengah hari" : h < 19 ? "petang" : "malam";
+  const bhg = h < 12 ? tr("pagi") : h < 14 ? tr("tengah hari") : h < 19 ? tr("petang") : tr("malam");
   return `${h12}:${String(m).padStart(2, "0")} ${bhg}`;
 }
 
@@ -114,18 +115,18 @@ export function tarikhTempatan(ts: string): string {
 export function bilaDihantar(ts: string): string {
   const d = tarikhTempatan(ts);
   const today = todayISO();
-  if (d === today) return "hari ini";
-  if (d === addDays(today, -1)) return "semalam";
+  if (d === today) return tr("hari ini");
+  if (d === addDays(today, -1)) return tr("semalam");
   return tarikh(d);
 }
 
 /** Ucapan ikut masa: Selamat pagi / tengah hari / petang / malam. */
 export function ucapan(): string {
   const h = localParts(new Date()).h;
-  if (h < 12) return "Selamat pagi,";
-  if (h < 14) return "Selamat tengah hari,";
-  if (h < 19) return "Selamat petang,";
-  return "Selamat malam,";
+  if (h < 12) return tr("Selamat pagi,");
+  if (h < 14) return tr("Selamat tengah hari,");
+  if (h < 19) return tr("Selamat petang,");
+  return tr("Selamat malam,");
 }
 
 /** Nombor hari: 3 → "3", 0.5 → "0.5" */
@@ -178,18 +179,18 @@ export function paparTelefon(full: string): string {
 export type StatusPermohonan = "draft" | "pending" | "approved" | "rejected" | "returned" | "cancelled";
 
 export const LABEL_STATUS: Record<StatusPermohonan, string> = {
-  draft: "Draf",
-  pending: "Menunggu",
-  approved: "Lulus",
-  rejected: "Ditolak",
-  returned: "Dikembalikan",
-  cancelled: "Dibatalkan",
+  draft: tr("Draf"),
+  pending: tr("Menunggu"),
+  approved: tr("Lulus"),
+  rejected: tr("Ditolak"),
+  returned: tr("Dikembalikan"),
+  cancelled: tr("Dibatalkan"),
 };
 
 /** Nama peringkat dalam bahasa Melayu (aliran lalai menggunakan "Finance"). */
 export function namaPeringkat(nama: string): string {
-  const peta: Record<string, string> = { Finance: "Kewangan" };
-  return peta[nama] ?? nama;
+  const peta: Record<string, string> = { Finance: tr("Kewangan") };
+  return peta[nama] ?? trRalat(nama);
 }
 
 /** Jam 24 jam waktu Malaysia: "9:05", "18:20" (jadual kehadiran). */

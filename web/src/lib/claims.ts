@@ -1,5 +1,6 @@
 "use client";
 
+import { tr, trRalat } from "@/lib/i18n";
 import { getSupabase } from "./supabase";
 import { must } from "./useData";
 import { namaPeringkat, type StatusPermohonan } from "./format";
@@ -7,12 +8,12 @@ import type { Pekerjaan } from "./me";
 
 /** Nama paparan BM bagi jenis tuntutan lalai (CLAUDE.md: perbatuan, letak kereta). HR boleh menamakan semula. */
 const LABEL: Record<string, string> = {
-  Mileage: "Perbatuan",
-  "Parking & Tol": "Letak kereta & Tol",
-  "Grab / Teksi": "E-hailing / Teksi",
-  "Makan (outstation)": "Makan (luar kawasan)",
+  Mileage: tr("Perbatuan"),
+  "Parking & Tol": tr("Letak kereta & Tol"),
+  "Grab / Teksi": tr("E-hailing / Teksi"),
+  "Makan (outstation)": tr("Makan (luar kawasan)"),
 };
-export const namaJenisTuntutan = (n: string) => LABEL[n] ?? n;
+export const namaJenisTuntutan = (n: string) => LABEL[n] ?? trRalat(n);
 
 export type JenisTuntutan = {
   id: string;
@@ -63,10 +64,10 @@ export async function getAliranTuntutan(companyId: string): Promise<string | nul
     .map((s) => {
       const c = s.condition as { field?: string; op?: string; value?: number };
       return c.field === "amount" && c.op === ">" && typeof c.value === "number"
-        ? `Melebihi RM${c.value.toLocaleString("en-MY")} → ${namaPeringkat(s.name)} juga.`
-        : `${namaPeringkat(s.name)} (bersyarat).`;
+        ? tr("Melebihi RM{0} → {1} juga.", c.value.toLocaleString("en-MY"), namaPeringkat(s.name))
+        : tr("{0} (bersyarat).", namaPeringkat(s.name));
     });
-  return [`Akan diluluskan oleh: ${biasa.join(" → ")}.`, ...bersyarat].join(" ");
+  return [tr("Akan diluluskan oleh: {0}.", biasa.join(" → ")), ...bersyarat].join(" ");
 }
 
 export type ItemTuntutan = {
@@ -132,7 +133,7 @@ export async function getTuntutanSaya(emp: Pekerjaan): Promise<Tuntutan[]> {
 /** Simpan tuntutan sebagai draf (cipta baharu atau kemas kini draf/dikembalikan). Memulangkan id tuntutan. */
 export async function simpanDraf(employmentId: string, item: ItemTuntutan, claimId?: string): Promise<string> {
   const sb = getSupabase();
-  const title = item.purpose.trim() || "Tuntutan";
+  const title = item.purpose.trim() || tr("Tuntutan");
   let id = claimId;
   if (id) {
     must(await sb.from("claims").update({ title }).eq("id", id));

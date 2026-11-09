@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import type { Slip } from "@/lib/gaji";
 import { BULAN_PENUH, BULAN_RINGKAS } from "@/lib/gaji";
 import { tarikh } from "@/lib/format";
@@ -7,8 +8,8 @@ import { tarikh } from "@/lib/format";
 const rm = (n: number) => n.toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const sorokIC = (ic: string | null) => (ic ? `••••••-••-${ic.replace(/\D/g, "").slice(-4)}` : "-");
 
-const LABEL_POTONGAN: Record<string, string> = { EPF: "KWSP (pekerja)", SOCSO: "PERKESO (pekerja)", EIS: "SIP / EIS (pekerja)", PCB: "PCB / MTD", UNPAID: "Cuti tanpa gaji" };
-const LABEL_MAJIKAN: Record<string, string> = { EPF_ER: "KWSP", SOCSO_ER: "PERKESO", EIS_ER: "SIP / EIS", HRDF: "HRDF" };
+const LABEL_POTONGAN: Record<string, string> = { EPF: tr("KWSP (pekerja)"), SOCSO: tr("PERKESO (pekerja)"), EIS: tr("SIP / EIS (pekerja)"), PCB: tr("PCB / MTD"), UNPAID: tr("Cuti tanpa gaji") };
+const LABEL_MAJIKAN: Record<string, string> = { EPF_ER: tr("KWSP"), SOCSO_ER: tr("PERKESO"), EIS_ER: tr("SIP / EIS"), HRDF: "HRDF" };
 
 /** Slip gaji A4 (rujukan reka bentuk: design/SlipGaji.dc.html). Dicetak sebagai PDF melalui pelayar. */
 export function SlipGaji({ s }: { s: Slip }) {
@@ -21,66 +22,65 @@ export function SlipGaji({ s }: { s: Slip }) {
   const rujukan = `${s.company.code}-${s.year}${String(s.month).padStart(2, "0")}-${s.employee.employeeNo.replace(/\D/g, "").slice(-4)}`;
 
   return (
-    <article className="slip mx-auto flex w-full max-w-[794px] flex-col gap-4 bg-white p-6 text-[12px] text-ink sm:p-10" aria-label="Slip gaji">
+    <article className="slip mx-auto flex w-full max-w-[794px] flex-col gap-4 bg-white p-6 text-[12px] text-ink sm:p-10" aria-label={tr("Slip gaji")}>
       <header className="flex items-start justify-between gap-4 border-b-2 border-primary pb-3">
         <div className="flex flex-col gap-0.5">
           <b className="text-[15px] font-extrabold uppercase">{s.company.name}</b>
-          {s.company.reg_no && <span className="text-muted">No. Syarikat {s.company.reg_no}</span>}
+          {s.company.reg_no && <span className="text-muted">{tr("No. Syarikat {0}", s.company.reg_no)}</span>}
           <span className="text-muted">
-            No. Majikan KWSP {s.company.epf ?? "-"} · PERKESO {s.company.socso ?? "-"} · LHDN {s.company.lhdn ?? "-"}
-          </span>
+            {tr("No. Majikan KWSP {0} · PERKESO {1} · LHDN {2}", s.company.epf ?? "-", s.company.socso ?? "-", s.company.lhdn ?? "-")}</span>
         </div>
         <div className="flex flex-col items-end gap-0.5 text-right">
-          <b className="text-[15px] font-extrabold tracking-[0.06em] text-primary">SLIP GAJI</b>
+          <b className="text-[15px] font-extrabold tracking-[0.06em] text-primary">{tr("SLIP GAJI")}</b>
           <span className="font-bold">
             {BULAN_PENUH[s.month - 1]} {s.year}
           </span>
-          {s.payDate && <span className="text-muted">Dibayar {tarikh(s.payDate)} {s.payDate.slice(0, 4)}</span>}
+          {s.payDate && <span className="text-muted">{tr("Dibayar {0} {1}", tarikh(s.payDate), s.payDate.slice(0, 4))}</span>}
         </div>
       </header>
 
       <section className="grid grid-cols-2 gap-x-6 gap-y-1">
-        <Row k="Nama" v={s.employee.fullName} />
-        <Row k="No. pekerja" v={s.employee.employeeNo} />
-        <Row k="No. kad pengenalan" v={sorokIC(s.employee.ic)} />
-        <Row k="Jabatan" v={s.employee.department ?? "-"} />
-        <Row k="Jawatan" v={s.employee.position ?? "-"} />
-        <Row k="No. KWSP" v={s.employee.epfNo ?? "-"} />
-        <Row k="No. cukai" v={s.employee.taxNo ?? "-"} />
-        <Row k="No. PERKESO" v={s.employee.socsoNo ?? "-"} />
-        <Row k="Bank" v={s.employee.bank ? `${s.employee.bank} ••••${(s.employee.account ?? "").slice(-4)}` : "-"} />
-        <Row k="Cuti tanpa gaji" v={`${s.unpaidDays} hari`} />
+        <Row k={tr("Nama")} v={s.employee.fullName} />
+        <Row k={tr("No. pekerja")} v={s.employee.employeeNo} />
+        <Row k={tr("No. kad pengenalan")} v={sorokIC(s.employee.ic)} />
+        <Row k={tr("Jabatan")} v={s.employee.department ?? "-"} />
+        <Row k={tr("Jawatan")} v={s.employee.position ?? "-"} />
+        <Row k={tr("No. KWSP")} v={s.employee.epfNo ?? "-"} />
+        <Row k={tr("No. cukai")} v={s.employee.taxNo ?? "-"} />
+        <Row k={tr("No. PERKESO")} v={s.employee.socsoNo ?? "-"} />
+        <Row k={tr("Bank")} v={s.employee.bank ? `${s.employee.bank} ••••${(s.employee.account ?? "").slice(-4)}` : "-"} />
+        <Row k={tr("Cuti tanpa gaji")} v={tr("{0} hari", s.unpaidDays)} />
       </section>
 
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Jadual tajuk="PENDAPATAN" baris={earn.map((l) => [l.description + (l.code === "CLAIM" ? " *" : ""), rm(l.amount)])} jumlah={["Jumlah pendapatan", rm(jumlahEarn)]} />
-        <Jadual tajuk="POTONGAN" baris={ded.map((l) => [LABEL_POTONGAN[l.code] ?? l.description, rm(l.amount)])} jumlah={["Jumlah potongan", rm(jumlahDed)]} />
+        <Jadual tajuk={tr("PENDAPATAN")} baris={earn.map((l) => [l.description + (l.code === "CLAIM" ? " *" : ""), rm(l.amount)])} jumlah={[tr("Jumlah pendapatan"), rm(jumlahEarn)]} />
+        <Jadual tajuk={tr("POTONGAN")} baris={ded.map((l) => [LABEL_POTONGAN[l.code] ?? l.description, rm(l.amount)])} jumlah={[tr("Jumlah potongan"), rm(jumlahDed)]} />
       </section>
 
       <section className="flex items-center justify-between rounded-[12px] bg-[#E3F1EE] px-5 py-3.5 text-primary">
-        <b className="text-[13px] font-extrabold tracking-[0.06em]">GAJI BERSIH</b>
-        <b className="text-[22px] font-extrabold">RM {rm(s.net)}</b>
+        <b className="text-[13px] font-extrabold tracking-[0.06em]">{tr("GAJI BERSIH")}</b>
+        <b className="text-[22px] font-extrabold">{tr("RM {0}", rm(s.net))}</b>
       </section>
 
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Jadual tajuk="CARUMAN MAJIKAN" baris={er.map((l) => [LABEL_MAJIKAN[l.code] ?? l.description, rm(l.amount)])} />
+        <Jadual tajuk={tr("CARUMAN MAJIKAN")} baris={er.map((l) => [LABEL_MAJIKAN[l.code] ?? l.description, rm(l.amount)])} />
         <Jadual
-          tajuk={`TERKUMPUL ${s.year} (${BULAN_RINGKAS[0].toUpperCase()}–${BULAN_RINGKAS[s.month - 1].toUpperCase()})`}
+          tajuk={tr("TERKUMPUL {0} ({1}–{2})", s.year, BULAN_RINGKAS[0].toUpperCase(), BULAN_RINGKAS[s.month - 1].toUpperCase())}
           baris={[
-            ["Pendapatan kasar", rm(s.ytd.gross)],
-            ["KWSP pekerja", rm(s.ytd.epf)],
+            [tr("Pendapatan kasar"), rm(s.ytd.gross)],
+            [tr("KWSP pekerja"), rm(s.ytd.epf)],
             ["PCB", rm(s.ytd.pcb)],
-            ...(s.alBalance !== null ? [["Baki cuti tahunan", `${s.alBalance} hari`] as [string, string]] : []),
+            ...(s.alBalance !== null ? [[tr("Baki cuti tahunan"), tr("{0} hari", s.alBalance)] as [string, string]] : []),
           ]}
         />
       </section>
 
       <footer className="flex flex-col gap-1 border-t border-line-soft pt-3 text-[11px] text-muted">
-        {ada("CLAIM") && <span>* Bayaran balik tuntutan tidak dikenakan KWSP, PERKESO atau cukai.</span>}
-        <span>Slip ini dijana oleh komputer. Tandatangan tidak diperlukan.</span>
+        {ada("CLAIM") && <span>{tr("* Bayaran balik tuntutan tidak dikenakan KWSP, PERKESO atau cukai.")}</span>}
+        <span>{tr("Slip ini dijana oleh komputer. Tandatangan tidak diperlukan.")}</span>
         <div className="flex justify-between">
-          <span className="font-bold">Sulit — untuk penerima sahaja.</span>
-          <span>Rujukan slip {rujukan}</span>
+          <span className="font-bold">{tr("Sulit — untuk penerima sahaja.")}</span>
+          <span>{tr("Rujukan slip {0}", rujukan)}</span>
         </div>
       </footer>
     </article>

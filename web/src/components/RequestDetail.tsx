@@ -1,5 +1,6 @@
 "use client";
 
+import { tr, trRalat } from "@/lib/i18n";
 import { beritahu, sahkan } from "@/components/Dialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -13,14 +14,14 @@ import { ReasonSheet } from "./ReasonSheet";
 import { urlSementara } from "@/lib/upload";
 import { namaJenisTuntutan } from "@/lib/claims";
 
-const VIA: Record<string, string> = { web: "aplikasi", whatsapp: "WhatsApp", ai_agent: "pembantu AI", system: "sistem" };
+const VIA: Record<string, string> = { web: "aplikasi", whatsapp: tr("WhatsApp"), ai_agent: tr("pembantu AI"), system: "sistem" };
 const TAJUK: Record<string, string> = {
-  leave: "Permohonan Cuti",
-  claim: "Tuntutan",
-  attendance_correction: "Pembetulan Masa",
-  payroll_run: "Kelulusan Gaji",
-  overtime: "Kerja Lebih Masa",
-  salary_advance: "Pendahuluan Gaji",
+  leave: tr("Permohonan Cuti"),
+  claim: tr("Tuntutan"),
+  attendance_correction: tr("Pembetulan Masa"),
+  payroll_run: tr("Kelulusan Gaji"),
+  overtime: tr("Kerja Lebih Masa"),
+  salary_advance: tr("Pendahuluan Gaji"),
 };
 
 type Mode = { kind: "approver"; taskId: string } | { kind: "requester"; requestId: string };
@@ -53,7 +54,7 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
       <Bingkai tertanam={!!tertanam}>
         {!tertanam && <BackHeader href={back} />}
         <div className="p-5">
-          <ErrorBox message={d.error ?? "Permohonan tidak dijumpai atau anda tidak mempunyai akses."} />
+          <ErrorBox message={d.error ?? tr("Permohonan tidak dijumpai atau anda tidak mempunyai akses.")} />
         </div>
       </Bingkai>
     );
@@ -82,13 +83,13 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
       return;
     }
     setSheet(null);
-    beritahu(action === "approve" ? "Diluluskan." : action === "reject" ? "Ditolak. Pemohon dimaklumkan." : "Dikembalikan kepada pemohon untuk pembetulan.");
+    beritahu(action === "approve" ? tr("Diluluskan.") : action === "reject" ? tr("Ditolak. Pemohon dimaklumkan.") : tr("Dikembalikan kepada pemohon untuk pembetulan."));
     if (tertanam) tertanam.onSelesai();
     else router.push("/kelulusan");
   }
 
   async function batal() {
-    if (!(await sahkan({ tajuk: "Batalkan permohonan ini?", mesej: "Pelulus akan dimaklumkan. Anda boleh memohon semula kemudian.", ok: "Batalkan", bahaya: true }))) return;
+    if (!(await sahkan({ tajuk: tr("Batalkan permohonan ini?"), mesej: tr("Pelulus akan dimaklumkan. Anda boleh memohon semula kemudian."), ok: tr("Batalkan"), bahaya: true }))) return;
     setBusy(true);
     const { error: err } = await getSupabase().rpc("approval_cancel", { p_request: x.req.id, p_via: "web" });
     setBusy(false);
@@ -99,9 +100,9 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
   return (
     <Bingkai tertanam={!!tertanam}>
       {tertanam ? (
-        <h2 className="m-0 px-1 pt-1 pb-2 text-lg font-extrabold">{TAJUK[x.req.request_type] ?? "Permohonan"}</h2>
+        <h2 className="m-0 px-1 pt-1 pb-2 text-lg font-extrabold">{TAJUK[x.req.request_type] ?? tr("Permohonan")}</h2>
       ) : (
-        <BackHeader title={TAJUK[x.req.request_type] ?? "Permohonan"} href={back} />
+        <BackHeader title={TAJUK[x.req.request_type] ?? tr("Permohonan")} href={back} />
       )}
       <Isi className={`flex grow flex-col gap-3 ${tertanam ? "" : "px-4 pt-1 pb-4"}`}>
         <section className="flex flex-col gap-3 rounded-[18px] bg-surface p-4">
@@ -110,7 +111,7 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
             <div className="flex grow flex-col gap-0.5">
               <span className="text-base font-extrabold">{x.requesterName}</span>
               <span className="text-[13px] text-muted">
-                {[x.department, x.companyCode, `dihantar ${masa(x.req.submitted_at)}${x.via ? ` melalui ${VIA[x.via] ?? x.via}` : ""}`]
+                {[x.department, x.companyCode, tr("dihantar {0}{1}", masa(x.req.submitted_at), x.via ? tr(" melalui {0}", VIA[x.via] ?? x.via) : "")]
                   .filter(Boolean)
                   .join(" · ")}
               </span>
@@ -120,60 +121,60 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
 
           {x.leave && (
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Jenis" value={x.leave.typeName} />
-              <Field label="Tempoh" value={`${hari(x.leave.days)} hari bekerja`} />
-              <Field label="Tarikh" value={julatTarikh(x.leave.start, x.leave.end)} />
-              {x.leave.balanceAfter !== null && <Field label="Baki selepas" value={`${hari(x.leave.balanceAfter)} hari`} />}
+              <Field label={tr("Jenis")} value={x.leave.typeName} />
+              <Field label={tr("Tempoh")} value={`${hari(x.leave.days)} hari bekerja`} />
+              <Field label={tr("Tarikh")} value={julatTarikh(x.leave.start, x.leave.end)} />
+              {x.leave.balanceAfter !== null && <Field label={tr("Baki selepas")} value={`${hari(x.leave.balanceAfter)} hari`} />}
             </div>
           )}
-          {x.leave?.reason && <Field label="Sebab" value={x.leave.reason} plain />}
-          {x.leave?.cover && <Field label="Pengganti tugas" value={x.leave.cover} plain />}
+          {x.leave?.reason && <Field label={tr("Sebab")} value={x.leave.reason} plain />}
+          {x.leave?.cover && <Field label={tr("Pengganti tugas")} value={x.leave.cover} plain />}
           {x.leave?.attachment && (
             <div className="flex flex-col gap-1">
-              <span className="text-xs text-muted">Sijil sokongan</span>
-              <LihatFail path={x.leave.attachment} label="Lihat sijil" />
+              <span className="text-xs text-muted">{tr("Sijil sokongan")}</span>
+              <LihatFail path={x.leave.attachment} label={tr("Lihat sijil")} />
             </div>
           )}
 
           {x.gaji && (
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Bulan" value={x.gaji.bulan} />
-              <Field label="Pekerja" value={String(x.gaji.headcount)} />
-              <Field label="Jumlah kasar" value={ringgit(x.gaji.gross)} />
-              <Field label="Jumlah bersih" value={ringgit(x.gaji.net)} />
-              <Field label="Caruman majikan" value={ringgit(x.gaji.employer)} />
+              <Field label={tr("Bulan")} value={x.gaji.bulan} />
+              <Field label={tr("Pekerja")} value={String(x.gaji.headcount)} />
+              <Field label={tr("Jumlah kasar")} value={ringgit(x.gaji.gross)} />
+              <Field label={tr("Jumlah bersih")} value={ringgit(x.gaji.net)} />
+              <Field label={tr("Caruman majikan")} value={ringgit(x.gaji.employer)} />
               <Field label="PCB" value={ringgit(x.gaji.pcb)} />
             </div>
           )}
           {x.koreksi && (
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Tarikh" value={tarikh(x.koreksi.date)} />
-              <Field label="Rekod mesin" value={`${x.koreksi.machineIn ? jam(x.koreksi.machineIn) : "Tiada"} – ${x.koreksi.machineOut ? jam(x.koreksi.machineOut) : "Tiada"}`} />
-              <Field label="Masuk sebenar" value={x.koreksi.in ? jam(x.koreksi.in) : "Tiada perubahan"} />
-              <Field label="Keluar sebenar" value={x.koreksi.out ? jam(x.koreksi.out) : "Tiada perubahan"} />
+              <Field label={tr("Tarikh")} value={tarikh(x.koreksi.date)} />
+              <Field label={tr("Rekod mesin")} value={`${x.koreksi.machineIn ? jam(x.koreksi.machineIn) : "Tiada"} – ${x.koreksi.machineOut ? jam(x.koreksi.machineOut) : "Tiada"}`} />
+              <Field label={tr("Masuk sebenar")} value={x.koreksi.in ? jam(x.koreksi.in) : "Tiada perubahan"} />
+              <Field label={tr("Keluar sebenar")} value={x.koreksi.out ? jam(x.koreksi.out) : "Tiada perubahan"} />
             </div>
           )}
-          {x.koreksi && <Field label="Sebab" value={x.koreksi.reason} plain />}
+          {x.koreksi && <Field label={tr("Sebab")} value={x.koreksi.reason} plain />}
 
           {x.claim && (
             <div className="flex flex-col gap-2">
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Tajuk" value={x.claim.title} />
-                <Field label="Jumlah" value={ringgit(x.claim.total)} />
+                <Field label={tr("Tajuk")} value={x.claim.title} />
+                <Field label={tr("Jumlah")} value={ringgit(x.claim.total)} />
               </div>
               {x.claim.items.map((it, i) => (
                 <div key={i} className="flex flex-col gap-1.5 border-t border-[#EEF2F1] pt-2 text-sm">
                   <div className="flex justify-between gap-2">
                     <span>
                       {it.type} · {tarikh(it.date)}
-                      {it.km ? ` · ${it.km} km` : ""}
+                      {it.km ? tr(" · {0} km", it.km) : ""}
                     </span>
                     <b>{ringgit(it.amount)}</b>
                   </div>
                   {it.receipts.length > 0 && (
                     <div className="flex flex-wrap gap-x-4 gap-y-1">
                       {it.receipts.map((r, k) => (
-                        <LihatFail key={r} path={r} label={`Lihat resit${it.receipts.length > 1 ? ` ${k + 1}` : ""}`} />
+                        <LihatFail key={r} path={r} label={tr("Lihat resit{0}", it.receipts.length > 1 ? ` ${k + 1}` : "")} />
                       ))}
                     </div>
                   )}
@@ -181,24 +182,24 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
               ))}
             </div>
           )}
-          {!x.leave && !x.claim && <Field label="Permohonan" value={x.req.title} />}
+          {!x.leave && !x.claim && <Field label={tr("Permohonan")} value={x.req.title} />}
         </section>
 
         {x.req.ai_summary && (
           <section className="flex flex-col gap-2 rounded-[18px] bg-ai-soft px-4 py-3">
             <div className="flex items-center gap-2">
               <IconSparkle size={18} className="text-ai" />
-              <span className="text-sm font-extrabold text-ai-hover">Ringkasan AI</span>
+              <span className="text-sm font-extrabold text-ai-hover">{tr("Ringkasan AI")}</span>
             </div>
             <p className="m-0 text-sm whitespace-pre-line text-[#2E2650]">{x.req.ai_summary}</p>
           </section>
         )}
 
         <section className="flex flex-col gap-3 rounded-[18px] bg-surface p-4">
-          <span className="text-sm font-extrabold">Aliran kelulusan</span>
+          <span className="text-sm font-extrabold">{tr("Aliran kelulusan")}</span>
           <div className="flex items-center gap-3">
             <Done />
-            <span className="grow text-sm">Dihantar oleh {x.requesterName}</span>
+            <span className="grow text-sm">{tr("Dihantar oleh {0}", x.requesterName)}</span>
             <span className="text-xs text-muted">{masa(x.req.submitted_at)}</span>
           </div>
           {x.flow.map((s) => (
@@ -216,7 +217,7 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
                 <span
                   className={`grow text-sm ${s.state === "current" ? "font-extrabold" : s.state === "future" || s.state === "skipped" ? "text-muted" : ""}`}
                 >
-                  {s.order} · {s.name}
+                  {s.order} · {trRalat(s.name)}
                   {s.mine ? " (anda)" : ""}
                 </span>
                 <span
@@ -243,15 +244,14 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
               onClick={() => setSheet("reject")}
               className="h-12 rounded-button border-[1.5px] border-line bg-surface text-base font-bold text-danger disabled:opacity-60"
             >
-              Tolak
-            </button>
+              {tr("Tolak")}</button>
             <button
               type="button"
               disabled={busy}
               onClick={() => act("approve")}
               className="h-12 rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover disabled:opacity-60"
             >
-              {busy ? "Memproses…" : "Lulus"}
+              {busy ? tr("Memproses…") : tr("Lulus")}
             </button>
           </div>
           <button
@@ -260,8 +260,7 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
             onClick={() => setSheet("return")}
             className="h-11 bg-transparent text-sm font-bold text-primary"
           >
-            Kembalikan untuk pembetulan
-          </button>
+            {tr("Kembalikan untuk pembetulan")}</button>
         </div>
       )}
 
@@ -273,15 +272,14 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
             onClick={batal}
             className="h-12 w-full rounded-[14px] border border-line bg-surface text-sm font-bold text-danger disabled:opacity-60"
           >
-            Batalkan permohonan
-          </button>
+            {tr("Batalkan permohonan")}</button>
         </div>
       )}
 
       {sheet && (
         <ReasonSheet
-          title={sheet === "reject" ? "Tolak permohonan" : "Kembalikan untuk pembetulan"}
-          confirmLabel={sheet === "reject" ? "Tolak" : "Kembalikan"}
+          title={sheet === "reject" ? tr("Tolak permohonan") : tr("Kembalikan untuk pembetulan")}
+          confirmLabel={sheet === "reject" ? tr("Tolak") : tr("Kembalikan")}
           danger={sheet === "reject"}
           onCancel={() => setSheet(null)}
           onConfirm={(r) => act(sheet, r)}
@@ -309,7 +307,7 @@ function LihatFail({ path, label }: { path: string; label: string }) {
         }}
         className="self-start text-sm font-bold text-primary"
       >
-        {busy ? "Membuka…" : label}
+        {busy ? tr("Membuka…") : label}
       </button>
       {error && <span className="text-xs text-danger">{error}</span>}
     </span>
@@ -349,7 +347,7 @@ async function loadDetail(mode: Mode) {
   let requestId: string;
   if (mode.kind === "approver") {
     const t = must(await sb.from("approval_tasks").select("request_id").eq("id", mode.taskId).maybeSingle());
-    if (!t) throw new Error("Tugasan tidak dijumpai atau anda tidak mempunyai akses.");
+    if (!t) throw new Error(tr("Tugasan tidak dijumpai atau anda tidak mempunyai akses."));
     requestId = t.request_id;
   } else {
     requestId = mode.requestId;
@@ -364,7 +362,7 @@ async function loadDetail(mode: Mode) {
       .eq("id", requestId)
       .maybeSingle(),
   );
-  if (!req) throw new Error("Permohonan tidak dijumpai atau anda tidak mempunyai akses.");
+  if (!req) throw new Error(tr("Permohonan tidak dijumpai atau anda tidak mempunyai akses."));
 
   const { data: auth } = await sb.auth.getUser();
   const me = must(await sb.from("persons").select("id").eq("auth_user_id", auth.user?.id ?? "").maybeSingle());
@@ -398,7 +396,7 @@ async function loadDetail(mode: Mode) {
     p?.preferred_name ||
     p?.full_name ||
     (await sb.rpc("request_requester_name", { p_request: req.id })).data ||
-    "Pemohon";
+    tr("Pemohon");
   const via = acts.find((a) => a.action === "submitted")?.via ?? null;
 
   // Aliran kelulusan: satu baris setiap peringkat
@@ -411,12 +409,12 @@ async function loadDetail(mode: Mode) {
     const pending = mineAll.find((t) => t.status === "pending");
     const mine = !!me && mineAll.some((t) => t.approver_person_id === me.id);
     const name = namaPeringkat(s.name);
-    if (approved) return { order: s.step_order, name, state: "approved", right: approved.acted_at ? masa(approved.acted_at) : "Lulus", mine, comment: approved.comment };
-    if (rejected) return { order: s.step_order, name, state: "rejected", right: "Ditolak", mine, comment: rejected.comment };
-    if (returned) return { order: s.step_order, name, state: "returned", right: "Dikembalikan", mine, comment: returned.comment };
+    if (approved) return { order: s.step_order, name, state: "approved", right: approved.acted_at ? masa(approved.acted_at) : tr("Lulus"), mine, comment: approved.comment };
+    if (rejected) return { order: s.step_order, name, state: "rejected", right: tr("Ditolak"), mine, comment: rejected.comment };
+    if (returned) return { order: s.step_order, name, state: "returned", right: tr("Dikembalikan"), mine, comment: returned.comment };
     if (pending && req.status === "pending")
-      return { order: s.step_order, name, state: "current", right: "Menunggu", mine: pending.approver_person_id === me?.id, comment: null };
-    if (skipped) return { order: s.step_order, name, state: "skipped", right: "Dilangkau", mine: false, comment: null };
+      return { order: s.step_order, name, state: "current", right: tr("Menunggu"), mine: pending.approver_person_id === me?.id, comment: null };
+    if (skipped) return { order: s.step_order, name, state: "skipped", right: tr("Dilangkau"), mine: false, comment: null };
     return { order: s.step_order, name, state: "future", right: "", mine: false, comment: null };
   });
 
@@ -466,10 +464,10 @@ async function loadDetail(mode: Mode) {
       if (lr.cover_person_id) {
         const cols = must(await sb.rpc("my_colleagues", { p_company: req.company_id })) ?? [];
         cover = cols.find((c) => c.person_id === lr.cover_person_id)?.name ?? null;
-        if (!cover && lr.cover_person_id === me?.id) cover = "Anda";
+        if (!cover && lr.cover_person_id === me?.id) cover = tr("Anda");
       }
       leave = {
-        typeName: lr.leave_types?.name ?? "Cuti",
+        typeName: lr.leave_types?.name ?? tr("Cuti"),
         days: Number(lr.days),
         start: lr.start_date,
         end: lr.end_date,
@@ -483,7 +481,7 @@ async function loadDetail(mode: Mode) {
     const pr = must(await sb.from("payroll_runs").select("period_year, period_month, totals").eq("id", req.reference_id).maybeSingle());
     if (pr) {
       const t = (pr.totals ?? {}) as Record<string, number>;
-      const BULAN = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+      const BULAN = [tr("Januari"), tr("Februari"), tr("Mac"), tr("April"), tr("Mei"), tr("Jun"), tr("Julai"), tr("Ogos"), tr("September"), tr("Oktober"), tr("November"), tr("Disember")];
       gaji = {
         bulan: `${BULAN[pr.period_month - 1]} ${pr.period_year}`,
         headcount: Number(t.headcount ?? 0),
@@ -528,7 +526,7 @@ async function loadDetail(mode: Mode) {
         title: c.title,
         total: Number(c.total_amount),
         items: c.claim_items.map((i) => ({
-          type: namaJenisTuntutan(i.claim_types?.name ?? "Item"),
+          type: namaJenisTuntutan(i.claim_types?.name ?? tr("Item")),
           description: i.description,
           date: i.expense_date,
           amount: Number(i.amount),

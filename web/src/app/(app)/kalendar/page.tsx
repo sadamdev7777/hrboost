@@ -1,5 +1,6 @@
 "use client";
 
+import { tr, trRalat } from "@/lib/i18n";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useMe } from "@/lib/me";
@@ -11,8 +12,8 @@ import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar } from "@/components/TabNav";
 import { useSkrinLebar } from "@/lib/skrin";
 
-const HARI = ["Isn", "Sel", "Rab", "Kha", "Jum", "Sab", "Ahd"];
-const HARI_PENUH = ["Ahad", "Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu"];
+const HARI = [tr("Isn"), tr("Sel"), tr("Rab"), tr("Kha"), tr("Jum"), tr("Sab"), tr("Ahd")];
+const HARI_PENUH = [tr("Ahad"), tr("Isnin"), tr("Selasa"), tr("Rabu"), tr("Khamis"), tr("Jumaat"), tr("Sabtu")];
 /** Amaran "ramai bercuti": sekurang-kurangnya 2 orang dan ≥ 30% jabatan pada hari yang sama. */
 const HAD = 0.3;
 
@@ -27,11 +28,11 @@ function binaHari(k: Kalendar, dari: string, hingga: string): Hari[] {
     const kiraan = new Map<string, { n: number; nama: string }>();
     for (const c of cuti.filter((x) => x.status === "approved")) {
       const k2 = c.department_id ?? "-";
-      kiraan.set(k2, { n: (kiraan.get(k2)?.n ?? 0) + 1, nama: c.department ?? "Tiada jabatan" });
+      kiraan.set(k2, { n: (kiraan.get(k2)?.n ?? 0) + 1, nama: c.department ?? tr("Tiada jabatan") });
     }
     const amaran = [...kiraan.entries()]
       .filter(([id, v]) => v.n >= 2 && v.n / Math.max(k.headcount[id] ?? 1, 1) >= HAD)
-      .map(([id, v]) => `${v.nama}: ${v.n}/${k.headcount[id]} bercuti`);
+      .map(([id, v]) => tr("{0}: {1}/{2} bercuti", v.nama, v.n, k.headcount[id]));
     out.push({
       iso: d,
       cuti,
@@ -64,31 +65,30 @@ export default function KalendarPage() {
 
   return (
     <Screen lebar="lebar">
-      <PengepalaAkar title="Kalendar pasukan" back="/saya" />
+      <PengepalaAkar title={tr("Kalendar pasukan")} back="/saya" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1 rounded-full bg-surface p-1">
-            <button type="button" aria-label="Bulan sebelumnya" onClick={() => geser(-1)} className="flex size-9 items-center justify-center rounded-full text-lg">
+            <button type="button" aria-label={tr("Bulan sebelumnya")} onClick={() => geser(-1)} className="flex size-9 items-center justify-center rounded-full text-lg">
               ‹
             </button>
             <b className="min-w-[132px] text-center text-sm font-extrabold">{tajuk}</b>
-            <button type="button" aria-label="Bulan seterusnya" onClick={() => geser(1)} className="flex size-9 items-center justify-center rounded-full text-lg">
+            <button type="button" aria-label={tr("Bulan seterusnya")} onClick={() => geser(1)} className="flex size-9 items-center justify-center rounded-full text-lg">
               ›
             </button>
           </div>
           {bulan !== t.slice(0, 7) && (
             <button type="button" onClick={() => setBulan(t.slice(0, 7))} className="flex h-9 items-center rounded-full border border-line px-3 text-[13px] font-bold">
-              Bulan ini
-            </button>
+              {tr("Bulan ini")}</button>
           )}
           {(d.data?.departments.length ?? 0) > 1 && (
             <select
-              aria-label="Jabatan"
+              aria-label={tr("Jabatan")}
               value={jabatan}
               onChange={(e) => setJabatan(e.target.value)}
               className="h-9 rounded-full border border-line bg-surface px-3 text-[13px] font-bold"
             >
-              <option value="">Semua jabatan</option>
+              <option value="">{tr("Semua jabatan")}</option>
               {d.data!.departments.map((j) => (
                 <option key={j.id} value={j.id}>
                   {j.name}
@@ -97,20 +97,19 @@ export default function KalendarPage() {
             </select>
           )}
           <span className="flex flex-wrap items-center gap-3 text-xs text-muted lg:ml-auto">
-            <Petunjuk cls="bg-[#E3F1EE] text-primary">Cuti</Petunjuk>
-            <Petunjuk cls="border border-dashed border-primary text-primary">Menunggu kelulusan</Petunjuk>
-            <Petunjuk cls="bg-[#FDEBD7] text-warning">Cuti umum</Petunjuk>
+            <Petunjuk cls="bg-[#E3F1EE] text-primary">{tr("Cuti")}</Petunjuk>
+            <Petunjuk cls="border border-dashed border-primary text-primary">{tr("Menunggu kelulusan")}</Petunjuk>
+            <Petunjuk cls="bg-[#FDEBD7] text-warning">{tr("Cuti umum")}</Petunjuk>
           </span>
         </div>
         {amaranBulan > 0 && (
           <div className="rounded-card bg-warning-soft px-4 py-3 text-[13px] text-warning">
-            <b>Perhatian:</b> {amaranBulan} hari dalam bulan ini, ramai pekerja sejabatan bercuti serentak (sekurang-kurangnya {Math.round(HAD * 100)}% jabatan).
-          </div>
+            <b>{tr("Perhatian:")}</b> {" "}{tr("{0} hari dalam bulan ini, ramai pekerja sejabatan bercuti serentak (sekurang-kurangnya {1}% jabatan).", amaranBulan, Math.round(HAD * 100))}</div>
         )}
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         {d.data && (lebar ? <Grid hari={hari} t={t} full={d.data.full} /> : <Senarai hari={hari} t={t} full={d.data.full} />)}
-        {d.data && !d.data.full && <span className="text-xs text-muted">Anda melihat cuti jabatan anda sahaja. Jenis cuti hanya dipaparkan kepada HR.</span>}
+        {d.data && !d.data.full && <span className="text-xs text-muted">{tr("Anda melihat cuti jabatan anda sahaja. Jenis cuti hanya dipaparkan kepada HR.")}</span>}
       </main>
     </Screen>
   );
@@ -129,7 +128,7 @@ function Lencana({ c, full }: { c: CutiKalendar; full: boolean }) {
   const label = `${c.name}${full && c.type ? ` · ${c.type}` : ""}${c.half_day !== "full" ? " (½)" : ""}`;
   const isi = (
     <span
-      title={`${c.name} — ${c.type_name}${c.status === "pending" ? " (menunggu kelulusan)" : ""}`}
+      title={`${c.name} — ${trRalat(c.type_name)}${c.status === "pending" ? tr(" (menunggu kelulusan)") : ""}`}
       className={`block truncate rounded-[6px] px-1.5 py-0.5 text-[11px] font-semibold ${c.status === "pending" ? "border border-dashed border-primary text-primary" : "bg-[#E3F1EE] text-primary"}`}
     >
       {label}
@@ -172,16 +171,15 @@ function Grid({ hari, t, full }: { hari: Hari[]; t: string; full: boolean }) {
                   {Number(h.iso.slice(8, 10))}
                 </span>
                 {h.jadi.length > 0 && (
-                  <span className="truncate text-[10px] font-semibold text-ai" title={`Hari jadi: ${h.jadi.join(", ")}`}>
-                    Hari jadi: {h.jadi.join(", ")}
-                  </span>
+                  <span className="truncate text-[10px] font-semibold text-ai" title={tr("Hari jadi: {0}", h.jadi.join(", "))}>
+                    {tr("Hari jadi: {0}", h.jadi.join(", "))}</span>
                 )}
               </span>
               {h.cutiUmum && <span className="truncate rounded-[6px] bg-[#FDEBD7] px-1.5 py-0.5 text-[11px] font-semibold text-warning">{h.cutiUmum}</span>}
               {h.cuti.slice(0, 3).map((c) => (
                 <Lencana key={c.employment_id + c.start} c={c} full={full} />
               ))}
-              {h.cuti.length > 3 && <span className="px-1 text-[11px] font-bold text-muted">+{h.cuti.length - 3} lagi</span>}
+              {h.cuti.length > 3 && <span className="px-1 text-[11px] font-bold text-muted">{tr("+{0} lagi", h.cuti.length - 3)}</span>}
             </div>
           );
         })}
@@ -192,7 +190,7 @@ function Grid({ hari, t, full }: { hari: Hari[]; t: string; full: boolean }) {
 
 function Senarai({ hari, t, full }: { hari: Hari[]; t: string; full: boolean }) {
   const ada = hari.filter((h) => h.cuti.length || h.cutiUmum || h.jadi.length);
-  if (!ada.length) return <div className="rounded-card bg-surface px-4 py-8 text-center text-sm text-muted">Tiada cuti atau cuti umum bulan ini.</div>;
+  if (!ada.length) return <div className="rounded-card bg-surface px-4 py-8 text-center text-sm text-muted">{tr("Tiada cuti atau cuti umum bulan ini.")}</div>;
   return (
     <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
       {ada.map((h) => (
@@ -203,7 +201,7 @@ function Senarai({ hari, t, full }: { hari: Hari[]; t: string; full: boolean }) 
           </span>
           <span className="flex min-w-0 grow flex-col gap-1">
             {h.cutiUmum && <span className="text-[13px] font-bold text-warning">{h.cutiUmum}</span>}
-            {h.jadi.length > 0 && <span className="text-xs font-semibold text-ai">Hari jadi: {h.jadi.join(", ")}</span>}
+            {h.jadi.length > 0 && <span className="text-xs font-semibold text-ai">{tr("Hari jadi: {0}", h.jadi.join(", "))}</span>}
             {h.cuti.length > 0 && (
               <span className="flex flex-wrap gap-1">
                 {h.cuti.map((c) => (

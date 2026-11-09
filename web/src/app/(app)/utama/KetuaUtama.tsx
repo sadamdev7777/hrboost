@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
@@ -49,11 +50,11 @@ export function KetuaUtama() {
 
       <Link href="/kelulusan" className="flex items-center gap-3 rounded-[20px] bg-primary px-4 py-[18px] text-white!">
         <span className="flex grow flex-col gap-1">
-          <span className="text-[13px] opacity-92">Menunggu kelulusan anda</span>
+          <span className="text-[13px] opacity-92">{tr("Menunggu kelulusan anda")}</span>
           <b className="text-[34px] leading-none font-extrabold">{pending.data ?? "–"}</b>
-          <span className="text-[13px] opacity-92">Selesaikan sebelum {masaTeks(emp.workEnd)}</span>
+          <span className="text-[13px] opacity-92">{tr("Selesaikan sebelum {0}", masaTeks(emp.workEnd))}</span>
         </span>
-        <span className="flex h-11 items-center rounded-[14px] bg-white px-4 text-sm font-extrabold text-primary">Semak</span>
+        <span className="flex h-11 items-center rounded-[14px] bg-white px-4 text-sm font-extrabold text-primary">{tr("Semak")}</span>
       </Link>
 
       <KadPenilaianKetua companyId={emp.companyId} />
@@ -61,11 +62,11 @@ export function KetuaUtama() {
 
       {team.error && <ErrorBox message={team.error} />}
 
-      <span className="text-xs font-bold tracking-[0.04em] text-subtle">PASUKAN {jabatan} HARI INI</span>
+      <span className="text-xs font-bold tracking-[0.04em] text-subtle">{tr("PASUKAN {0} HARI INI", jabatan)}</span>
       <div className="grid grid-cols-3 gap-2">
-        <Kotak n={hadir} label="Hadir" />
-        <Kotak n={lewat} label="Lewat" warn />
-        <Kotak n={cuti} label="MC / cuti" />
+        <Kotak n={hadir} label={tr("Hadir")} />
+        <Kotak n={lewat} label={tr("Lewat")} warn />
+        <Kotak n={cuti} label={tr("MC / cuti")} />
       </div>
       {perhatian.length > 0 && (
         <div className="flex flex-col rounded-card bg-surface px-4 py-1">
@@ -75,8 +76,7 @@ export function KetuaUtama() {
               <span className="grow font-bold">{a.name}</span>
               {a.late && a.clockIn ? (
                 <span className="text-xs font-bold text-warning">
-                  Masuk {masaRingkas(a.clockIn)} · kali ke-{a.lateCount}
-                </span>
+                  {tr("Masuk {0} · kali ke-{1}", masaRingkas(a.clockIn), a.lateCount)}</span>
               ) : (
                 <span className="text-xs text-muted">{a.leaveToday}</span>
               )}
@@ -85,16 +85,16 @@ export function KetuaUtama() {
         </div>
       )}
 
-      <span className="text-xs font-bold tracking-[0.04em] text-subtle">CUTI PASUKAN MINGGU HADAPAN</span>
+      <span className="text-xs font-bold tracking-[0.04em] text-subtle">{tr("CUTI PASUKAN MINGGU HADAPAN")}</span>
       <div className="flex flex-col rounded-card bg-surface px-4 py-1">
         {(team.data?.hadapan ?? []).length === 0 ? (
-          <div className="flex min-h-[50px] items-center text-sm text-muted">Tiada cuti dijadualkan.</div>
+          <div className="flex min-h-[50px] items-center text-sm text-muted">{tr("Tiada cuti dijadualkan.")}</div>
         ) : (
           team.data!.hadapan.map((c, i) => (
             <div key={i} className={`flex min-h-[50px] items-center gap-3 text-sm ${i ? "border-t border-[#EEF2F1]" : ""}`}>
               <Avatar name={c.name} size={32} />
               <span className="grow font-bold">{c.name}</span>
-              <span className="text-xs text-muted">{c.label}</span>
+              <span className="text-xs text-muted">{tr(c.label)}</span>
             </div>
           ))
         )}
@@ -153,7 +153,7 @@ async function loadPasukan(deptIds: string[], myPersonId: string, grace: number)
 
   const nameOf = (empId: string) => {
     const e = emps.find((x) => x.id === empId);
-    return e?.persons?.preferred_name || e?.persons?.full_name || "Pekerja";
+    return e?.persons?.preferred_name || e?.persons?.full_name || tr("Pekerja");
   };
   const nameOfPerson = (pid: string | null) => {
     const e = emps.find((x) => x.person_id === pid);
@@ -172,7 +172,7 @@ async function loadPasukan(deptIds: string[], myPersonId: string, grace: number)
       clockIn: a?.clock_in ?? null,
       late: (a?.late_minutes ?? 0) > grace,
       lateCount: lateRows.filter((x) => x.employment_id === e.id).length,
-      leaveToday: lv ? (lv.leave_types?.code === "MC" ? "MC hari ini" : "Cuti hari ini") : null,
+      leaveToday: lv ? (lv.leave_types?.code === "MC" ? tr("MC hari ini") : tr("Cuti hari ini")) : null,
     };
   });
 
@@ -185,7 +185,7 @@ async function loadPasukan(deptIds: string[], myPersonId: string, grace: number)
       const pic = nameOfPerson(l.cover_person_id);
       return {
         name: nameOf(l.employment_id),
-        label: [hari, pic ? `Pengganti: ${pic}` : null, l.status === "pending" ? "menunggu" : null]
+        label: [hari, pic ? tr("Pengganti: {0}", pic) : null, l.status === "pending" ? "menunggu" : null]
           .filter(Boolean)
           .join(" · "),
       };

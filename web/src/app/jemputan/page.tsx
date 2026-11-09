@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { tokenDaripada } from "@/lib/invite";
@@ -26,13 +27,11 @@ export default function JemputanPage() {
           router.push(`/jemputan/${t}`);
         }}
       >
-        <h1 className="m-0 text-[22px] font-extrabold">Pautan jemputan</h1>
+        <h1 className="m-0 text-[22px] font-extrabold">{tr("Pautan jemputan")}</h1>
         <p className="m-0 text-sm leading-normal text-subtle">
-          HR telah menghantar pautan jemputan ke WhatsApp anda. Tekan pautan itu, atau salin dan tampal di sini.
-        </p>
+          {tr("HR telah menghantar pautan jemputan ke WhatsApp anda. Tekan pautan itu, atau salin dan tampal di sini.")}</p>
         <label className="flex flex-col gap-1.5 text-sm font-bold">
-          Pautan jemputan
-          <input
+          {tr("Pautan jemputan")}<input
             type="url"
             inputMode="url"
             value={link}
@@ -46,20 +45,18 @@ export default function JemputanPage() {
           type="submit"
           className="mt-2 flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover"
         >
-          Teruskan
-        </button>
+          {tr("Teruskan")}</button>
         <div className="mt-2 flex flex-col gap-2 rounded-card bg-surface px-4 py-4 text-[13px] leading-normal text-[#4A5A57]">
-          <b className="text-sm text-ink">Tidak jumpa pautan?</b>
+          <b className="text-sm text-ink">{tr("Tidak jumpa pautan?")}</b>
           <ol className="m-0 flex list-decimal flex-col gap-1 pl-5">
-            <li>Buka WhatsApp dan cari mesej daripada HRBoost bertajuk &ldquo;anda dijemput menyertai&rdquo;.</li>
-            <li>Pautan sah selama 7 hari. Jika telah tamat, minta HR anda menghantar jemputan semula.</li>
-            <li>Tiada WhatsApp? HR boleh menyalin pautan dan menghantarnya melalui e-mel atau SMS.</li>
+            <li>{tr("Buka WhatsApp dan cari mesej daripada HRBoost bertajuk “anda dijemput menyertai”.")}</li>
+            <li>{tr("Pautan sah selama 7 hari. Jika telah tamat, minta HR anda menghantar jemputan semula.")}</li>
+            <li>{tr("Tiada WhatsApp? HR boleh menyalin pautan dan menghantarnya melalui e-mel atau SMS.")}</li>
           </ol>
           <span>
-            Sudah mengaktifkan akaun?{" "}
+            {tr("Sudah mengaktifkan akaun?")}{" "}
             <a href="/masuk" className="font-bold">
-              Log masuk
-            </a>
+              {tr("Log masuk")}</a>
           </span>
         </div>
       </form>

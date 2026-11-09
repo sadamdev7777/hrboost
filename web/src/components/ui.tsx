@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
@@ -29,11 +30,11 @@ export function BackHeader({ title, href, action }: { title?: string; href?: str
   return (
     <header className="flex items-center gap-2 px-3 pt-3 pb-1">
       {href ? (
-        <Link href={href} aria-label="Kembali" className={cls}>
+        <Link href={href} aria-label={tr("Kembali")} className={cls}>
           <IconBack />
         </Link>
       ) : (
-        <button type="button" aria-label="Kembali" className={cls} onClick={() => router.back()}>
+        <button type="button" aria-label={tr("Kembali")} className={cls} onClick={() => router.back()}>
           <IconBack />
         </button>
       )}
@@ -113,7 +114,7 @@ export function PrimaryButton({
 }
 
 /** Rangka kelabu semasa memuatkan (lebih pantas dirasai berbanding teks "Memuatkan…"). */
-export function Loading({ label = "Memuatkan…" }: { label?: string }) {
+export function Loading({ label = tr("Memuatkan…") }: { label?: string }) {
   return (
     <div role="status" aria-live="polite" className="flex w-full flex-col gap-3 px-4 py-4 lg:px-0">
       <span className="sr-only">{label}</span>

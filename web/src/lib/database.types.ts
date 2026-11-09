@@ -1274,6 +1274,20 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"message_i18n": {
+                  Row: {
+                    "en": string,"frasa": boolean,"id": number,"kind": string,"ms": string,"sort": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "en": string,"frasa"?: boolean,"id"?: never,"kind": string,"ms": string,"sort"?: number
+                  }
+                  Update: {
+                    "en"?: string,"frasa"?: boolean,"id"?: never,"kind"?: string,"ms"?: string,"sort"?: number
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"notifications": {
                   Row: {
                     "attempts": number,"bypass_limit": boolean,"channel": string,"claimed_at": string | null,"company_id": string | null,"created_at": string,"error": string | null,"event_id": number | null,"id": string,"message": string,"person_id": string,"provider_ref": string | null,"read_at": string | null,"rule_id": string | null,"send_after": string | null,"sent_at": string | null,"status": Database["public"]['Enums']["notify_status"],"to_address": string | null
@@ -2667,6 +2681,9 @@ isOneToOne: false
 "set_hr_daily_digest":
 { Args: { "p_company": string,"p_on": boolean }; Returns: undefined
                            },
+"set_my_language":
+{ Args: { "p_lang": string }; Returns: undefined
+                           },
 "set_my_login_email":
 { Args: { "p_email": string }; Returns: string
                            },
@@ -2851,6 +2868,9 @@ isOneToOne: false
 { Args: { "p_company": string,"p_from": string,"p_to": string }; Returns: {
               "end_date": string,"half_day": Database["public"]['Enums']["leave_half"],"is_me": boolean,"name": string,"person_id": string,"start_date": string,"status": Database["public"]['Enums']["request_status"]
             }[]
+                           },
+"translate_message":
+{ Args: { "p_lang": string,"p_msg": string }; Returns: string
                            },
 "update_my_profile":
 { Args: { "p_data": Json,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined

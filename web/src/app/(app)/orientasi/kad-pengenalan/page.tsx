@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -73,39 +74,36 @@ export default function OrientasiKadPengenalanPage() {
     <OnboardingLayout
       step={5}
       back="/orientasi/bank"
-      title="Gambar kad pengenalan"
-      sub="Ambil gambar terus dengan kamera, bahagian hadapan dan belakang."
+      title={tr("Gambar kad pengenalan")}
+      sub={tr("Ambil gambar terus dengan kamera, bahagian hadapan dan belakang.")}
       error={error}
       footer={<NextButton busy={busy} disabled={!depan || !belakang} onClick={simpan} />}
     >
       <div className="grid grid-cols-2 gap-2.5">
-        <Ambil label="Hadapan" file={depan} onFile={(f) => { setAmaran(null); setDepan(f); }} />
-        <Ambil label="Belakang" file={belakang} onFile={(f) => { setAmaran(null); setBelakang(f); }} />
+        <Ambil label={tr("Hadapan")} file={depan} onFile={(f) => { setAmaran(null); setDepan(f); }} />
+        <Ambil label={tr("Belakang")} file={belakang} onFile={(f) => { setAmaran(null); setBelakang(f); }} />
       </div>
 
       {amaran && (
         <div role="alert" className="rounded-[14px] bg-warning-soft px-3.5 py-3 text-[13px] leading-normal text-warning">
-          AI mendapati no. kad pengenalan dalam gambar berbeza daripada rekod HR. Semak gambar anda, atau tekan butang sekali lagi untuk meneruskan — HR akan menyemaknya.
-        </div>
+          {tr("AI mendapati no. kad pengenalan dalam gambar berbeza daripada rekod HR. Semak gambar anda, atau tekan butang sekali lagi untuk meneruskan — HR akan menyemaknya.")}</div>
       )}
       <div className="flex flex-col gap-1 rounded-card bg-surface px-3.5 py-3">
-        <span className="pb-1 text-[13px] font-extrabold">Maklumat dalam rekod HR</span>
-        <Baris label="Nama" value={r?.full_name ?? "—"} />
-        <Baris label="No. kad pengenalan" value={icMask} />
-        <Baris label="Hari jadi" value={lahir} />
+        <span className="pb-1 text-[13px] font-extrabold">{tr("Maklumat dalam rekod HR")}</span>
+        <Baris label={tr("Nama")} value={r?.full_name ?? "—"} />
+        <Baris label={tr("No. kad pengenalan")} value={icMask} />
+        <Baris label={tr("Hari jadi")} value={lahir} />
         <span className="pt-1 text-xs text-muted">
-          Pastikan maklumat ini sama dengan kad pengenalan anda. Jika berbeza, maklumkan kepada HR.
-        </span>
+          {tr("Pastikan maklumat ini sama dengan kad pengenalan anda. Jika berbeza, maklumkan kepada HR.")}</span>
       </div>
 
       <div className="flex items-center gap-3 rounded-[14px] bg-surface px-3.5 py-3">
         <span className="flex grow flex-col gap-0.5">
-          <b className="text-sm font-bold">Sijil &amp; dokumen lain</b>
-          <span className="text-xs text-muted">Pilihan — boleh ditambah kemudian di Profil</span>
+          <b className="text-sm font-bold">{tr("Sijil & dokumen lain")}</b>
+          <span className="text-xs text-muted">{tr("Pilihan — boleh ditambah kemudian di Profil")}</span>
         </span>
         <Link href="/profil" className="text-[13px] font-bold">
-          Tambah
-        </Link>
+          {tr("Tambah")}</Link>
       </div>
     </OnboardingLayout>
   );
@@ -125,7 +123,7 @@ function Ambil({ label, file, onFile }: { label: string; file: File | null; onFi
         accept="image/*"
         capture="environment"
         className="hidden"
-        aria-label={`Gambar ${label.toLowerCase()} kad pengenalan`}
+        aria-label={tr("Gambar {0} kad pengenalan", label.toLowerCase())}
         onChange={(e) => {
           const f = e.target.files?.[0];
           if (f) onFile(f);
@@ -145,7 +143,7 @@ function Ambil({ label, file, onFile }: { label: string; file: File | null; onFi
         )}
         <span className="relative flex flex-col items-center gap-1.5">
           {file ? <IconCheck size={22} /> : <IconDocument size={22} />}
-          <span className="text-[13px] font-bold">{file ? `${label} ✓` : `Ambil bahagian ${label.toLowerCase()}`}</span>
+          <span className="text-[13px] font-bold">{file ? `${label} ✓` : tr("Ambil bahagian {0}", label.toLowerCase())}</span>
         </span>
       </button>
     </>

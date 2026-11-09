@@ -1,5 +1,6 @@
 "use client";
 
+import { tr, trRalat } from "@/lib/i18n";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
@@ -11,24 +12,24 @@ import type { Database } from "@/lib/database.types";
 type Target = Database["public"]["Enums"]["notify_target"];
 
 const BILA: Record<string, string> = {
-  "leave.submitted": "Cuti dimohon",
-  "leave.approved": "Cuti diluluskan",
-  "attendance.late": "Lewat masuk",
-  "approval.task_assigned": "Tiba di peringkat pelulus",
-  "approval.reminder": "Peringatan berkala",
-  "approval.approved": "Permohonan diluluskan",
-  "approval.rejected": "Permohonan ditolak",
-  "approval.returned": "Permohonan dikembalikan",
-  "approval.sla_breached": "Melepasi tempoh sasaran",
-  "profile.bank_change_requested": "Tukar akaun bank dimohon",
-  "employment.ended": "Pekerjaan tamat",
+  "leave.submitted": tr("Cuti dimohon"),
+  "leave.approved": tr("Cuti diluluskan"),
+  "attendance.late": tr("Lewat masuk"),
+  "approval.task_assigned": tr("Tiba di peringkat pelulus"),
+  "approval.reminder": tr("Peringatan berkala"),
+  "approval.approved": tr("Permohonan diluluskan"),
+  "approval.rejected": tr("Permohonan ditolak"),
+  "approval.returned": tr("Permohonan dikembalikan"),
+  "approval.sla_breached": tr("Melepasi tempoh sasaran"),
+  "profile.bank_change_requested": tr("Tukar akaun bank dimohon"),
+  "employment.ended": tr("Pekerjaan tamat"),
 };
 const KEPADA: { id: Target; label: string }[] = [
-  { id: "subject", label: "Pekerja berkenaan" },
-  { id: "cover_person", label: "Pengganti tugas" },
-  { id: "subject_dept_head", label: "Ketua jabatan" },
-  { id: "subject_manager", label: "Pengurus terus" },
-  { id: "dept_peers", label: "Rakan sejabatan" },
+  { id: "subject", label: tr("Pekerja berkenaan") },
+  { id: "cover_person", label: tr("Pengganti tugas") },
+  { id: "subject_dept_head", label: tr("Ketua jabatan") },
+  { id: "subject_manager", label: tr("Pengurus terus") },
+  { id: "dept_peers", label: tr("Rakan sejabatan") },
   { id: "role_hr", label: "HR" },
   { id: "role_ceo", label: "CEO" },
 ];
@@ -73,13 +74,13 @@ function Automasi() {
       must(await getSupabase().from("automation_rules").update(patch).eq("id", id));
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
 
   async function simpan() {
     if (!cur) return;
-    if (!cur.message_template.trim()) return setRalat("Mesej tidak boleh kosong.");
+    if (!cur.message_template.trim()) return setRalat(tr("Mesej tidak boleh kosong."));
     setBusy(true);
     await kemas(cur.id, { target: cur.target, message_template: cur.message_template.trim() });
     setDraf(null);
@@ -90,7 +91,7 @@ function Automasi() {
 
   return (
     <Screen lebar="sederhana">
-      <BackHeader title="Automasi WhatsApp" href="/pengurusan/tetapan" />
+      <BackHeader title={tr("Automasi WhatsApp")} href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         <RingkasanHarian cid={cid} />
         {d.error && <ErrorBox message={d.error} />}
@@ -98,46 +99,43 @@ function Automasi() {
         {cur && (
           <div className="flex flex-col gap-3 rounded-card bg-surface px-4 py-3">
             <div className="flex items-start justify-between gap-2">
-              <b className="text-sm font-extrabold">{cur.name}</b>
-              <Tag tone={cur.active ? "success" : "neutral"}>{cur.active ? "Aktif" : "Tidak aktif"}</Tag>
+              <b className="text-sm font-extrabold">{trRalat(cur.name)}</b>
+              <Tag tone={cur.active ? "success" : "neutral"}>{cur.active ? tr("Aktif") : tr("Tidak aktif")}</Tag>
             </div>
-            <Seksyen>APABILA</Seksyen>
+            <Seksyen>{tr("APABILA")}</Seksyen>
             <div className="flex flex-wrap gap-1.5">
               <Cip on onClick={() => {}}>
                 {BILA[cur.event_type] ?? cur.event_type}
               </Cip>
               {(cur.condition as { field?: string; value?: number })?.field === "late_count_month" && (
                 <Cip on onClick={() => {}}>
-                  Lewat kali ke-{(cur.condition as { value: number }).value}
-                </Cip>
+                  {tr("Lewat kali ke-{0}", (cur.condition as { value: number }).value)}</Cip>
               )}
             </div>
-            <Seksyen>HANTAR KEPADA</Seksyen>
+            <Seksyen>{tr("HANTAR KEPADA")}</Seksyen>
             <div className="flex flex-wrap gap-1.5">
               {KEPADA.map((k) => (
                 <Cip key={k.id} on={cur.target === k.id} onClick={() => setDraf({ ...cur, target: k.id })}>
-                  {k.label}
+                  {tr(k.label)}
                 </Cip>
               ))}
             </div>
-            <Seksyen>MESEJ</Seksyen>
+            <Seksyen>{tr("MESEJ")}</Seksyen>
             <textarea
-              aria-label="Mesej WhatsApp"
+              aria-label={tr("Mesej WhatsApp")}
               value={cur.message_template}
               onChange={(e) => setDraf({ ...cur, message_template: e.target.value })}
               rows={5}
               className="rounded-[12px] border border-[#D5DEDC] bg-page px-3 py-2.5 text-sm leading-relaxed outline-none focus:border-primary"
             />
-            <span className="text-xs text-muted">Pemboleh ubah: {vars.map((v) => `{{${v}}}`).join(" ")}</span>
+            <span className="text-xs text-muted">{tr("Pemboleh ubah: {0}", vars.map((v) => `{{${v}}}`).join(" "))}</span>
             {cur.event_type === "leave.submitted" && cur.target === "cover_person" && (
               <span className="rounded-[12px] bg-warning-soft px-3 py-2 text-xs leading-normal text-warning">
-                Ketua jabatan tidak dihantar mesej ini kerana telah menerima mesej kelulusan — bagi mengelakkan mesej berulang.
-              </span>
+                {tr("Ketua jabatan tidak dihantar mesej ini kerana telah menerima mesej kelulusan — bagi mengelakkan mesej berulang.")}</span>
             )}
             {draf && draf.id === cur.id && (
               <ButangUtama onClick={simpan} busy={busy}>
-                Simpan peraturan
-              </ButangUtama>
+                {tr("Simpan peraturan")}</ButangUtama>
             )}
           </div>
         )}
@@ -154,12 +152,12 @@ function Automasi() {
                 }}
                 className={`flex min-h-12 grow flex-col justify-center gap-0.5 py-2 text-left ${cur?.id === r.id ? "text-primary" : ""}`}
               >
-                <b className="text-sm font-bold">{r.name}</b>
+                <b className="text-sm font-bold">{trRalat(r.name)}</b>
                 <span className="text-xs text-muted">
                   {BILA[r.event_type] ?? r.event_type} · {KEPADA.find((k) => k.id === r.target)?.label ?? r.target}
                 </span>
               </button>
-              <Suis on={r.active} label={`${r.active ? "Matikan" : "Hidupkan"} ${r.name}`} onChange={(v) => kemas(r.id, { active: v })} />
+              <Suis on={r.active} label={`${r.active ? tr("Matikan") : tr("Hidupkan")} ${r.name}`} onChange={(v) => kemas(r.id, { active: v })} />
             </div>
           ))}
         </div>
@@ -185,12 +183,12 @@ function RingkasanHarian({ cid }: { cid: string }) {
     <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3">
       <div className="flex items-center gap-3">
         <span className="flex grow flex-col gap-0.5">
-          <b className="text-sm font-extrabold">Ringkasan harian kepada HR</b>
-          <span className="text-xs leading-snug text-muted">WhatsApp setiap hari bekerja jam 5:00 petang: kelulusan tertangguh, siapa tiada, pekerja baharu esok, tarikh akhir berkanun. Tidak dihantar jika tiada apa-apa.</span>
+          <b className="text-sm font-extrabold">{tr("Ringkasan harian kepada HR")}</b>
+          <span className="text-xs leading-snug text-muted">{tr("WhatsApp setiap hari bekerja jam 5:00 petang: kelulusan tertangguh, siapa tiada, pekerja baharu esok, tarikh akhir berkanun. Tidak dihantar jika tiada apa-apa.")}</span>
         </span>
         <Suis
           on={d.data.on}
-          label="Ringkasan harian kepada HR"
+          label={tr("Ringkasan harian kepada HR")}
           onChange={async (v) => {
             setRalat(null);
             try {
@@ -203,11 +201,11 @@ function RingkasanHarian({ cid }: { cid: string }) {
         />
       </div>
       <button type="button" onClick={() => setLihat(!lihat)} className="self-start py-1 text-[13px] font-bold text-primary">
-        {lihat ? "Sembunyikan pratonton" : "Pratonton mesej hari ini"}
+        {lihat ? tr("Sembunyikan pratonton") : tr("Pratonton mesej hari ini")}
       </button>
       {lihat && (
         <pre className="m-0 rounded-[12px] bg-[#E7F6E9] px-3.5 py-3 font-sans text-[13px] leading-relaxed whitespace-pre-wrap text-ink">
-          {d.data.pratonton ?? "Tiada perkara untuk dilaporkan hari ini — mesej tidak akan dihantar."}
+          {d.data.pratonton ?? tr("Tiada perkara untuk dilaporkan hari ini — mesej tidak akan dihantar.")}
         </pre>
       )}
       {ralat && <ErrorBox message={ralat} />}

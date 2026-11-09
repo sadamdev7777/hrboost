@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { getSupabase } from "./supabase";
 import { must } from "./useData";
 import { addDays, dow, todayISO, type StatusPermohonan } from "./format";
@@ -40,7 +41,7 @@ export async function getKalendarCuti(emp: Pekerjaan, bulan: string): Promise<Da
       date: d,
       weekend: weekend.includes(dow(d)),
       jenis: ph ? "ph" : saya ? "me" : lain.length ? "ot" : null,
-      label: ph ? ph.name : saya ? "Saya" : lain.length ? lain.map((c) => c.name).join(", ") : null,
+      label: ph ? ph.name : saya ? tr("Saya") : lain.length ? lain.map((c) => c.name).join(", ") : null,
     });
   }
   return {
@@ -64,7 +65,7 @@ export type SejarahCuti = {
 
 /** Nama ringkas jenis cuti untuk kad baki & sejarah (reka bentuk Cuti). */
 export function namaCutiRingkas(code: string, name: string): string {
-  return ({ AL: "Tahunan", MC: "Sakit (MC)", HL: "Hospital" } as Record<string, string>)[code] ?? name.replace(/^Cuti\s+/i, "");
+  return ({ AL: tr("Tahunan"), MC: tr("Sakit (MC)"), HL: tr("Hospital") } as Record<string, string>)[code] ?? name.replace(/^Cuti\s+/i, "");
 }
 
 export async function getSejarahCuti(emp: Pekerjaan, year = Number(todayISO().slice(0, 4))): Promise<SejarahCuti[]> {
@@ -82,7 +83,7 @@ export async function getSejarahCuti(emp: Pekerjaan, year = Number(todayISO().sl
   const req = must(await sb.from("v_my_requests").select("request_id, waiting_for").eq("request_type", "leave"));
   return rows.map((r) => ({
     id: r.id,
-    jenis: r.leave_types?.code === "MC" ? "MC" : namaCutiRingkas(r.leave_types?.code ?? "", r.leave_types?.name ?? "Cuti"),
+    jenis: r.leave_types?.code === "MC" ? "MC" : namaCutiRingkas(r.leave_types?.code ?? "", r.leave_types?.name ?? tr("Cuti")),
     start: r.start_date,
     end: r.end_date,
     days: Number(r.days),
@@ -162,20 +163,20 @@ export async function getProfil(personId: string): Promise<Profil> {
 
 /** "••••••-••-1234" */
 export function sorokIC(ic: string | null): string {
-  if (!ic) return "Belum diisi";
+  if (!ic) return tr("Belum diisi");
   const d = ic.replace(/\D/g, "");
   return `••••••-••-${d.slice(-4)}`;
 }
 
 /** "•••• •••• 5678" */
 export function sorokAkaun(no: string | null): string {
-  if (!no) return "Belum diisi";
+  if (!no) return tr("Belum diisi");
   return `•••• •••• ${no.replace(/\D/g, "").slice(-4)}`;
 }
 
 /** "011-•••• 0004" daripada 601100000004 */
 export function sorokTelefon(full: string | null): string {
-  if (!full) return "Belum diisi";
+  if (!full) return tr("Belum diisi");
   const local = full.replace(/\D/g, "").replace(/^6/, "");
   return `${local.slice(0, 3)}-•••• ${local.slice(-4)}`;
 }

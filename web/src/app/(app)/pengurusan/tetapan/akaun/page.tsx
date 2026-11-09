@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
@@ -9,12 +10,12 @@ import { tarikh } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
 import { HadPeranan, Seksyen, Tag } from "@/components/Senarai";
 
-const SISTEM: Record<string, string> = { quickbooks: "QuickBooks Online", niagawan: "Niagawan", csv: "Eksport CSV", none: "Belum dipilih" };
+const SISTEM: Record<string, string> = { quickbooks: tr("QuickBooks Online"), niagawan: tr("Niagawan"), csv: tr("Eksport CSV"), none: tr("Belum dipilih") };
 const STATUS: Record<string, { label: string; tone: "success" | "warning" | "danger" | "neutral" }> = {
-  success: { label: "Dihantar", tone: "success" },
-  pending: { label: "Dalam barisan", tone: "warning" },
-  failed: { label: "Gagal", tone: "danger" },
-  skipped: { label: "Dilangkau", tone: "neutral" },
+  success: { label: tr("Dihantar"), tone: "success" },
+  pending: { label: tr("Dalam barisan"), tone: "warning" },
+  failed: { label: tr("Gagal"), tone: "danger" },
+  skipped: { label: tr("Dilangkau"), tone: "neutral" },
 };
 
 // Rujukan reka bentuk: design/T_IntegrasiAkaun.dc.html
@@ -49,7 +50,7 @@ function Akaun() {
       must(await getSupabase().from("companies").update(patch).eq("id", cid));
       d.reload();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
 
@@ -57,13 +58,13 @@ function Akaun() {
     try {
       must(await getSupabase().from("claim_types").update({ account_ref: v.trim() || null }).eq("id", id));
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
   }
 
   return (
     <Screen lebar="sederhana">
-      <BackHeader title="Integrasi perakaunan" href="/pengurusan/tetapan" />
+      <BackHeader title={tr("Integrasi perakaunan")} href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
@@ -74,10 +75,10 @@ function Akaun() {
                 <b className="text-sm font-extrabold">{SISTEM[d.data.c.accounting_system]}</b>
                 <span className="text-xs text-muted uppercase">{d.data.c.name}</span>
               </span>
-              <Tag tone={sambung ? "success" : "neutral"}>{sambung ? "Bersambung" : "Belum disambung"}</Tag>
+              <Tag tone={sambung ? "success" : "neutral"}>{sambung ? tr("Bersambung") : tr("Belum disambung")}</Tag>
             </div>
             <label className="flex items-center gap-2 rounded-card bg-surface px-4 py-3 text-sm">
-              <span className="grow font-bold">Sistem perakaunan</span>
+              <span className="grow font-bold">{tr("Sistem perakaunan")}</span>
               <select
                 disabled={!admin}
                 value={d.data.c.accounting_system}
@@ -93,18 +94,17 @@ function Akaun() {
             </label>
             {d.data.c.accounting_system === "quickbooks" && !sambung && (
               <span className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] leading-normal text-warning">
-                Sambungan QuickBooks akan diaktifkan oleh Pentadbir Platform HRBoost setelah kunci aplikasi QuickBooks didaftarkan. Kunci tidak pernah dipaparkan di sini.
-              </span>
+                {tr("Sambungan QuickBooks akan diaktifkan oleh Pentadbir Platform HRBoost setelah kunci aplikasi QuickBooks didaftarkan. Kunci tidak pernah dipaparkan di sini.")}</span>
             )}
 
-            <Seksyen className="pt-1">PADANAN AKAUN TUNTUTAN</Seksyen>
+            <Seksyen className="pt-1">{tr("PADANAN AKAUN TUNTUTAN")}</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {d.data.t.map((t) => (
                 <label key={t.id} className="flex min-h-12 items-center gap-2 py-2 text-sm">
                   <span className="grow font-bold">{namaJenisTuntutan(t.name)}</span>
                   <input
                     className="h-10 w-[150px] rounded-[10px] border border-[#D5DEDC] px-2.5 text-sm font-semibold"
-                    placeholder="Kod akaun perbelanjaan"
+                    placeholder={tr("Kod akaun perbelanjaan")}
                     defaultValue={t.account_ref ?? ""}
                     onBlur={(e) => e.target.value !== (t.account_ref ?? "") && akaunTuntutan(t.id, e.target.value)}
                   />
@@ -112,27 +112,27 @@ function Akaun() {
               ))}
             </div>
 
-            <Seksyen className="pt-1">GAJI</Seksyen>
+            <Seksyen className="pt-1">{tr("GAJI")}</Seksyen>
             <label className="flex min-h-12 items-center gap-2 rounded-card bg-surface px-4 py-2 text-sm">
-              <span className="grow font-bold">Jurnal gaji bulanan</span>
+              <span className="grow font-bold">{tr("Jurnal gaji bulanan")}</span>
               <select
                 disabled={!admin}
                 value={cfg.journal ?? "auto"}
                 onChange={(e) => kemasSyarikat({ accounting_config: { ...cfg, journal: e.target.value } })}
                 className="h-10 rounded-[10px] border border-[#D5DEDC] bg-surface px-2 text-sm font-semibold"
               >
-                <option value="auto">Hantar apabila gaji diluluskan</option>
-                <option value="manual">Manual</option>
+                <option value="auto">{tr("Hantar apabila gaji diluluskan")}</option>
+                <option value="manual">{tr("Manual")}</option>
               </select>
             </label>
 
-            <Seksyen className="pt-1">TERKINI</Seksyen>
+            <Seksyen className="pt-1">{tr("TERKINI")}</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-              {d.data.q.length === 0 && <span className="py-3 text-sm text-muted">Belum ada rekod dihantar.</span>}
+              {d.data.q.length === 0 && <span className="py-3 text-sm text-muted">{tr("Belum ada rekod dihantar.")}</span>}
               {d.data.q.map((q) => (
                 <div key={q.id} className="flex min-h-[50px] items-center justify-between gap-2 py-2 text-sm">
                   <span className="flex flex-col">
-                    <b className="font-bold">{q.entity_type === "claim" ? "Tuntutan" : "Jurnal gaji"}</b>
+                    <b className="font-bold">{q.entity_type === "claim" ? tr("Tuntutan") : tr("Jurnal gaji")}</b>
                     <span className="text-xs text-muted">{tarikh(q.created_at)}{q.error ? ` · ${q.error}` : ""}</span>
                   </span>
                   <Tag tone={STATUS[q.status].tone}>{STATUS[q.status].label}</Tag>
@@ -140,7 +140,7 @@ function Akaun() {
               ))}
             </div>
             {ralat && <ErrorBox message={ralat} />}
-            <span className="text-xs text-muted">Sistem lain (contohnya Niagawan): eksport CSV setiap bulan daripada skrin Proses Gaji.</span>
+            <span className="text-xs text-muted">{tr("Sistem lain (contohnya Niagawan): eksport CSV setiap bulan daripada skrin Proses Gaji.")}</span>
           </>
         )}
       </main>

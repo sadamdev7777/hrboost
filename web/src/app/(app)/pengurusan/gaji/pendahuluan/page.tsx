@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
@@ -27,19 +28,17 @@ function Kandungan() {
   const d = useData(() => getPendahuluanHr(emp.companyId), [emp.companyId]);
   return (
     <Screen lebar="lebar">
-      <PengepalaAkar title="Gaji" backHr="/pengurusan" />
+      <PengepalaAkar title={tr("Gaji")} backHr="/pengurusan" />
       <TabGaji />
       <main className="flex grow flex-col gap-3 px-4 pt-4 pb-6 lg:px-0">
         <span className="text-sm leading-normal text-subtle">
-          Pekerja memohon melalui Mohon → Pendahuluan gaji (jumlah bebas); diluluskan oleh CEO (aliran boleh diubah dalam Tetapan → Aliran Kelulusan). Selepas dibayar, jumlahnya ditolak secara automatik semasa{" "}
+          {tr("Pekerja memohon melalui Mohon → Pendahuluan gaji (jumlah bebas); diluluskan oleh CEO (aliran boleh diubah dalam Tetapan → Aliran Kelulusan). Selepas dibayar, jumlahnya ditolak secara automatik semasa")}{" "}
           <Link href="/pengurusan/gaji" className="font-bold">
-            Proses Gaji
-          </Link>{" "}
-          bulan berikutnya.
-        </span>
+            {tr("Proses Gaji")}</Link>{" "}
+          {tr("bulan berikutnya.")}</span>
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
-        {d.data && d.data.length === 0 && <div className="rounded-card bg-surface px-4 py-8 text-center text-sm text-muted">Tiada pendahuluan gaji yang aktif.</div>}
+        {d.data && d.data.length === 0 && <div className="rounded-card bg-surface px-4 py-8 text-center text-sm text-muted">{tr("Tiada pendahuluan gaji yang aktif.")}</div>}
         {(d.data ?? []).length > 0 && (
           <div className="flex flex-col rounded-card bg-surface px-4 lg:px-5 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
             {(d.data ?? []).map((a) => (
@@ -53,14 +52,14 @@ function Kandungan() {
                   </b>
                   <span className="text-xs text-muted">
                     {a.reason} · {tarikh(tarikhTempatan(a.created_at))}
-                    {a.deduct_month ? ` · tolak gaji ${BULAN_PENUH[a.deduct_month - 1]} ${a.deduct_year}` : ""}
-                    {a.deducted ? " (dalam larian gaji)" : ""}
+                    {a.deduct_month ? tr(" · tolak gaji {0} {1}", BULAN_PENUH[a.deduct_month - 1], a.deduct_year) : ""}
+                    {a.deducted ? tr(" (dalam larian gaji)") : ""}
                   </span>
                 </span>
                 <StatusPill status={a.status as StatusPermohonan} />
                 {a.status === "approved" &&
                   (a.disbursed_at ? (
-                    <span className="text-xs font-bold text-success">Dibayar {tarikh(tarikhTempatan(a.disbursed_at))}</span>
+                    <span className="text-xs font-bold text-success">{tr("Dibayar {0}", tarikh(tarikhTempatan(a.disbursed_at)))}</span>
                   ) : (
                     <button
                       type="button"
@@ -76,8 +75,7 @@ function Kandungan() {
                       }}
                       className="flex h-9 items-center rounded-full bg-primary px-4 text-xs font-bold text-white"
                     >
-                      Tandakan dibayar
-                    </button>
+                      {tr("Tandakan dibayar")}</button>
                   ))}
               </div>
             ))}

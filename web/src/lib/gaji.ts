@@ -1,10 +1,11 @@
 "use client";
 
+import { tr, trRalat } from "@/lib/i18n";
 import { getSupabase } from "./supabase";
 import { must } from "./useData";
 
-export const BULAN_PENUH = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
-export const BULAN_RINGKAS = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogo", "Sep", "Okt", "Nov", "Dis"];
+export const BULAN_PENUH = [tr("Januari"), tr("Februari"), tr("Mac"), tr("April"), tr("Mei"), tr("Jun"), tr("Julai"), tr("Ogos"), tr("September"), tr("Oktober"), tr("November"), tr("Disember")];
+export const BULAN_RINGKAS = [tr("Jan"), tr("Feb"), tr("Mac"), tr("Apr"), tr("Mei"), tr("Jun"), tr("Jul"), tr("Ogo"), tr("Sep"), tr("Okt"), tr("Nov"), tr("Dis")];
 export const namaBulan = (y: number, m: number) => `${BULAN_RINGKAS[m - 1]} ${y}`;
 
 export type Jumlah = {
@@ -155,7 +156,7 @@ export async function getSlip(id: string): Promise<Slip> {
       .eq("id", id)
       .maybeSingle(),
   );
-  if (!s) throw new Error("Slip gaji tidak dijumpai.");
+  if (!s) throw new Error(tr("Slip gaji tidak dijumpai."));
   void sb.rpc("payslip_opened", { p_payslip: id });
   const meta = must(await sb.rpc("payslip_meta", { p_payslip: id })) as unknown as {
     period_year: number;
@@ -164,7 +165,7 @@ export async function getSlip(id: string): Promise<Slip> {
     status: string;
     company: Slip["company"];
   } | null;
-  if (!meta) throw new Error("Slip gaji tidak dijumpai.");
+  if (!meta) throw new Error(tr("Slip gaji tidak dijumpai."));
   const r = meta;
   const [emp, ytd, bal] = await Promise.all([
     sb
@@ -194,7 +195,7 @@ export async function getSlip(id: string): Promise<Slip> {
     net: Number(s.net),
     totalDeduction: Number(s.total_deduction),
     unpaidDays: Number(s.unpaid_leave_days),
-    lines: s.payslip_lines.map((l) => ({ code: l.component_code, description: l.description, kind: l.kind as Slip["lines"][number]["kind"], amount: Number(l.amount) })),
+    lines: s.payslip_lines.map((l) => ({ code: l.component_code, description: trRalat(l.description), kind: l.kind as Slip["lines"][number]["kind"], amount: Number(l.amount) })),
     company: r.company,
     employee: {
       fullName: e.persons?.full_name ?? "",
@@ -259,6 +260,7 @@ export async function getJadualGaji(companyId: string, pada?: string): Promise<J
   const r = must(await getSupabase().rpc("hr_pay_table", { p_company: companyId, ...(pada ? { p_on: pada } : {}), p_via: "web" })) as unknown as JadualGaji;
   return {
     ...r,
+    components: r.components.map((c) => ({ ...c, name: trRalat(c.name) })),
     totals: nombor(r.totals as Record<string, unknown> | null),
     rows: r.rows.map((x) => ({ ...x, calc: nombor(x.calc as Record<string, unknown> | null), items: Object.fromEntries(Object.entries(x.items).map(([k, v]) => [k, Number(v)])) })),
   };

@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { getSupabase } from "./supabase";
 import { must } from "./useData";
 
@@ -45,9 +46,9 @@ export async function setOtDigunakan(companyId: string, on: boolean) {
 
 export type JenisHari = "normal" | "rest" | "holiday";
 export const LABEL_HARI: Record<JenisHari, { label: string; kadar: string }> = {
-  normal: { label: "Hari bekerja biasa", kadar: "1.5 kali kadar sejam" },
-  rest: { label: "Hari rehat", kadar: "2 kali kadar sejam" },
-  holiday: { label: "Cuti umum", kadar: "3 kali kadar sejam" },
+  normal: { label: tr("Hari bekerja biasa"), kadar: tr("1.5 kali kadar sejam") },
+  rest: { label: tr("Hari rehat"), kadar: tr("2 kali kadar sejam") },
+  holiday: { label: tr("Cuti umum"), kadar: tr("3 kali kadar sejam") },
 };
 
 export async function mohonLebihMasa(employmentId: string, tarikh: string, jam: number, jenis: JenisHari, sebab: string) {
@@ -63,7 +64,7 @@ export async function getLebihMasaSaya(employmentId: string) {
 // ---------------------------------------------------------------- Surat
 
 export type JenisSurat = "employment" | "salary";
-export const LABEL_SURAT: Record<JenisSurat, string> = { employment: "Surat pengesahan majikan", salary: "Surat pengesahan gaji" };
+export const LABEL_SURAT: Record<JenisSurat, string> = { employment: tr("Surat pengesahan majikan"), salary: tr("Surat pengesahan gaji") };
 
 export type PermohonanSurat = {
   id: string;
@@ -81,10 +82,10 @@ export type PermohonanSurat = {
 };
 
 export const STATUS_SURAT: Record<PermohonanSurat["status"], { label: string; tone: "warning" | "success" | "danger" | "neutral" }> = {
-  pending: { label: "Menunggu HR", tone: "warning" },
-  issued: { label: "Dikeluarkan", tone: "success" },
-  rejected: { label: "Ditolak", tone: "danger" },
-  cancelled: { label: "Dibatalkan", tone: "neutral" },
+  pending: { label: tr("Menunggu HR"), tone: "warning" },
+  issued: { label: tr("Dikeluarkan"), tone: "success" },
+  rejected: { label: tr("Ditolak"), tone: "danger" },
+  cancelled: { label: tr("Dibatalkan"), tone: "neutral" },
 };
 
 export async function getSurat(companyId: string, milikSaya = false): Promise<PermohonanSurat[]> {
@@ -202,7 +203,7 @@ export async function tandaPendahuluanDibayar(id: string) {
 // ---------------------------------------------------------------- Kerja fleksibel
 
 export type JenisFleksibel = "hours" | "days" | "place";
-export const LABEL_FLEKSIBEL: Record<JenisFleksibel, string> = { hours: "Waktu bekerja", days: "Hari bekerja", place: "Tempat bekerja" };
+export const LABEL_FLEKSIBEL: Record<JenisFleksibel, string> = { hours: tr("Waktu bekerja"), days: tr("Hari bekerja"), place: tr("Tempat bekerja") };
 export type PermohonanFleksibel = {
   id: string;
   employment_id: string;
@@ -220,10 +221,10 @@ export type PermohonanFleksibel = {
   created_at: string;
 };
 export const STATUS_FLEKSIBEL: Record<PermohonanFleksibel["status"], { label: string; tone: "warning" | "success" | "danger" | "neutral" }> = {
-  pending: { label: "Menunggu keputusan", tone: "warning" },
-  approved: { label: "Diluluskan", tone: "success" },
-  rejected: { label: "Tidak diluluskan", tone: "danger" },
-  withdrawn: { label: "Ditarik balik", tone: "neutral" },
+  pending: { label: tr("Menunggu keputusan"), tone: "warning" },
+  approved: { label: tr("Diluluskan"), tone: "success" },
+  rejected: { label: tr("Tidak diluluskan"), tone: "danger" },
+  withdrawn: { label: tr("Ditarik balik"), tone: "neutral" },
 };
 export async function getFleksibel(companyId: string, milikSaya = false): Promise<PermohonanFleksibel[]> {
   return (must(await getSupabase().rpc("flexible_work_list", { p_company: companyId, p_mine: milikSaya })) ?? []) as PermohonanFleksibel[];
@@ -249,7 +250,7 @@ export const ASPEK_PENILAIAN = [
   { k: "kerjasama", label: "Kerjasama berpasukan" },
 ] as const;
 export type CadanganPercubaan = "confirm" | "extend" | "terminate";
-export const LABEL_CADANGAN: Record<CadanganPercubaan, string> = { confirm: "Sahkan jawatan", extend: "Lanjutkan tempoh percubaan", terminate: "Tamatkan perkhidmatan" };
+export const LABEL_CADANGAN: Record<CadanganPercubaan, string> = { confirm: tr("Sahkan jawatan"), extend: tr("Lanjutkan tempoh percubaan"), terminate: tr("Tamatkan perkhidmatan") };
 
 export async function getPenilaianPerlu(companyId: string) {
   return (must(await getSupabase().rpc("my_probation_reviews_due", { p_company: companyId })) ?? []) as {

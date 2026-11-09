@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { useMe } from "@/lib/me";
@@ -41,7 +42,7 @@ export default function OrientasiSelesaiPage() {
         <div className="relative">
           {d?.photo ? (
             // eslint-disable-next-line @next/next/no-img-element -- URL bertandatangan sementara daripada storan peribadi
-            <img src={d.photo} alt={`Gambar profil ${me.name}`} className="size-[88px] rounded-full border-[3px] border-white object-cover" />
+            <img src={d.photo} alt={tr("Gambar profil {0}", me.name)} className="size-[88px] rounded-full border-[3px] border-white object-cover" />
           ) : (
             <span className="flex size-[88px] items-center justify-center rounded-full border-[3px] border-white bg-primary-soft text-2xl font-extrabold text-primary">
               {inisial(me.name)}
@@ -52,12 +53,12 @@ export default function OrientasiSelesaiPage() {
           </span>
         </div>
         <h1 className="m-0 text-[22px] leading-[1.2] font-extrabold">
-          {lengkap ? `Selamat datang ke pasukan, ${me.name}!` : `Hampir selesai, ${me.name}`}
+          {lengkap ? tr("Selamat datang ke pasukan, {0}!", me.name) : tr("Hampir selesai, {0}", me.name)}
         </h1>
         <span className="text-sm opacity-94">
           {lengkap
-            ? `Akaun anda telah lengkap. HR${d?.head ? ` dan ${d.head}` : ""} akan dimaklumkan.`
-            : `Masih ada ${belum.length} langkah: ${belum.map((l) => l.label.toLowerCase()).join(", ")}.`}
+            ? tr("Akaun anda telah lengkap. HR{0} akan dimaklumkan.", d?.head ? tr(" dan {0}", d.head) : "")
+            : tr("Masih ada {0} langkah: {1}.", belum.length, belum.map((l) => l.label.toLowerCase()).join(", "))}
         </span>
       </div>
 
@@ -67,8 +68,7 @@ export default function OrientasiSelesaiPage() {
             href="/orientasi"
             className="flex h-12 items-center justify-center rounded-[14px] border-[1.5px] border-primary bg-surface text-sm font-bold"
           >
-            Lengkapkan langkah yang tinggal
-          </Link>
+            {tr("Lengkapkan langkah yang tinggal")}</Link>
         )}
 
         {d && d.joinDate >= todayISO() && (
@@ -78,10 +78,10 @@ export default function OrientasiSelesaiPage() {
               <span className="text-[11px] font-bold">{BULAN[Number(d.joinDate.slice(5, 7)) - 1]}</span>
             </span>
             <div className="flex flex-col gap-[3px] text-sm">
-              <span className="text-xs font-bold tracking-[0.04em] text-subtle">HARI PERTAMA</span>
+              <span className="text-xs font-bold tracking-[0.04em] text-subtle">{tr("HARI PERTAMA")}</span>
               <b className="font-bold">
                 {masaTeks(emp.workStart)}
-                {d.head ? ` · lapor diri kepada ${d.head}` : ""}
+                {d.head ? tr(" · lapor diri kepada {0}", d.head) : ""}
               </b>
               <span className="text-muted">{emp.companyName}</span>
             </div>
@@ -89,17 +89,14 @@ export default function OrientasiSelesaiPage() {
         )}
 
         <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-bold tracking-[0.04em] text-subtle">ANDA KINI BOLEH</span>
+          <span className="text-xs font-bold tracking-[0.04em] text-subtle">{tr("ANDA KINI BOLEH")}</span>
           <div className="flex flex-col rounded-card bg-surface px-4 py-0.5">
             <Item href="/mohon/cuti" icon={<IconCalendar size={18} />}>
-              Mohon cuti
-            </Item>
+              {tr("Mohon cuti")}</Item>
             <Item href="/tuntutan/baru" icon={<IconReceipt size={18} />}>
-              Buat tuntutan dengan gambar resit
-            </Item>
+              {tr("Buat tuntutan dengan gambar resit")}</Item>
             <Item href="/pembantu-ai" icon={<IconChat size={18} />} tone="bg-[#EDE9F8] text-ai">
-              Tanya sebarang soalan melalui WhatsApp
-            </Item>
+              {tr("Tanya sebarang soalan melalui WhatsApp")}</Item>
           </div>
         </div>
       </main>
@@ -109,8 +106,7 @@ export default function OrientasiSelesaiPage() {
           href="/utama"
           className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white! hover:bg-primary-hover"
         >
-          Masuk ke HRBoost
-        </Link>
+          {tr("Masuk ke HRBoost")}</Link>
       </div>
     </Screen>
   );

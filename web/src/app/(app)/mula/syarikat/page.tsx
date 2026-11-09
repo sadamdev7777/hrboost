@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe, useMeContext } from "@/lib/me";
@@ -47,8 +48,8 @@ function Borang() {
 
   async function simpan() {
     setRalat(null);
-    if (!v.name.trim()) return setRalat("Sila isi nama syarikat.");
-    if (v.end <= v.start) return setRalat("Waktu keluar mesti selepas waktu masuk.");
+    if (!v.name.trim()) return setRalat(tr("Sila isi nama syarikat."));
+    if (v.end <= v.start) return setRalat(tr("Waktu keluar mesti selepas waktu masuk."));
     setBusy(true);
     try {
       const sb = getSupabase();
@@ -71,7 +72,7 @@ function Borang() {
       ctx.reload();
       router.push("/mula/import");
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
       setBusy(false);
     }
   }
@@ -79,27 +80,26 @@ function Borang() {
   return (
     <MulaLayout
       n={2}
-      title="Maklumat syarikat"
+      title={tr("Maklumat syarikat")}
       back="/mula"
       footer={
         <ButangUtama onClick={simpan} busy={busy}>
-          Simpan &amp; seterusnya
-        </ButangUtama>
+          {tr("Simpan & seterusnya")}</ButangUtama>
       }
     >
-      <MedanBorang label="Nama syarikat">
+      <MedanBorang label={tr("Nama syarikat")}>
         <input className={inputKecil} value={v.name} onChange={set("name")} />
       </MedanBorang>
       <div className="grid grid-cols-2 gap-2.5">
-        <MedanBorang label="Kod pendek" nota="Untuk no. pekerja & akses">
+        <MedanBorang label={tr("Kod pendek")} nota={tr("Untuk no. pekerja & akses")}>
           <input className={`${inputKecil} uppercase`} value={v.code} onChange={set("code")} maxLength={8} />
         </MedanBorang>
-        <MedanBorang label="No. SSM">
+        <MedanBorang label={tr("No. SSM")}>
           <input className={inputKecil} value={v.reg_no} onChange={set("reg_no")} placeholder="2020010xxxxx" />
         </MedanBorang>
       </div>
-      <Seksyen className="pt-1">WAKTU KERJA</Seksyen>
-      <MedanBorang label="Negeri (untuk cuti umum)">
+      <Seksyen className="pt-1">{tr("WAKTU KERJA")}</Seksyen>
+      <MedanBorang label={tr("Negeri (untuk cuti umum)")}>
         <select className={inputKecil} value={v.state} onChange={set("state")}>
           {NEGERI.map((n) => (
             <option key={n}>{n}</option>
@@ -107,11 +107,11 @@ function Borang() {
         </select>
       </MedanBorang>
       <div className="flex flex-col gap-1.5">
-        <span className="text-[13px] font-bold text-[#4A5A57]">Hujung minggu</span>
+        <span className="text-[13px] font-bold text-[#4A5A57]">{tr("Hujung minggu")}</span>
         <div className="grid grid-cols-2 gap-2">
           {[
-            ["0,6", "Sabtu & Ahad"],
-            ["5,6", "Jumaat & Sabtu"],
+            ["0,6", tr("Sabtu & Ahad")],
+            ["5,6", tr("Jumaat & Sabtu")],
           ].map(([k, l]) => (
             <button
               key={k}
@@ -126,13 +126,13 @@ function Borang() {
         </div>
       </div>
       <div className="grid grid-cols-3 gap-2.5">
-        <MedanBorang label="Masuk">
+        <MedanBorang label={tr("Masuk")}>
           <input type="time" className={inputKecil} value={v.start} onChange={set("start")} />
         </MedanBorang>
-        <MedanBorang label="Keluar">
+        <MedanBorang label={tr("Keluar")}>
           <input type="time" className={inputKecil} value={v.end} onChange={set("end")} />
         </MedanBorang>
-        <MedanBorang label="Lewat jika > (min)">
+        <MedanBorang label={tr("Lewat jika > (min)")}>
           <input className={inputKecil} inputMode="numeric" value={v.grace} onChange={set("grace")} />
         </MedanBorang>
       </div>

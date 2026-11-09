@@ -1,5 +1,6 @@
 "use client";
 
+import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
@@ -55,7 +56,7 @@ function ProfilSyarikat() {
   );
   return (
     <Screen lebar="sederhana">
-      <BackHeader title="Profil syarikat" href="/pengurusan/tetapan" />
+      <BackHeader title={tr("Profil syarikat")} href="/pengurusan/tetapan" />
       {d.error && <ErrorBox message={d.error} />}
       {d.loading && !d.data && <Loading />}
       {d.data && <Borang s={d.data} admin={admin} cid={cid} onSaved={d.reload} />}
@@ -86,8 +87,8 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
 
   async function simpan() {
     setRalat(null);
-    if (!f.name.trim()) return setRalat("Sila isi nama syarikat.");
-    if (f.work_end <= f.work_start) return setRalat("Waktu keluar mesti selepas waktu masuk.");
+    if (!f.name.trim()) return setRalat(tr("Sila isi nama syarikat."));
+    if (f.work_end <= f.work_start) return setRalat(tr("Waktu keluar mesti selepas waktu masuk."));
     setBusy(true);
     try {
       must(
@@ -112,7 +113,7 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
       setOk(true);
       onSaved();
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : "Ralat");
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
     setBusy(false);
   }
@@ -120,22 +121,22 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
   return (
     <>
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-4">
-        {!admin && <span className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] text-warning">Hanya Pentadbir syarikat boleh mengubah maklumat ini.</span>}
-        <Seksyen>SYARIKAT</Seksyen>
+        {!admin && <span className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] text-warning">{tr("Hanya Pentadbir syarikat boleh mengubah maklumat ini.")}</span>}
+        <Seksyen>{tr("SYARIKAT")}</Seksyen>
         <Kotak>
-          <Baris label="Nama">
+          <Baris label={tr("Nama")}>
             <input className={cls} disabled={!admin} value={f.name} onChange={(e) => set("name", e.target.value)} />
           </Baris>
-          <Baris label="Kod (untuk akses)">
+          <Baris label={tr("Kod (untuk akses)")}>
             <span className="grow text-sm font-bold">{f.code}</span>
           </Baris>
-          <Baris label="No. SSM">
+          <Baris label={tr("No. SSM")}>
             <input className={cls} disabled={!admin} value={f.reg_no} onChange={(e) => set("reg_no", e.target.value)} />
           </Baris>
-          <Baris label="Alamat (kepala surat)">
-            <input className={cls} disabled={!admin} value={f.address} onChange={(e) => set("address", e.target.value)} placeholder="Alamat penuh syarikat" />
+          <Baris label={tr("Alamat (kepala surat)")}>
+            <input className={cls} disabled={!admin} value={f.address} onChange={(e) => set("address", e.target.value)} placeholder={tr("Alamat penuh syarikat")} />
           </Baris>
-          <Baris label="Negeri">
+          <Baris label={tr("Negeri")}>
             <select className={cls} disabled={!admin} value={f.state} onChange={(e) => set("state", e.target.value)}>
               {NEGERI.map((n) => (
                 <option key={n}>{n}</option>
@@ -145,52 +146,51 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
         </Kotak>
 
         <Seksyen className="pt-1" >
-          <span id="waktu">WAKTU KERJA</span>
+          <span id="waktu">{tr("WAKTU KERJA")}</span>
         </Seksyen>
         <Kotak>
-          <Baris label="Hujung minggu">
+          <Baris label={tr("Hujung minggu")}>
             <select className={cls} disabled={!admin} value={hujung} onChange={(e) => set("weekend_days", e.target.value.split(",").map(Number))}>
-              <option value="0,6">Sabtu &amp; Ahad</option>
-              <option value="5,6">Jumaat &amp; Sabtu</option>
-              <option value="0">Ahad sahaja</option>
+              <option value="0,6">{tr("Sabtu & Ahad")}</option>
+              <option value="5,6">{tr("Jumaat & Sabtu")}</option>
+              <option value="0">{tr("Ahad sahaja")}</option>
             </select>
           </Baris>
-          <Baris label="Masuk / keluar">
-            <input type="time" className={cls} disabled={!admin} value={f.work_start} onChange={(e) => set("work_start", e.target.value)} aria-label="Waktu masuk" />
-            <input type="time" className={cls} disabled={!admin} value={f.work_end} onChange={(e) => set("work_end", e.target.value)} aria-label="Waktu keluar" />
+          <Baris label={tr("Masuk / keluar")}>
+            <input type="time" className={cls} disabled={!admin} value={f.work_start} onChange={(e) => set("work_start", e.target.value)} aria-label={tr("Waktu masuk")} />
+            <input type="time" className={cls} disabled={!admin} value={f.work_end} onChange={(e) => set("work_end", e.target.value)} aria-label={tr("Waktu keluar")} />
           </Baris>
-          <Baris label="Dikira lewat selepas">
+          <Baris label={tr("Dikira lewat selepas")}>
             <input className={cls} disabled={!admin} inputMode="numeric" value={f.late_grace_minutes} onChange={(e) => set("late_grace_minutes", e.target.value.replace(/\D/g, ""))} />
             <span className="text-sm text-muted">minit</span>
           </Baris>
         </Kotak>
 
-        <Seksyen className="pt-1">MAJIKAN BERKANUN</Seksyen>
+        <Seksyen className="pt-1">{tr("MAJIKAN BERKANUN")}</Seksyen>
         <Kotak>
-          <Baris label="No. majikan KWSP">
+          <Baris label={tr("No. majikan KWSP")}>
             <input className={cls} disabled={!admin} value={f.epf_employer_no} onChange={(e) => set("epf_employer_no", e.target.value)} />
           </Baris>
-          <Baris label="No. majikan PERKESO">
+          <Baris label={tr("No. majikan PERKESO")}>
             <input className={cls} disabled={!admin} value={f.socso_employer_no} onChange={(e) => set("socso_employer_no", e.target.value)} />
           </Baris>
-          <Baris label="No. E (LHDN)">
+          <Baris label={tr("No. E (LHDN)")}>
             <input className={cls} disabled={!admin} value={f.lhdn_employer_no} onChange={(e) => set("lhdn_employer_no", e.target.value)} placeholder="E" />
           </Baris>
-          <Baris label="Berdaftar HRDF">
+          <Baris label={tr("Berdaftar HRDF")}>
             <select className={cls} disabled={!admin} value={f.hrdf_registered ? "1" : "0"} onChange={(e) => set("hrdf_registered", e.target.value === "1")}>
-              <option value="1">Ya</option>
-              <option value="0">Tidak</option>
+              <option value="1">{tr("Ya")}</option>
+              <option value="0">{tr("Tidak")}</option>
             </select>
           </Baris>
         </Kotak>
         {ralat && <ErrorBox message={ralat} />}
-        {ok && <span className="text-sm font-semibold text-success">Profil syarikat disimpan.</span>}
+        {ok && <span className="text-sm font-semibold text-success">{tr("Profil syarikat disimpan.")}</span>}
       </main>
       {admin && (
         <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <ButangUtama onClick={simpan} busy={busy}>
-            Simpan
-          </ButangUtama>
+            {tr("Simpan")}</ButangUtama>
         </div>
       )}
     </>
@@ -217,17 +217,17 @@ function SuisLebihMasa({ cid, boleh }: { cid: string; boleh: boolean }) {
   return (
     <div className="mx-4 mb-6 flex items-center gap-3 rounded-card bg-surface px-4 py-3">
       <span className="flex grow flex-col gap-0.5">
-        <b className="text-sm font-bold">Kerja lebih masa</b>
+        <b className="text-sm font-bold">{tr("Kerja lebih masa")}</b>
         <span className="text-xs leading-snug text-muted">
           {d.data
-            ? "Pekerja boleh memohon bayaran kerja lebih masa (Akta Kerja: 1.5×, 2× hari rehat, 3× cuti umum); dibayar bersama gaji selepas diluluskan."
-            : "Tidak digunakan. Pilihan Kerja lebih masa tidak dipaparkan kepada pekerja."}
+            ? tr("Pekerja boleh memohon bayaran kerja lebih masa (Akta Kerja: 1.5×, 2× hari rehat, 3× cuti umum); dibayar bersama gaji selepas diluluskan.")
+            : tr("Tidak digunakan. Pilihan Kerja lebih masa tidak dipaparkan kepada pekerja.")}
         </span>
       </span>
       <Suis
         on={d.data}
         disabled={!boleh}
-        label="Kerja lebih masa"
+        label={tr("Kerja lebih masa")}
         onChange={async (v) => {
           try {
             await setOtDigunakan(cid, v);
