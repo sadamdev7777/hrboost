@@ -23,12 +23,11 @@ export default function PendahuluanPage() {
   const [busy, setBusy] = useState(false);
   const [ralat, setRalat] = useState<string | null>(null);
   const senarai = (d.data ?? []).filter((x) => x.id);
-  const had = Number(d.data?.[0]?.max_amount ?? 0);
 
   async function hantar() {
     const n = Number(jumlah);
     if (!(n > 0)) return setRalat("Sila masukkan jumlah.");
-    if (n > had) return setRalat(`Jumlah melebihi had pendahuluan (${ringgit(had)}).`);
+    if (n > 1000000) return setRalat("Jumlah tidak sah.");
     if (!sebab.trim()) return setRalat("Sila nyatakan sebab.");
     setBusy(true);
     setRalat(null);
@@ -50,11 +49,7 @@ export default function PendahuluanPage() {
         {d.error && <ErrorBox message={d.error} />}
         {d.data && (
           <>
-            <div className="flex flex-col gap-0.5 rounded-card bg-surface px-4 py-3">
-              <span className="text-xs text-muted">Had pendahuluan (50% gaji pokok)</span>
-              <b className="text-xl font-extrabold">{ringgit(had)}</b>
-              <span className="text-xs leading-snug text-muted">Diluluskan oleh ketua jabatan dan Kewangan. Jumlah ditolak sepenuhnya daripada gaji bulan berikutnya.</span>
-            </div>
+            <span className="text-sm leading-snug text-subtle">Masukkan jumlah yang diperlukan. Permohonan diluluskan oleh CEO, dan jumlahnya ditolak sepenuhnya daripada gaji bulan berikutnya.</span>
             <MedanBorang label="Jumlah (RM)">
               <input className={inputKecil} inputMode="decimal" value={jumlah} onChange={(e) => setJumlah(e.target.value.replace(/[^\d.]/g, ""))} aria-label="Jumlah" />
             </MedanBorang>
@@ -62,7 +57,7 @@ export default function PendahuluanPage() {
               <input className={inputKecil} value={sebab} onChange={(e) => setSebab(e.target.value)} placeholder="Contoh: Kecemasan keluarga" />
             </MedanBorang>
             {ralat && <ErrorBox message={ralat} />}
-            <ButangUtama onClick={hantar} busy={busy} disabled={had <= 0}>
+            <ButangUtama onClick={hantar} busy={busy}>
               Hantar permohonan
             </ButangUtama>
           </>

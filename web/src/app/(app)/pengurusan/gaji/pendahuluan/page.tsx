@@ -31,7 +31,7 @@ function Kandungan() {
       <TabGaji />
       <main className="flex grow flex-col gap-3 px-4 pt-4 pb-6 lg:px-0">
         <span className="text-sm leading-normal text-subtle">
-          Pekerja memohon melalui Mohon → Pendahuluan gaji (maksimum 50% gaji pokok); diluluskan oleh ketua jabatan dan Kewangan. Selepas dibayar, jumlahnya ditolak secara automatik semasa{" "}
+          Pekerja memohon melalui Mohon → Pendahuluan gaji (jumlah bebas); diluluskan oleh CEO (aliran boleh diubah dalam Tetapan → Aliran Kelulusan). Selepas dibayar, jumlahnya ditolak secara automatik semasa{" "}
           <Link href="/pengurusan/gaji" className="font-bold">
             Proses Gaji
           </Link>{" "}

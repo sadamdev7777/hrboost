@@ -31,8 +31,8 @@ async function masuk(b, email, vp) {
 async function lulusSemua(b, email) {
   const { ctx, p } = await masuk(b, email, DESKTOP);
   await p.goto(BASE + '/kelulusan');
-  await p.waitForSelector(V('text=Pendahuluan gaji RM500.00'));
-  await p.click(V('text=Pendahuluan gaji RM500.00'));
+  await p.waitForSelector(V('text=Pendahuluan gaji RM2,500.00'));
+  await p.click(V('text=Pendahuluan gaji RM2,500.00'));
   await p.click(V('button:text-is("Lulus")'));
   await p.waitForSelector(V('text=Tiada permohonan menunggu kelulusan anda'), { timeout: 20000 });
   await ctx.close();
@@ -53,12 +53,12 @@ async function lulusSemua(b, email) {
   await p.waitForSelector(V('text=Menunggu HR'), { timeout: 15000 });
   expect(true, 'soalan dihantar kepada HR');
   await p.goto(BASE + '/mohon/pendahuluan');
-  await p.waitForSelector(V('text=Had pendahuluan'));
-  await p.fill('input[aria-label=Jumlah]', '500');
+  await p.waitForSelector(V('text=diluluskan oleh CEO'));
+  await p.fill('input[aria-label=Jumlah]', '2500');
   await p.fill('input[placeholder="Contoh: Kecemasan keluarga"]', 'Kecemasan keluarga');
   await p.click(V('button:has-text("Hantar permohonan")'));
   await p.waitForURL(/\/permohonan\//, { timeout: 15000 });
-  expect(true, 'pendahuluan gaji RM500 dimohon');
+  expect(true, 'pendahuluan gaji RM2,500 dimohon (tiada had peratus)');
   await p.goto(BASE + '/mohon/kerja-fleksibel');
   await p.click(V('button:has-text("Tempat bekerja")'));
   await p.fill('textarea', 'Bekerja dari rumah setiap Jumaat untuk menjaga anak.');
@@ -67,10 +67,9 @@ async function lulusSemua(b, email) {
   expect(true, 'permohonan kerja fleksibel dihantar');
   await ctx.close();
 
-  log('2. Kelulusan pendahuluan: Zuerin (ketua) → Farah (Kewangan)');
-  await lulusSemua(b, 'zuerin@demo.hrboost.io');
-  await lulusSemua(b, 'farah@demo.hrboost.io');
-  expect(true, 'pendahuluan diluluskan dua peringkat');
+  log('2. Kelulusan pendahuluan oleh CEO (Sadam)');
+  await lulusSemua(b, 'sadam@demo.hrboost.io');
+  expect(true, 'pendahuluan diluluskan oleh CEO');
 
   log('3. Zuerin menilai Zulfa (percubaan)');
   ({ ctx, p } = await masuk(b, 'zuerin@demo.hrboost.io', TELEFON));

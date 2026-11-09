@@ -22,8 +22,15 @@ insert into user_roles(person_id,company_id,role) values ('00000000-0000-0000-00
 insert into employment_compensation(employment_id, component_id, amount, effective_from)
 select '00000000-0000-0000-0000-0000000000e4', id, 2600, '2024-01-01' from pay_components where company_id='00000000-0000-0000-0000-0000000000c1' and code='BASIC';
 
-\echo '=== N1: kerja lebih masa — mohon, ketua lulus, amaun ikut Akta Kerja ==='
+\echo '=== N1: kerja lebih masa — pilihan syarikat (lalai: tidak digunakan) ==='
 set test.role='authenticated'; set test.uid='00000000-0000-0000-0000-00000000a004';
+\set ON_ERROR_STOP 0
+select submit_overtime('00000000-0000-0000-0000-0000000000e4', current_date - 3, 4, 'normal', 'Sebelum dihidupkan');
+select set_overtime_enabled('00000000-0000-0000-0000-0000000000c1', true);
+\set ON_ERROR_STOP 1
+set test.uid='00000000-0000-0000-0000-00000000a002';
+select set_overtime_enabled('00000000-0000-0000-0000-0000000000c1', true);
+set test.uid='00000000-0000-0000-0000-00000000a004';
 select hours, day_type, status from submit_overtime('00000000-0000-0000-0000-0000000000e4', current_date - 3, 4, 'normal', 'Sambut kumpulan pelancong lewat malam');
 select hours, day_type, status from submit_overtime('00000000-0000-0000-0000-0000000000e4', current_date - 2, 3, 'holiday', 'Bertugas cuti umum');
 \set ON_ERROR_STOP 0

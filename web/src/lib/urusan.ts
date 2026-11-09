@@ -34,6 +34,15 @@ export async function getKalendar(companyId: string, dari: string, hingga: strin
 
 // ---------------------------------------------------------------- Kerja lebih masa
 
+/** Kerja lebih masa ialah pilihan setiap syarikat (lalai: tidak digunakan). */
+export async function getOtDigunakan(companyId: string): Promise<boolean> {
+  const r = must(await getSupabase().from("companies").select("overtime_enabled").eq("id", companyId).maybeSingle()) as { overtime_enabled?: boolean } | null;
+  return !!r?.overtime_enabled;
+}
+export async function setOtDigunakan(companyId: string, on: boolean) {
+  must(await getSupabase().rpc("set_overtime_enabled", { p_company: companyId, p_on: on }));
+}
+
 export type JenisHari = "normal" | "rest" | "holiday";
 export const LABEL_HARI: Record<JenisHari, { label: string; kadar: string }> = {
   normal: { label: "Hari bekerja biasa", kadar: "1.5 kali kadar sejam" },

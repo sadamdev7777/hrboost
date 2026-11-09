@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { addDays, hari, ringgit, tarikh, todayISO } from "@/lib/format";
-import { getLebihMasaSaya, LABEL_HARI, mohonLebihMasa, type JenisHari } from "@/lib/urusan";
+import { getLebihMasaSaya, getOtDigunakan, LABEL_HARI, mohonLebihMasa, type JenisHari } from "@/lib/urusan";
 import { BackHeader, ErrorBox, Screen, StatusPill } from "@/components/ui";
 import { ButangUtama, Cip, MedanBorang, Seksyen, inputKecil } from "@/components/Senarai";
 import { beritahu } from "@/components/Dialog";
@@ -25,6 +25,7 @@ export default function LebihMasaPage() {
   const [busy, setBusy] = useState(false);
   const [ralat, setRalat] = useState<string | null>(null);
   const sejarah = useData(() => getLebihMasaSaya(emp.id), [emp.id]);
+  const digunakan = useData(() => getOtDigunakan(emp.companyId), [emp.companyId]);
 
   async function hantar() {
     const j = Number(jam);
@@ -45,6 +46,13 @@ export default function LebihMasaPage() {
   return (
     <Screen lebar="sederhana">
       <BackHeader title="Kerja lebih masa" href="/mohon" />
+      {digunakan.data === false && (
+        <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
+          <div className="rounded-card bg-surface px-4 py-6 text-sm text-muted">Kerja lebih masa tidak digunakan di syarikat ini. Hubungi HR jika anda perlu bekerja lebih masa.</div>
+        </main>
+      )}
+      {digunakan.data && (
+      <>
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-4">
         <MedanBorang label="Tarikh">
           <input className={inputKecil} type="date" value={tarikhOT} max={t} min={addDays(t, -60)} onChange={(e) => setTarikhOT(e.target.value)} />
@@ -102,6 +110,8 @@ export default function LebihMasaPage() {
           Hantar permohonan
         </ButangUtama>
       </div>
+      </>
+      )}
     </Screen>
   );
 }

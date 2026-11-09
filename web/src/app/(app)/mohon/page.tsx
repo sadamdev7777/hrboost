@@ -6,6 +6,7 @@ import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { getBaki, getPermohonanSaya, kiniDi, paparPermohonan, type Baki } from "@/lib/data";
 import { hari } from "@/lib/format";
+import { getOtDigunakan } from "@/lib/urusan";
 import { IconCalendar, IconChat, IconChevronRight, IconClock, IconDocument, IconReceipt, IconWallet } from "@/components/icons";
 import { Screen, StatusPill } from "@/components/ui";
 import { TabNav } from "@/components/TabNav";
@@ -16,6 +17,7 @@ export default function MohonPage() {
   const emp = me.active;
   const baki = useData(() => (emp ? getBaki(emp) : Promise.resolve({} as Record<string, Baki>)), [emp?.id]);
   const mohon = useData(() => getPermohonanSaya(), [emp?.id]);
+  const ot = useData(() => (emp ? getOtDigunakan(emp.companyId) : Promise.resolve(false)), [emp?.companyId]);
   const proses = (mohon.data ?? []).find((p) => p.status === "pending");
   const al = baki.data?.AL;
   const mc = baki.data?.MC;
@@ -49,6 +51,7 @@ export default function MohonPage() {
           title="Pembetulan masa"
           sub="Terlupa mengimbas atau bertugas di luar"
         />
+        {ot.data && (
         <Pilihan
           href="/mohon/lebih-masa"
           tone="bg-[#EDE9F8] text-ai"
@@ -56,12 +59,13 @@ export default function MohonPage() {
           title="Kerja lebih masa"
           sub="Dibayar bersama gaji selepas diluluskan"
         />
+        )}
         <Pilihan
           href="/mohon/pendahuluan"
           tone="bg-warning-soft text-warning"
           icon={<IconWallet />}
           title="Pendahuluan gaji"
-          sub="Ditolak daripada gaji bulan berikutnya"
+          sub="Diluluskan oleh CEO, ditolak daripada gaji bulan berikutnya"
         />
         <Pilihan
           href="/mohon/kerja-fleksibel"

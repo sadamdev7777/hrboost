@@ -35,17 +35,20 @@ select hr_question_stats('00000000-0000-0000-0000-0000000000c1') - 'avg_hours' a
 reset test.role; reset test.uid;
 select message like 'Jawapan HR%' as dimaklumkan from notifications where person_id = '00000000-0000-0000-0000-000000000004' order by created_at desc limit 1;
 
-\echo '=== O2: pendahuluan gaji ==='
+\echo '=== O2: pendahuluan gaji (jumlah bebas, CEO meluluskan) ==='
 set test.role='authenticated'; set test.uid='00000000-0000-0000-0000-00000000a004';
 \set ON_ERROR_STOP 0
+-- tiada CEO dalam syarikat → ditolak (tiada lulus automatik)
 select submit_salary_advance('00000000-0000-0000-0000-0000000000e4', 2000, 'Kecemasan keluarga');
 \set ON_ERROR_STOP 1
-select amount, status from submit_salary_advance('00000000-0000-0000-0000-0000000000e4', 1000, 'Kecemasan keluarga');
+reset test.role; reset test.uid;
+insert into user_roles(person_id,company_id,role) values ('00000000-0000-0000-0000-000000000006','00000000-0000-0000-0000-0000000000c1','ceo');
+set test.role='authenticated'; set test.uid='00000000-0000-0000-0000-00000000a004';
+select amount, status from submit_salary_advance('00000000-0000-0000-0000-0000000000e4', 2000, 'Kecemasan keluarga');
 \set ON_ERROR_STOP 0
 select submit_salary_advance('00000000-0000-0000-0000-0000000000e4', 100, 'Kedua');
 \set ON_ERROR_STOP 1
-set test.uid='00000000-0000-0000-0000-00000000a003';
-select (approval_act(t.id, 'approve')).status from approval_tasks t join approval_requests r on r.id = t.request_id where r.request_type = 'salary_advance' and t.status = 'pending';
+select s.name, s.approver_role from approval_workflow_steps s join approval_workflows w on w.id = s.workflow_id where w.request_type = 'salary_advance';
 set test.uid='00000000-0000-0000-0000-00000000a006';
 select (approval_act(t.id, 'approve')).status from approval_tasks t join approval_requests r on r.id = t.request_id where r.request_type = 'salary_advance' and t.status = 'pending';
 reset test.role; reset test.uid;

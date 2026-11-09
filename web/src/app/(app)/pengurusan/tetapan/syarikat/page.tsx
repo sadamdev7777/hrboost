@@ -5,7 +5,9 @@ import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
-import { ButangUtama, HadPeranan, Seksyen } from "@/components/Senarai";
+import { ButangUtama, HadPeranan, Seksyen, Suis } from "@/components/Senarai";
+import { getOtDigunakan, setOtDigunakan } from "@/lib/urusan";
+import { beritahu } from "@/components/Dialog";
 import { NEGERI } from "@/lib/senarai";
 
 
@@ -57,6 +59,7 @@ function ProfilSyarikat() {
       {d.error && <ErrorBox message={d.error} />}
       {d.loading && !d.data && <Loading />}
       {d.data && <Borang s={d.data} admin={admin} cid={cid} onSaved={d.reload} />}
+      {d.data && <SuisLebihMasa cid={cid} boleh={me.roles.includes("hr") || admin} />}
     </Screen>
   );
 }
@@ -204,5 +207,37 @@ function Baris({ label, children }: { label: string; children: React.ReactNode }
       <span className="w-[120px] shrink-0 text-muted">{label}</span>
       {children}
     </label>
+  );
+}
+
+/** Kerja lebih masa ialah pilihan: apabila dimatikan, pekerja tidak boleh memohon. */
+function SuisLebihMasa({ cid, boleh }: { cid: string; boleh: boolean }) {
+  const d = useData(() => getOtDigunakan(cid), [cid]);
+  if (d.data === null || d.data === undefined) return null;
+  return (
+    <div className="mx-4 mb-6 flex items-center gap-3 rounded-card bg-surface px-4 py-3">
+      <span className="flex grow flex-col gap-0.5">
+        <b className="text-sm font-bold">Kerja lebih masa</b>
+        <span className="text-xs leading-snug text-muted">
+          {d.data
+            ? "Pekerja boleh memohon bayaran kerja lebih masa (Akta Kerja: 1.5×, 2× hari rehat, 3× cuti umum); dibayar bersama gaji selepas diluluskan."
+            : "Tidak digunakan. Pilihan Kerja lebih masa tidak dipaparkan kepada pekerja."}
+        </span>
+      </span>
+      <Suis
+        on={d.data}
+        disabled={!boleh}
+        label="Kerja lebih masa"
+        onChange={async (v) => {
+          try {
+            await setOtDigunakan(cid, v);
+            beritahu(v ? "Kerja lebih masa dihidupkan." : "Kerja lebih masa dimatikan.");
+            d.reload();
+          } catch (e) {
+            beritahu(e instanceof Error ? e.message : "Ralat", "ralat");
+          }
+        }}
+      />
+    </div>
   );
 }

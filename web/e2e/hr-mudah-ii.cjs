@@ -30,8 +30,21 @@ async function masuk(b, email, vp) {
   const b = await chromium.launch();
   const kelmarin = new Date(Date.now() - 2 * 864e5).toISOString().slice(0, 10);
 
-  log('1. Amin mohon kerja lebih masa & surat pengesahan gaji');
+  log('0. Kerja lebih masa ialah pilihan (lalai: tidak digunakan)');
   let { ctx, p } = await masuk(b, 'amin@demo.hrboost.io', TELEFON);
+  await p.goto(BASE + '/mohon');
+  await p.waitForSelector(V('a:has-text("Surat")'));
+  expect(!(await p.locator(V('a:has-text("Kerja lebih masa")')).count()), 'pilihan Kerja lebih masa disorok secara lalai');
+  await ctx.close();
+  ({ ctx, p } = await masuk(b, 'lily@demo.hrboost.io', DESKTOP));
+  await p.goto(BASE + '/pengurusan/tetapan/syarikat');
+  await p.click(V('[role=switch][aria-label="Kerja lebih masa"]'));
+  await p.waitForSelector(V('text=Kerja lebih masa dihidupkan.'));
+  expect(true, 'HR menghidupkan kerja lebih masa dalam Tetapan → Syarikat');
+  await ctx.close();
+
+  log('1. Amin mohon kerja lebih masa & surat pengesahan gaji');
+  ({ ctx, p } = await masuk(b, 'amin@demo.hrboost.io', TELEFON));
   await p.goto(BASE + '/mohon');
   await p.click(V('a:has-text("Kerja lebih masa")'));
   await p.waitForURL('**/mohon/lebih-masa');
