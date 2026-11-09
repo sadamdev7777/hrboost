@@ -35,7 +35,7 @@ async function login(browser, phone) {
   await p.goto(BASE + '/saya');
   await p.click('a:has-text("Tetapan")');
   await p.waitForSelector('text=KELULUSAN & AUTOMASI');
-  await p.waitForSelector('text=4 jenis');
+  await p.waitForSelector('text=6 jenis');
   await p.screenshot({ path: `${shots}/t-menu.png` });
   expect(true, 'menu Tetapan dengan ringkasan');
 
