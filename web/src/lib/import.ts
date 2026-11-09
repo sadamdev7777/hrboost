@@ -99,15 +99,18 @@ function csv(text: string): string[][] {
   return rows;
 }
 
+/** Baca fail Excel (.xlsx) atau CSV sebagai jadual mentah. */
+export async function bacaJadual(file: File): Promise<unknown[][]> {
+  if (/\.csv$/i.test(file.name) || file.type === "text/csv") return csv((await file.text()).replace(/^﻿/, ""));
+  const { readSheet } = await import("read-excel-file/browser");
+  return (await readSheet(file)) as unknown[][];
+}
+
+export { teks as teksSel, tarikhISO };
+
 /** Baca fail Excel (.xlsx) atau CSV dan padankan lajur. */
 export async function bacaFailPekerja(file: File): Promise<{ rows: BarisImport[]; mapped: string[] }> {
-  let data: unknown[][];
-  if (/\.csv$/i.test(file.name) || file.type === "text/csv") {
-    data = csv((await file.text()).replace(/^﻿/, ""));
-  } else {
-    const { readSheet } = await import("read-excel-file/browser");
-    data = (await readSheet(file)) as unknown[][];
-  }
+  const data = await bacaJadual(file);
   // baris tajuk = baris pertama yang mempunyai lajur nama
   let h = data.findIndex((r) => padanLajur(r.map(teks)).includes("full_name"));
   if (h < 0) h = 0;

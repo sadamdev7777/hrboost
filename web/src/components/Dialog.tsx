@@ -130,19 +130,23 @@ export function HosDialog() {
 // ---------------------------------------------------------------------
 //  Toast: mesej berjaya ringkas yang sama di semua skrin ("Disimpan.")
 // ---------------------------------------------------------------------
-type Toast = { id: number; teks: string; nada: "ok" | "ralat" };
+type AksiToast = { label: string; buat: () => void | Promise<void> };
+type Toast = { id: number; teks: string; nada: "ok" | "ralat"; aksi?: AksiToast };
 let toasts: Toast[] = [];
 const pendengarToast = new Set<() => void>();
 let seq = 0;
 
-export function beritahu(teks: string, nada: "ok" | "ralat" = "ok") {
-  const id = ++seq;
-  toasts = [...toasts, { id, teks, nada }];
+function buangToast(id: number) {
+  toasts = toasts.filter((t) => t.id !== id);
   pendengarToast.forEach((f) => f());
-  setTimeout(() => {
-    toasts = toasts.filter((t) => t.id !== id);
-    pendengarToast.forEach((f) => f());
-  }, 3500);
+}
+
+/** Mesej ringkas. `aksi` (cth. "Buat asal") memaparkan butang dan memanjangkan tempoh paparan kepada 10 saat. */
+export function beritahu(teks: string, nada: "ok" | "ralat" = "ok", aksi?: AksiToast) {
+  const id = ++seq;
+  toasts = [...toasts, { id, teks, nada, aksi }];
+  pendengarToast.forEach((f) => f());
+  setTimeout(() => buangToast(id), aksi ? 10000 : 3500);
 }
 
 export function HosToast() {
@@ -166,7 +170,19 @@ export function HosToast() {
           <span aria-hidden="true" className={`flex size-5 shrink-0 items-center justify-center rounded-full text-xs ${t.nada === "ok" ? "bg-primary" : "bg-white/25"}`}>
             {t.nada === "ok" ? "✓" : "!"}
           </span>
-          {t.teks}
+          <span className="grow">{t.teks}</span>
+          {t.aksi && (
+            <button
+              type="button"
+              onClick={() => {
+                buangToast(t.id);
+                void t.aksi!.buat();
+              }}
+              className="-my-1 ml-1 flex min-h-9 shrink-0 items-center rounded-[10px] px-2.5 text-sm font-extrabold text-[#7FD3C4] hover:bg-white/10"
+            >
+              {t.aksi.label}
+            </button>
+          )}
         </div>
       ))}
     </div>

@@ -9,6 +9,7 @@ import { todayISO } from "@/lib/format";
 import { BULAN_PENUH } from "@/lib/gaji";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar } from "@/components/TabNav";
+import { ButangBantuan, KadPanduan } from "@/components/Panduan";
 import { HadPeranan, inputKecil } from "@/components/Senarai";
 
 type Lajur = { k: string; label: string; jenis?: "rm" | "nombor" | "peratus" | "bulan" | "status" };
@@ -185,8 +186,9 @@ function Kandungan() {
 
   return (
     <Screen lebar="lebar">
-      <PengepalaAkar title="Laporan" backHr="/pengurusan" />
+      <PengepalaAkar title="Laporan" backHr="/pengurusan" action={<ButangBantuan id="laporan" />} />
       <main className="flex grow flex-col gap-4 px-4 pt-2 pb-6 lg:px-0">
+        <KadPanduan id="laporan" />
         <div role="tablist" aria-label="Jenis laporan" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 lg:mx-0 lg:flex-wrap lg:px-0">
           {tersedia.map((l) => (
             <button

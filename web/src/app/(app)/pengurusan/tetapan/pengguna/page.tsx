@@ -1,6 +1,6 @@
 "use client";
 
-import { sahkan } from "@/components/Dialog";
+import { beritahu, sahkan } from "@/components/Dialog";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
@@ -44,6 +44,18 @@ function Pengguna() {
     try {
       must(await getSupabase().from("user_roles").delete().eq("company_id", emp.companyId).eq("person_id", personId).eq("role", role as Role));
       d.reload();
+      beritahu(`Peranan ${LABEL_PERANAN[role]} ditarik balik daripada ${nama}.`, "ok", {
+        label: "Buat asal",
+        buat: async () => {
+          try {
+            must(await getSupabase().from("user_roles").insert({ company_id: emp.companyId, person_id: personId, role: role as Role }));
+            beritahu(`Peranan ${LABEL_PERANAN[role]} dikembalikan kepada ${nama}.`);
+          } catch (e) {
+            beritahu(e instanceof Error ? e.message : "Ralat", "ralat");
+          }
+          d.reload();
+        },
+      });
     } catch (e) {
       setRalat(e instanceof Error ? e.message : "Ralat");
     }

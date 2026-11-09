@@ -13,8 +13,12 @@ import {
   hantarKelulusan,
   kiraGaji,
   muatTurun,
+  getLaporanSlip,
+  getTetapanPratonton,
+  selesaikanLaporan,
   sediakanGaji,
   setPelarasan,
+  setTetapanPratonton,
   tandaDibayar,
   type Jumlah,
 } from "@/lib/gaji";
@@ -24,8 +28,10 @@ import { namaPeringkat, todayISO } from "@/lib/format";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar } from "@/components/TabNav";
 import { TabGaji } from "@/components/TabGaji";
+import { ButangBantuan, KadPanduan } from "@/components/Panduan";
 import { useSearchParams } from "next/navigation";
-import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
+import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Suis, Tag, inputKecil } from "@/components/Senarai";
+import { beritahu, mintaTeks } from "@/components/Dialog";
 
 const rm = (n: number | string | null | undefined) => `RM ${Number(n ?? 0).toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 const LANGKAH = ["Semak data", "Kira", "Kelulusan", "Bayar & hantar"];
@@ -81,6 +87,7 @@ function ProsesGaji() {
         title={`Gaji ${BULAN_PENUH[tempoh.m - 1].slice(0, 3)} ${tempoh.y}`}
         action={
           <div className="mr-1 flex items-center gap-1">
+            <ButangBantuan id="gaji" />
             <button type="button" aria-label="Bulan sebelumnya" onClick={() => setTempoh(geser(tempoh.y, tempoh.m, -1))} className="flex size-11 items-center justify-center rounded-full text-lg">
               ‹
             </button>
@@ -92,6 +99,9 @@ function ProsesGaji() {
         }
       />
       <TabGaji />
+      <div className="px-4 pt-3 empty:hidden lg:px-0">
+        <KadPanduan id="gaji" />
+      </div>
       <ol className="mx-5 mt-4 grid grid-cols-4 gap-1.5 lg:mx-0" aria-label="Langkah proses gaji">
         {LANGKAH.map((l, i) => {
           const siap = langkah > i + 1 || status === "paid";
@@ -317,6 +327,7 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
           <Angka k="PCB" v={rm(j.pcb)} />
         </div>
         <PanelBendera runId={data.run.id} />
+        <PanelLaporanPekerja runId={data.run.id} />
         <Seksyen className="pt-1">{j.previous_run ? "BERBEZA DARIPADA BULAN LALU" : "PERUBAHAN"}</Seksyen>
         <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
           {(diff.data ?? []).length === 0 && <span className="py-3 text-muted">Tiada perubahan berbanding bulan lalu.</span>}
@@ -342,6 +353,7 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
             ))}
           </div>
         )}
+        <SuisPratonton companyId={data.run.company_id} />
         <span className="rounded-[14px] bg-[#E3F1EE] px-4 py-3 text-[13px] leading-normal text-primary">
           <b>Aliran kelulusan gaji: {data.aliran.join(" → ") || "Kewangan → CEO"}</b>. Pelulus akan menerima WhatsApp bersama ringkasan di atas.
         </span>
@@ -400,6 +412,75 @@ function PanelBendera({ runId }: { runId: string }) {
   );
 }
 
+/** Laporan kesilapan daripada pekerja yang melihat pratonton slip. */
+function PanelLaporanPekerja({ runId }: { runId: string }) {
+  const d = useData(() => getLaporanSlip(runId), [runId]);
+  const xs = d.data ?? [];
+  if (!xs.length) return null;
+  const terbuka = xs.filter((x) => !x.resolved_at).length;
+  async function selesai(id: string, nama: string) {
+    const n = await mintaTeks({ tajuk: `Selesaikan laporan ${nama}`, label: "Nota kepada pekerja (pilihan)", ok: "Tanda selesai", wajib: false });
+    if (n === null) return;
+    try {
+      await selesaikanLaporan(id, n);
+      beritahu(`${nama} dimaklumkan melalui WhatsApp.`);
+      d.reload();
+    } catch (e) {
+      beritahu(e instanceof Error ? e.message : "Ralat", "ralat");
+    }
+  }
+  return (
+    <section aria-label="Laporan daripada pekerja" className="flex flex-col gap-2">
+      <Seksyen className="pt-1">LAPORAN DARIPADA PEKERJA ({terbuka} belum selesai)</Seksyen>
+      <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
+        {xs.map((x) => (
+          <div key={x.id} className="flex min-h-12 flex-wrap items-center gap-x-3 gap-y-1 py-2.5">
+            <span className="flex min-w-0 grow basis-60 flex-col gap-0.5">
+              <Link href={`/pengurusan/pekerja/${x.employment_id}`} className="font-bold text-ink!">
+                {x.name}
+              </Link>
+              <span className={x.resolved_at ? "text-muted" : ""}>&ldquo;{x.message}&rdquo;</span>
+              {x.resolved_at && <span className="text-xs text-success">Selesai{x.resolution ? ` — ${x.resolution}` : ""}</span>}
+            </span>
+            {!x.resolved_at && (
+              <button type="button" onClick={() => selesai(x.id, x.name)} className="flex h-9 items-center rounded-full border border-line px-3 text-xs font-bold text-primary">
+                Tanda selesai
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      {terbuka > 0 && <span className="text-xs text-muted">Betulkan data (gaji pekerja, komisen, cuti), tekan Kira semula, kemudian tanda selesai.</span>}
+    </section>
+  );
+}
+
+function SuisPratonton({ companyId }: { companyId: string }) {
+  const d = useData(() => getTetapanPratonton(companyId), [companyId]);
+  if (d.data === null || d.data === undefined) return null;
+  return (
+    <div className="flex items-center gap-3 rounded-card bg-surface px-4 py-2">
+      <span className="flex grow flex-col gap-0.5">
+        <b className="text-sm font-bold">Pekerja boleh pratonton slip</b>
+        <span className="text-xs leading-snug text-muted">Pekerja melihat slip draf mereka sebelum kelulusan dan boleh melaporkan kesilapan.</span>
+      </span>
+      <Suis
+        on={d.data}
+        label="Pekerja boleh pratonton slip"
+        onChange={async (v) => {
+          try {
+            await setTetapanPratonton(companyId, v);
+            beritahu(v ? "Pratonton slip dihidupkan." : "Pratonton slip dimatikan.");
+            d.reload();
+          } catch (e) {
+            beritahu(e instanceof Error ? e.message : "Ralat", "ralat");
+          }
+        }}
+      />
+    </div>
+  );
+}
+
 function Langkah3({ data }: { data: Data }) {
   const j = (data.run.totals ?? {}) as unknown as Jumlah;
   return (
@@ -409,6 +490,7 @@ function Langkah3({ data }: { data: Data }) {
         <b className="text-lg font-extrabold">{rm(j.net)} bersih · {j.headcount} pekerja</b>
         <span className="text-sm text-muted">Aliran: {data.aliran.join(" → ")}</span>
       </div>
+      <PanelLaporanPekerja runId={data.run.id} />
       {data.run.approval_request_id && (
         <Link href={`/permohonan/${data.run.approval_request_id}`} className="flex h-12 items-center justify-center rounded-[14px] border border-line bg-surface text-sm font-bold">
           Lihat status kelulusan

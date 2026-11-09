@@ -14,6 +14,9 @@ import { TabNav } from "@/components/TabNav";
 import { Loceng } from "@/components/Loceng";
 import { bukaCari } from "@/components/CariPantas";
 import { useSkrinLebar } from "@/lib/skrin";
+import { ButangBantuan, KadPanduan } from "@/components/Panduan";
+import { ringkasSemakHr } from "@/components/SenaraiSemak";
+import { getTugasSemakSaya } from "@/lib/berkanun";
 import { getKalendarBerkanun, getTarikhTamat, tandaDihantar, type KewajipanBerkanun } from "@/lib/berkanun";
 import { beritahu, mintaTeks } from "@/components/Dialog";
 
@@ -41,15 +44,16 @@ function Kandungan() {
   const hariIni = todayISO();
   const d = useData(async () => {
     const sb = getSupabase();
-    const [asas, tambahan, tugas, jadi, berkanun, tamat] = await Promise.all([
+    const [asas, tambahan, tugas, jadi, berkanun, tamat, semak] = await Promise.all([
       getDashboard(emp.companyId),
       getDashboardTambahan(emp.companyId),
       getTugasSaya(emp.companyId),
       sb.rpc("team_birthdays", { p_company: emp.companyId, p_from: hariIni, p_to: addDays(hariIni, 6) }),
       getKalendarBerkanun(emp.companyId).catch(() => [] as KewajipanBerkanun[]),
       getTarikhTamat(emp.companyId).catch(() => []),
+      getTugasSemakSaya(emp.companyId).catch(() => []),
     ]);
-    return { asas, tambahan, tugas, jadi: must(jadi) ?? [], berkanun, tamat };
+    return { asas, tambahan, tugas, jadi: must(jadi) ?? [], berkanun, tamat, semak: ringkasSemakHr(semak) };
   }, [emp.companyId]);
   const [sibuk, setSibuk] = useState<string | null>(null);
   const [ralat, setRalat] = useState<string | null>(null);
@@ -69,7 +73,7 @@ function Kandungan() {
   const a = x?.asas;
   const t = x?.tambahan;
   const dijangka = a ? Math.max(a.headcount - a.on_leave.length, 0) : 0;
-  const tindakan = x && a ? x.tugas.length + a.attention.length + (t?.no_salary ? 1 : 0) + x.tamat.length : 0;
+  const tindakan = x && a ? x.tugas.length + a.attention.length + (t?.no_salary ? 1 : 0) + x.tamat.length + x.semak.length : 0;
 
   async function tanda(k: KewajipanBerkanun) {
     const ruj = await mintaTeks({
@@ -106,10 +110,12 @@ function Kandungan() {
               </svg>
             </button>
           )}
+          <ButangBantuan id="papan" />
           <Loceng />
         </span>
       </header>
       <main className="flex grow flex-col gap-4 px-4 pt-2 pb-5 lg:px-0">
+        <KadPanduan id="papan" />
         {d.error && <ErrorBox message={d.error} />}
         {ralat && <ErrorBox message={ralat} />}
         {d.loading && !x && <Loading />}
@@ -175,6 +181,16 @@ function Kandungan() {
                   {t.no_salary ? (
                     <Baris tag="Gaji" tone="warning" teks={`${t.no_salary} pekerja belum mempunyai gaji pokok`} href="/pengurusan/gaji/pekerja" aksi="Tetapkan" />
                   ) : null}
+                  {x.semak.map((s) => (
+                    <Baris
+                      key={"semak" + s.employment_id}
+                      tag="Orientasi"
+                      tone={s.lewat ? "danger" : "primary"}
+                      teks={`${s.name}: ${s.n} perkara senarai semak pekerja baharu${s.lewat ? ` (${s.lewat} lewat)` : ""}`}
+                      href={`/pengurusan/pekerja/${s.employment_id}`}
+                      aksi="Semak"
+                    />
+                  ))}
                   {x.tamat.map((m) => (
                     <Baris
                       key={m.kind + m.employment_id + m.expiry}

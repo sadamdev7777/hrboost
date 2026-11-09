@@ -254,6 +254,19 @@ node supabase/scripts/ujian-fungsi-crosschex.cjs
 - Kelulusan (desktop): senarai + butiran sebelah-menyebelah, lulus ramai sekali gus, konteks pada setiap baris (baki selepas, rakan sejabatan bercuti, lampiran — `approval_task_context`). Carian pantas Ctrl+K (pekerja & tindakan). Loceng pemberitahuan (`notifications.read_at`). Jadual Pekerja boleh diisih, ditapis ikut jabatan dan dieksport CSV.
 - Gaji Pekerja: KWSP, PERKESO, SIP, HRDF, PCB, gaji bersih dan kos majikan dikira automatik (`pay_estimate` / `hr_pay_preview`, fungsi kiraan yang sama dengan Proses Gaji) — langsung semasa menaip, dalam jadual dan jumlah syarikat. RPC `hr_pay_table`, `hr_set_pay` (mengikut tarikh berkuat kuasa; 0 = hentikan elaun), `hr_add_pay_component` (jenis elaun / potongan tetap baharu). Komisen, kerja lebih masa dan tuntutan kekal dalam Proses Gaji. Setiap paparan & perubahan direkodkan dalam `data_access_log`.
 
+### HR lebih mudah
+
+- **Kalendar berkanun** (Papan Pemuka): KWSP, PERKESO & SIP, PCB (CP39), HRDF — tarikh akhir hari ke-15 bulan berikutnya; Borang EA (28 Feb) & Borang E (31 Mac). Tarikh disimpan sebagai data (`platform_settings.statutory_deadlines`). "Tanda dihantar" → `statutory_submissions`. Peringatan WhatsApp kepada HR & Kewangan 5 dan 1 hari sebelum (`statutory_reminders`, pg_cron 9:07 pagi MYT).
+- **Laporan** (`/pengurusan/laporan`, `hr_report`): bilangan & pusing ganti, baki cuti, cuti diambil, kehadiran & lewat, tuntutan, kos gaji (HR / Kewangan sahaja; direkodkan). Julat tarikh & eksport CSV.
+- **Semakan pintar gaji** selepas Kira (`payroll_flags`): gaji bersih ≤ 0, akaun bank tiada, perubahan > 10%, PCB 0 dengan gaji tinggi, pekerja baharu / berhenti, cuti tanpa gaji — setiap satu dengan penjelasan.
+- **Tarikh tamat**: kontrak, permit kerja, pasport (`hr_set_expiry`, Profil Pekerja → ⋯ Lagi) dan dokumen (`employee_documents.expiry_date`) → "Perlu tindakan" (`hr_expiring`).
+- **Senarai semak pekerja baharu**: templat lalai dalam `platform_settings.onboarding_checklist_default` disalin ke setiap pekerjaan baharu (perkara HR & ketua jabatan, tarikh ikut tarikh mula / tamat percubaan). Profil Pekerja (HR), kad di Utama ketua jabatan, perkara lewat di Papan Pemuka.
+- **Import Excel / CSV**: gaji pokok (Gaji → Gaji pekerja → Import Excel, `hr_import_basic_pay`) dan baki cuti awal (Tetapan → Jenis cuti, `hr_import_leave_opening`: dibawa + telah diambil sebelum HRBoost). Keputusan dilaporkan baris demi baris.
+- **Buat asal** selepas pindah jabatan pukal, tarik balik peranan dan padam perkara senarai semak (toast 10 saat).
+- **Panduan** ringkas setiap skrin HR (kali pertama + butang "?").
+- **Ringkasan harian WhatsApp** kepada HR jam 5:00 petang hari bekerja (`hr_daily_digest`, pg_cron `0 9 * * 1-5` UTC); suis & pratonton di Tetapan → Automasi.
+- **Pratonton slip oleh pekerja** sebelum kelulusan (`companies.payslip_preview`, suis dalam Proses Gaji langkah 2). Pekerja boleh "Lapor kesilapan" (`report_payslip_issue`) → HR & Kewangan dimaklumkan; HR menandakan selesai (`resolve_payslip_issue`) dan pekerja dimaklumkan.
+
 ### Log masuk e-mel & kata laluan
 
 - Kali pertama: OTP WhatsApp untuk mengesahkan nombor telefon. Selepas itu pengguna **wajib** menetapkan e-mel & kata laluan (`/akaun/kata-laluan`) sebelum boleh membuka skrin lain. E-mel tidak perlu disahkan; ia ditulis oleh RPC `set_my_login_email` (unik, huruf kecil) dan kata laluan melalui Supabase Auth (minimum 8 aksara).

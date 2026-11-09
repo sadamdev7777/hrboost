@@ -16,6 +16,7 @@ import { beritahu } from "@/components/Dialog";
 import { inisial } from "@/lib/format";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar, TabNav } from "@/components/TabNav";
+import { ButangBantuan, KadPanduan } from "@/components/Panduan";
 import { useRouter } from "next/navigation";
 import { useSkrinLebar } from "@/lib/skrin";
 import { HadPeranan, Seksyen, Tag } from "@/components/Senarai";
@@ -81,6 +82,7 @@ function Senarai() {
         action={
           boleh && (
             <span className="flex items-center gap-2">
+            <ButangBantuan id="pekerja" />
             <Link
               href="/pengurusan/tetapan/jabatan"
               className="flex h-11 items-center rounded-full border border-line bg-surface px-4 text-sm font-bold text-primary!"
@@ -111,6 +113,7 @@ function Senarai() {
         }
       />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
+        {boleh && <KadPanduan id="pekerja" />}
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
           <label className="flex h-12 items-center gap-2.5 rounded-[14px] bg-surface px-3.5 lg:w-[360px]">
             <svg
@@ -279,7 +282,7 @@ function JadualPekerja({ ppl: asal, boleh, onUbah }: { ppl: PekerjaRingkas[]; bo
     else n.delete(id);
     setTanda(n);
   };
-  async function pukal(kerja: (p: PekerjaRingkas) => Promise<unknown>, sasaran: PekerjaRingkas[], mesej: string) {
+  async function pukal(kerja: (p: PekerjaRingkas) => Promise<unknown>, sasaran: PekerjaRingkas[], mesej: string, asal?: (p: PekerjaRingkas) => Promise<unknown>) {
     setBusy(true);
     let ok = 0;
     const gagal: string[] = [];
@@ -294,7 +297,19 @@ function JadualPekerja({ ppl: asal, boleh, onUbah }: { ppl: PekerjaRingkas[]; bo
     setBusy(false);
     setTanda(new Set());
     if (gagal.length) beritahu(`${ok} berjaya. Tidak berjaya: ${gagal.join("; ")}`, "ralat");
-    else beritahu(mesej.replace("{n}", String(ok)));
+    else
+      beritahu(
+        mesej.replace("{n}", String(ok)),
+        "ok",
+        asal && {
+          label: "Buat asal",
+          buat: async () => {
+            for (const p of sasaran) await asal(p).catch(() => undefined);
+            beritahu("Perubahan dibatalkan.");
+            onUbah();
+          },
+        },
+      );
     onUbah();
   }
   const [isih, setIsih] = useState<Isih>({ k: "employeeNo", naik: true });
@@ -318,7 +333,14 @@ function JadualPekerja({ ppl: asal, boleh, onUbah }: { ppl: PekerjaRingkas[]; bo
         <button
           type="button"
           disabled={!jabBaru || busy}
-          onClick={() => pukal((p) => kemasKiniPekerjaan(p.id, { department_id: jabBaru }), dipilih, "{n} pekerja dipindahkan.")}
+          onClick={() =>
+            pukal(
+              (p) => kemasKiniPekerjaan(p.id, { department_id: jabBaru }),
+              dipilih,
+              "{n} pekerja dipindahkan.",
+              (p) => kemasKiniPekerjaan(p.id, { department_id: p.departmentId ?? "" }),
+            )
+          }
           className="h-9 rounded-full bg-primary px-4 text-[13px] font-bold text-white disabled:opacity-40"
         >
           Pindah

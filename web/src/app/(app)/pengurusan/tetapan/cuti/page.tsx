@@ -5,6 +5,9 @@ import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
+import { ImportPukal } from "@/components/ImportPukal";
+import { importBakiCuti } from "@/lib/berkanun";
+import { getSenaraiPekerja } from "@/lib/hr";
 import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Suis, Tag, inputKecil, inputSempit } from "@/components/Senarai";
 
 const WAJIB = ["AL", "MC", "HL", "ML", "PL"];
@@ -42,6 +45,14 @@ function JenisCuti() {
     [cid],
   );
   const [ubah, setUbah] = useState<Jenis | null>(null);
+  const [imp, setImp] = useState(false);
+  const [templat, setTemplat] = useState("");
+  const tahun = new Date().getFullYear();
+  async function bukaImport() {
+    const ppl = await getSenaraiPekerja(cid).catch(() => []);
+    setTemplat(["No. pekerja,Kod cuti,Dibawa dari tahun lepas,Telah diambil", ...ppl.map((p) => `${p.employeeNo},AL,0,0`)].join("\n"));
+    setImp(true);
+  }
   const [haji, setHaji] = useState<string>("");
   const [ralat, setRalat] = useState<string | null>(null);
   const jenis = d.data ?? [];
@@ -152,7 +163,31 @@ function JenisCuti() {
         )}
         {ralat && <ErrorBox message={ralat} />}
         <span className="text-xs text-muted">Kelayakan syarikat boleh lebih tinggi daripada minimum, tetapi tidak boleh kurang.</span>
+        <button type="button" onClick={bukaImport} className="flex min-h-12 items-center justify-between gap-2 rounded-card bg-surface px-4 py-3 text-left">
+          <span className="flex flex-col gap-0.5">
+            <b className="text-sm font-bold">Import baki cuti awal (Excel)</b>
+            <span className="text-xs text-muted">Baki dibawa dan cuti yang telah diambil sebelum menggunakan HRBoost, tahun {tahun}</span>
+          </span>
+          <span className="text-[13px] font-bold text-primary">Import</span>
+        </button>
       </main>
+      {imp && (
+        <ImportPukal
+          tajuk={`Import baki cuti awal ${tahun}`}
+          huraian={`Kod cuti: ${jenis.map((j) => j.code).join(", ")}. "Dibawa" ditambah kepada kelayakan; "Telah diambil" ditolak daripada baki. Cuti yang dimohon melalui HRBoost tidak perlu dimasukkan.`}
+          lajur={[
+            { k: "employee_no", label: "No. pekerja", alias: /^(nopekerja|nopek|employeeno|empno|staffno|no)$/, wajib: true },
+            { k: "leave_code", label: "Kod cuti", alias: /^(kodcuti|kod|leavecode|code|jeniscuti)$/, wajib: true },
+            { k: "carried_forward", label: "Dibawa", alias: /^(dibawa|bawa|carriedforward|cf)/, jenis: "nombor" },
+            { k: "taken", label: "Telah diambil", alias: /^(telahdiambil|diambil|taken|used)/, jenis: "nombor" },
+          ]}
+          templat={templat}
+          namaTemplat={`baki-cuti-${tahun}.csv`}
+          hantar={(b) => importBakiCuti(cid, tahun, b.map((x) => ({ employee_no: x.employee_no, leave_code: x.leave_code, carried_forward: x.carried_forward, taken: x.taken })))}
+          onClose={() => setImp(false)}
+          onDone={() => d.reload()}
+        />
+      )}
       {ubah && (
         <UbahKelayakan
           j={ubah}

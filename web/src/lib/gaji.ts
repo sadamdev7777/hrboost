@@ -117,7 +117,31 @@ export async function getSenaraiSlip(employmentId: string) {
     year: s.period_year,
     month: s.period_month,
     payDate: s.pay_date,
+    /** Gaji belum diluluskan: pratonton sahaja, jumlah mungkin berubah. */
+    draf: !!(s as { draft?: boolean }).draft,
+    adaLaporan: !!(s as { issue_open?: boolean }).issue_open,
   }));
+}
+
+/** Pekerja melaporkan kesilapan pada slip pratonton → HR & Kewangan dimaklumkan. */
+export async function laporKesilapan(payslipId: string, mesej: string) {
+  must(await getSupabase().rpc("report_payslip_issue", { p_payslip: payslipId, p_message: mesej }));
+}
+
+export type LaporanSlip = { id: string; employment_id: string; name: string; message: string; created_at: string; resolved_at: string | null; resolution: string | null };
+
+export async function getLaporanSlip(runId: string): Promise<LaporanSlip[]> {
+  return (must(await getSupabase().rpc("payroll_issues", { p_run: runId })) ?? []) as LaporanSlip[];
+}
+export async function selesaikanLaporan(id: string, nota: string) {
+  must(await getSupabase().rpc("resolve_payslip_issue", { p_issue: id, p_note: nota }));
+}
+export async function getTetapanPratonton(companyId: string): Promise<boolean> {
+  const r = must(await getSupabase().from("companies").select("payslip_preview").eq("id", companyId).maybeSingle()) as { payslip_preview?: boolean } | null;
+  return r?.payslip_preview ?? true;
+}
+export async function setTetapanPratonton(companyId: string, on: boolean) {
+  must(await getSupabase().rpc("set_payslip_preview", { p_company: companyId, p_on: on }));
 }
 
 export async function getSlip(id: string): Promise<Slip> {

@@ -27,6 +27,7 @@ import {
 } from "@/lib/hr";
 import { muatNaikPeribadi, urlSementara } from "@/lib/upload";
 import { setTarikhTamat } from "@/lib/berkanun";
+import { SenaraiSemakPekerja } from "@/components/SenaraiSemak";
 import { hari, julatTarikh, masa, paparTelefon, ringgit, tarikh, todayISO, type StatusPermohonan } from "@/lib/format";
 import { Avatar, BackHeader, ErrorBox, Loading, Screen, StatusPill } from "@/components/ui";
 import { RingkasanKiraan, UbahGaji, usePratonton } from "@/components/GajiPekerja";
@@ -272,6 +273,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
           </details>
         </div>
       )}
+      {bolehUbah && !tamat && <SenaraiSemakPekerja employmentId={p.id} hr />}
       </div>
       <div className="flex flex-col gap-3">
       {bolehUbah && (

@@ -13,6 +13,8 @@ import { HadPeranan, Tag } from "@/components/Senarai";
 import { KomponenBaharu, RingkasanKiraan, UbahGaji, nilaiInput, usePratonton } from "@/components/GajiPekerja";
 import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { useSkrinLebar } from "@/lib/skrin";
+import { ImportPukal } from "@/components/ImportPukal";
+import { importGajiPokok } from "@/lib/berkanun";
 
 const AV = ["bg-[#E3F1EE] text-primary", "bg-[#FDEBD7] text-warning", "bg-[#EDE9F8] text-ai"];
 const rm = (n: number | undefined | null) => Number(n ?? 0).toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -34,6 +36,7 @@ function GajiPekerja() {
   const [lihat, setLihat] = useState<BarisGaji | null>(null);
   const [baru, setBaru] = useState(false);
   const [pukal, setPukal] = useState(false);
+  const [imp, setImp] = useState(false);
   const lebar = useSkrinLebar();
   const j = d.data;
   const belum = (j?.rows ?? []).filter((r) => !(r.items.BASIC > 0));
@@ -46,9 +49,14 @@ function GajiPekerja() {
         title="Gaji"
         backHr="/pengurusan"
         action={
-          <button type="button" onClick={() => setBaru(true)} className="mr-1 flex min-h-11 items-center px-2 text-[13px] font-bold text-primary">
-            + Jenis elaun
-          </button>
+          <span className="mr-1 flex items-center gap-1">
+            <button type="button" onClick={() => setImp(true)} className="flex min-h-11 items-center px-2 text-[13px] font-bold text-primary">
+              Import Excel
+            </button>
+            <button type="button" onClick={() => setBaru(true)} className="flex min-h-11 items-center px-2 text-[13px] font-bold text-primary">
+              + Jenis elaun
+            </button>
+          </span>
         }
       />
       <TabGaji />
@@ -165,6 +173,22 @@ function GajiPekerja() {
             setUbah(null);
             d.reload();
           }}
+        />
+      )}
+      {imp && (
+        <ImportPukal
+          tajuk="Import gaji pokok"
+          huraian="Kemas kini gaji pokok ramai pekerja sekali gus. Lajur: No. pekerja, Gaji pokok dan Berkuat kuasa (pilihan; lalai awal bulan ini). Elaun lain diubah dalam jadual."
+          lajur={[
+            { k: "employee_no", label: "No. pekerja", alias: /^(nopekerja|nopek|employeeno|empno|staffno|no)$/, wajib: true },
+            { k: "basic", label: "Gaji pokok", alias: /^(gajipokok|basic|basicsalary|gaji)/, wajib: true, jenis: "nombor" },
+            { k: "effective_from", label: "Berkuat kuasa", alias: /^(berkuatkuasa|effective|mulai|tarikh)/, jenis: "tarikh" },
+          ]}
+          templat={["No. pekerja,Gaji pokok,Berkuat kuasa", ...(j?.rows ?? []).map((r) => `${r.employee_no},${r.items.BASIC ?? ""},`)].join("\n")}
+          namaTemplat={`gaji-pokok-${emp.companyCode}.csv`}
+          hantar={(b) => importGajiPokok(emp.companyId, b.map((x) => ({ employee_no: x.employee_no, basic: x.basic, effective_from: x.effective_from || undefined })))}
+          onClose={() => setImp(false)}
+          onDone={() => d.reload()}
         />
       )}
       {baru && (

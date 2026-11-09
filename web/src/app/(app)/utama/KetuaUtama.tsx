@@ -9,6 +9,7 @@ import { addDays, dow, hariPendek, masaRingkas, masaTeks, todayISO } from "@/lib
 import { Greeting } from "@/components/Greeting";
 import { OrientasiBanner } from "@/components/OrientasiBanner";
 import { Avatar, ErrorBox } from "@/components/ui";
+import { TugasSemakKetua } from "@/components/SenaraiSemak";
 
 type Ahli = {
   employmentId: string;
@@ -51,6 +52,8 @@ export function KetuaUtama() {
         </span>
         <span className="flex h-11 items-center rounded-[14px] bg-white px-4 text-sm font-extrabold text-primary">Semak</span>
       </Link>
+
+      <TugasSemakKetua companyId={emp.companyId} />
 
       {team.error && <ErrorBox message={team.error} />}
 

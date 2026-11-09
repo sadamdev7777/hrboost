@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
-import { BULAN_RINGKAS, getSenaraiSlip, getSlip } from "@/lib/gaji";
+import { BULAN_PENUH, BULAN_RINGKAS, getSenaraiSlip, getSlip, laporKesilapan } from "@/lib/gaji";
+import { beritahu, mintaTeks } from "@/components/Dialog";
 import { tarikh } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
 import { Seksyen } from "@/components/Senarai";
@@ -25,6 +26,25 @@ export default function GajiPage() {
   const s = slip.data;
   const sorok = (n: number) => (tunjuk ? rm(n) : "••••");
   const tahun = list[0]?.year;
+  const semasa = list.find((x) => x.id === id);
+
+  async function lapor() {
+    if (!semasa) return;
+    const m = await mintaTeks({
+      tajuk: "Lapor kesilapan slip gaji",
+      mesej: `Terangkan apa yang tidak betul pada slip ${BULAN_PENUH[semasa.month - 1]} ${semasa.year}. HR akan menyemak sebelum gaji diluluskan.`,
+      label: "Kesilapan",
+      ok: "Hantar kepada HR",
+    });
+    if (!m) return;
+    try {
+      await laporKesilapan(semasa.id, m);
+      beritahu("Laporan dihantar kepada HR.");
+      senarai.reload();
+    } catch (e) {
+      beritahu(e instanceof Error ? e.message : "Ralat", "ralat");
+    }
+  }
 
   return (
     <Screen>
@@ -54,6 +74,7 @@ export default function GajiPage() {
               >
                 {BULAN_RINGKAS[x.month - 1]}
                 {i === 0 ? ` ${x.year}` : ""}
+                {x.draf ? " · pratonton" : ""}
               </button>
             ))}
             <button type="button" onClick={() => setEa(true)} className={`h-9 shrink-0 rounded-full px-3.5 text-[13px] font-bold ${ea ? "bg-primary text-white" : "bg-surface text-[#4A5A57]"}`}>
@@ -73,11 +94,26 @@ export default function GajiPage() {
 
         {!ea && slip.error && <ErrorBox message={slip.error} />}
         {!ea && id && !s && <Loading />}
+        {!ea && s && semasa?.draf && (
+          <div className="flex flex-col gap-2 rounded-card bg-warning-soft px-4 py-3 text-[13px] text-warning">
+            <b>Pratonton — gaji {BULAN_PENUH[semasa.month - 1]} belum diluluskan</b>
+            <span className="leading-snug">Jumlah mungkin berubah sebelum hari gaji. Semak pendapatan dan potongan anda; jika ada yang tidak betul, maklumkan HR sekarang.</span>
+            {semasa.adaLaporan ? (
+              <span className="font-bold">Laporan anda sedang disemak oleh HR.</span>
+            ) : (
+              <button type="button" onClick={lapor} className="flex h-10 items-center self-start rounded-full border border-warning bg-surface px-4 font-bold text-warning">
+                Lapor kesilapan
+              </button>
+            )}
+          </div>
+        )}
         {!ea && s && (
           <>
             <div className="flex items-center gap-3 rounded-[20px] bg-primary px-4 py-4 text-white">
               <div className="flex grow flex-col gap-0.5">
-                <span className="text-xs opacity-80">Gaji bersih · {s.company.code}</span>
+                <span className="text-xs opacity-80">
+                  Gaji bersih{semasa?.draf ? " (anggaran)" : ""} · {s.company.code}
+                </span>
                 <b className="text-2xl font-extrabold tracking-wide">RM {sorok(s.net)}</b>
                 {s.payDate && (
                   <span className="text-xs opacity-80">
@@ -107,7 +143,7 @@ export default function GajiPage() {
           </>
         )}
       </main>
-      {!ea && s && (
+      {!ea && s && !semasa?.draf && (
         <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <Link href={`/gaji/${s.id}`} className="flex h-12 items-center justify-center gap-2 rounded-button border-2 border-primary text-base font-extrabold text-primary!">
             Muat turun PDF
