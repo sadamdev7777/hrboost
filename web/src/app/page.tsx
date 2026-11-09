@@ -26,6 +26,7 @@ const SOALAN = [
   ["Perlukah pekerja memasang aplikasi?", "Tidak. Pekerja menerima pautan di WhatsApp dan boleh terus menggunakan pelayar telefon. Mereka boleh memasangnya pada skrin utama jika mahu."],
   ["Bagaimana jika pekerja tiada WhatsApp?", "HR boleh menyalin pautan jemputan dan menghantarnya melalui saluran lain. Pekerja kemudian log masuk dengan e-mel dan kata laluan."],
   ["Bolehkah saya menggunakan mesin kehadiran sedia ada?", "Ya, mesin CrossChex Cloud boleh disambungkan. Rekod masuk dan keluar diterima secara automatik setiap 5 minit."],
+  ["Bagaimana menghubungi pasukan HRBoost?", "E-mel hi@hrboost.io atau WhatsApp 019-444 2424. Pejabat kami di D-G-6 Putra Walk, Taman Pinggiran Putra, 43300 Seri Kembangan, Selangor."],
   ["Berapa lama untuk mula?", "Kebanyakan syarikat siap dalam satu petang: daftar, import senarai pekerja daripada Excel, semak jabatan dan ketua, kemudian jemput pekerja."],
 ];
 const SKRIN = [
@@ -217,6 +218,11 @@ export default function Homepage() {
         <Link href="/privasi#privasi">Notis privasi (PDPA)</Link>
         <Link href="/privasi#terma">Terma</Link>
         <Link href="/privasi#hubungi">Hubungi kami</Link>
+        <span className="flex w-full flex-wrap gap-x-5 gap-y-1 text-[13px]">
+          <a href="mailto:hi@hrboost.io">hi@hrboost.io</a>
+          <a href="https://wa.me/60194442424">WhatsApp 019-444 2424</a>
+          <span>D-G-6 Putra Walk, Taman Pinggiran Putra, 43300 Seri Kembangan, Selangor</span>
+        </span>
       </footer>
     </div>
   );

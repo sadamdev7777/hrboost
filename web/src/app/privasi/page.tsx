@@ -95,7 +95,13 @@ export default function PrivasiPage() {
         </P>
 
         <H2 id="hubungi">8. Hubungi</H2>
-        <P>[E-mel perlindungan data] · [Alamat syarikat pemilik HRBoost]</P>
+        <P>
+          E-mel: <a href="mailto:hi@hrboost.io">hi@hrboost.io</a>
+          <br />
+          WhatsApp: <a href="https://wa.me/60194442424">019-444 2424</a>
+          <br />
+          Alamat: D-G-6 Putra Walk, Taman Pinggiran Putra, 43300 Seri Kembangan, Selangor
+        </P>
 
         <h1 id="terma" className="mt-14 mb-2 text-[32px] leading-[1.15] font-extrabold">
           Terma Penggunaan
