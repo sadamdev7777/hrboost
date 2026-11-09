@@ -17,11 +17,13 @@ import { useSkrinLebar } from "@/lib/skrin";
 import { ButangBantuan, KadPanduan } from "@/components/Panduan";
 import { ringkasSemakHr } from "@/components/SenaraiSemak";
 import { getTugasSemakSaya } from "@/lib/berkanun";
+import { getSurat } from "@/lib/urusan";
+import { KadPengumuman } from "@/components/Pengumuman";
 import { getKalendarBerkanun, getTarikhTamat, tandaDihantar, type KewajipanBerkanun } from "@/lib/berkanun";
 import { beritahu, mintaTeks } from "@/components/Dialog";
 
 const AV = ["bg-[#FDEBD7] text-warning", "bg-[#E3F1EE] text-primary", "bg-[#EDE9F8] text-ai"];
-const JENIS: Record<string, string> = { leave: "Cuti", claim: "Tuntutan", attendance_correction: "Pembetulan", payroll_run: "Gaji" };
+const JENIS: Record<string, string> = { leave: "Cuti", claim: "Tuntutan", attendance_correction: "Pembetulan", payroll_run: "Gaji", overtime: "Lebih masa", salary_advance: "Pendahuluan" };
 const PERHATIAN: Record<Dashboard["attention"][number]["kind"], { tag: string; tone: "danger" | "warning" | "ai" | "primary"; aksi: string }> = {
   sla: { tag: "Tertangguh", tone: "danger", aksi: "Lihat" },
   probation: { tag: "Percubaan", tone: "warning", aksi: "Sahkan" },
@@ -44,7 +46,7 @@ function Kandungan() {
   const hariIni = todayISO();
   const d = useData(async () => {
     const sb = getSupabase();
-    const [asas, tambahan, tugas, jadi, berkanun, tamat, semak] = await Promise.all([
+    const [asas, tambahan, tugas, jadi, berkanun, tamat, semak, surat] = await Promise.all([
       getDashboard(emp.companyId),
       getDashboardTambahan(emp.companyId),
       getTugasSaya(emp.companyId),
@@ -52,8 +54,9 @@ function Kandungan() {
       getKalendarBerkanun(emp.companyId).catch(() => [] as KewajipanBerkanun[]),
       getTarikhTamat(emp.companyId).catch(() => []),
       getTugasSemakSaya(emp.companyId).catch(() => []),
+      hasRole(me, ["hr", "admin"]) ? getSurat(emp.companyId).catch(() => []) : Promise.resolve([]),
     ]);
-    return { asas, tambahan, tugas, jadi: must(jadi) ?? [], berkanun, tamat, semak: ringkasSemakHr(semak) };
+    return { asas, tambahan, tugas, jadi: must(jadi) ?? [], berkanun, tamat, semak: ringkasSemakHr(semak), surat: surat.filter((s) => s.status === "pending").length };
   }, [emp.companyId]);
   const [sibuk, setSibuk] = useState<string | null>(null);
   const [ralat, setRalat] = useState<string | null>(null);
@@ -73,7 +76,7 @@ function Kandungan() {
   const a = x?.asas;
   const t = x?.tambahan;
   const dijangka = a ? Math.max(a.headcount - a.on_leave.length, 0) : 0;
-  const tindakan = x && a ? x.tugas.length + a.attention.length + (t?.no_salary ? 1 : 0) + x.tamat.length + x.semak.length : 0;
+  const tindakan = x && a ? x.tugas.length + a.attention.length + (t?.no_salary ? 1 : 0) + x.tamat.length + x.semak.length + (x.surat ? 1 : 0) : 0;
 
   async function tanda(k: KewajipanBerkanun) {
     const ruj = await mintaTeks({
@@ -181,6 +184,7 @@ function Kandungan() {
                   {t.no_salary ? (
                     <Baris tag="Gaji" tone="warning" teks={`${t.no_salary} pekerja belum mempunyai gaji pokok`} href="/pengurusan/gaji/pekerja" aksi="Tetapkan" />
                   ) : null}
+                  {x.surat > 0 && <Baris tag="Surat" tone="primary" teks={`${x.surat} permohonan surat pengesahan menunggu dikeluarkan`} href="/pengurusan/surat" aksi="Keluarkan" />}
                   {x.semak.map((s) => (
                     <Baris
                       key={"semak" + s.employment_id}
@@ -217,6 +221,7 @@ function Kandungan() {
               </div>
 
               <div className="flex flex-col gap-4">
+                <KadPengumuman companyId={emp.companyId} />
                 {x.berkanun.length > 0 && <PanelBerkanun senarai={x.berkanun} boleh={urusGaji} onTanda={tanda} />}
                 <Panel tajuk="SIAPA TIADA HARI INI">
                   {a.on_leave.length === 0 && t.late_names.length === 0 && <span className="py-4 text-sm text-muted">Semua pekerja bertugas hari ini.</span>}

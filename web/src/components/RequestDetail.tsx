@@ -19,6 +19,8 @@ const TAJUK: Record<string, string> = {
   claim: "Tuntutan",
   attendance_correction: "Pembetulan Masa",
   payroll_run: "Kelulusan Gaji",
+  overtime: "Kerja Lebih Masa",
+  salary_advance: "Pendahuluan Gaji",
 };
 
 type Mode = { kind: "approver"; taskId: string } | { kind: "requester"; requestId: string };

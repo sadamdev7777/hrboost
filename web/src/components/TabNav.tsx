@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { IconCard, IconChart, IconCheckSquare, IconHome, IconPlusCircle, IconOrg, IconSettings, IconUser, IconUsers } from "./icons";
+import { IconBell, IconCalendar, IconCard, IconChart, IconCheckSquare, IconDocument, IconHome, IconPlusCircle, IconOrg, IconSettings, IconUser, IconUsers } from "./icons";
 import { getBilanganTugasan } from "@/lib/data";
 import { useData } from "@/lib/useData";
 import { useMeContext } from "@/lib/me";
@@ -24,6 +24,9 @@ const IKON: Record<ItemNav["ikon"], (p: { size?: number }) => ReactNode> = {
   card: IconCard,
   settings: IconSettings,
   org: IconOrg,
+  calendar: IconCalendar,
+  document: IconDocument,
+  bell: IconBell,
 };
 
 function Lencana({ n }: { n: number }) {
@@ -48,7 +51,7 @@ export function TabNav() {
   if (lebar) return null;
   return (
     <nav
-      className="sticky bottom-0 z-10 grid border-t border-line-soft bg-surface px-1 pt-2 pb-[max(16px,env(safe-area-inset-bottom))] lg:hidden"
+      className="sticky bottom-0 z-10 grid border-t border-line-soft bg-surface px-1 pt-2 pb-[max(16px,env(safe-area-inset-bottom))] lg:hidden print:hidden!"
       style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}
     >
       {items.map((n) => {
@@ -127,7 +130,7 @@ export function MenuSisi() {
   };
 
   return (
-    <aside aria-label="Menu sisi" className="sticky top-0 hidden h-dvh w-[248px] shrink-0 flex-col gap-1 border-r border-line-soft bg-surface px-3 py-5 lg:flex">
+    <aside aria-label="Menu sisi" className="sticky top-0 hidden h-dvh w-[248px] shrink-0 flex-col gap-1 border-r border-line-soft bg-surface px-3 py-5 lg:flex print:hidden!">
       <div className="flex items-center gap-2.5 px-2 pb-4">
         <span className="flex size-9 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold text-white">HR</span>
         <span className="flex min-w-0 flex-col">

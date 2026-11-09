@@ -10,6 +10,7 @@ import { Greeting } from "@/components/Greeting";
 import { OrientasiBanner } from "@/components/OrientasiBanner";
 import { Avatar, ErrorBox } from "@/components/ui";
 import { TugasSemakKetua } from "@/components/SenaraiSemak";
+import { KadPengumuman } from "@/components/Pengumuman";
 
 type Ahli = {
   employmentId: string;
@@ -43,6 +44,7 @@ export function KetuaUtama() {
     <main className="flex grow flex-col gap-3 px-4 pt-4 pb-4">
       <Greeting me={me} />
       <OrientasiBanner employmentId={emp.id} />
+      <KadPengumuman companyId={emp.companyId} />
 
       <Link href="/kelulusan" className="flex items-center gap-3 rounded-[20px] bg-primary px-4 py-[18px] text-white!">
         <span className="flex grow flex-col gap-1">

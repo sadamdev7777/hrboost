@@ -10,6 +10,7 @@ import { getSupabase } from "@/lib/supabase";
 import { IconCalendar, IconClock, IconReceipt } from "@/components/icons";
 import { Greeting } from "@/components/Greeting";
 import { OrientasiBanner } from "@/components/OrientasiBanner";
+import { KadPengumuman } from "@/components/Pengumuman";
 import { ErrorBox, Screen, StatusPill, StepBar } from "@/components/ui";
 import { TabNav } from "@/components/TabNav";
 import { KetuaUtama } from "./KetuaUtama";
@@ -48,6 +49,7 @@ function StaffUtama({ me }: { me: Me }) {
     <main className="flex grow flex-col gap-5 px-4 pt-4 pb-4">
       <Greeting me={me} />
       {emp && <OrientasiBanner employmentId={emp.id} />}
+      {emp && <KadPengumuman companyId={emp.companyId} />}
 
       {!emp && <ErrorBox message="Tiada pekerjaan aktif ditemui untuk akaun ini. Sila hubungi HR." />}
 

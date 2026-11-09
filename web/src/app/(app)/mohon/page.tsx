@@ -50,11 +50,18 @@ export default function MohonPage() {
           sub="Terlupa mengimbas atau bertugas di luar"
         />
         <Pilihan
-          href="/pembantu-ai"
+          href="/mohon/lebih-masa"
+          tone="bg-[#EDE9F8] text-ai"
+          icon={<IconClock />}
+          title="Kerja lebih masa"
+          sub="Dibayar bersama gaji selepas diluluskan"
+        />
+        <Pilihan
+          href="/mohon/surat"
           tone="bg-ai-soft text-ai"
           icon={<IconDocument />}
           title="Surat"
-          sub="Pengesahan jawatan, gaji dan lain-lain"
+          sub="Pengesahan majikan atau gaji, cth. untuk pinjaman bank"
         />
 
         {proses && (

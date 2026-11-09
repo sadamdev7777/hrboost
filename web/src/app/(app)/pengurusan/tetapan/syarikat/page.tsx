@@ -13,6 +13,7 @@ type Syarikat = {
   name: string;
   code: string;
   reg_no: string | null;
+  address: string | null;
   state: string;
   weekend_days: number[];
   work_start: string;
@@ -44,7 +45,7 @@ function ProfilSyarikat() {
       must(
         await getSupabase()
           .from("companies")
-          .select("name, code, reg_no, state, weekend_days, work_start, work_end, late_grace_minutes, epf_employer_no, socso_employer_no, lhdn_employer_no, hrdf_registered")
+          .select("name, code, reg_no, address, state, weekend_days, work_start, work_end, late_grace_minutes, epf_employer_no, socso_employer_no, lhdn_employer_no, hrdf_registered")
           .eq("id", cid)
           .single(),
       ) as Syarikat,
@@ -64,6 +65,7 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
   const [f, setF] = useState({
     ...s,
     reg_no: s.reg_no ?? "",
+    address: s.address ?? "",
     epf_employer_no: s.epf_employer_no ?? "",
     socso_employer_no: s.socso_employer_no ?? "",
     lhdn_employer_no: s.lhdn_employer_no ?? "",
@@ -91,6 +93,7 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
           .update({
             name: f.name.trim(),
             reg_no: f.reg_no.trim() || null,
+            address: f.address.trim() || null,
             state: f.state,
             weekend_days: f.weekend_days,
             work_start: f.work_start,
@@ -125,6 +128,9 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
           </Baris>
           <Baris label="No. SSM">
             <input className={cls} disabled={!admin} value={f.reg_no} onChange={(e) => set("reg_no", e.target.value)} />
+          </Baris>
+          <Baris label="Alamat (kepala surat)">
+            <input className={cls} disabled={!admin} value={f.address} onChange={(e) => set("address", e.target.value)} placeholder="Alamat penuh syarikat" />
           </Baris>
           <Baris label="Negeri">
             <select className={cls} disabled={!admin} value={f.state} onChange={(e) => set("state", e.target.value)}>

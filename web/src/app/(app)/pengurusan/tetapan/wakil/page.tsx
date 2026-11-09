@@ -9,7 +9,7 @@ import { addDays, julatTarikh, todayISO } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
 import { ButangUtama, HadPeranan, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
 
-const JENIS: Record<string, string> = { leave: "Cuti", claim: "tuntutan", attendance_correction: "pembetulan masa", payroll_run: "gaji" };
+const JENIS: Record<string, string> = { leave: "Cuti", claim: "tuntutan", attendance_correction: "pembetulan masa", payroll_run: "gaji", overtime: "kerja lebih masa", salary_advance: "pendahuluan gaji" };
 
 function jenisTeks(t: string[] | null) {
   if (!t || t.length === 0) return "Semua jenis";

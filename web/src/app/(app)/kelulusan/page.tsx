@@ -16,12 +16,14 @@ import { RequestDetail } from "@/components/RequestDetail";
 import { useSkrinLebar } from "@/lib/skrin";
 
 // Rujukan reka bentuk: design/Kelulusan.dc.html
-type Filter = "all" | "leave" | "claim" | "attendance_correction" | "payroll_run";
+type Filter = "all" | "leave" | "claim" | "attendance_correction" | "payroll_run" | "overtime" | "salary_advance";
 const FILTER_LABEL: Record<Exclude<Filter, "all">, string> = {
   leave: "Cuti",
   claim: "Tuntutan",
   attendance_correction: "Pembetulan",
   payroll_run: "Gaji",
+  overtime: "Lebih masa",
+  salary_advance: "Pendahuluan",
 };
 const ROLE_LABEL: Record<string, string> = { hr: "HR", ceo: "CEO", finance: "Kewangan", admin: "Pentadbir" };
 

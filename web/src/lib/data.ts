@@ -145,6 +145,10 @@ export function paparPermohonan(p: { type: RequestType; title: string; context: 
   if (p.type === "attendance_correction") {
     return { title: p.title.replace(/^Pembetulan kehadiran/, "Betulkan masa"), sub: "Pembetulan kehadiran", days: null };
   }
+  if (p.type === "overtime") {
+    const jenis = c.day_type === "holiday" ? "cuti umum" : c.day_type === "rest" ? "hari rehat" : "hari biasa";
+    return { title: p.title, sub: `${jenis} · ${String(c.reason ?? "")}`.trim(), days: null };
+  }
   return { title: p.title, sub: `Dihantar ${bilaDihantar(p.submittedAt)}`, days: null };
 }
 

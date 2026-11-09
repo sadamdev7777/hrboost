@@ -162,6 +162,58 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"announcement_reads": {
+                  Row: {
+                    "announcement_id": string,"person_id": string,"read_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "announcement_id": string,"person_id": string,"read_at"?: string
+                  }
+                  Update: {
+                    "announcement_id"?: string,"person_id"?: string,"read_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "announcement_reads_announcement_id_fkey"
+      columns: ["announcement_id"]
+isOneToOne: false
+      referencedRelation: "announcements"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "announcement_reads_person_id_fkey"
+      columns: ["person_id"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"announcements": {
+                  Row: {
+                    "archived_at": string | null,"body": string,"company_id": string,"created_at": string,"created_by": string | null,"id": string,"sent_whatsapp": boolean,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "archived_at"?: string | null,"body": string,"company_id": string,"created_at"?: string,"created_by"?: string | null,"id"?: string,"sent_whatsapp"?: boolean,"title": string
+                  }
+                  Update: {
+                    "archived_at"?: string | null,"body"?: string,"company_id"?: string,"created_at"?: string,"created_by"?: string | null,"id"?: string,"sent_whatsapp"?: boolean,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "announcements_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "announcements_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"approval_actions": {
                   Row: {
                     "action": string,"actor_person_id": string | null,"comment": string | null,"created_at": string,"id": number,"request_id": string,"step_order": number | null,"via": Database["public"]['Enums']["action_channel"]
@@ -608,14 +660,14 @@ isOneToOne: false
                   ]
                 },"companies": {
                   Row: {
-                    "accounting_config": NonNullable<Json>,"accounting_system": Database["public"]['Enums']["accounting_system"],"ai_monthly_limit": number | null,"claim_submit_days": number | null,"code": string,"created_at": string,"created_by": string | null,"epf_employer_no": string | null,"epf_employer_rate": number | null,"hr_daily_digest": boolean,"hrdf_registered": boolean,"id": string,"late_grace_minutes": number,"lhdn_employer_no": string | null,"logo_path": string | null,"name": string,"onboarding_completed_at": string | null,"payslip_preview": boolean,"reg_no": string | null,"size_band": string | null,"socso_employer_no": string | null,"state": string,"status": string,"suspended_at": string | null,"suspended_reason": string | null,"timezone": string,"wa_monthly_limit": number | null,"weekend_days": (number)[],"work_end": string,"work_start": string
+                    "accounting_config": NonNullable<Json>,"accounting_system": Database["public"]['Enums']["accounting_system"],"address": string | null,"ai_monthly_limit": number | null,"claim_submit_days": number | null,"code": string,"created_at": string,"created_by": string | null,"epf_employer_no": string | null,"epf_employer_rate": number | null,"hr_daily_digest": boolean,"hrdf_registered": boolean,"id": string,"late_grace_minutes": number,"lhdn_employer_no": string | null,"logo_path": string | null,"name": string,"onboarding_completed_at": string | null,"payslip_preview": boolean,"reg_no": string | null,"size_band": string | null,"socso_employer_no": string | null,"state": string,"status": string,"suspended_at": string | null,"suspended_reason": string | null,"timezone": string,"wa_monthly_limit": number | null,"weekend_days": (number)[],"work_end": string,"work_start": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"ai_monthly_limit"?: number | null,"claim_submit_days"?: number | null,"code": string,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name": string,"onboarding_completed_at"?: string | null,"payslip_preview"?: boolean,"reg_no"?: string | null,"size_band"?: string | null,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string
+                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"claim_submit_days"?: number | null,"code": string,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name": string,"onboarding_completed_at"?: string | null,"payslip_preview"?: boolean,"reg_no"?: string | null,"size_band"?: string | null,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string
                   }
                   Update: {
-                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"ai_monthly_limit"?: number | null,"claim_submit_days"?: number | null,"code"?: string,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name"?: string,"onboarding_completed_at"?: string | null,"payslip_preview"?: boolean,"reg_no"?: string | null,"size_band"?: string | null,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string
+                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"claim_submit_days"?: number | null,"code"?: string,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name"?: string,"onboarding_completed_at"?: string | null,"payslip_preview"?: boolean,"reg_no"?: string | null,"size_band"?: string | null,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string
                   }
                   Relationships: [
                     {
@@ -1100,6 +1152,38 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"letter_requests": {
+                  Row: {
+                    "addressed_to": string | null,"company_id": string,"created_at": string,"employment_id": string,"id": string,"issued_at": string | null,"issued_by": string | null,"kind": string,"purpose": string,"ref_no": string | null,"reject_reason": string | null,"snapshot": Json | null,"status": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "addressed_to"?: string | null,"company_id": string,"created_at"?: string,"employment_id": string,"id"?: string,"issued_at"?: string | null,"issued_by"?: string | null,"kind": string,"purpose": string,"ref_no"?: string | null,"reject_reason"?: string | null,"snapshot"?: Json | null,"status"?: string
+                  }
+                  Update: {
+                    "addressed_to"?: string | null,"company_id"?: string,"created_at"?: string,"employment_id"?: string,"id"?: string,"issued_at"?: string | null,"issued_by"?: string | null,"kind"?: string,"purpose"?: string,"ref_no"?: string | null,"reject_reason"?: string | null,"snapshot"?: Json | null,"status"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "letter_requests_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "letter_requests_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "letter_requests_issued_by_fkey"
+      columns: ["issued_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"notifications": {
                   Row: {
                     "attempts": number,"bypass_limit": boolean,"channel": string,"claimed_at": string | null,"company_id": string | null,"created_at": string,"error": string | null,"event_id": number | null,"id": string,"message": string,"person_id": string,"provider_ref": string | null,"read_at": string | null,"rule_id": string | null,"send_after": string | null,"sent_at": string | null,"status": Database["public"]['Enums']["notify_status"],"to_address": string | null
@@ -1187,6 +1271,50 @@ isOneToOne: false
       columns: ["employment_id"]
 isOneToOne: false
       referencedRelation: "employments"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"overtime_requests": {
+                  Row: {
+                    "amount": number | null,"approval_request_id": string | null,"created_at": string,"created_via": Database["public"]['Enums']["action_channel"],"day_type": string,"employment_id": string,"hours": number,"id": string,"monthly_basic": number | null,"paid_via_payroll_run": string | null,"reason": string,"status": Database["public"]['Enums']["request_status"],"work_date": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "amount"?: number | null,"approval_request_id"?: string | null,"created_at"?: string,"created_via"?: Database["public"]['Enums']["action_channel"],"day_type"?: string,"employment_id": string,"hours": number,"id"?: string,"monthly_basic"?: number | null,"paid_via_payroll_run"?: string | null,"reason": string,"status"?: Database["public"]['Enums']["request_status"],"work_date": string
+                  }
+                  Update: {
+                    "amount"?: number | null,"approval_request_id"?: string | null,"created_at"?: string,"created_via"?: Database["public"]['Enums']["action_channel"],"day_type"?: string,"employment_id"?: string,"hours"?: number,"id"?: string,"monthly_basic"?: number | null,"paid_via_payroll_run"?: string | null,"reason"?: string,"status"?: Database["public"]['Enums']["request_status"],"work_date"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "overtime_requests_approval_request_id_fkey"
+      columns: ["approval_request_id"]
+isOneToOne: false
+      referencedRelation: "approval_requests"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "overtime_requests_approval_request_id_fkey"
+      columns: ["approval_request_id"]
+isOneToOne: false
+      referencedRelation: "v_my_approval_tasks"
+      referencedColumns: ["request_id"]
+    },{
+      foreignKeyName: "overtime_requests_approval_request_id_fkey"
+      columns: ["approval_request_id"]
+isOneToOne: false
+      referencedRelation: "v_my_requests"
+      referencedColumns: ["request_id"]
+    },{
+      foreignKeyName: "overtime_requests_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "overtime_requests_paid_via_payroll_run_fkey"
+      columns: ["paid_via_payroll_run"]
+isOneToOne: false
+      referencedRelation: "payroll_runs"
       referencedColumns: ["id"]
     }
                   ]
@@ -1644,6 +1772,11 @@ isOneToOne: false
 "add_employee":
 { Args: { "p_basic"?: number,"p_company": string,"p_department": string,"p_full_name": string,"p_ic": string,"p_join": string,"p_phone": string,"p_position": string,"p_preferred": string,"p_probation_months"?: number,"p_type"?: Database["public"]['Enums']["employment_type"] }; Returns: string
                            },
+"announcement_unread":
+{ Args: { "p_id": string }; Returns: {
+              "department": string,"employment_id": string,"name": string
+            }[]
+                           },
 "approval_act":
 { Args: { "p_action": string,"p_comment"?: string,"p_on_behalf"?: string,"p_task": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: {
               "ai_summary": string | null,
@@ -1697,6 +1830,9 @@ isOneToOne: false
               "balance_after": number,"has_attachment": boolean,"task_id": string,"team_names": string,"team_off": number
             }[]
                            },
+"archive_announcement":
+{ Args: { "p_id": string }; Returns: undefined
+                           },
 "attendance_integration_status":
 { Args: { "p_company": string }; Returns: Json
                            },
@@ -1722,6 +1858,14 @@ isOneToOne: false
                            },
 "cancel_employment_end":
 { Args: { "p_employment": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
+                           },
+"cancel_letter":
+{ Args: { "p_id": string }; Returns: undefined
+                           },
+"company_announcements":
+{ Args: { "p_company": string,"p_include_archived"?: boolean }; Returns: {
+              "archived": boolean,"audience": number,"author": string,"body": string,"created_at": string,"id": string,"is_read": boolean,"read_count": number,"sent_whatsapp": boolean,"title": string
+            }[]
                            },
 "company_attendance_connected":
 { Args: { "p_company": string }; Returns: boolean
@@ -1813,6 +1957,24 @@ isOneToOne: false
                           SetofOptions: {
         from: "*"
         to: "leave_balances"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
+"ensure_workflow":
+{ Args: { "p_company": string,"p_type": Database["public"]['Enums']["request_type"] }; Returns: {
+              "active": boolean,
+"company_id": string,
+"cutoff_time": string,
+"id": string,
+"name": string,
+"reminder_every_hours": number,
+"request_type": Database["public"]['Enums']["request_type"],
+"sla": Database["public"]['Enums']["sla_mode"],
+"sla_hours": number | null
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "approval_workflows"
         isOneToOne: true
         isSetofReturn: false
       } },
@@ -1946,6 +2108,9 @@ isOneToOne: false
 "is_working_day":
 { Args: { "p_company": string,"p_date": string,"p_state"?: string }; Returns: boolean
                            },
+"issue_letter":
+{ Args: { "p_id": string }; Returns: string
+                           },
 "kb_documents":
 { Args: { "p_company": string }; Returns: {
               "active": boolean,"chars": number,"chunks": number,"global": boolean,"id": string,"title": string,"updated_at": string
@@ -1973,8 +2138,22 @@ isOneToOne: false
 "leave_entitlement":
 { Args: { "p_employment": string,"p_leave_type": string,"p_year": number }; Returns: number
                            },
+"letter_build_snapshot":
+{ Args: { "p_id": string }; Returns: Json
+                           },
+"letter_list":
+{ Args: { "p_company": string,"p_mine"?: boolean }; Returns: {
+              "addressed_to": string,"created_at": string,"employee_no": string,"employment_id": string,"id": string,"issued_at": string,"kind": string,"name": string,"purpose": string,"ref_no": string,"reject_reason": string,"status": string
+            }[]
+                           },
+"letter_view":
+{ Args: { "p_id": string }; Returns: Json
+                           },
 "log_platform":
 { Args: { "p_action": string,"p_company": string,"p_details"?: Json,"p_target": string,"p_target_type": string }; Returns: undefined
+                           },
+"mark_announcement_read":
+{ Args: { "p_id": string }; Returns: undefined
                            },
 "mark_my_notifications_read":
 { Args: { "p_ids"?: (string)[] }; Returns: number
@@ -2012,6 +2191,11 @@ isOneToOne: false
 "my_onboarding_tasks":
 { Args: { "p_company": string }; Returns: {
               "due_date": string,"employee_name": string,"employment_id": string,"id": string,"owner": string,"title": string
+            }[]
+                           },
+"my_overtime":
+{ Args: { "p_employment": string }; Returns: {
+              "amount": number,"approval_request_id": string,"day_type": string,"hours": number,"id": string,"reason": string,"status": Database["public"]['Enums']["request_status"],"work_date": string
             }[]
                            },
 "my_payslips":
@@ -2076,6 +2260,9 @@ isOneToOne: false
 "payroll_calculate":
 { Args: { "p_run": string }; Returns: Json
                            },
+"payroll_calculate_core":
+{ Args: { "p_run": string }; Returns: Json
+                           },
 "payroll_differences":
 { Args: { "p_run": string }; Returns: {
               "employment_id": string,"name": string,"note": string
@@ -2106,6 +2293,9 @@ isOneToOne: false
 "payroll_set_adjustment":
 { Args: { "p_amount": number,"p_code": string,"p_employment": string,"p_note"?: string,"p_run": string }; Returns: undefined
                            },
+"payroll_sync_extras":
+{ Args: { "p_run": string }; Returns: undefined
+                           },
 "payslip_is_mine":
 { Args: { "p_payslip": string }; Returns: boolean
                            },
@@ -2133,6 +2323,9 @@ isOneToOne: false
 "platform_setting":
 { Args: { "p_key": string }; Returns: Json
                            },
+"post_announcement":
+{ Args: { "p_body": string,"p_company": string,"p_title": string,"p_whatsapp"?: boolean }; Returns: string
+                           },
 "process_hr_events":
 { Args: { "p_limit"?: number }; Returns: number
                            },
@@ -2141,6 +2334,9 @@ isOneToOne: false
                            },
 "register_company":
 { Args: { "p_company_name": string,"p_email"?: string,"p_full_name": string,"p_phone": string,"p_size": string }; Returns: string
+                           },
+"reject_letter":
+{ Args: { "p_id": string,"p_reason": string }; Returns: undefined
                            },
 "render_template":
 { Args: { "p_tpl": string,"p_vars": Json }; Returns: string
@@ -2156,6 +2352,9 @@ isOneToOne: false
                            },
 "request_company_access":
 { Args: { "p_company_code": string,"p_days": number,"p_reason": string,"p_role": Database["public"]['Enums']["app_role"] }; Returns: string
+                           },
+"request_letter":
+{ Args: { "p_addressed_to"?: string,"p_employment": string,"p_kind": string,"p_on_behalf"?: string,"p_purpose": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: string
                            },
 "request_requester_name":
 { Args: { "p_request": string }; Returns: string
@@ -2347,6 +2546,28 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"submit_overtime":
+{ Args: { "p_date": string,"p_day_type": string,"p_employment": string,"p_hours": number,"p_on_behalf"?: string,"p_reason": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: {
+              "amount": number | null,
+"approval_request_id": string | null,
+"created_at": string,
+"created_via": Database["public"]['Enums']["action_channel"],
+"day_type": string,
+"employment_id": string,
+"hours": number,
+"id": string,
+"monthly_basic": number | null,
+"paid_via_payroll_run": string | null,
+"reason": string,
+"status": Database["public"]['Enums']["request_status"],
+"work_date": string
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "overtime_requests"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
 "submit_payroll_run":
 { Args: { "p_on_behalf"?: string,"p_run": string }; Returns: {
               "approval_request_id": string | null,
@@ -2370,6 +2591,9 @@ isOneToOne: false
 { Args: { "p_company": string,"p_from": string,"p_to": string }; Returns: {
               "day": number,"department": string,"month": number,"name": string,"person_id": string
             }[]
+                           },
+"team_calendar":
+{ Args: { "p_company": string,"p_department"?: string,"p_from": string,"p_to": string }; Returns: Json
                            },
 "team_leave_calendar":
 { Args: { "p_company": string,"p_from": string,"p_to": string }; Returns: {

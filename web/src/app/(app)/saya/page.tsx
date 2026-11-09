@@ -9,12 +9,14 @@ import { must, useData } from "@/lib/useData";
 import { getBaki, type Baki } from "@/lib/data";
 import { hari, inisial, todayISO } from "@/lib/format";
 import {
+  IconBell,
   IconCake,
   IconCalendar,
   IconCard,
   IconChart,
   IconChevronRight,
   IconClock,
+  IconDocument,
   IconReceipt,
   IconSettings,
   IconSparkle,
@@ -71,6 +73,8 @@ export default function SayaPage() {
           <Baris href="/tuntutan" icon={<IconReceipt size={18} />} label="Tuntutan" />
           <Baris href="/kehadiran" icon={<IconClock size={18} />} label="Kehadiran" />
           <Baris href="/gaji" icon={<IconWallet size={18} />} label="Slip Gaji" />
+          <Baris href="/kalendar" icon={<IconCalendar size={18} />} label="Kalendar pasukan" />
+          <Baris href="/pengumuman" icon={<IconBell size={18} />} label="Pengumuman" />
           <Baris href="/pembantu-ai" icon={<IconSparkle size={18} />} tone="bg-[#EDE9F8] text-ai" label="Pembantu AI" />
           <Baris href="/hari-jadi" icon={<IconCake size={18} />} tone="bg-[#FDEBD7] text-warning" label="Hari Jadi">
             {hariIni.length > 0 && (
@@ -92,6 +96,8 @@ export default function SayaPage() {
                 <Baris href="/pengurusan/gaji/pekerja" icon={<IconWallet size={18} />} tone="bg-[#FDEBD7] text-warning" label="Gaji Pekerja" />
               </>
             )}
+            {hasRole(me, ["hr", "admin"]) && <Baris href="/pengurusan/surat" icon={<IconDocument size={18} />} tone="bg-[#FDEBD7] text-warning" label="Surat" />}
+            {hasRole(me, ["hr", "ceo", "admin"]) && <Baris href="/pengurusan/pengumuman" icon={<IconBell size={18} />} tone="bg-[#FDEBD7] text-warning" label="Pengumuman" />}
             <Baris href="/pengurusan/laporan" icon={<IconChart size={18} />} tone="bg-[#FDEBD7] text-warning" label="Laporan" />
             <Baris href="/pengurusan/tetapan" icon={<IconSettings size={18} />} tone="bg-[#FDEBD7] text-warning" label="Tetapan" />
           </Kumpulan>
