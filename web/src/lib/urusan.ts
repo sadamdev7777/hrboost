@@ -147,3 +147,134 @@ export async function arkibPengumuman(id: string) {
 export async function getBelumBaca(id: string) {
   return (must(await getSupabase().rpc("announcement_unread", { p_id: id })) ?? []) as { employment_id: string; name: string; department: string | null }[];
 }
+
+// ---------------------------------------------------------------- Soalan HR
+
+export type SoalanHr = {
+  id: string;
+  employment_id: string;
+  name: string;
+  question: string;
+  ai_answer: string | null;
+  status: "open" | "answered" | "ai_resolved";
+  answer: string | null;
+  answered_by_name: string | null;
+  answered_at: string | null;
+  created_at: string;
+};
+export async function tanyaHr(employmentId: string, soalan: string, jawapanAi: string | null, kepadaHr: boolean) {
+  return must(await getSupabase().rpc("ask_hr", { p_employment: employmentId, p_question: soalan, p_ai_answer: jawapanAi as string, p_to_hr: kepadaHr }));
+}
+export async function getSoalan(companyId: string, milikSaya = false): Promise<SoalanHr[]> {
+  return (must(await getSupabase().rpc("hr_question_list", { p_company: companyId, p_mine: milikSaya })) ?? []) as SoalanHr[];
+}
+export async function jawabSoalan(id: string, jawapan: string) {
+  must(await getSupabase().rpc("answer_hr_question", { p_id: id, p_answer: jawapan }));
+}
+export async function getStatistikSoalan(companyId: string) {
+  return must(await getSupabase().rpc("hr_question_stats", { p_company: companyId })) as { total: number; ai_resolved: number; open: number; avg_hours: number | null };
+}
+
+// ---------------------------------------------------------------- Pendahuluan gaji
+
+export async function getPendahuluanSaya(employmentId: string) {
+  return must(await getSupabase().rpc("my_salary_advances", { p_employment: employmentId })) ?? [];
+}
+export async function mohonPendahuluan(employmentId: string, jumlah: number, sebab: string) {
+  return must(await getSupabase().rpc("submit_salary_advance", { p_employment: employmentId, p_amount: jumlah, p_reason: sebab, p_via: "web" }));
+}
+export async function getPendahuluanHr(companyId: string) {
+  return must(await getSupabase().rpc("hr_salary_advances", { p_company: companyId })) ?? [];
+}
+export async function tandaPendahuluanDibayar(id: string) {
+  must(await getSupabase().rpc("finance_mark_advance_paid", { p_id: id }));
+}
+
+// ---------------------------------------------------------------- Kerja fleksibel
+
+export type JenisFleksibel = "hours" | "days" | "place";
+export const LABEL_FLEKSIBEL: Record<JenisFleksibel, string> = { hours: "Waktu bekerja", days: "Hari bekerja", place: "Tempat bekerja" };
+export type PermohonanFleksibel = {
+  id: string;
+  employment_id: string;
+  name: string;
+  department: string | null;
+  change_types: JenisFleksibel[];
+  details: string;
+  start_date: string;
+  end_date: string | null;
+  status: "pending" | "approved" | "rejected" | "withdrawn";
+  decision_note: string | null;
+  decided_at: string | null;
+  due_date: string;
+  days_left: number;
+  created_at: string;
+};
+export const STATUS_FLEKSIBEL: Record<PermohonanFleksibel["status"], { label: string; tone: "warning" | "success" | "danger" | "neutral" }> = {
+  pending: { label: "Menunggu keputusan", tone: "warning" },
+  approved: { label: "Diluluskan", tone: "success" },
+  rejected: { label: "Tidak diluluskan", tone: "danger" },
+  withdrawn: { label: "Ditarik balik", tone: "neutral" },
+};
+export async function getFleksibel(companyId: string, milikSaya = false): Promise<PermohonanFleksibel[]> {
+  return (must(await getSupabase().rpc("flexible_work_list", { p_company: companyId, p_mine: milikSaya })) ?? []) as PermohonanFleksibel[];
+}
+export async function mohonFleksibel(employmentId: string, jenis: JenisFleksibel[], butiran: string, mula: string, tamat: string | null) {
+  return must(
+    await getSupabase().rpc("submit_flexible_work", { p_employment: employmentId, p_types: jenis, p_details: butiran, p_start: mula, p_end: tamat as string }),
+  );
+}
+export async function putuskanFleksibel(id: string, lulus: boolean, nota: string) {
+  must(await getSupabase().rpc("decide_flexible_work", { p_id: id, p_approve: lulus, p_note: nota }));
+}
+export async function tarikBalikFleksibel(id: string) {
+  must(await getSupabase().rpc("withdraw_flexible_work", { p_id: id }));
+}
+
+// ---------------------------------------------------------------- Penilaian percubaan
+
+export const ASPEK_PENILAIAN = [
+  { k: "kualiti", label: "Kualiti kerja" },
+  { k: "kehadiran", label: "Kehadiran & ketepatan masa" },
+  { k: "sikap", label: "Sikap & disiplin" },
+  { k: "kerjasama", label: "Kerjasama berpasukan" },
+] as const;
+export type CadanganPercubaan = "confirm" | "extend" | "terminate";
+export const LABEL_CADANGAN: Record<CadanganPercubaan, string> = { confirm: "Sahkan jawatan", extend: "Lanjutkan tempoh percubaan", terminate: "Tamatkan perkhidmatan" };
+
+export async function getPenilaianPerlu(companyId: string) {
+  return (must(await getSupabase().rpc("my_probation_reviews_due", { p_company: companyId })) ?? []) as {
+    employment_id: string;
+    name: string;
+    probation_end: string;
+    days_left: number;
+  }[];
+}
+export async function hantarPenilaian(employmentId: string, markah: Record<string, number>, cadangan: CadanganPercubaan, bulan: number | null, ulasan: string) {
+  return must(
+    await getSupabase().rpc("submit_probation_review", {
+      p_employment: employmentId,
+      p_ratings: markah,
+      p_recommendation: cadangan,
+      p_extend_months: bulan as number,
+      p_comments: ulasan,
+    }),
+  );
+}
+export type PenilaianTerkini = {
+  id: string;
+  ratings: Record<string, number>;
+  recommendation: CadanganPercubaan;
+  extend_months: number | null;
+  comments: string | null;
+  submitted_at: string;
+  hr_decision: string | null;
+  decided_at: string | null;
+  reviewer: string;
+} | null;
+export async function getPenilaianTerkini(employmentId: string): Promise<PenilaianTerkini> {
+  return must(await getSupabase().rpc("probation_review_latest", { p_employment: employmentId })) as unknown as PenilaianTerkini;
+}
+export async function putuskanPercubaan(employmentId: string, keputusan: "confirmed" | "extended" | "terminated", bulan?: number) {
+  must(await getSupabase().rpc("decide_probation", { p_employment: employmentId, p_decision: keputusan, p_months: (bulan ?? null) as number }));
+}

@@ -944,6 +944,38 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"flexible_work_requests": {
+                  Row: {
+                    "change_types": (string)[],"company_id": string,"created_at": string,"decided_at": string | null,"decided_by": string | null,"decision_note": string | null,"details": string,"due_date": string,"employment_id": string,"end_date": string | null,"id": string,"start_date": string,"status": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "change_types": (string)[],"company_id": string,"created_at"?: string,"decided_at"?: string | null,"decided_by"?: string | null,"decision_note"?: string | null,"details": string,"due_date": string,"employment_id": string,"end_date"?: string | null,"id"?: string,"start_date": string,"status"?: string
+                  }
+                  Update: {
+                    "change_types"?: (string)[],"company_id"?: string,"created_at"?: string,"decided_at"?: string | null,"decided_by"?: string | null,"decision_note"?: string | null,"details"?: string,"due_date"?: string,"employment_id"?: string,"end_date"?: string | null,"id"?: string,"start_date"?: string,"status"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "flexible_work_requests_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "flexible_work_requests_decided_by_fkey"
+      columns: ["decided_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "flexible_work_requests_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"hr_events": {
                   Row: {
                     "company_id": string | null,"created_at": string,"event_type": string,"id": number,"payload": NonNullable<Json>,"processed_at": string | null,"subject_employment_id": string | null,"subject_person_id": string | null
@@ -973,6 +1005,38 @@ isOneToOne: false
       columns: ["subject_person_id"]
 isOneToOne: false
       referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"hr_questions": {
+                  Row: {
+                    "ai_answer": string | null,"answer": string | null,"answered_at": string | null,"answered_by": string | null,"company_id": string,"created_at": string,"employment_id": string,"id": string,"question": string,"status": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "ai_answer"?: string | null,"answer"?: string | null,"answered_at"?: string | null,"answered_by"?: string | null,"company_id": string,"created_at"?: string,"employment_id": string,"id"?: string,"question": string,"status"?: string
+                  }
+                  Update: {
+                    "ai_answer"?: string | null,"answer"?: string | null,"answered_at"?: string | null,"answered_by"?: string | null,"company_id"?: string,"created_at"?: string,"employment_id"?: string,"id"?: string,"question"?: string,"status"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "hr_questions_answered_by_fkey"
+      columns: ["answered_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "hr_questions_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "hr_questions_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
       referencedColumns: ["id"]
     }
                   ]
@@ -1626,6 +1690,44 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"probation_reviews": {
+                  Row: {
+                    "comments": string | null,"company_id": string,"decided_at": string | null,"decided_by": string | null,"employment_id": string,"extend_months": number | null,"hr_decision": string | null,"id": string,"ratings": NonNullable<Json>,"recommendation": string,"reviewer_id": string,"submitted_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "comments"?: string | null,"company_id": string,"decided_at"?: string | null,"decided_by"?: string | null,"employment_id": string,"extend_months"?: number | null,"hr_decision"?: string | null,"id"?: string,"ratings": NonNullable<Json>,"recommendation": string,"reviewer_id": string,"submitted_at"?: string
+                  }
+                  Update: {
+                    "comments"?: string | null,"company_id"?: string,"decided_at"?: string | null,"decided_by"?: string | null,"employment_id"?: string,"extend_months"?: number | null,"hr_decision"?: string | null,"id"?: string,"ratings"?: NonNullable<Json>,"recommendation"?: string,"reviewer_id"?: string,"submitted_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "probation_reviews_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "probation_reviews_decided_by_fkey"
+      columns: ["decided_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "probation_reviews_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "probation_reviews_reviewer_id_fkey"
+      columns: ["reviewer_id"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"public_holidays": {
                   Row: {
                     "company_id": string | null,"holiday_date": string,"id": string,"is_adhoc": boolean,"is_mandatory": boolean,"name": string,"state": string | null
@@ -1643,6 +1745,50 @@ isOneToOne: false
       columns: ["company_id"]
 isOneToOne: false
       referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"salary_advances": {
+                  Row: {
+                    "amount": number,"approval_request_id": string | null,"created_at": string,"deduct_month": number | null,"deduct_year": number | null,"deducted_via_payroll_run": string | null,"disbursed_at": string | null,"employment_id": string,"id": string,"reason": string,"status": Database["public"]['Enums']["request_status"]
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "amount": number,"approval_request_id"?: string | null,"created_at"?: string,"deduct_month"?: number | null,"deduct_year"?: number | null,"deducted_via_payroll_run"?: string | null,"disbursed_at"?: string | null,"employment_id": string,"id"?: string,"reason": string,"status"?: Database["public"]['Enums']["request_status"]
+                  }
+                  Update: {
+                    "amount"?: number,"approval_request_id"?: string | null,"created_at"?: string,"deduct_month"?: number | null,"deduct_year"?: number | null,"deducted_via_payroll_run"?: string | null,"disbursed_at"?: string | null,"employment_id"?: string,"id"?: string,"reason"?: string,"status"?: Database["public"]['Enums']["request_status"]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "salary_advances_approval_request_id_fkey"
+      columns: ["approval_request_id"]
+isOneToOne: false
+      referencedRelation: "approval_requests"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "salary_advances_approval_request_id_fkey"
+      columns: ["approval_request_id"]
+isOneToOne: false
+      referencedRelation: "v_my_approval_tasks"
+      referencedColumns: ["request_id"]
+    },{
+      foreignKeyName: "salary_advances_approval_request_id_fkey"
+      columns: ["approval_request_id"]
+isOneToOne: false
+      referencedRelation: "v_my_requests"
+      referencedColumns: ["request_id"]
+    },{
+      foreignKeyName: "salary_advances_deducted_via_payroll_run_fkey"
+      columns: ["deducted_via_payroll_run"]
+isOneToOne: false
+      referencedRelation: "payroll_runs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "salary_advances_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
       referencedColumns: ["id"]
     }
                   ]
@@ -1777,6 +1923,9 @@ isOneToOne: false
               "department": string,"employment_id": string,"name": string
             }[]
                            },
+"answer_hr_question":
+{ Args: { "p_answer": string,"p_id": string }; Returns: undefined
+                           },
 "approval_act":
 { Args: { "p_action": string,"p_comment"?: string,"p_on_behalf"?: string,"p_task": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: {
               "ai_summary": string | null,
@@ -1832,6 +1981,9 @@ isOneToOne: false
                            },
 "archive_announcement":
 { Args: { "p_id": string }; Returns: undefined
+                           },
+"ask_hr":
+{ Args: { "p_ai_answer"?: string,"p_employment": string,"p_question": string,"p_to_hr"?: boolean }; Returns: string
                            },
 "attendance_integration_status":
 { Args: { "p_company": string }; Returns: Json
@@ -1932,6 +2084,12 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"decide_flexible_work":
+{ Args: { "p_approve": boolean,"p_id": string,"p_note": string }; Returns: undefined
+                           },
+"decide_probation":
+{ Args: { "p_decision": string,"p_employment": string,"p_months"?: number }; Returns: undefined
+                           },
 "emit_event":
 { Args: { "p_company": string,"p_employment": string,"p_payload": Json,"p_person": string,"p_type": string }; Returns: number
                            },
@@ -1983,6 +2141,14 @@ isOneToOne: false
                            },
 "finalize_employment_ends":
 { Args: Record<PropertyKey, never>; Returns: number
+                           },
+"finance_mark_advance_paid":
+{ Args: { "p_id": string }; Returns: undefined
+                           },
+"flexible_work_list":
+{ Args: { "p_company": string,"p_mine"?: boolean }; Returns: {
+              "change_types": (string)[],"created_at": string,"days_left": number,"decided_at": string,"decision_note": string,"department": string,"details": string,"due_date": string,"employment_id": string,"end_date": string,"id": string,"name": string,"start_date": string,"status": string
+            }[]
                            },
 "fmt_num":
 { Args: { "n": number }; Returns: string
@@ -2039,8 +2205,21 @@ isOneToOne: false
 "hr_pay_table":
 { Args: { "p_company": string,"p_on"?: string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: Json
                            },
+"hr_question_list":
+{ Args: { "p_company": string,"p_mine"?: boolean }; Returns: {
+              "ai_answer": string,"answer": string,"answered_at": string,"answered_by_name": string,"created_at": string,"employment_id": string,"id": string,"name": string,"question": string,"status": string
+            }[]
+                           },
+"hr_question_stats":
+{ Args: { "p_company": string }; Returns: Json
+                           },
 "hr_report":
 { Args: { "p_company": string,"p_from": string,"p_kind": string,"p_to": string }; Returns: Json
+                           },
+"hr_salary_advances":
+{ Args: { "p_company": string }; Returns: {
+              "amount": number,"created_at": string,"deduct_month": number,"deduct_year": number,"deducted": boolean,"disbursed_at": string,"employment_id": string,"id": string,"name": string,"reason": string,"status": Database["public"]['Enums']["request_status"]
+            }[]
                            },
 "hr_set_expiry":
 { Args: { "p_contract_end": string,"p_employment": string,"p_passport_expiry": string,"p_permit_expiry": string }; Returns: undefined
@@ -2203,6 +2382,16 @@ isOneToOne: false
               "draft": boolean,"id": string,"issue_open": boolean,"net": number,"pay_date": string,"period_month": number,"period_year": number,"status": Database["public"]['Enums']["payroll_status"]
             }[]
                            },
+"my_probation_reviews_due":
+{ Args: { "p_company": string }; Returns: {
+              "days_left": number,"employment_id": string,"name": string,"probation_end": string
+            }[]
+                           },
+"my_salary_advances":
+{ Args: { "p_employment": string }; Returns: {
+              "amount": number,"approval_request_id": string,"created_at": string,"deduct_month": number,"deduct_year": number,"deducted": boolean,"id": string,"max_amount": number,"reason": string,"status": Database["public"]['Enums']["request_status"]
+            }[]
+                           },
 "next_working_day":
 { Args: { "p_company": string,"p_date": string }; Returns: string
                            },
@@ -2326,6 +2515,9 @@ isOneToOne: false
 "post_announcement":
 { Args: { "p_body": string,"p_company": string,"p_title": string,"p_whatsapp"?: boolean }; Returns: string
                            },
+"probation_review_latest":
+{ Args: { "p_employment": string }; Returns: Json
+                           },
 "process_hr_events":
 { Args: { "p_limit"?: number }; Returns: number
                            },
@@ -2419,6 +2611,9 @@ isOneToOne: false
 { Args: { "p_query": string }; Returns: {
               "active": boolean,"companies": string,"is_platform_admin": boolean,"last_sign_in": string,"name": string,"person_id": string,"whatsapp": string
             }[]
+                           },
+"salary_advance_limit":
+{ Args: { "p_employment": string }; Returns: number
                            },
 "save_onboarding_step":
 { Args: { "p_data"?: Json,"p_employment": string,"p_step": string }; Returns: number
@@ -2523,6 +2718,9 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"submit_flexible_work":
+{ Args: { "p_details": string,"p_employment": string,"p_end"?: string,"p_start": string,"p_types": (string)[] }; Returns: string
+                           },
 "submit_leave":
 { Args: { "p_attachment"?: string,"p_cover_person"?: string,"p_employment": string,"p_end": string,"p_half"?: Database["public"]['Enums']["leave_half"],"p_leave_code": string,"p_on_behalf"?: string,"p_reason"?: string,"p_start": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: {
               "approval_request_id": string | null,
@@ -2587,6 +2785,29 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"submit_probation_review":
+{ Args: { "p_comments": string,"p_employment": string,"p_extend_months": number,"p_ratings": Json,"p_recommendation": string }; Returns: string
+                           },
+"submit_salary_advance":
+{ Args: { "p_amount": number,"p_employment": string,"p_on_behalf"?: string,"p_reason": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: {
+              "amount": number,
+"approval_request_id": string | null,
+"created_at": string,
+"deduct_month": number | null,
+"deduct_year": number | null,
+"deducted_via_payroll_run": string | null,
+"disbursed_at": string | null,
+"employment_id": string,
+"id": string,
+"reason": string,
+"status": Database["public"]['Enums']["request_status"]
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "salary_advances"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
 "team_birthdays":
 { Args: { "p_company": string,"p_from": string,"p_to": string }; Returns: {
               "day": number,"department": string,"month": number,"name": string,"person_id": string
@@ -2605,6 +2826,9 @@ isOneToOne: false
                            },
 "whatsapp_handle_reply":
 { Args: { "p_phone": string,"p_text": string }; Returns: Json
+                           },
+"withdraw_flexible_work":
+{ Args: { "p_id": string }; Returns: undefined
                            }
           }
           Enums: {

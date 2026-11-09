@@ -28,6 +28,7 @@ import {
 import { muatNaikPeribadi, urlSementara } from "@/lib/upload";
 import { setTarikhTamat } from "@/lib/berkanun";
 import { SenaraiSemakPekerja } from "@/components/SenaraiSemak";
+import { PanelPercubaan } from "@/components/Percubaan";
 import { hari, julatTarikh, masa, paparTelefon, ringgit, tarikh, todayISO, type StatusPermohonan } from "@/lib/format";
 import { Avatar, BackHeader, ErrorBox, Loading, Screen, StatusPill } from "@/components/ui";
 import { RingkasanKiraan, UbahGaji, usePratonton } from "@/components/GajiPekerja";
@@ -273,6 +274,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
           </details>
         </div>
       )}
+      {bolehUbah && p.status === "probation" && !p.endStatus && <PanelPercubaan employmentId={p.id} onTamatkan={() => setLembaran("tamat")} onUbah={reload} />}
       {bolehUbah && !tamat && <SenaraiSemakPekerja employmentId={p.id} hr />}
       </div>
       <div className="flex flex-col gap-3">

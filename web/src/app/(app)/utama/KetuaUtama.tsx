@@ -11,6 +11,7 @@ import { OrientasiBanner } from "@/components/OrientasiBanner";
 import { Avatar, ErrorBox } from "@/components/ui";
 import { TugasSemakKetua } from "@/components/SenaraiSemak";
 import { KadPengumuman } from "@/components/Pengumuman";
+import { KadPenilaianKetua } from "@/components/Percubaan";
 
 type Ahli = {
   employmentId: string;
@@ -55,6 +56,7 @@ export function KetuaUtama() {
         <span className="flex h-11 items-center rounded-[14px] bg-white px-4 text-sm font-extrabold text-primary">Semak</span>
       </Link>
 
+      <KadPenilaianKetua companyId={emp.companyId} />
       <TugasSemakKetua companyId={emp.companyId} />
 
       {team.error && <ErrorBox message={team.error} />}

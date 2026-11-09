@@ -6,7 +6,7 @@ import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { getBaki, getPermohonanSaya, kiniDi, paparPermohonan, type Baki } from "@/lib/data";
 import { hari } from "@/lib/format";
-import { IconCalendar, IconChat, IconChevronRight, IconClock, IconDocument, IconReceipt } from "@/components/icons";
+import { IconCalendar, IconChat, IconChevronRight, IconClock, IconDocument, IconReceipt, IconWallet } from "@/components/icons";
 import { Screen, StatusPill } from "@/components/ui";
 import { TabNav } from "@/components/TabNav";
 
@@ -55,6 +55,20 @@ export default function MohonPage() {
           icon={<IconClock />}
           title="Kerja lebih masa"
           sub="Dibayar bersama gaji selepas diluluskan"
+        />
+        <Pilihan
+          href="/mohon/pendahuluan"
+          tone="bg-warning-soft text-warning"
+          icon={<IconWallet />}
+          title="Pendahuluan gaji"
+          sub="Ditolak daripada gaji bulan berikutnya"
+        />
+        <Pilihan
+          href="/mohon/kerja-fleksibel"
+          tone="bg-[#EAF0FB] text-[#2F5BA8]"
+          icon={<IconCalendar />}
+          title="Kerja fleksibel"
+          sub="Ubah waktu, hari atau tempat bekerja"
         />
         <Pilihan
           href="/mohon/surat"

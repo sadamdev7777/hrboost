@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { IconBell, IconCalendar, IconCard, IconChart, IconCheckSquare, IconDocument, IconHome, IconPlusCircle, IconOrg, IconSettings, IconUser, IconUsers } from "./icons";
+import { IconBell, IconCalendar, IconChat, IconCard, IconChart, IconCheckSquare, IconDocument, IconHome, IconPlusCircle, IconOrg, IconSettings, IconUser, IconUsers } from "./icons";
 import { getBilanganTugasan } from "@/lib/data";
 import { useData } from "@/lib/useData";
 import { useMeContext } from "@/lib/me";
@@ -27,6 +27,7 @@ const IKON: Record<ItemNav["ikon"], (p: { size?: number }) => ReactNode> = {
   calendar: IconCalendar,
   document: IconDocument,
   bell: IconBell,
+  chat: IconChat,
 };
 
 function Lencana({ n }: { n: number }) {

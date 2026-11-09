@@ -50,7 +50,7 @@ export function useMod(): { mod: Mod; boleh: boolean; tukar: (m: Mod) => void } 
   return { mod, boleh, tukar };
 }
 
-export type ItemNav = { href: string; label: string; pendek?: string; ikon: "home" | "plus" | "check" | "user" | "chart" | "users" | "card" | "settings" | "org" | "calendar" | "document" | "bell"; roles?: string[] };
+export type ItemNav = { href: string; label: string; pendek?: string; ikon: "home" | "plus" | "check" | "user" | "chart" | "users" | "card" | "settings" | "org" | "calendar" | "document" | "bell" | "chat"; roles?: string[] };
 
 export const NAV_PEKERJA: ItemNav[] = [
   { href: "/utama", label: "Utama", ikon: "home" },
@@ -72,6 +72,8 @@ export const NAV_HR_LAGI: ItemNav[] = [
   { href: "/kalendar", label: "Kalendar pasukan", ikon: "calendar" },
   { href: "/pengurusan/surat", label: "Surat", ikon: "document", roles: ["hr", "admin"] },
   { href: "/pengurusan/pengumuman", label: "Pengumuman", ikon: "bell", roles: ["hr", "ceo", "admin"] },
+  { href: "/pengurusan/soalan", label: "Soalan HR", ikon: "chat", roles: ["hr", "admin"] },
+  { href: "/pengurusan/kerja-fleksibel", label: "Kerja fleksibel", ikon: "calendar", roles: ["hr", "admin"] },
   { href: "/pengurusan/laporan", label: "Laporan", ikon: "chart" },
   { href: "/pengurusan/tetapan/jabatan", label: "Jabatan", ikon: "org", roles: ["hr", "admin"] },
   { href: "/pengurusan/tetapan", label: "Tetapan", ikon: "settings" },

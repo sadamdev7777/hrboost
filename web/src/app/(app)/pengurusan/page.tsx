@@ -17,7 +17,7 @@ import { useSkrinLebar } from "@/lib/skrin";
 import { ButangBantuan, KadPanduan } from "@/components/Panduan";
 import { ringkasSemakHr } from "@/components/SenaraiSemak";
 import { getTugasSemakSaya } from "@/lib/berkanun";
-import { getSurat } from "@/lib/urusan";
+import { getFleksibel, getSoalan, getSurat } from "@/lib/urusan";
 import { KadPengumuman } from "@/components/Pengumuman";
 import { getKalendarBerkanun, getTarikhTamat, tandaDihantar, type KewajipanBerkanun } from "@/lib/berkanun";
 import { beritahu, mintaTeks } from "@/components/Dialog";
@@ -46,7 +46,7 @@ function Kandungan() {
   const hariIni = todayISO();
   const d = useData(async () => {
     const sb = getSupabase();
-    const [asas, tambahan, tugas, jadi, berkanun, tamat, semak, surat] = await Promise.all([
+    const [asas, tambahan, tugas, jadi, berkanun, tamat, semak, surat, soalan, fleksibel] = await Promise.all([
       getDashboard(emp.companyId),
       getDashboardTambahan(emp.companyId),
       getTugasSaya(emp.companyId),
@@ -55,8 +55,13 @@ function Kandungan() {
       getTarikhTamat(emp.companyId).catch(() => []),
       getTugasSemakSaya(emp.companyId).catch(() => []),
       hasRole(me, ["hr", "admin"]) ? getSurat(emp.companyId).catch(() => []) : Promise.resolve([]),
+      hasRole(me, ["hr", "admin"]) ? getSoalan(emp.companyId).catch(() => []) : Promise.resolve([]),
+      hasRole(me, ["hr", "admin"]) ? getFleksibel(emp.companyId).catch(() => []) : Promise.resolve([]),
     ]);
-    return { asas, tambahan, tugas, jadi: must(jadi) ?? [], berkanun, tamat, semak: ringkasSemakHr(semak), surat: surat.filter((s) => s.status === "pending").length };
+    return { asas, tambahan, tugas, jadi: must(jadi) ?? [], berkanun, tamat, semak: ringkasSemakHr(semak), surat: surat.filter((s) => s.status === "pending").length,
+      soalan: soalan.filter((q) => q.status === "open").length,
+      fleksibel: fleksibel.filter((f) => f.status === "pending"),
+    };
   }, [emp.companyId]);
   const [sibuk, setSibuk] = useState<string | null>(null);
   const [ralat, setRalat] = useState<string | null>(null);
@@ -76,7 +81,7 @@ function Kandungan() {
   const a = x?.asas;
   const t = x?.tambahan;
   const dijangka = a ? Math.max(a.headcount - a.on_leave.length, 0) : 0;
-  const tindakan = x && a ? x.tugas.length + a.attention.length + (t?.no_salary ? 1 : 0) + x.tamat.length + x.semak.length + (x.surat ? 1 : 0) : 0;
+  const tindakan = x && a ? x.tugas.length + a.attention.length + (t?.no_salary ? 1 : 0) + x.tamat.length + x.semak.length + (x.surat ? 1 : 0) + (x.soalan ? 1 : 0) + x.fleksibel.length : 0;
 
   async function tanda(k: KewajipanBerkanun) {
     const ruj = await mintaTeks({
@@ -184,6 +189,17 @@ function Kandungan() {
                   {t.no_salary ? (
                     <Baris tag="Gaji" tone="warning" teks={`${t.no_salary} pekerja belum mempunyai gaji pokok`} href="/pengurusan/gaji/pekerja" aksi="Tetapkan" />
                   ) : null}
+                  {x.soalan > 0 && <Baris tag="Soalan" tone="primary" teks={`${x.soalan} soalan pekerja belum dijawab`} href="/pengurusan/soalan" aksi="Jawab" />}
+                  {x.fleksibel.map((f) => (
+                    <Baris
+                      key={"fwa" + f.id}
+                      tag="Fleksibel"
+                      tone={f.days_left <= 14 ? "danger" : "warning"}
+                      teks={`${f.name} memohon kerja fleksibel · jawapan bertulis sebelum ${tarikh(f.due_date)} (${f.days_left} hari)`}
+                      href="/pengurusan/kerja-fleksibel"
+                      aksi="Putuskan"
+                    />
+                  ))}
                   {x.surat > 0 && <Baris tag="Surat" tone="primary" teks={`${x.surat} permohonan surat pengesahan menunggu dikeluarkan`} href="/pengurusan/surat" aksi="Keluarkan" />}
                   {x.semak.map((s) => (
                     <Baris

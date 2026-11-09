@@ -14,6 +14,7 @@ import {
   IconCalendar,
   IconCard,
   IconChart,
+  IconChat,
   IconChevronRight,
   IconClock,
   IconDocument,
@@ -75,6 +76,7 @@ export default function SayaPage() {
           <Baris href="/gaji" icon={<IconWallet size={18} />} label="Slip Gaji" />
           <Baris href="/kalendar" icon={<IconCalendar size={18} />} label="Kalendar pasukan" />
           <Baris href="/pengumuman" icon={<IconBell size={18} />} label="Pengumuman" />
+          <Baris href="/tanya-hr" icon={<IconChat size={18} />} label="Tanya HR" />
           <Baris href="/pembantu-ai" icon={<IconSparkle size={18} />} tone="bg-[#EDE9F8] text-ai" label="Pembantu AI" />
           <Baris href="/hari-jadi" icon={<IconCake size={18} />} tone="bg-[#FDEBD7] text-warning" label="Hari Jadi">
             {hariIni.length > 0 && (
@@ -97,6 +99,8 @@ export default function SayaPage() {
               </>
             )}
             {hasRole(me, ["hr", "admin"]) && <Baris href="/pengurusan/surat" icon={<IconDocument size={18} />} tone="bg-[#FDEBD7] text-warning" label="Surat" />}
+            {hasRole(me, ["hr", "admin"]) && <Baris href="/pengurusan/soalan" icon={<IconChat size={18} />} tone="bg-[#FDEBD7] text-warning" label="Soalan HR" />}
+            {hasRole(me, ["hr", "admin"]) && <Baris href="/pengurusan/kerja-fleksibel" icon={<IconCalendar size={18} />} tone="bg-[#FDEBD7] text-warning" label="Kerja fleksibel" />}
             {hasRole(me, ["hr", "ceo", "admin"]) && <Baris href="/pengurusan/pengumuman" icon={<IconBell size={18} />} tone="bg-[#FDEBD7] text-warning" label="Pengumuman" />}
             <Baris href="/pengurusan/laporan" icon={<IconChart size={18} />} tone="bg-[#FDEBD7] text-warning" label="Laporan" />
             <Baris href="/pengurusan/tetapan" icon={<IconSettings size={18} />} tone="bg-[#FDEBD7] text-warning" label="Tetapan" />

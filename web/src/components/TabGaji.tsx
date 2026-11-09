@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const TAB = [
   { href: "/pengurusan/gaji", label: "Bulan ini" },
   { href: "/pengurusan/gaji/pekerja", label: "Gaji pekerja" },
+  { href: "/pengurusan/gaji/pendahuluan", label: "Pendahuluan" },
   { href: "/pengurusan/gaji/sejarah", label: "Sejarah" },
 ];
 
