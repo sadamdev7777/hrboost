@@ -678,7 +678,7 @@ function TabGaji({ id, nama, tarikhMula }: { id: string; nama: string; tarikhMul
         ))}
       </Senarai>
       <RingkasanKiraan k={semasa?.BASIC ? pr.k : null} mengira={pr.mengira} />
-      <button type="button" onClick={() => setUbah(true)} disabled={!komp.data} className="min-h-12 rounded-[14px] bg-primary text-sm font-extrabold text-white disabled:opacity-60 lg:w-60">
+      <button type="button" onClick={() => setUbah(true)} disabled={!komp.data} className="min-h-12 rounded-button bg-primary text-sm font-extrabold text-white disabled:opacity-60 lg:w-60">
         Ubah gaji &amp; elaun
       </button>
       <span className="text-xs text-muted">Akses ini direkodkan. Slip gaji bulanan dijana melalui Proses Gaji.</span>
@@ -810,7 +810,7 @@ function TabDokumen({ p, bolehUbah }: { p: ButiranPekerja; bolehUbah: boolean })
               <input className={inputKecil} value={tajuk} onChange={(e) => setTajuk(e.target.value)} />
             </MedanBorang>
           </div>
-          <button type="button" disabled={busy} onClick={() => fail.current?.click()} className="h-12 rounded-[14px] bg-primary text-sm font-bold text-white disabled:opacity-60">
+          <button type="button" disabled={busy} onClick={() => fail.current?.click()} className="h-12 rounded-button bg-primary text-sm font-bold text-white disabled:opacity-60">
             {busy ? "Memuat naik…" : "Muat naik dokumen"}
           </button>
           <input ref={fail} type="file" accept="image/*,application/pdf" className="hidden" aria-label="Pilih fail dokumen" onChange={(e) => muatNaik(e.target.files?.[0])} />

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
-import { must, useData } from "@/lib/useData";
+import { mesejRalat, must, useData } from "@/lib/useData";
 import { getBaki } from "@/lib/data";
 import { addDays, dow, hari, hariTarikh, julatTarikh, masaTeks, namaPeringkat, tarikh, todayISO } from "@/lib/format";
 import { IconChevronRight } from "@/components/icons";
@@ -102,7 +102,7 @@ export default function MohonCutiPage() {
     });
     setBusy(false);
     if (err) {
-      setError(err.message);
+      setError(mesejRalat(err.message, err.code));
       return;
     }
     beritahu(info.data?.steps[0] ? `Permohonan dihantar kepada ${info.data.steps[0].label}.` : "Permohonan dihantar.");

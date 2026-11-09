@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
-import { must, useData } from "@/lib/useData";
+import { mesejRalat, must, useData } from "@/lib/useData";
 import { hari, jam, julatTarikh, masa, namaPeringkat, ringgit, tarikh, tarikhTempatan, todayISO, type StatusPermohonan } from "@/lib/format";
 import { IconCheck, IconSparkle } from "./icons";
 import { Avatar, BackHeader, ErrorBox, Loading, Screen, StatusPill } from "./ui";
@@ -76,7 +76,7 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
     });
     setBusy(false);
     if (err) {
-      setError(err.message);
+      setError(mesejRalat(err.message, err.code));
       return;
     }
     setSheet(null);
@@ -90,7 +90,7 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
     setBusy(true);
     const { error: err } = await getSupabase().rpc("approval_cancel", { p_request: x.req.id, p_via: "web" });
     setBusy(false);
-    if (err) setError(err.message);
+    if (err) setError(mesejRalat(err.message, err.code));
     else d.reload();
   }
 

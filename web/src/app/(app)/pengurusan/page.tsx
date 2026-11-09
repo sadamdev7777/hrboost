@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { hasRole, useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
-import { must, useData } from "@/lib/useData";
+import { mesejRalat, must, useData } from "@/lib/useData";
 import { getDashboard, getDashboardTambahan, getTugasSaya, type Dashboard } from "@/lib/hr";
 import { BULAN_PENUH } from "@/lib/gaji";
 import { addDays, hariTarikh, inisial, masa, ringgit, tarikh, todayISO, ucapan } from "@/lib/format";
@@ -56,7 +56,7 @@ function Kandungan() {
     setRalat(null);
     const { error } = await getSupabase().rpc("approval_act", { p_task: taskId, p_action: "approve", p_via: "web" });
     setSibuk(null);
-    if (error) setRalat(error.message);
+    if (error) setRalat(mesejRalat(error.message, error.code));
     d.reload();
   }
 

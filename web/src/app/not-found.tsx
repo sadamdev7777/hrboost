@@ -9,7 +9,7 @@ export default function NotFound() {
       </p>
       <Link
         href="/utama"
-        className="flex h-12 items-center justify-center rounded-[14px] bg-primary text-sm font-bold text-white!"
+        className="flex h-12 items-center justify-center rounded-button bg-primary text-sm font-bold text-white!"
       >
         Kembali ke Utama
       </Link>

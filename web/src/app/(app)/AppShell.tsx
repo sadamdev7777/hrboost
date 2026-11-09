@@ -9,6 +9,7 @@ import { paparTelefon } from "@/lib/format";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { MenuSisi } from "@/components/TabNav";
 import { CariPantas } from "@/components/CariPantas";
+import { CadanganPasang } from "@/components/CadanganPasang";
 import { useMod } from "@/lib/mod";
 
 function Guard({ children }: { children: ReactNode }) {
@@ -78,6 +79,7 @@ function Guard({ children }: { children: ReactNode }) {
       <div className="lg:flex">
         <MenuSisi />
         <CariPantas />
+        <CadanganPasang />
         <div className="min-w-0 lg:flex-1">
           <Notis />
           {children}

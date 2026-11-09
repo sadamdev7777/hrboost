@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useMe, type Me } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
-import { must, useData } from "@/lib/useData";
+import { mesejRalat, must, useData } from "@/lib/useData";
 import { paparPermohonan } from "@/lib/data";
 import { hari, hariTarikh, masa, masaPanjang, ringgit, tarikhTempatan, todayISO, type StatusPermohonan } from "@/lib/format";
 import { IconClock } from "@/components/icons";
@@ -59,7 +59,7 @@ export default function KelulusanPage() {
     });
     setBusy(null);
     setRejecting(null);
-    if (err) setError(err.message);
+    if (err) setError(mesejRalat(err.message, err.code));
     else beritahu(action === "approve" ? "Diluluskan." : "Ditolak. Pemohon dimaklumkan.");
     if (pilih === taskId) setPilih(null);
     tasks.reload();

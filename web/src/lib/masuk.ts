@@ -1,7 +1,9 @@
 import { getSupabase } from "./supabase";
+import { kiraLogMasuk } from "@/components/CadanganPasang";
 
 /** Destinasi selepas log masuk: Pentadbir Platform tanpa pekerjaan → /admin, selainnya /utama. */
 export async function destinasiSelepasMasuk(): Promise<string> {
+  kiraLogMasuk();
   const sb = getSupabase();
   const { data: sa } = await sb.from("platform_admins").select("person_id").limit(1);
   if (sa && sa.length > 0) {

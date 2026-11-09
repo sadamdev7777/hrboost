@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useState, useSyncExternalStore } from "react";
 import { getSupabase } from "@/lib/supabase";
-import { useData } from "@/lib/useData";
+import { mesejRalat, useData } from "@/lib/useData";
 import { bacaJemputan, padamJemputan, simpanJemputan } from "@/lib/invite";
 import { digitTempatan, tarikh } from "@/lib/format";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
@@ -62,7 +62,7 @@ export function Daftar() {
       setBusy(false);
       padamJemputan();
       if (err) {
-        setError(err.message);
+        setError(mesejRalat(err.message, err.code));
         return;
       }
       const r = data as unknown as { ok: boolean; error?: string; attempts_left?: number };
@@ -128,7 +128,7 @@ export function Daftar() {
           <p className="m-0 text-sm leading-normal text-subtle">{p?.error ?? preview.error}</p>
           <Link
             href="/masuk"
-            className="flex h-12 items-center justify-center rounded-[14px] bg-primary text-sm font-bold text-white!"
+            className="flex h-12 items-center justify-center rounded-button bg-primary text-sm font-bold text-white!"
           >
             Log masuk
           </Link>
