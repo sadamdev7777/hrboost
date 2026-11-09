@@ -38,7 +38,7 @@ const navMobile = async (p) => (await p.locator('nav.sticky >> visible=true').lo
   await p.waitForSelector('text=PERLU TINDAKAN ANDA');
   expect(true, 'HR terus ke Papan Pemuka selepas log masuk');
   const sisi = await p.locator('aside').innerText();
-  expect(['Papan Pemuka', 'Pekerja', 'Kelulusan', 'Gaji', 'Gaji Pekerja', 'Tetapan', 'Tukar ke Mod Pekerja'].every((t) => sisi.includes(t)), 'menu sisi desktop: menu HR + suis mod');
+  expect(['Papan Pemuka', 'Pekerja', 'Kelulusan', 'Gaji', 'Jabatan', 'Tetapan', 'Tukar ke Mod Pekerja', 'Cari pekerja'].every((t) => sisi.includes(t)), 'menu sisi desktop: menu HR + suis mod');
   expect(!(await p.locator('nav.sticky').isVisible()), 'navigasi bawah disorok di desktop');
   await p.screenshot({ path: `${shots}/hr-papan-desktop.png` });
   await p.click('aside a:has-text("Pekerja") >> nth=0');
@@ -47,7 +47,9 @@ const navMobile = async (p) => (await p.locator('nav.sticky >> visible=true').lo
   expect((await p.locator('table tbody tr').count()) === 6, 'jadual pekerja (6 baris) di desktop');
 
   log('2. Gaji Pekerja');
-  await p.click('aside a:has-text("Gaji Pekerja")');
+  await p.click('aside a:has-text("Gaji") >> nth=0');
+  await p.waitForURL('**/pengurusan/gaji');
+  await p.click(V('nav[aria-label="Gaji"] a:has-text("Gaji pekerja")'));
   await p.waitForURL('**/pengurusan/gaji/pekerja');
   await p.waitForSelector(V('text=Jumlah gaji kasar'));
   await p.locator(V('tr:has-text("Amin")')).first().locator('button:has-text("Ubah")').click();
@@ -83,7 +85,7 @@ const navMobile = async (p) => (await p.locator('nav.sticky >> visible=true').lo
   await p.screenshot({ path: `${shots}/hr-gaji-pekerja-desktop.png` });
 
   log('3. Proses Gaji menggunakan gaji baharu');
-  await p.click('aside a:has-text("Gaji") >> nth=0');
+  await p.click(V('nav[aria-label="Gaji"] a:has-text("Bulan ini")'));
   await p.waitForURL('**/pengurusan/gaji');
   await p.waitForSelector('text=Semak data');
   await p.click('button:has-text("Kira Gaji")');
