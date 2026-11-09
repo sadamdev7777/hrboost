@@ -267,6 +267,19 @@ node supabase/scripts/ujian-fungsi-crosschex.cjs
 - **Ringkasan harian WhatsApp** kepada HR jam 5:00 petang hari bekerja (`hr_daily_digest`, pg_cron `0 9 * * 1-5` UTC); suis & pratonton di Tetapan → Automasi.
 - **Pratonton slip oleh pekerja** sebelum kelulusan (`companies.payslip_preview`, suis dalam Proses Gaji langkah 2). Pekerja boleh "Lapor kesilapan" (`report_payslip_issue`) → HR & Kewangan dimaklumkan; HR menandakan selesai (`resolve_payslip_issue`) dan pekerja dimaklumkan.
 
+### HR lebih mudah II
+
+- **Kalendar pasukan** (`/kalendar`, `team_calendar`): cuti (diluluskan & menunggu), cuti umum, hari jadi; amaran apabila ≥ 30% jabatan bercuti serentak. Pekerja / ketua melihat jabatan sendiri tanpa jenis cuti (MC kekal sulit).
+- **Surat pengesahan** (`/mohon/surat` → `/pengurusan/surat` → `/surat/[id]`): pengesahan majikan atau gaji, rujukan `KOD/HR/TAHUN/0001`, penandatangan = HR yang mengeluarkan, data dibekukan (`letter_requests.snapshot`). Alamat kepala surat di Tetapan → Syarikat. Surat gaji direkodkan dalam `data_access_log`.
+- **Kerja lebih masa** (`/mohon/lebih-masa`, `submit_overtime`): Akta Kerja s.60A — 1.5× hari biasa, 2× hari rehat, 3× cuti umum; kadar sejam = gaji pokok ÷ 26 ÷ 8. Aliran Ketua Jabatan; selepas lulus, dimasukkan sebagai komponen `OT_LULUS` semasa Kira Gaji (`payroll_calculate` kini membungkus `payroll_calculate_core` melalui `payroll_sync_extras`).
+- **Pengumuman** (`/pengurusan/pengumuman`): WhatsApp kepada semua pekerja aktif, kad di Utama, kiraan dibaca dan senarai belum membaca.
+- **Tanya HR** (`/tanya-hr` → `/pengurusan/soalan`): Pembantu AI menjawab dahulu; jika tidak memadai, soalan dihantar kepada HR. Statistik 30 hari: % dijawab AI, purata masa HR menjawab.
+- **Pendahuluan gaji** (`/mohon/pendahuluan`): had 50% gaji pokok (`platform_settings.salary_advance`), Ketua Jabatan → Kewangan, "Tandakan dibayar", potongan `ADVANCE` automatik pada gaji bulan berikutnya (Gaji → Pendahuluan).
+- **Kerja fleksibel** (`/mohon/kerja-fleksibel` → `/pengurusan/kerja-fleksibel`): Akta Kerja Bahagian XIIC — jawapan bertulis dalam 60 hari, sebab wajib jika tidak diluluskan; tarikh akhir dalam Perlu tindakan.
+- **Penilaian percubaan**: ketua jabatan menilai (4 aspek, 1–5) pekerja yang tamat percubaan dalam 30 hari → HR memutuskan di Profil Pekerja (sahkan / lanjut / tamatkan).
+- **Jadual Pekerja**: pilih lajur, paparan tersimpan, penapis diingati (storan pelayar). **Kelulusan** (desktop): pintasan J/K pilih, A lulus, X tanda.
+- **Sejarah** (Profil Pekerja → Sejarah, `employment_history`): perubahan jabatan, jawatan, status, gaji, peranan (pencetus `employment_changes`, dengan pelaku), surat, penilaian, dokumen, dan log akses data (pilihan).
+
 ### Log masuk e-mel & kata laluan
 
 - Kali pertama: OTP WhatsApp untuk mengesahkan nombor telefon. Selepas itu pengguna **wajib** menetapkan e-mel & kata laluan (`/akaun/kata-laluan`) sebelum boleh membuka skrin lain. E-mel tidak perlu disahkan; ia ditulis oleh RPC `set_my_login_email` (unik, huruf kecil) dan kata laluan melalui Supabase Auth (minimum 8 aksara).

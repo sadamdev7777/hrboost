@@ -874,6 +874,32 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"employment_changes": {
+                  Row: {
+                    "changed_at": string,"changed_by": string | null,"employment_id": string,"field": string,"id": number,"new_value": string | null,"note": string | null,"old_value": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "changed_at"?: string,"changed_by"?: string | null,"employment_id": string,"field": string,"id"?: never,"new_value"?: string | null,"note"?: string | null,"old_value"?: string | null
+                  }
+                  Update: {
+                    "changed_at"?: string,"changed_by"?: string | null,"employment_id"?: string,"field"?: string,"id"?: never,"new_value"?: string | null,"note"?: string | null,"old_value"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "employment_changes_changed_by_fkey"
+      columns: ["changed_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "employment_changes_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"employment_compensation": {
                   Row: {
                     "amount": number,"component_id": string,"effective_from": string,"effective_to": string | null,"employment_id": string,"id": string
@@ -2095,6 +2121,11 @@ isOneToOne: false
                            },
 "employment_company":
 { Args: { "p_employment": string }; Returns: string
+                           },
+"employment_history":
+{ Args: { "p_employment": string,"p_include_access"?: boolean }; Returns: {
+              "actor": string,"at": string,"field": string,"kind": string,"new_value": string,"note": string,"old_value": string
+            }[]
                            },
 "end_employment":
 { Args: { "p_employment": string,"p_end_date": string,"p_reason"?: string,"p_status": Database["public"]['Enums']["employment_status"],"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined

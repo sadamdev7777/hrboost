@@ -29,13 +29,14 @@ import { muatNaikPeribadi, urlSementara } from "@/lib/upload";
 import { setTarikhTamat } from "@/lib/berkanun";
 import { SenaraiSemakPekerja } from "@/components/SenaraiSemak";
 import { PanelPercubaan } from "@/components/Percubaan";
+import { SejarahPekerja } from "@/components/SejarahPekerja";
 import { hari, julatTarikh, masa, paparTelefon, ringgit, tarikh, todayISO, type StatusPermohonan } from "@/lib/format";
 import { Avatar, BackHeader, ErrorBox, Loading, Screen, StatusPill } from "@/components/ui";
 import { RingkasanKiraan, UbahGaji, usePratonton } from "@/components/GajiPekerja";
 import type { KomponenTetap } from "@/lib/gaji";
 import { HadPeranan, Kotak, Lembaran, Medan, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
 
-const TABS = ["Maklumat", "Cuti", "Tuntutan", "Kehadiran", "Gaji", "Dokumen"] as const;
+const TABS = ["Maklumat", "Cuti", "Tuntutan", "Kehadiran", "Gaji", "Dokumen", "Sejarah"] as const;
 type TabId = (typeof TABS)[number];
 const BULAN = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogo", "Sep", "Okt", "Nov", "Dis"];
 const tarikhPenuh = (iso: string) => `${Number(iso.slice(8, 10))} ${BULAN[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
@@ -87,6 +88,7 @@ function Profil() {
         {p.data && tab === "Kehadiran" && <TabKehadiran id={id} />}
         {p.data && tab === "Gaji" && <TabGaji id={id} nama={p.data.name} tarikhMula={p.data.joinDate} />}
         {p.data && tab === "Dokumen" && <TabDokumen p={p.data} bolehUbah={bolehUbah} />}
+        {p.data && tab === "Sejarah" && (bolehUbah ? <SejarahPekerja employmentId={id} /> : <span className="text-sm text-muted">Sejarah perubahan hanya untuk HR.</span>)}
       </main>
     </Screen>
   );

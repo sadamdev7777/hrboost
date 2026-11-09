@@ -2,7 +2,7 @@
 
 import { beritahu } from "@/components/Dialog";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMe, type Me } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { mesejRalat, must, useData } from "@/lib/useData";
@@ -66,6 +66,43 @@ export default function KelulusanPage() {
     if (pilih === taskId) setPilih(null);
     tasks.reload();
   }
+
+  // Pintasan papan kekunci (desktop): J/K atau ↓/↑ pilih, A lulus, X tanda
+  const pintasan = useRef<(e: KeyboardEvent) => void>(() => {});
+  const tekan = (e: KeyboardEvent) => {
+    if (!lebar || tab !== "pending" || !shown.length || e.ctrlKey || e.metaKey || e.altKey) return;
+    const sasaran = e.target as HTMLElement | null;
+    if (sasaran && (/^(INPUT|TEXTAREA|SELECT)$/.test(sasaran.tagName) || sasaran.isContentEditable)) return;
+    if (document.querySelector("[role=alertdialog],[role=dialog]")) return;
+    const kini = pilih ?? shown[0].taskId;
+    const i = Math.max(shown.findIndex((t) => t.taskId === kini), 0);
+    const k = e.key.toLowerCase();
+    if (k === "j" || e.key === "ArrowDown") {
+      e.preventDefault();
+      setPilih(shown[Math.min(i + 1, shown.length - 1)].taskId);
+    } else if (k === "k" || e.key === "ArrowUp") {
+      e.preventDefault();
+      setPilih(shown[Math.max(i - 1, 0)].taskId);
+    } else if (k === "a" && shown[i].type !== "payroll_run" && !busy) {
+      e.preventDefault();
+      const seterusnya = shown[i + 1]?.taskId ?? shown[i - 1]?.taskId ?? null;
+      void act(shown[i].taskId, "approve").then(() => setPilih(seterusnya));
+    } else if (k === "x" && shown[i].type !== "payroll_run") {
+      e.preventDefault();
+      const n = new Set(tanda);
+      if (n.has(shown[i].taskId)) n.delete(shown[i].taskId);
+      else n.add(shown[i].taskId);
+      setTanda(n);
+    }
+  };
+  useEffect(() => {
+    pintasan.current = tekan;
+  });
+  useEffect(() => {
+    const f = (e: KeyboardEvent) => pintasan.current(e);
+    window.addEventListener("keydown", f);
+    return () => window.removeEventListener("keydown", f);
+  }, []);
 
   async function lulusDitanda() {
     const ids = [...tanda];
@@ -168,11 +205,17 @@ export default function KelulusanPage() {
                       {busy === "pukal" ? "Meluluskan…" : `Lulus ${tanda.size || ""} dipilih`}
                     </button>
                   </div>
+                  <span className="px-1 text-[11px] text-muted">
+                    Pintasan: <kbd className="rounded border border-line px-1 font-sans">J</kbd>/<kbd className="rounded border border-line px-1 font-sans">K</kbd> pilih ·{" "}
+                    <kbd className="rounded border border-line px-1 font-sans">A</kbd> lulus · <kbd className="rounded border border-line px-1 font-sans">X</kbd> tanda
+                  </span>
                   {shown.map((t, i) => {
                     const aktif = (pilih ?? shown[0].taskId) === t.taskId;
                     return (
                       <div
                         key={t.taskId}
+                        ref={aktif ? (el) => el?.scrollIntoView({ block: "nearest" }) : undefined}
+                        aria-current={aktif ? "true" : undefined}
                         className={`flex cursor-pointer gap-3 rounded-[14px] px-3 py-3 ${aktif ? "bg-[#E3F1EE] ring-2 ring-primary" : "bg-surface hover:bg-[#F7F9F8]"}`}
                         onClick={() => setPilih(t.taskId)}
                       >

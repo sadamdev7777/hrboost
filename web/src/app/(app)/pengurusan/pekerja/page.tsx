@@ -19,6 +19,10 @@ import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { ButangBantuan, KadPanduan } from "@/components/Panduan";
 import { useRouter } from "next/navigation";
 import { useSkrinLebar } from "@/lib/skrin";
+import { useSimpanan } from "@/lib/simpanan";
+import { labelJenis } from "@/lib/hr";
+import { mintaTeks } from "@/components/Dialog";
+import { tarikh } from "@/lib/format";
 import { HadPeranan, Seksyen, Tag } from "@/components/Senarai";
 
 type Tapis = "semua" | "aktif" | "percubaan" | "belum";
@@ -48,8 +52,18 @@ function Senarai() {
   const emp = me.active!;
   const list = useData(() => getSenaraiPekerja(emp.companyId), [emp.companyId]);
   const [cari, setCari] = useState("");
-  const [tapis, setTapis] = useState<Tapis>("semua");
-  const [jab, setJab] = useState("");
+  // Penapis terakhir diingati dalam pelayar ini; paparan boleh disimpan dengan nama
+  const [pilihan, setPilihan] = useSimpanan<{ tapis: Tapis; jab: string }>("hrb_pekerja_tapis", { tapis: "semua", jab: "" });
+  const [paparan, setPaparan] = useSimpanan<{ nama: string; tapis: Tapis; jab: string }[]>("hrb_pekerja_paparan", []);
+  const tapis = pilihan.tapis;
+  const jab = pilihan.jab;
+  const setTapis = (t: Tapis) => setPilihan({ ...pilihan, tapis: t });
+  const setJab = (j: string) => setPilihan({ ...pilihan, jab: j });
+  async function simpanPaparan() {
+    const nama = await mintaTeks({ tajuk: "Simpan paparan ini", label: "Nama paparan", ok: "Simpan" });
+    if (!nama) return;
+    setPaparan([...paparan.filter((x) => x.nama !== nama.trim()), { nama: nama.trim(), tapis, jab }].slice(-8));
+  }
   const lebar = useSkrinLebar();
   const boleh = me.roles.includes("hr") || me.roles.includes("admin");
 
@@ -164,6 +178,12 @@ function Senarai() {
               </option>
             ))}
           </select>
+          {(tapis !== "semua" || jab) && (
+            <button type="button" onClick={simpanPaparan} className="h-9 shrink-0 rounded-full px-2 text-[13px] font-bold text-primary">
+              + Simpan paparan
+            </button>
+          )}
+          {lebar && <PilihLajur />}
           {lebar && tapisan.length > 0 && (
             <button type="button" onClick={() => eksportCSV(tapisan, emp.companyCode)} className="ml-auto h-9 rounded-full border border-primary px-4 text-[13px] font-bold text-primary">
               Eksport CSV
@@ -171,6 +191,24 @@ function Senarai() {
           )}
         </div>
 
+        {paparan.length > 0 && (
+          <div className="-mt-1 flex flex-wrap items-center gap-1.5" aria-label="Paparan tersimpan">
+            <span className="text-xs font-bold text-muted">Paparan:</span>
+            {paparan.map((v) => {
+              const on = v.tapis === tapis && v.jab === jab;
+              return (
+                <span key={v.nama} className={`flex h-8 items-center rounded-full border text-[12px] font-bold ${on ? "border-primary bg-[#E3F1EE] text-primary" : "border-line bg-surface"}`}>
+                  <button type="button" onClick={() => setPilihan({ tapis: v.tapis, jab: v.jab })} className="h-full pr-1 pl-3">
+                    {v.nama}
+                  </button>
+                  <button type="button" aria-label={`Buang paparan ${v.nama}`} onClick={() => setPaparan(paparan.filter((x) => x.nama !== v.nama))} className="h-full pr-2.5 pl-1 text-muted">
+                    ×
+                  </button>
+                </span>
+              );
+            })}
+          </div>
+        )}
         {list.error && <ErrorBox message={list.error} />}
         {list.loading && !list.data && <Loading />}
         {list.data && tapisan.length === 0 && (
@@ -237,7 +275,42 @@ function StatusPekerja({ p }: { p: PekerjaRingkas }) {
 }
 
 /** Jadual untuk skrin lebar (desktop). */
-type Lajur = "name" | "employeeNo" | "department" | "position" | "status";
+type Lajur = "name" | "employeeNo" | "department" | "position" | "status" | "joinDate" | "type";
+type LajurPilihan = "department" | "position" | "roles" | "joinDate" | "type" | "status";
+const LAJUR_PILIHAN: { k: LajurPilihan; label: string }[] = [
+  { k: "department", label: "Jabatan" },
+  { k: "position", label: "Jawatan" },
+  { k: "roles", label: "Peranan" },
+  { k: "joinDate", label: "Tarikh mula" },
+  { k: "type", label: "Jenis pekerjaan" },
+  { k: "status", label: "Status" },
+];
+const LAJUR_LALAI: LajurPilihan[] = ["department", "position", "roles", "status"];
+
+/** Pilih lajur jadual Pekerja (diingati dalam pelayar ini). */
+function PilihLajur() {
+  const [lajur, setLajur] = useSimpanan<LajurPilihan[]>("hrb_pekerja_lajur", LAJUR_LALAI);
+  return (
+    <details className="relative">
+      <summary className="flex h-9 cursor-pointer list-none items-center rounded-full border border-line bg-surface px-3.5 text-[13px] font-bold text-[#4A5A57] [&::-webkit-details-marker]:hidden">
+        Lajur ▾
+      </summary>
+      <div className="absolute right-0 z-20 mt-1 flex w-52 flex-col rounded-[14px] border border-line bg-surface p-2 shadow-lg">
+        {LAJUR_PILIHAN.map((l) => (
+          <label key={l.k} className="flex min-h-10 cursor-pointer items-center gap-2.5 rounded-[10px] px-2 text-sm hover:bg-page">
+            <input
+              type="checkbox"
+              className="size-[18px] accent-primary"
+              checked={lajur.includes(l.k)}
+              onChange={(e) => setLajur(e.target.checked ? [...lajur, l.k] : lajur.filter((x) => x !== l.k))}
+            />
+            {l.label}
+          </label>
+        ))}
+      </div>
+    </details>
+  );
+}
 const STATUS_TEKS = (p: PekerjaRingkas) => (!p.activated ? "Belum aktif" : p.status === "probation" ? "Percubaan" : "Aktif");
 
 function eksportCSV(ppl: PekerjaRingkas[], kod: string) {
@@ -313,7 +386,10 @@ function JadualPekerja({ ppl: asal, boleh, onUbah }: { ppl: PekerjaRingkas[]; bo
     onUbah();
   }
   const [isih, setIsih] = useState<Isih>({ k: "employeeNo", naik: true });
-  const nilai = (p: PekerjaRingkas, k: Lajur) => (k === "status" ? STATUS_TEKS(p) : k === "position" ? (p.isHead ? "Ketua Jabatan" : (p.position ?? "")) : ((p[k] as string | null) ?? ""));
+  const [lajur] = useSimpanan<LajurPilihan[]>("hrb_pekerja_lajur", LAJUR_LALAI);
+  const ada = (k: LajurPilihan) => lajur.includes(k);
+  const nilai = (p: PekerjaRingkas, k: Lajur) =>
+    k === "status" ? STATUS_TEKS(p) : k === "position" ? (p.isHead ? "Ketua Jabatan" : (p.position ?? "")) : k === "type" ? labelJenis(p.type) : ((p[k] as string | null) ?? "");
   const ppl = [...asal].sort((a, b) => nilai(a, isih.k).localeCompare(nilai(b, isih.k), "ms") * (isih.naik ? 1 : -1));
   const belumAktif = dipilih.filter((p) => !p.activated);
   return (
@@ -377,10 +453,12 @@ function JadualPekerja({ ppl: asal, boleh, onUbah }: { ppl: PekerjaRingkas[]; bo
             )}
             <Kepala isih={isih} setIsih={setIsih} k="name" label="NAMA" />
             <Kepala isih={isih} setIsih={setIsih} k="employeeNo" label="NO. PEKERJA" />
-            <Kepala isih={isih} setIsih={setIsih} k="department" label="JABATAN" />
-            <Kepala isih={isih} setIsih={setIsih} k="position" label="JAWATAN" />
-            <th className="px-4 py-3 font-bold">PERANAN</th>
-            <Kepala isih={isih} setIsih={setIsih} k="status" label="STATUS" />
+            {ada("department") && <Kepala isih={isih} setIsih={setIsih} k="department" label="JABATAN" />}
+            {ada("position") && <Kepala isih={isih} setIsih={setIsih} k="position" label="JAWATAN" />}
+            {ada("roles") && <th className="px-4 py-3 font-bold">PERANAN</th>}
+            {ada("joinDate") && <Kepala isih={isih} setIsih={setIsih} k="joinDate" label="TARIKH MULA" />}
+            {ada("type") && <Kepala isih={isih} setIsih={setIsih} k="type" label="JENIS" />}
+            {ada("status") && <Kepala isih={isih} setIsih={setIsih} k="status" label="STATUS" />}
           </tr>
         </thead>
         <tbody>
@@ -409,10 +487,13 @@ function JadualPekerja({ ppl: asal, boleh, onUbah }: { ppl: PekerjaRingkas[]; bo
                 </Link>
               </td>
               <td className="px-4 py-2.5 text-muted">{p.employeeNo}</td>
-              <td className="px-4 py-2.5">{p.department ?? "—"}</td>
-              <td className="px-4 py-2.5">
-                {p.isHead ? "Ketua Jabatan" : (p.position ?? "—")}
-              </td>
+              {ada("department") && <td className="px-4 py-2.5">{p.department ?? "—"}</td>}
+              {ada("position") && (
+                <td className="px-4 py-2.5">
+                  {p.isHead ? "Ketua Jabatan" : (p.position ?? "—")}
+                </td>
+              )}
+              {ada("roles") && (
               <td className="px-4 py-2.5">
                 <span className="flex flex-wrap gap-1">
                   {p.roles
@@ -426,9 +507,14 @@ function JadualPekerja({ ppl: asal, boleh, onUbah }: { ppl: PekerjaRingkas[]; bo
                     ))}
                 </span>
               </td>
-              <td className="px-4 py-2.5">
-                <StatusPekerja p={p} />
-              </td>
+              )}
+              {ada("joinDate") && <td className="px-4 py-2.5 whitespace-nowrap">{tarikh(p.joinDate)}</td>}
+              {ada("type") && <td className="px-4 py-2.5">{labelJenis(p.type)}</td>}
+              {ada("status") && (
+                <td className="px-4 py-2.5">
+                  <StatusPekerja p={p} />
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

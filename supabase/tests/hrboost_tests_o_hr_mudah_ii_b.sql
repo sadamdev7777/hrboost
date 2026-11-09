@@ -87,3 +87,12 @@ select x->>'recommendation' cadangan, x->>'reviewer' penilai from probation_revi
 select decide_probation('00000000-0000-0000-0000-0000000000e5', 'extended', 2);
 reset test.role; reset test.uid;
 select probation_end_date - current_date > 60 as dilanjut, (select hr_decision from probation_reviews order by submitted_at desc limit 1) from employments where id = '00000000-0000-0000-0000-0000000000e5';
+
+\echo '=== O5: sejarah perubahan ==='
+set test.role='authenticated'; set test.uid='00000000-0000-0000-0000-00000000a002';
+select hr_update_employment('00000000-0000-0000-0000-0000000000e4', '{"department_id": null, "basic": "3500", "effective_from": "2026-12-01"}'::jsonb, 'web');
+insert into user_roles(person_id, company_id, role) values ('00000000-0000-0000-0000-000000000004','00000000-0000-0000-0000-0000000000c1','finance');
+select kind, field, old_value, new_value, actor from employment_history('00000000-0000-0000-0000-0000000000e4') where kind = 'change' order by field;
+set test.uid='00000000-0000-0000-0000-00000000a004';
+\set ON_ERROR_STOP 0
+select * from employment_history('00000000-0000-0000-0000-0000000000e4');
