@@ -126,3 +126,49 @@ export function HosDialog() {
     </div>
   );
 }
+
+// ---------------------------------------------------------------------
+//  Toast: mesej berjaya ringkas yang sama di semua skrin ("Disimpan.")
+// ---------------------------------------------------------------------
+type Toast = { id: number; teks: string; nada: "ok" | "ralat" };
+let toasts: Toast[] = [];
+const pendengarToast = new Set<() => void>();
+let seq = 0;
+
+export function beritahu(teks: string, nada: "ok" | "ralat" = "ok") {
+  const id = ++seq;
+  toasts = [...toasts, { id, teks, nada }];
+  pendengarToast.forEach((f) => f());
+  setTimeout(() => {
+    toasts = toasts.filter((t) => t.id !== id);
+    pendengarToast.forEach((f) => f());
+  }, 3500);
+}
+
+export function HosToast() {
+  const senarai = useSyncExternalStore(
+    (f) => {
+      pendengarToast.add(f);
+      return () => pendengarToast.delete(f);
+    },
+    () => toasts,
+    () => toasts,
+  );
+  if (!senarai.length) return null;
+  return (
+    <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-[96px] z-[80] flex flex-col items-center gap-2 px-4 lg:bottom-8">
+      {senarai.map((t) => (
+        <div
+          key={t.id}
+          role="status"
+          className={`pointer-events-auto flex max-w-[440px] items-center gap-2.5 rounded-[14px] px-4 py-3 text-sm font-semibold text-white shadow-lg ${t.nada === "ok" ? "bg-ink" : "bg-danger"}`}
+        >
+          <span aria-hidden="true" className={`flex size-5 shrink-0 items-center justify-center rounded-full text-xs ${t.nada === "ok" ? "bg-primary" : "bg-white/25"}`}>
+            {t.nada === "ok" ? "✓" : "!"}
+          </span>
+          {t.teks}
+        </div>
+      ))}
+    </div>
+  );
+}

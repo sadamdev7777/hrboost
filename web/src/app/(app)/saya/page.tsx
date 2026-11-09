@@ -54,7 +54,7 @@ export default function SayaPage() {
             {inisial(me.name)}
           </span>
           <div className="flex grow flex-col gap-0.5">
-            <span className="text-lg font-extrabold">{me.name}</span>
+            <h1 className="m-0 text-lg font-extrabold">{me.name}</h1>
             <span className="text-[13px] text-muted">
               {[emp?.position, emp?.employeeNo].filter(Boolean).join(" · ")}
             </span>

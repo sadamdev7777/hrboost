@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { todayISO } from "@/lib/format";
 import { pratontonGaji, setGajiPekerja, tambahKomponen, type Kiraan, type KomponenTetap } from "@/lib/gaji";
 import { ErrorBox } from "./ui";
+import { beritahu } from "./Dialog";
 import { ButangUtama, Lembaran, MedanBorang, inputKecil } from "./Senarai";
 
 /** Tarikh berkuat kuasa lalai: tarikh mula kerja jika gaji belum pernah ditetapkan, selainnya 1hb bulan ini. */
@@ -66,6 +67,7 @@ export function UbahGaji({
     setBusy(true);
     try {
       await setGajiPekerja(employmentId, out, mulai);
+      beritahu(`Gaji ${nama} disimpan.`);
       onDone();
     } catch (e) {
       setRalat(e instanceof Error ? e.message : "Ralat");
@@ -117,6 +119,7 @@ export function KomponenBaharu({ companyId, onClose, onDone }: { companyId: stri
     setBusy(true);
     try {
       await tambahKomponen(companyId, nama.trim(), jenis, epf, socso, cukai);
+      beritahu(`${nama.trim()} ditambah.`);
       onDone();
     } catch (e) {
       setRalat(e instanceof Error ? e.message : "Ralat");

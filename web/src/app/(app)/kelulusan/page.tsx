@@ -1,5 +1,6 @@
 "use client";
 
+import { beritahu } from "@/components/Dialog";
 import Link from "next/link";
 import { useState } from "react";
 import { useMe, type Me } from "@/lib/me";
@@ -59,6 +60,7 @@ export default function KelulusanPage() {
     setBusy(null);
     setRejecting(null);
     if (err) setError(err.message);
+    else beritahu(action === "approve" ? "Diluluskan." : "Ditolak. Pemohon dimaklumkan.");
     if (pilih === taskId) setPilih(null);
     tasks.reload();
   }
@@ -76,6 +78,7 @@ export default function KelulusanPage() {
     setTanda(new Set());
     setPilih(null);
     if (gagal.length) setError(`${ids.length - gagal.length} diluluskan. Tidak berjaya: ${gagal.join("; ")}`);
+    else beritahu(`${ids.length} permohonan diluluskan.`);
     tasks.reload();
   }
 
@@ -130,7 +133,16 @@ export default function KelulusanPage() {
             )}
             {tasks.error && <ErrorBox message={tasks.error} />}
             {tasks.loading && !tasks.data && <Loading />}
-            {tasks.data && list.length === 0 && <Empty>Tiada permohonan menunggu kelulusan anda.</Empty>}
+            {tasks.data && list.length === 0 && (
+              <Empty>
+                Tiada permohonan menunggu kelulusan anda.
+                {!me.isHead && !me.roles.some((r) => ["hr", "finance", "ceo", "admin"].includes(r)) && (
+                  <span className="mt-1 block text-xs">
+                    Permohonan akan muncul di sini jika anda dilantik sebagai ketua jabatan atau wakil kelulusan. Permohonan anda sendiri ada di tab &ldquo;Permohonan Saya&rdquo;.
+                  </span>
+                )}
+              </Empty>
+            )}
 
             {lebar && shown.length > 0 ? (
               <div className="grid grid-cols-[minmax(0,400px)_minmax(0,1fr)] items-start gap-5">

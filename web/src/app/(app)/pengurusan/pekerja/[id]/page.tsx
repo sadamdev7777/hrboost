@@ -60,6 +60,7 @@ function Profil() {
     <Screen>
       <BackHeader title={p.data ? "" : ""} href="/pengurusan/pekerja" />
       {p.data && <KepalaPekerja p={p.data} />}
+      {p.data && <RingkasanPekerja id={id} grace={me.active!.graceMinutes} />}
       <div role="tablist" className="flex gap-0.5 overflow-x-auto border-b border-line-soft px-3 lg:px-0">
         {TABS.map((t) => (
           <button
@@ -333,6 +334,46 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
           }}
         />
       )}
+    </div>
+  );
+}
+
+function KadRingkas({ l, v, s, tone }: { l: string; v: string; s?: string; tone?: string }) {
+  return (
+    <div className="flex min-w-[130px] shrink-0 flex-col gap-0.5 rounded-[14px] bg-surface px-3.5 py-2.5 lg:min-w-0">
+      <span className="text-[11px] font-semibold text-muted">{l}</span>
+      <b className={`text-lg font-extrabold ${tone ?? ""}`}>{v}</b>
+      {s && <span className="text-[11px] text-muted">{s}</span>}
+    </div>
+  );
+}
+
+/** Ringkasan pantas: baki cuti tahunan, kehadiran bulan ini, tuntutan menunggu. */
+function RingkasanPekerja({ id, grace }: { id: string; grace: number }) {
+  const t = todayISO();
+  const d = useData(async () => {
+    const sb = getSupabase();
+    const [baki, hadir, tuntut] = await Promise.all([
+      sb.from("leave_balances").select("available, leave_types!inner(code)").eq("employment_id", id).eq("year", Number(t.slice(0, 4))).eq("leave_types.code", "AL").maybeSingle(),
+      sb.from("attendance_records").select("late_minutes, clock_in").eq("employment_id", id).gte("work_date", `${t.slice(0, 7)}-01`),
+      sb.from("claims").select("total_amount").eq("employment_id", id).eq("status", "pending"),
+    ]);
+    const rekod = hadir.data ?? [];
+    return {
+      baki: baki.data ? Number(baki.data.available) : null,
+      hadir: rekod.filter((r) => r.clock_in).length,
+      lewat: rekod.filter((r) => r.late_minutes > grace).length,
+      tuntutan: (tuntut.data ?? []).length,
+      jumlah: (tuntut.data ?? []).reduce((a, c) => a + Number(c.total_amount ?? 0), 0),
+    };
+  }, [id]);
+  const x = d.data;
+  if (!x) return null;
+  return (
+    <div className="-mx-0 flex gap-2 overflow-x-auto px-4 pb-3 lg:grid lg:max-w-[760px] lg:grid-cols-3 lg:overflow-visible lg:px-0">
+      <KadRingkas l="Baki cuti tahunan" v={x.baki === null ? "—" : `${hari(x.baki)} hari`} />
+      <KadRingkas l="Hadir bulan ini" v={`${x.hadir} hari`} s={x.lewat ? `${x.lewat} kali lewat` : undefined} tone={x.lewat ? "text-warning" : ""} />
+      <KadRingkas l="Tuntutan menunggu" v={String(x.tuntutan)} s={x.tuntutan ? ringgit(x.jumlah) : undefined} />
     </div>
   );
 }

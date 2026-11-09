@@ -5,7 +5,8 @@ import { useMe, type Me } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { kehadiranDisambung } from "@/lib/kehadiran";
 import { getBaki, getKehadiranMinggu, type Baki, getPermohonanSaya, kiniDi, paparPermohonan } from "@/lib/data";
-import { hari, hariPendek, masaRingkas, todayISO } from "@/lib/format";
+import { addDays, hari, hariPendek, hariTarikh, masaRingkas, todayISO } from "@/lib/format";
+import { getSupabase } from "@/lib/supabase";
 import { IconCalendar, IconClock, IconReceipt } from "@/components/icons";
 import { Greeting } from "@/components/Greeting";
 import { OrientasiBanner } from "@/components/OrientasiBanner";
@@ -29,6 +30,12 @@ function StaffUtama({ me }: { me: Me }) {
   const baki = useData(() => (emp ? getBaki(emp) : Promise.resolve({} as Record<string, Baki>)), [emp?.id]);
   const mohon = useData(() => getPermohonanSaya(2), [emp?.id]);
   const hadir = useData(() => (emp ? getKehadiranMinggu(emp) : Promise.resolve([])), [emp?.id]);
+  const cutiUmum = useData(async () => {
+    if (!emp) return null;
+    const t = todayISO();
+    const { data } = await getSupabase().rpc("company_holidays", { p_company: emp.companyId, p_from: t, p_to: addDays(t, 120) });
+    return ((data ?? []) as { holiday_date: string; name: string }[]).sort((a, b) => a.holiday_date.localeCompare(b.holiday_date))[0] ?? null;
+  }, [emp?.companyId]);
   const sambung = useData(() => (emp ? kehadiranDisambung(emp.companyId) : Promise.resolve(false)), [emp?.companyId]);
 
   const al = baki.data?.AL;
@@ -45,7 +52,7 @@ function StaffUtama({ me }: { me: Me }) {
       {!emp && <ErrorBox message="Tiada pekerjaan aktif ditemui untuk akaun ini. Sila hubungi HR." />}
 
       <div className="flex flex-col gap-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
-        <div className="flex flex-col gap-5">
+        <div className="contents lg:flex lg:flex-col lg:gap-5">
           <section className="flex flex-col gap-3 rounded-[20px] bg-primary p-5 text-white">
             <div className="flex items-start justify-between">
               <div className="flex flex-col gap-1">
@@ -75,8 +82,20 @@ function StaffUtama({ me }: { me: Me }) {
             <QuickAction href="/tuntutan/baru" label="Buat Tuntutan" icon={<IconReceipt size={22} />} />
             <QuickAction href="/kehadiran/betulkan" label="Betulkan Masa" icon={<IconClock size={22} />} />
           </div>
+          {cutiUmum.data && (
+            <div className="flex items-center gap-3 rounded-card bg-surface px-4 py-3 text-sm">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#FDECEA] text-[#B42318]">
+                <IconCalendar size={18} />
+              </span>
+              <span className="flex grow flex-col">
+                <span className="text-xs text-muted">Cuti umum seterusnya</span>
+                <b className="font-bold">{cutiUmum.data.name}</b>
+              </span>
+              <span className="text-[13px] font-semibold text-subtle">{hariTarikh(cutiUmum.data.holiday_date)}</span>
+            </div>
+          )}
           {emp && sambung.data === true && (
-            <section className="flex flex-col gap-3 rounded-card bg-surface px-4 py-3">
+            <section className="order-2 flex flex-col gap-3 rounded-card bg-surface px-4 py-3 lg:order-none">
               <div className="flex items-center justify-between">
                 <h2 className="m-0 text-base font-extrabold">Kehadiran minggu ini</h2>
                 <span className="text-xs text-muted">Waktu masuk {emp.workStart.replace(/^0/, "")}</span>
@@ -103,7 +122,7 @@ function StaffUtama({ me }: { me: Me }) {
             </section>
           )}
         </div>
-          <section className="flex flex-col gap-2.5">
+          <section className="order-1 flex flex-col gap-2.5 lg:order-none">
             <div className="flex items-center justify-between">
               <h2 className="m-0 text-base font-extrabold">Permohonan saya</h2>
               <Link href="/permohonan" className="text-[13px] font-bold">

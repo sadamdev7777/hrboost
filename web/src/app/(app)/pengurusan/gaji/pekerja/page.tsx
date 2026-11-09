@@ -1,5 +1,6 @@
 "use client";
 
+import { beritahu } from "@/components/Dialog";
 import Link from "next/link";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -440,6 +441,7 @@ function JadualPukal({ j, rows, onBatal, onSiap }: { j: JadualGaji; rows: BarisG
     }
     setBusy(false);
     if (gagal.length) return setRalat([`${n} pekerja disimpan. Tidak berjaya:`, ...gagal]);
+    beritahu(`Gaji ${n} pekerja dikemas kini.`);
     onSiap();
   }
 

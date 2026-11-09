@@ -1,12 +1,13 @@
 "use client";
 
+import { beritahu } from "@/components/Dialog";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { getBaki } from "@/lib/data";
-import { addDays, dow, hari, hariTarikh, masaTeks, namaPeringkat, tarikh, todayISO } from "@/lib/format";
+import { addDays, dow, hari, hariTarikh, julatTarikh, masaTeks, namaPeringkat, tarikh, todayISO } from "@/lib/format";
 import { IconChevronRight } from "@/components/icons";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
 import { muatNaikPeribadi } from "@/lib/upload";
@@ -30,6 +31,11 @@ export default function MohonCutiPage() {
   const [code, setCode] = useState<string>("AL");
   const [start, setStart] = useState(todayISO());
   const [end, setEnd] = useState(todayISO());
+  // Rakan sejabatan yang bercuti (atau sedang memohon) pada tarikh yang sama
+  const rakan = useData(async () => {
+    const { data } = await getSupabase().rpc("team_leave_calendar", { p_company: emp.companyId, p_from: start, p_to: end });
+    return ((data ?? []) as { name: string; start_date: string; end_date: string; status: string; is_me: boolean }[]).filter((r) => !r.is_me);
+  }, [emp.companyId, start, end]);
   const [coverPick, setCover] = useState<string | null>(null); // null = belum dipilih (guna lalai)
   const [reason, setReason] = useState("");
   const [sijil, setSijil] = useState<File | null>(null);
@@ -99,6 +105,7 @@ export default function MohonCutiPage() {
       setError(err.message);
       return;
     }
+    beritahu(info.data?.steps[0] ? `Permohonan dihantar kepada ${info.data.steps[0].label}.` : "Permohonan dihantar.");
     router.push("/permohonan");
   }
 
@@ -148,6 +155,17 @@ export default function MohonCutiPage() {
           <DateField label="Dari" value={start} onChange={(v) => { setStart(v); if (end < v) setEnd(v); }} />
           <DateField label="Hingga" value={end} min={start} onChange={setEnd} />
         </div>
+
+        {rakan.data && (
+          <div className={`flex items-start gap-2 rounded-[12px] px-3.5 py-2.5 text-[13px] ${rakan.data.length ? "bg-warning-soft text-warning" : "bg-surface text-subtle"}`}>
+            <span aria-hidden="true" className="pt-px">{rakan.data.length ? "!" : "✓"}</span>
+            <span>
+              {rakan.data.length
+                ? `Rakan sejabatan bercuti pada tarikh ini: ${rakan.data.map((r) => `${r.name} (${julatTarikh(r.start_date, r.end_date)}${r.status === "pending" ? ", menunggu" : ""})`).join(", ")}.`
+                : "Tiada rakan sejabatan bercuti pada tarikh ini."}
+            </span>
+          </div>
+        )}
 
         <div className="flex flex-col gap-1.5 rounded-card bg-primary-soft px-4 py-3">
           <div className="flex items-baseline justify-between">

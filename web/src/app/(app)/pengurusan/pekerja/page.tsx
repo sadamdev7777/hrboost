@@ -5,10 +5,14 @@ import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import {
+  getJabatan,
   getSenaraiPekerja,
+  jemputPekerja,
+  kemasKiniPekerjaan,
   LABEL_PERANAN,
   type PekerjaRingkas,
 } from "@/lib/hr";
+import { beritahu } from "@/components/Dialog";
 import { inisial } from "@/lib/format";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar, TabNav } from "@/components/TabNav";
@@ -170,7 +174,7 @@ function Senarai() {
           <span className="text-sm text-muted">Tiada pekerja sepadan.</span>
         )}
 
-        {lebar && tapisan.length > 0 && <JadualPekerja ppl={tapisan} />}
+        {lebar && tapisan.length > 0 && <JadualPekerja ppl={tapisan} boleh={boleh} onUbah={list.reload} />}
 
         {!lebar &&
           [...kumpulan.entries()].map(([jab, ppl]) => (
@@ -261,16 +265,94 @@ function Kepala({ k, label, isih, setIsih }: { k: Lajur; label: string; isih: Is
   );
 }
 
-function JadualPekerja({ ppl: asal }: { ppl: PekerjaRingkas[] }) {
+function JadualPekerja({ ppl: asal, boleh, onUbah }: { ppl: PekerjaRingkas[]; boleh: boolean; onUbah: () => void }) {
   const router = useRouter();
+  const me = useMe();
+  const [tanda, setTanda] = useState<Set<string>>(new Set());
+  const [busy, setBusy] = useState(false);
+  const [jabBaru, setJabBaru] = useState("");
+  const jab = useData(() => (boleh ? getJabatan(me.active!.companyId) : Promise.resolve([])), [boleh, me.active!.companyId]);
+  const dipilih = asal.filter((p) => tanda.has(p.id));
+  const togol = (id: string, on: boolean) => {
+    const n = new Set(tanda);
+    if (on) n.add(id);
+    else n.delete(id);
+    setTanda(n);
+  };
+  async function pukal(kerja: (p: PekerjaRingkas) => Promise<unknown>, sasaran: PekerjaRingkas[], mesej: string) {
+    setBusy(true);
+    let ok = 0;
+    const gagal: string[] = [];
+    for (const p of sasaran) {
+      try {
+        await kerja(p);
+        ok++;
+      } catch (e) {
+        gagal.push(`${p.name}: ${e instanceof Error ? e.message : "Ralat"}`);
+      }
+    }
+    setBusy(false);
+    setTanda(new Set());
+    if (gagal.length) beritahu(`${ok} berjaya. Tidak berjaya: ${gagal.join("; ")}`, "ralat");
+    else beritahu(mesej.replace("{n}", String(ok)));
+    onUbah();
+  }
   const [isih, setIsih] = useState<Isih>({ k: "employeeNo", naik: true });
   const nilai = (p: PekerjaRingkas, k: Lajur) => (k === "status" ? STATUS_TEKS(p) : k === "position" ? (p.isHead ? "Ketua Jabatan" : (p.position ?? "")) : ((p[k] as string | null) ?? ""));
   const ppl = [...asal].sort((a, b) => nilai(a, isih.k).localeCompare(nilai(b, isih.k), "ms") * (isih.naik ? 1 : -1));
+  const belumAktif = dipilih.filter((p) => !p.activated);
   return (
+    <div className="flex flex-col gap-2">
+    {boleh && dipilih.length > 0 && (
+      <div className="flex flex-wrap items-center gap-2 rounded-[14px] bg-[#E3F1EE] px-4 py-2.5 text-sm">
+        <b className="text-primary">{dipilih.length} dipilih</b>
+        <span className="grow" />
+        <select aria-label="Jabatan baharu" value={jabBaru} onChange={(e) => setJabBaru(e.target.value)} className="h-9 rounded-full border border-line bg-surface px-3 text-[13px] font-bold">
+          <option value="">Pindah ke jabatan…</option>
+          {(jab.data ?? []).map((j) => (
+            <option key={j.id} value={j.id}>
+              {j.name}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          disabled={!jabBaru || busy}
+          onClick={() => pukal((p) => kemasKiniPekerjaan(p.id, { department_id: jabBaru }), dipilih, "{n} pekerja dipindahkan.")}
+          className="h-9 rounded-full bg-primary px-4 text-[13px] font-bold text-white disabled:opacity-40"
+        >
+          Pindah
+        </button>
+        {belumAktif.length > 0 && (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => pukal((p) => jemputPekerja(p.id), belumAktif, "Jemputan dihantar semula kepada {n} pekerja.")}
+            className="h-9 rounded-full border border-primary bg-surface px-4 text-[13px] font-bold text-primary disabled:opacity-40"
+          >
+            Hantar semula jemputan ({belumAktif.length})
+          </button>
+        )}
+        <button type="button" onClick={() => setTanda(new Set())} className="h-9 px-2 text-[13px] font-bold text-muted">
+          Batal
+        </button>
+      </div>
+    )}
     <div className="overflow-hidden rounded-card bg-surface">
       <table className="w-full border-collapse text-left text-sm">
         <thead>
           <tr className="border-b border-[#EEF2F1] text-xs font-bold tracking-[0.03em] text-muted">
+            {boleh && (
+              <th className="w-10 pl-4">
+                <input
+                  type="checkbox"
+                  aria-label="Pilih semua pekerja"
+                  className="size-[18px] accent-primary"
+                  checked={ppl.length > 0 && ppl.every((p) => tanda.has(p.id))}
+                  onChange={(e) => setTanda(e.target.checked ? new Set(ppl.map((p) => p.id)) : new Set())}
+                />
+              </th>
+            )}
             <Kepala isih={isih} setIsih={setIsih} k="name" label="NAMA" />
             <Kepala isih={isih} setIsih={setIsih} k="employeeNo" label="NO. PEKERJA" />
             <Kepala isih={isih} setIsih={setIsih} k="department" label="JABATAN" />
@@ -284,8 +366,13 @@ function JadualPekerja({ ppl: asal }: { ppl: PekerjaRingkas[] }) {
             <tr
               key={p.id}
               onClick={() => router.push(`/pengurusan/pekerja/${p.id}`)}
-              className="cursor-pointer border-b border-[#EEF2F1] last:border-0 hover:bg-[#F7F9F8]"
+              className={`cursor-pointer border-b border-[#EEF2F1] last:border-0 hover:bg-[#F7F9F8] ${tanda.has(p.id) ? "bg-[#F2F8F7]" : ""}`}
             >
+              {boleh && (
+                <td className="pl-4" onClick={(e) => e.stopPropagation()}>
+                  <input type="checkbox" aria-label={`Pilih ${p.name}`} className="size-[18px] accent-primary" checked={tanda.has(p.id)} onChange={(e) => togol(p.id, e.target.checked)} />
+                </td>
+              )}
               <td className="px-4 py-2.5">
                 <Link
                   href={`/pengurusan/pekerja/${p.id}`}
@@ -324,6 +411,7 @@ function JadualPekerja({ ppl: asal }: { ppl: PekerjaRingkas[] }) {
           ))}
         </tbody>
       </table>
+    </div>
     </div>
   );
 }

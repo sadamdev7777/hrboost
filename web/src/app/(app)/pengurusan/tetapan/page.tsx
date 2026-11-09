@@ -1,6 +1,7 @@
 "use client";
 
-import { useMe } from "@/lib/me";
+import { hasRole, useMe } from "@/lib/me";
+import { useState } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { BackHeader, ErrorBox, Screen } from "@/components/ui";
@@ -32,6 +33,23 @@ export default function TetapanPage() {
   );
 }
 
+const SEMUA_TETAPAN: { label: string; href: string; kata: string; roles?: ("hr" | "finance" | "ceo" | "admin")[] }[] = [
+  { label: "Profil Syarikat", href: "/pengurusan/tetapan/syarikat", kata: "syarikat ssm alamat no majikan kwsp perkeso lhdn hrdf logo" },
+  { label: "Waktu Kerja", href: "/pengurusan/tetapan/syarikat#waktu", kata: "waktu kerja masuk keluar lewat kelonggaran hujung minggu" },
+  { label: "Jabatan & Ketua", href: "/pengurusan/tetapan/jabatan", kata: "jabatan ketua department", roles: ["hr", "admin"] },
+  { label: "Pengguna & Peranan", href: "/pengurusan/tetapan/pengguna", kata: "pengguna peranan hr kewangan ceo pentadbir akses", roles: ["hr", "admin"] },
+  { label: "Aliran Kelulusan", href: "/pengurusan/tetapan/aliran", kata: "aliran kelulusan peringkat pelulus ketua", roles: ["hr", "admin"] },
+  { label: "Wakil Kelulusan", href: "/pengurusan/tetapan/wakil", kata: "wakil delegasi bercuti pelulus", roles: ["hr", "admin"] },
+  { label: "Automasi WhatsApp", href: "/pengurusan/tetapan/automasi", kata: "automasi whatsapp mesej notifikasi peringatan", roles: ["hr", "admin"] },
+  { label: "Jenis & Kelayakan Cuti", href: "/pengurusan/tetapan/cuti", kata: "cuti tahunan sakit mc kelayakan bawa ke hadapan", roles: ["hr", "admin"] },
+  { label: "Cuti Umum", href: "/pengurusan/tetapan/cuti-umum", kata: "cuti umum public holiday negeri", roles: ["hr", "admin"] },
+  { label: "Jenis Tuntutan & Had", href: "/pengurusan/tetapan/tuntutan", kata: "tuntutan claim had perbatuan makan resit", roles: ["hr", "finance", "admin"] },
+  { label: "Kadar Berkanun", href: "/pengurusan/tetapan/kadar", kata: "kwsp perkeso sip eis pcb hrdf kadar caruman" },
+  { label: "Integrasi Akaun", href: "/pengurusan/tetapan/akaun", kata: "quickbooks perakaunan akaun jurnal", roles: ["finance", "admin"] },
+  { label: "Pengetahuan AI", href: "/pengurusan/tetapan/pengetahuan-ai", kata: "ai buku panduan polisi dokumen pembantu", roles: ["hr", "admin"] },
+  { label: "Integrasi Kehadiran", href: "/pengurusan/tetapan/kehadiran", kata: "kehadiran crosschex mesin punch", roles: ["hr", "admin"] },
+];
+
 function Menu() {
   const me = useMe();
   const emp = me.active!;
@@ -44,6 +62,9 @@ function Menu() {
     [emp.companyId],
   );
   const x = r.data;
+  const [cari, setCari] = useState("");
+  const q = cari.trim().toLowerCase();
+  const hasil = q ? SEMUA_TETAPAN.filter((t) => (!t.roles || hasRole(me, t.roles)) && (t.label.toLowerCase().includes(q) || t.kata.includes(q))) : [];
   const em = (t: string | number | undefined | null) => (t === undefined || t === null || t === "" ? undefined : <em className="text-[13px] font-semibold text-muted not-italic">{t}</em>);
 
   return (
@@ -55,7 +76,25 @@ function Menu() {
       />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
         {r.error && <ErrorBox message={r.error} />}
-<div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6 lg:gap-y-5">
+        <label className="flex h-12 items-center gap-2.5 rounded-[14px] bg-surface px-3.5 lg:max-w-[420px]">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B6B68" strokeWidth="2" strokeLinecap="round">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-3.5-3.5" />
+          </svg>
+          <span className="sr-only">Cari tetapan</span>
+          <input type="search" value={cari} onChange={(e) => setCari(e.target.value)} placeholder="Cari tetapan: cuti umum, KWSP, ketua…" className="h-full grow bg-transparent text-sm outline-none" />
+        </label>
+        {q && (
+          <Kotak>
+            {hasil.length === 0 && <span className="py-3 text-sm text-muted">Tiada tetapan sepadan dengan &ldquo;{cari}&rdquo;.</span>}
+            {hasil.map((t) => (
+              <BarisPautan key={t.href} href={t.href}>
+                {t.label}
+              </BarisPautan>
+            ))}
+          </Kotak>
+        )}
+<div className={`flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6 lg:gap-y-5 ${q ? "hidden!" : ""}`}>
 <div className="flex flex-col gap-2.5">
         <Seksyen>SYARIKAT &amp; PEKERJA</Seksyen>
         <Kotak>

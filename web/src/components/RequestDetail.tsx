@@ -1,6 +1,6 @@
 "use client";
 
-import { sahkan } from "@/components/Dialog";
+import { beritahu, sahkan } from "@/components/Dialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -80,6 +80,7 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
       return;
     }
     setSheet(null);
+    beritahu(action === "approve" ? "Diluluskan." : action === "reject" ? "Ditolak. Pemohon dimaklumkan." : "Dikembalikan kepada pemohon untuk pembetulan.");
     if (tertanam) tertanam.onSelesai();
     else router.push("/kelulusan");
   }

@@ -32,7 +32,14 @@ export default function GajiPage() {
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         {senarai.error && <ErrorBox message={senarai.error} />}
         {senarai.loading && !senarai.data && <Loading />}
-        {senarai.data && list.length === 0 && <span className="text-sm text-muted">Belum ada slip gaji untuk {emp.companyCode}.</span>}
+        {senarai.data && list.length === 0 && (
+          <div className="flex flex-col gap-1.5 rounded-card bg-surface px-4 py-4">
+            <b className="text-sm">Belum ada slip gaji</b>
+            <span className="text-[13px] leading-normal text-subtle">
+              Slip gaji anda akan muncul di sini — dan dihantar ke WhatsApp — sebaik sahaja gaji bulanan {emp.companyCode} diluluskan dan dibayar oleh HR.
+            </span>
+          </div>
+        )}
         {list.length > 0 && (
           <div className="flex gap-2 overflow-x-auto pb-1">
             {list.slice(0, 6).map((x, i) => (

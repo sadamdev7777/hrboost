@@ -1,5 +1,6 @@
 "use client";
 
+import { beritahu } from "@/components/Dialog";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type ReactNode } from "react";
 import { useMe, useMeContext } from "@/lib/me";
@@ -73,6 +74,7 @@ function Borang({ profil }: { profil: Profil }) {
       await simpanProfil({ ...f, children_count: f.children_count.trim() });
       if (bank && akaun.trim()) await mohonTukarBank(bank, akaun);
       ctx.reload();
+      beritahu("Profil dikemas kini.");
       router.replace("/profil");
     } catch (e) {
       setRalat(e instanceof Error ? e.message : "Ralat");

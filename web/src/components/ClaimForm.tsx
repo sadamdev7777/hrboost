@@ -1,5 +1,6 @@
 "use client";
 
+import { beritahu } from "@/components/Dialog";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useMe } from "@/lib/me";
@@ -90,6 +91,7 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
         claimId,
       );
       if (hantar) await hantarTuntutan(id);
+      beritahu(hantar ? "Tuntutan dihantar untuk kelulusan." : "Draf tuntutan disimpan.");
       router.push("/tuntutan");
     } catch (e) {
       setError((e as Error).message);
@@ -102,6 +104,7 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
     setBusy("padam");
     try {
       await padamDraf(claimId);
+      beritahu("Draf dipadam.");
       router.push("/tuntutan");
     } catch (e) {
       setError((e as Error).message);

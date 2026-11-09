@@ -4,6 +4,7 @@ import { useState } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { must } from "@/lib/useData";
 import { ErrorBox } from "./ui";
+import { beritahu } from "./Dialog";
 import { ButangUtama, Lembaran, MedanBorang, inputKecil } from "./Senarai";
 
 type Orang = { personId: string; name: string; departmentId: string | null; employeeNo: string };
@@ -36,6 +37,7 @@ export function PilihKetua({
     setRalat(null);
     try {
       must(await getSupabase().rpc("set_department_head", { p_department: jabatan.id, p_person: orang || (null as unknown as string) }));
+      beritahu(orang ? `Ketua ${jabatan.name} ditetapkan.` : `Ketua ${jabatan.name} dibuang.`);
       onDone();
     } catch (e) {
       setRalat(ralatJabatan(e));
@@ -88,6 +90,7 @@ export function BorangJabatan({
       const sb = getSupabase();
       if (jabatan) must(await sb.from("departments").update({ name: n }).eq("id", jabatan.id));
       else must(await sb.from("departments").insert({ company_id: cid, name: n }));
+      beritahu(jabatan ? "Nama jabatan dikemas kini." : `Jabatan ${n} ditambah.`);
       onDone();
     } catch (e) {
       setRalat(ralatJabatan(e));
@@ -111,6 +114,7 @@ export function BorangJabatan({
 export async function padamJabatan(id: string): Promise<string | null> {
   try {
     must(await getSupabase().from("departments").delete().eq("id", id));
+    beritahu("Jabatan dipadam.");
     return null;
   } catch (e) {
     return ralatJabatan(e);

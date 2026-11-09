@@ -1,5 +1,6 @@
 "use client";
 
+import { beritahu } from "@/components/Dialog";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useMe } from "@/lib/me";
@@ -68,6 +69,7 @@ function Betulkan() {
     setBusy(true);
     try {
       await hantarPembetulan(emp.id, tarikh, i, o, ket.trim() ? `${label}: ${ket.trim()}` : label);
+      beritahu("Pembetulan masa dihantar kepada ketua.");
       router.replace("/kehadiran");
     } catch (e) {
       setRalat(e instanceof Error ? e.message : "Ralat");
