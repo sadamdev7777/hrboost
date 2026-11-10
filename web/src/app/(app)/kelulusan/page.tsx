@@ -3,7 +3,8 @@
 import { tr, trTajuk } from "@/lib/i18n";
 import { beritahu } from "@/components/Dialog";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { hasRole, useMe, type Me } from "@/lib/me";
 import { getPermohonanSyarikat, ingatkanPelulus } from "@/lib/modul";
 import { getSupabase } from "@/lib/supabase";
@@ -30,11 +31,22 @@ const FILTER_LABEL: Record<Exclude<Filter, "all">, string> = {
 const ROLE_LABEL: Record<string, string> = { hr: "HR", ceo: "CEO", finance: tr("Kewangan"), admin: tr("Pentadbir") };
 
 export default function KelulusanPage() {
-  const me = useMe();
-  // ?tab=syarikat (pautan dari Papan Pemuka: permohonan tersangkut)
-  const [tab, setTab] = useState<"pending" | "history" | "syarikat">(() =>
-    typeof window !== "undefined" && new URLSearchParams(window.location.search).get("tab") === "syarikat" ? "syarikat" : "pending",
+  return (
+    <Suspense fallback={null}>
+      <DenganParam />
+    </Suspense>
   );
+}
+
+/** ?tab=syarikat (pautan dari Papan Pemuka: permohonan tersangkut). */
+function DenganParam() {
+  const tabAwal = useSearchParams().get("tab") === "syarikat" ? "syarikat" : "pending";
+  return <Kelulusan key={tabAwal} tabAwal={tabAwal} />;
+}
+
+function Kelulusan({ tabAwal }: { tabAwal: "pending" | "syarikat" }) {
+  const me = useMe();
+  const [tab, setTab] = useState<"pending" | "history" | "syarikat">(tabAwal);
   const pantau = !!me.active && hasRole(me, ["hr", "ceo", "admin"]);
   const [filter, setFilter] = useState<Filter>("all");
   const [rejecting, setRejecting] = useState<string | null>(null);

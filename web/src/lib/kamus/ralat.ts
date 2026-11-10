@@ -300,4 +300,8 @@ export const RALAT: Record<string, string> = {
   "Hari Keputeraan Sultan Selangor": "Birthday of the Sultan of Selangor",
   "% memerlukan dokumen sokongan": "% requires a supporting document",
   "% tidak boleh dimohon untuk tarikh lepas": "% cannot be applied for past dates",
+  "Nama panggilan mesti 2 hingga 30 aksara: %": "Preferred name must be 2 to 30 characters: %",
+  "Borang EA hanya boleh dikeluarkan selepas tahun berakhir": "Form EA can only be issued after the year has ended",
+  "Peringatan telah dihantar dalam 2 jam yang lalu": "A reminder was already sent in the last 2 hours",
+  "Permohonan ini tidak lagi menunggu kelulusan": "This request is no longer awaiting approval",
 };

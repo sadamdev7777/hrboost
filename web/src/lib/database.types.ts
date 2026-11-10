@@ -827,6 +827,32 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"ea_releases": {
+                  Row: {
+                    "company_id": string,"released_at": string,"released_by": string | null,"year": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "company_id": string,"released_at"?: string,"released_by"?: string | null,"year": number
+                  }
+                  Update: {
+                    "company_id"?: string,"released_at"?: string,"released_by"?: string | null,"year"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "ea_releases_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "ea_releases_released_by_fkey"
+      columns: ["released_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"emergency_contacts": {
                   Row: {
                     "id": string,"name": string,"person_id": string,"phone": string,"relationship": string | null
@@ -2152,6 +2178,12 @@ isOneToOne: false
 "decide_probation":
 { Args: { "p_decision": string,"p_employment": string,"p_months"?: number }; Returns: undefined
                            },
+"ea_company_header":
+{ Args: { "p_company": string,"p_year": number }; Returns: Json
+                           },
+"ea_compute":
+{ Args: { "p_company": string,"p_employment"?: string,"p_year": number }; Returns: Json
+                           },
 "emit_event":
 { Args: { "p_company": string,"p_employment": string,"p_payload": Json,"p_person": string,"p_type": string }; Returns: number
                            },
@@ -2252,6 +2284,12 @@ isOneToOne: false
 "hr_dashboard_extra":
 { Args: { "p_company": string }; Returns: Json
                            },
+"hr_ea":
+{ Args: { "p_company": string,"p_year": number }; Returns: Json
+                           },
+"hr_ea_release":
+{ Args: { "p_company": string,"p_year": number }; Returns: number
+                           },
 "hr_expiring":
 { Args: { "p_company": string,"p_days"?: number }; Returns: {
               "days_left": number,"employment_id": string,"expiry": string,"kind": string,"name": string,"text": string
@@ -2287,6 +2325,11 @@ isOneToOne: false
 "hr_pending_requests":
 { Args: { "p_company": string }; Returns: Json
                            },
+"hr_preferred_names":
+{ Args: { "p_company": string }; Returns: {
+              "activated": boolean,"department": string,"employee_no": string,"employment_id": string,"full_name": string,"preferred_name": string
+            }[]
+                           },
 "hr_question_list":
 { Args: { "p_company": string,"p_mine"?: boolean }; Returns: {
               "ai_answer": string,"answer": string,"answered_at": string,"answered_by_name": string,"created_at": string,"employment_id": string,"id": string,"name": string,"question": string,"status": string
@@ -2308,6 +2351,9 @@ isOneToOne: false
                            },
 "hr_set_pay":
 { Args: { "p_effective_from": string,"p_employment": string,"p_items": Json,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
+                           },
+"hr_set_preferred_names":
+{ Args: { "p_company": string,"p_items": Json }; Returns: number
                            },
 "hr_todo":
 { Args: { "p_company": string }; Returns: Json
@@ -2448,6 +2494,9 @@ isOneToOne: false
                            },
 "my_daily_digest_preview":
 { Args: { "p_company": string }; Returns: string
+                           },
+"my_ea":
+{ Args: { "p_employment": string,"p_year": number }; Returns: Json
                            },
 "my_login_status":
 { Args: Record<PropertyKey, never>; Returns: Json

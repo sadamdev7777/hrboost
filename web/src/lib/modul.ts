@@ -154,6 +154,7 @@ export type TugasanHr = {
   flexible_pending: number | null;
   stuck: number | null;
   pending_all: number | null;
+  no_nickname: number | null;
 };
 export async function getTugasanHr(companyId: string): Promise<TugasanHr> {
   const r = must(await getSupabase().rpc("hr_todo", { p_company: companyId })) as unknown as TugasanHr;

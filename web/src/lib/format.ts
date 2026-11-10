@@ -5,6 +5,7 @@ import { tr, trRalat, trKonteks, bahasa } from "@/lib/i18n";
 export const TZ = "Asia/Kuala_Lumpur";
 
 const BULAN = [tr("Jan"), tr("Feb"), tr("Mac"), tr("Apr"), tr("Mei"), tr("Jun"), tr("Jul"), tr("Ogo"), tr("Sep"), tr("Okt"), tr("Nov"), tr("Dis")];
+const BULAN_PENUH_F = [tr("Januari"), tr("Februari"), trKonteks("Mac", "March"), tr("April"), trKonteks("Mei", "May"), trKonteks("Jun", "June"), tr("Julai"), tr("Ogos"), tr("September"), tr("Oktober"), tr("November"), tr("Disember")];
 const HARI = [tr("Ahd"), tr("Isn"), tr("Sel"), tr("Rab"), tr("Kha"), tr("Jum"), tr("Sab")];
 
 /** Bahagian tarikh tempatan (Malaysia) bagi satu timestamp. */
@@ -57,6 +58,12 @@ function ymd(iso: string) {
 export function tarikh(iso: string): string {
   const { m, d } = ymd(iso);
   return `${d} ${BULAN[m - 1]}`;
+}
+
+/** "23 Disember 2026" (dokumen rasmi). */
+export function tarikhPenuh(iso: string): string {
+  const { y, m, d } = ymd(iso);
+  return `${d} ${BULAN_PENUH_F[m - 1]} ${y}`;
 }
 
 /** "Rab, 23 Dis" */

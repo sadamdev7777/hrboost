@@ -84,9 +84,15 @@ export default function GajiPage() {
 
         {ea && tahun && (
           <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3 text-sm">
-            <b className="text-sm font-extrabold">{tr("Ringkasan saraan {0}", tahun)}</b>
+            <b className="text-sm font-extrabold">{tr("Borang EA")}</b>
             <span className="text-muted">
-              {tr("{0} slip dibayar. Borang EA rasmi disediakan oleh HR selepas akhir tahun (sebelum 28 Februari) daripada data yang sama.", list.filter((x) => x.year === tahun).length)}</span>
+              {tr("Borang EA ialah penyata saraan tahunan untuk cukai pendapatan anda (e-Filing). HR mengeluarkannya sebelum 28 Februari setiap tahun; anda akan menerima WhatsApp apabila ia tersedia.")}</span>
+            <div className="flex flex-wrap gap-2 pt-1">
+              {[new Date().getFullYear() - 1, new Date().getFullYear() - 2].map((y) => (
+                <Link key={y} href={`/gaji/ea?tahun=${y}`} className="flex h-10 items-center rounded-full border border-primary px-4 text-[13px] font-bold text-primary!">
+                  {tr("Borang EA {0} ›", y)}</Link>
+              ))}
+            </div>
           </div>
         )}
 

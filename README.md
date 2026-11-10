@@ -272,6 +272,14 @@ Menu Mod HR (`MENU_HR` dalam `web/src/lib/mod.ts`) disusun ikut modul HR supaya 
 
 Tetapan dan "Saya" (klik nama) berada di bawah menu sisi. Di telefon, tab "Lagi" (`/pengurusan/menu`) menyenaraikan semua modul. Ujian: `hrboost_tests_q_modul_hr.sql`, `web/e2e/modul-hr.cjs`.
 
+### Audit & Borang EA
+
+- **Borang EA & Borang E** (Penggajian → Borang EA & E, `/pengurusan/gaji/ea`): angka setiap pekerja daripada slip gaji yang diluluskan + data terkumpul sistem lama (`ea_compute`; B1(a) gaji & elaun, B1(b) komisen/bonus, D1 PCB, E1 KWSP, E2 PERKESO + SIP; tuntutan tidak dimasukkan). Cetak / PDF semua Borang EA (A4, satu muka surat setiap pekerja), C.P.8D (CSV) dan ringkasan Borang E untuk e-Borang MyTax. "Keluarkan kepada pekerja" (`hr_ea_release`) menghantar WhatsApp; pekerja melihat di Slip Gaji → Borang EA (`my_ea`). Setiap paparan direkod dalam `data_access_log` (resource `ea`).
+- **Nama panggilan pukal** (Pekerja → Nama panggilan): cadangan automatik daripada nama penuh (`web/src/lib/nama.ts`), simpan sekali gus (`hr_set_preferred_names`).
+- **Papan Pemuka**: tugasan HR (`hr_todo`) — belum aktif, tiada nama panggilan, percubaan hampir tamat, tuntutan belum dibayar, permohonan melepasi SLA.
+- **Kelulusan → Dalam syarikat** (HR / CEO / Pentadbir): semua permohonan yang menunggu, pelulus semasa, dan butang Ingatkan (WhatsApp, sekali setiap 2 jam — `approval_remind`).
+- Ujian: `hrboost_tests_r_ea_nama.sql`, `web/e2e/ea-nama.cjs`.
+
 ### HR lebih mudah
 
 - **Kalendar berkanun** (Papan Pemuka): KWSP, PERKESO & SIP, PCB (CP39), HRDF — tarikh akhir hari ke-15 bulan berikutnya; Borang EA (28 Feb) & Borang E (31 Mac). Tarikh disimpan sebagai data (`platform_settings.statutory_deadlines`). "Tanda dihantar" → `statutory_submissions`. Peringatan WhatsApp kepada HR & Kewangan 5 dan 1 hari sebelum (`statutory_reminders`, pg_cron 9:07 pagi MYT).

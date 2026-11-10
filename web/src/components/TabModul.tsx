@@ -17,6 +17,7 @@ export const TAB_MODUL = {
       { href: "/pengurusan/gaji/pekerja", label: tr("Gaji pekerja") },
       { href: "/pengurusan/gaji/pendahuluan", label: tr("Pendahuluan") },
       { href: "/pengurusan/gaji/sejarah", label: tr("Sejarah") },
+      { href: "/pengurusan/gaji/ea", label: tr("Borang EA & E") },
     ],
   },
   pekerja: {
@@ -25,6 +26,7 @@ export const TAB_MODUL = {
       { href: "/pengurusan/pekerja", label: tr("Senarai pekerja") },
       { href: "/pengurusan/carta", label: tr("Carta organisasi") },
       { href: "/pengurusan/tetapan/jabatan", label: tr("Jabatan"), roles: ["hr", "admin"] },
+      { href: "/pengurusan/pekerja/nama", label: tr("Nama panggilan"), roles: ["hr", "admin"] },
     ],
   },
   cuti: {

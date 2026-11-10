@@ -86,7 +86,7 @@ function Kandungan() {
   const t = x?.tambahan;
   const dijangka = a ? Math.max(a.headcount - a.on_leave.length, 0) : 0;
   const td = x?.todo;
-  const tambahHr = td ? [td.stuck, td.not_activated, td.probation_ending, urusGaji ? td.claims_unpaid.n : 0].filter((v) => (v ?? 0) > 0).length : 0;
+  const tambahHr = td ? [td.stuck, td.not_activated, td.probation_ending, td.no_nickname, urusGaji ? td.claims_unpaid.n : 0].filter((v) => (v ?? 0) > 0).length : 0;
   const tindakan = x && a ? x.tugas.length + a.attention.length + (t?.no_salary ? 1 : 0) + x.tamat.length + x.semak.length + (x.surat ? 1 : 0) + (x.soalan ? 1 : 0) + x.fleksibel.length + tambahHr : 0;
 
   async function tanda(k: KewajipanBerkanun) {
@@ -195,6 +195,9 @@ function Kandungan() {
                   )}
                   {(td?.not_activated ?? 0) > 0 && (
                     <Baris tag={tr("Orientasi")} tone="warning" teks={tr("{0} pekerja belum mengaktifkan akaun", td!.not_activated)} href="/pengurusan/orientasi" aksi={tr("Jemput")} />
+                  )}
+                  {(td?.no_nickname ?? 0) > 0 && (
+                    <Baris tag={tr("Pekerja")} tone="primary" teks={tr("{0} pekerja belum mempunyai nama panggilan", td!.no_nickname)} href="/pengurusan/pekerja/nama" aksi={tr("Isi")} />
                   )}
                   {(td?.probation_ending ?? 0) > 0 && (
                     <Baris tag={tr("Percubaan")} tone="warning" teks={tr("{0} tempoh percubaan tamat dalam 30 hari", td!.probation_ending)} href="/pengurusan/orientasi" aksi={tr("Semak")} />
