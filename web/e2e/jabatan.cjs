@@ -23,7 +23,9 @@ const V = (s) => `${s} >> visible=true`;
   await p.waitForURL('**/pengurusan', { timeout: 20000 });
 
   log('1. Lily: Tetapan → Jabatan');
-  await p.click('aside a:has-text("Jabatan")');
+  // Jabatan kini tab dalam modul Pekerja
+  await p.click('aside a[href="/pengurusan/pekerja"]');
+  await p.click('nav[aria-label="Pekerja"] >> text=Jabatan');
   await p.waitForURL('**/pengurusan/tetapan/jabatan');
   await p.waitForSelector(V('text=Pelancongan'));
   expect(true, 'menu sisi → Jabatan; senarai jabatan sedia ada');
