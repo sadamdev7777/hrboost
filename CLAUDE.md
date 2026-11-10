@@ -20,7 +20,7 @@ Pemilik produk: Sadam. Reka bentuk skrin: kanvas Design "HRBoost.io — Skrin" (
 | Lapisan | Pilihan |
 |---|---|
 | Frontend | Next.js (App Router) + Tailwind, PWA (installable), BM sebagai bahasa utama |
-| Backend | Supabase: Postgres + RLS, Auth (telefon/OTP), Storage, Edge Functions, pg_cron |
+| Backend | Supabase: Postgres + RLS, Auth (e-mel + kata laluan, pautan pengesahan e-mel), Storage, Edge Functions, pg_cron |
 | WhatsApp | Murpati (satu nombor platform HRBoost secara default) |
 | Kehadiran | CrossChex Cloud (server EU) — tarik setiap 5 minit |
 | Akaun | QuickBooks Online (MTB); syarikat lain eksport CSV |
@@ -50,9 +50,9 @@ Konsep utama:
 | `approval_cancel(request, via, on_behalf)` | pemohon | Batal |
 | `submit_payroll_run(run)` | HR | Hantar gaji untuk kelulusan |
 | `add_employee(...)`, `create_invite(employment)` | HR | Tambah pekerja, jana token jemputan |
-| `accept_invite(token, ic4)` → jsonb | staff | Aktifkan akaun (5 cubaan) |
+| `invite_check_ic(token, ic4)` → `accept_invite_email(token)` | staff | Aktifkan akaun: sahkan 4 digit IC (5 cubaan), kemudian akaun e-mel yang disahkan diikat |
 | `complete_onboarding_step(employment, step)` | staff | Kemajuan onboarding (8 langkah) |
-| `register_company(nama, saiz, nama_penuh, telefon, email)` | awam selepas OTP | Daftar syarikat; pendaftar = Admin+HR+CEO |
+| `register_company_email(nama, saiz, nama_penuh, telefon?)` | selepas e-mel disahkan | Daftar syarikat; pendaftar = Admin+HR+CEO |
 | `set_company_holidays(company, tahun, ids[])` | HR | Pilih cuti umum (≥ 11 hari, 5 wajib) |
 | `team_birthdays(company, dari, hingga)` | ahli syarikat | Hari & bulan sahaja |
 | `request_company_access(kod, peranan, hari, sebab)` | sesiapa | Minta akses syarikat lain |
@@ -73,7 +73,7 @@ Konsep utama:
 | `crosschex-sync` | setiap 5 minit | Untuk setiap syarikat dengan CrossChex: token (cache sehingga `expires`, ralat `TOKEN_EXPIRES` → minta baru), `getrecord` dari `last_synced_at − 10 min` hingga kini, 100 rekod/halaman, panggil `ingest_punch` (uuid, `checktime` UTC, `workno`, peranti). Simpan `integration_sync_state` |
 | `whatsapp-inbound` | webhook Murpati | Balasan staff: "LULUS" / "TOLAK sebab" → `approval_act` dengan `p_on_behalf`; teks bebas → agent AI |
 | `invite-link` | HTTP | Token jemputan → cipta sesi Supabase untuk nombor itu → halaman sahkan IC |
-| `auth-sms-hook` | Auth hook | Hantar OTP log masuk melalui WhatsApp (Murpati) |
+| `auth-sms-hook` | Auth hook | (Tidak digunakan lagi — log masuk kini e-mel sahaja) |
 | `ai-receipt`, `ai-ic` | HTTP | Baca resit / IC → isi borang; `bump_usage(company,'ai')` dahulu |
 | `payroll-calc` | HTTP | Kira gaji dari `statutory_rates` → `payslips` + `payslip_lines` |
 | `payslip-pdf` | selepas lulus | Jana PDF A4 (rujuk skrin SlipGaji) → Storage → WhatsApp |
@@ -85,7 +85,9 @@ Rahsia (CrossChex api_key/secret, QuickBooks, Murpati, AI) **hanya** dalam Supab
 
 Reka bentuk setiap skrin ada dalam folder `design/` (fail `NamaSkrin.dc.html`). Ikut teks, susun atur, warna dan aliran pautan dalam fail tersebut dengan tepat. `design/canvas.json` menyenaraikan semua skrin mengikut seksyen. Fail `design/Mohon.dc.html` ialah tab Mohon (pilih jenis permohonan).
 
-**Awam:** `Homepage` → `/` · `Privasi` → `/privasi` · `DaftarSyarikat` → `/daftar` · `OTPSyarikat` → `/daftar/sahkan` · `Login` → `/masuk` · `OTP` → `/masuk/kod`
+**Awam:** `Homepage` → `/` · `Privasi` → `/privasi` · `DaftarSyarikat` → `/daftar` · semak e-mel → `/daftar/sahkan` · `Login` → `/masuk` (e-mel + kata laluan) · lupa kata laluan → `/masuk/lupa` → `/masuk/set-semula`
+
+**Log masuk e-mel sahaja.** Pendaftaran syarikat dan pengaktifan pekerja menggunakan e-mel + kata laluan dengan pautan pengesahan e-mel (Supabase Auth). Tiada OTP telefon. Nombor WhatsApp kekal untuk notifikasi dan pautan jemputan. E-mel dihantar oleh Supabase Auth (SMTP tersuai, cth. Resend, ditetapkan di papan pemuka Supabase); templat dalam `supabase/templates/`.
 
 **Onboarding syarikat (Admin):** `OnboardingSyarikat` → `/mula` · langkah: `SyarikatLangkah` (2) → `ImportPekerja` (3) → `SyarikatJabatan` (4) → `SyarikatPeranan` (5) → `SyarikatJemput` (6) → `SyarikatSelesai`. Butang Seterusnya dikunci jika ada jabatan tanpa ketua.
 

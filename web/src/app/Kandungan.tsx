@@ -1,45 +1,62 @@
 "use client";
 
-import { tr } from "@/lib/i18n";
+import { bahasa, tr } from "@/lib/i18n";
 import Image from "next/image";
 import Link from "next/link";
 import { PilihBahasa } from "@/components/PilihBahasa";
 
 
 // Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
-const CIRI = () => [
-  [tr("Pusat Kelulusan berperingkat"), tr("Ketua → HR → CEO, atau sebarang susunan. Semua permohonan di satu tempat dan selesai pada hari yang sama.")],
-  [tr("Cuti & tuntutan melalui telefon"), tr("Hari bekerja dikira secara automatik, baki boleh disemak, dan AI mengisi borang tuntutan daripada gambar resit.")],
-  [tr("Gaji mematuhi undang-undang"), tr("KWSP, PERKESO, SIP dan PCB dikira secara automatik. Slip gaji PDF dihantar terus ke WhatsApp pekerja.")],
-  [tr("Kehadiran bersambung"), tr("Sambungkan mesin kehadiran sedia ada. Pekerja yang lewat terus menerima WhatsApp — HR tidak perlu menegur.")],
-  [tr("Pembantu AI di WhatsApp"), tr("Pekerja boleh bertanya tentang baki cuti dan polisi atau memohon surat. Ketua menerima ringkasan sebelum meluluskan.")],
-  [tr("Data setiap syarikat terkunci"), tr("HR hanya boleh melihat syarikat sendiri. Pekerja yang bekerja di dua syarikat menggunakan satu log masuk, tetapi gaji dan rekod diasingkan sepenuhnya.")],
+const MODUL = () => [
+  [tr("Cuti & kalendar pasukan"), tr("Mohon dari telefon, hari bekerja dan baki dikira automatik, cuti umum ikut negeri, siapa bercuti hari ini.")],
+  [tr("Tuntutan perbelanjaan"), tr("Ambil gambar resit, AI mengisi borang. Had ikut jenis tuntutan, dibayar bersama gaji.")],
+  [tr("Kehadiran"), tr("Sambung mesin kehadiran sedia ada. Lewat, tiada rekod dan pembetulan masa di satu skrin.")],
+  [tr("Gaji & caruman berkanun"), tr("KWSP, PERKESO, SIP, PCB dan HRDF dikira automatik. Slip gaji ke WhatsApp, fail bank dan fail caruman.")],
+  [tr("Borang EA & Borang E"), tr("Borang EA setiap pekerja, C.P.8D dan ringkasan Borang E dijana daripada rekod gaji setahun.")],
+  [tr("Kelulusan melalui WhatsApp"), tr("Ketua → HR → CEO atau sebarang susunan. Balas LULUS atau TOLAK terus di WhatsApp.")],
+  [tr("Orientasi pekerja baharu"), tr("Jemputan WhatsApp, 8 langkah orientasi di telefon, senarai semak dan penilaian percubaan.")],
+  [tr("Pekerja & carta organisasi"), tr("Profil, dokumen dengan tarikh tamat, sejarah perubahan, jabatan dan carta organisasi.")],
+  [tr("Peti HR & Pembantu AI"), tr("Pekerja bertanya polisi atau memohon surat pengesahan. Pengumuman sampai ke WhatsApp semua.")],
+];
+// Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
+const BANDING = () => [
+  [tr("Permohonan cuti"), tr("Mesej WhatsApp & borang kertas, mudah terlepas"), tr("Satu aliran kelulusan, peringatan automatik")],
+  [tr("Baki cuti"), tr("Dikira manual dalam Excel"), tr("Dikira automatik, pekerja semak sendiri")],
+  [tr("Tuntutan"), tr("Resit hilang, kira semula"), tr("Gambar resit, AI isi borang, terus ke gaji")],
+  [tr("Gaji & caruman"), tr("Kalkulator berasingan, risiko silap"), tr("KWSP, PERKESO, SIP, PCB dikira serentak")],
+  [tr("Borang EA"), tr("Disediakan satu per satu pada Februari"), tr("Semua pekerja sekali gus, dihantar ke WhatsApp")],
 ];
 // Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
 const LANGKAH = () => [
-  [tr("Daftar syarikat"), tr("Isi nama syarikat dan no. WhatsApp anda. Tetapan cuti, kelulusan dan tuntutan disediakan secara automatik mengikut Akta Kerja.")],
+  [tr("Daftar syarikat"), tr("Isi nama syarikat dan e-mel anda, kemudian sahkan melalui pautan dalam e-mel. Tetapan cuti, kelulusan dan tuntutan disediakan secara automatik mengikut Akta Kerja.")],
   [tr("Import pekerja"), tr("Muat naik senarai Excel sedia ada. Sistem akan memadankan jabatan dan ketua untuk anda semak.")],
-  [tr("Pekerja menerima jemputan"), tr("Setiap pekerja menerima pautan di WhatsApp, mengaktifkan akaun dengan OTP, dan terus boleh memohon cuti.")],
+  [tr("Pekerja menerima jemputan"), tr("Setiap pekerja menerima pautan di WhatsApp, mengesahkan 4 digit kad pengenalan, mencipta log masuk e-mel dan terus boleh memohon cuti.")],
 ];
 // Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
 const SOALAN = () => [
   [tr("Adakah HRBoost benar-benar percuma?"), tr("Ya. Daftar syarikat, jemput pekerja dan gunakan cuti, tuntutan, kelulusan, kehadiran dan gaji tanpa bayaran dan tanpa kad kredit.")],
+  [tr("Adakah sesuai untuk syarikat kecil?"), tr("Ya. HRBoost dibina untuk PKS dengan 5 hingga 200 pekerja: tiada pemasangan, tiada latihan panjang, dan pekerja menggunakan telefon sendiri.")],
   [tr("Adakah data pekerja selamat?"), tr("Setiap syarikat diasingkan sepenuhnya. Hanya HR syarikat anda boleh melihat kad pengenalan, akaun bank, gaji dan sijil cuti sakit, dan setiap akses direkodkan. Pentadbir platform hanya melihat jumlah keseluruhan, bukan data peribadi.")],
+  [tr("Adakah kiraan KWSP, PERKESO dan PCB tepat?"), tr("Kadar berkanun disimpan sebagai data dan dikemas kini oleh HRBoost untuk semua syarikat. Semak slip gaji pertama dengan kalkulator rasmi KWSP, PERKESO dan LHDN sebelum membayar.")],
   [tr("Perlukah pekerja memasang aplikasi?"), tr("Tidak. Pekerja menerima pautan di WhatsApp dan boleh terus menggunakan pelayar telefon. Mereka boleh memasangnya pada skrin utama jika mahu.")],
   [tr("Bagaimana jika pekerja tiada WhatsApp?"), tr("HR boleh menyalin pautan jemputan dan menghantarnya melalui saluran lain. Pekerja kemudian log masuk dengan e-mel dan kata laluan.")],
   [tr("Bolehkah saya menggunakan mesin kehadiran sedia ada?"), tr("Ya, mesin CrossChex Cloud boleh disambungkan. Rekod masuk dan keluar diterima secara automatik setiap 5 minit.")],
-  [tr("Bagaimana menghubungi pasukan HRBoost?"), tr("E-mel hi@hrboost.io atau WhatsApp 019-444 2424. Pejabat kami di D-G-6 Putra Walk, Taman Pinggiran Putra, 43300 Seri Kembangan, Selangor.")],
+  [tr("Bolehkah saya mengeksport data saya?"), tr("Ya. Senarai pekerja, baki cuti, kehadiran, tuntutan, laporan dan fail gaji boleh dimuat turun sebagai CSV / Excel pada bila-bila masa.")],
   [tr("Berapa lama untuk mula?"), tr("Kebanyakan syarikat siap dalam satu petang: daftar, import senarai pekerja daripada Excel, semak jabatan dan ketua, kemudian jemput pekerja.")],
+  [tr("Bagaimana menghubungi pasukan HRBoost?"), tr("E-mel hi@hrboost.io atau WhatsApp 019-444 2424. Pejabat kami di D-G-6 Putra Walk, Taman Pinggiran Putra, 43300 Seri Kembangan, Selangor.")],
 ];
 // Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
-const SKRIN = () => [
-  { src: "/skrin/pekerja-utama.webp", alt: tr("Skrin utama pekerja: baki cuti, permohonan dan kehadiran"), tajuk: tr("Pekerja"), sub: tr("Baki cuti, permohonan dan kehadiran di satu skrin."), telefon: true },
-  { src: "/skrin/pekerja-mohon-cuti.webp", alt: tr("Skrin mohon cuti: jenis cuti, tarikh dan pelulus"), tajuk: tr("Mohon cuti"), sub: tr("Hari bekerja dan baki dikira semasa memilih tarikh."), telefon: true },
-  { src: "/skrin/hr-papan-pemuka.webp", alt: tr("Papan Pemuka HR: tindakan, kehadiran hari ini dan status gaji"), tajuk: tr("Papan Pemuka HR"), sub: tr("Semua yang perlu diuruskan hari ini, dengan butang Lulus terus."), telefon: false },
-  { src: "/skrin/hr-gaji-pekerja.webp", alt: tr("Jadual Gaji Pekerja dengan KWSP, PERKESO, SIP dan gaji bersih"), tajuk: tr("Gaji pekerja"), sub: tr("KWSP, PERKESO, SIP dan PCB dikira semasa anda menaip."), telefon: false },
-];
+const SKRIN = () => {
+  const d = `/skrin/${bahasa()}`;
+  return [
+    { src: `${d}/pekerja-utama.webp`, alt: tr("Skrin utama pekerja: baki cuti, permohonan dan kehadiran"), tajuk: tr("Pekerja"), sub: tr("Baki cuti, permohonan dan kehadiran di satu skrin."), telefon: true },
+    { src: `${d}/pekerja-mohon-cuti.webp`, alt: tr("Skrin mohon cuti: jenis cuti, tarikh dan pelulus"), tajuk: tr("Mohon cuti"), sub: tr("Hari bekerja dan baki dikira semasa memilih tarikh."), telefon: true },
+    { src: `${d}/hr-papan-pemuka.webp`, alt: tr("Papan Pemuka HR: tindakan, kehadiran hari ini dan status gaji"), tajuk: tr("Papan Pemuka HR"), sub: tr("Semua yang perlu diuruskan hari ini, ikut modul HR."), telefon: false },
+    { src: `${d}/hr-gaji-pekerja.webp`, alt: tr("Jadual Gaji Pekerja dengan KWSP, PERKESO, SIP dan gaji bersih"), tajuk: tr("Gaji pekerja"), sub: tr("KWSP, PERKESO, SIP dan PCB dikira semasa anda menaip."), telefon: false },
+  ];
+};
 // Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
-const PATUH = () => [tr("Akta Kerja 1955"), tr("KWSP"), tr("PERKESO"), tr("SIP"), tr("PCB / MTD"), "HRDF", tr("Borang EA")];
+const PATUH = () => [tr("Akta Kerja 1955"), tr("KWSP"), tr("PERKESO"), tr("SIP"), tr("PCB / MTD"), "HRDF", tr("Borang EA"), tr("PDPA")];
 
 // Rujukan reka bentuk: design/Homepage.dc.html
 export default function Kandungan() {
@@ -76,6 +93,14 @@ export default function Kandungan() {
             <Link href="/masuk" className="flex h-12 items-center justify-center rounded-button border-2 border-primary bg-surface px-6 text-base font-extrabold text-primary!">
               {tr("Saya pekerja — log masuk")}</Link>
           </div>
+          <ul className="m-0 flex list-none flex-wrap gap-x-5 gap-y-1.5 p-0 text-sm font-semibold text-[#33433F]">
+            {[tr("Percuma, tiada kad kredit"), tr("Sedia dalam satu petang"), tr("Bahasa Melayu & English"), tr("Untuk PKS 5–200 pekerja")].map((x) => (
+              <li key={x} className="flex items-center gap-1.5">
+                <span aria-hidden="true" className="flex size-5 items-center justify-center rounded-full bg-[#E3F1EE] text-[11px] font-extrabold text-primary">✓</span>
+                {x}
+              </li>
+            ))}
+          </ul>
         </div>
         <div className="mx-auto flex w-full max-w-[380px] flex-col gap-2.5 rounded-[28px] bg-[#E7DED3] p-4 shadow-sm" aria-label={tr("Contoh perbualan WhatsApp")}>
           <div className="max-w-[88%] rounded-[14px] rounded-tl-sm bg-white px-3.5 py-2.5 text-[14px] leading-snug">
@@ -101,7 +126,7 @@ export default function Kandungan() {
       <section id="skrin" className="mx-auto max-w-[1120px] px-4 pt-14">
         <h2 className="m-0 text-2xl leading-tight font-extrabold md:text-[34px]">{tr("Lihat sendiri.")}</h2>
         <p className="mt-3 mb-8 max-w-[680px] text-base text-[#4A5A57]">{tr("Skrin sebenar HRBoost — di telefon untuk pekerja, di komputer untuk HR. Contoh menggunakan data demo.")}</p>
-        <div className="grid gap-4 md:grid-cols-[repeat(2,minmax(0,0.6fr))_minmax(0,1.4fr)]">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-[repeat(2,minmax(0,0.6fr))_minmax(0,1.4fr)]">
           {SKRIN().filter((x) => x.telefon).map((x) => (
             <figure key={x.src} className="m-0 flex flex-col gap-2">
               <Image src={x.src} alt={x.alt} width={780} height={1560} sizes="(min-width: 768px) 220px, 100vw" className="w-full rounded-[22px] border-4 border-ink shadow-md" />
@@ -111,7 +136,7 @@ export default function Kandungan() {
               </figcaption>
             </figure>
           ))}
-          <div className="flex flex-col gap-4">
+          <div className="col-span-2 flex flex-col gap-4 md:col-span-1">
             {SKRIN().filter((x) => !x.telefon).map((x) => (
               <figure key={x.src} className="m-0 flex flex-col gap-2">
                 <Image src={x.src} alt={x.alt} width={2560} height={1520} sizes="(min-width: 768px) 620px, 100vw" className="w-full rounded-[14px] border border-line shadow-md" />
@@ -126,15 +151,39 @@ export default function Kandungan() {
       </section>
 
       <section id="ciri" className="mx-auto max-w-[1120px] px-4 py-14">
-        <h2 className="m-0 max-w-[680px] text-2xl leading-tight font-extrabold md:text-[34px]">{tr("Semua urusan HR, tanpa kertas dan tanpa perlu mengejar sesiapa.")}</h2>
-        <p className="mt-3 mb-8 max-w-[680px] text-base text-[#4A5A57]">{tr("Dibina untuk syarikat kecil dan sederhana yang memerlukan sistem yang benar-benar digunakan oleh pekerja.")}</p>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3">
-          {CIRI().map(([t, s]) => (
+        <h2 className="m-0 max-w-[680px] text-2xl leading-tight font-extrabold md:text-[34px]">{tr("Semua modul HR yang diperlukan PKS, dalam satu sistem.")}</h2>
+        <p className="mt-3 mb-8 max-w-[680px] text-base text-[#4A5A57]">{tr("Tanpa kertas, tanpa Excel berasingan, dan tanpa perlu mengejar sesiapa. Pekerja menggunakan telefon; HR menggunakan komputer.")}</p>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {MODUL().map(([t, s2]) => (
             <div key={t} className="flex flex-col gap-2 rounded-card bg-surface p-5">
               <b className="text-base font-extrabold">{t}</b>
-              <span className="text-sm leading-relaxed text-[#4A5A57]">{s}</span>
+              <span className="text-sm leading-relaxed text-[#4A5A57]">{s2}</span>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section id="banding" className="mx-auto max-w-[1120px] px-4 pb-14">
+        <h2 className="m-0 mb-6 text-2xl leading-tight font-extrabold md:text-[34px]">{tr("Sebelum dan selepas HRBoost")}</h2>
+        <div className="overflow-x-auto rounded-card bg-surface">
+          <table className="w-full min-w-[620px] border-collapse text-left text-sm">
+            <thead>
+              <tr className="border-b border-line-soft text-xs font-bold tracking-[0.04em] text-muted">
+                <th className="px-5 py-3">{tr("URUSAN")}</th>
+                <th className="px-5 py-3">{tr("CARA LAMA (WHATSAPP & EXCEL)")}</th>
+                <th className="px-5 py-3 text-primary">HRBOOST</th>
+              </tr>
+            </thead>
+            <tbody className="[&>tr+tr]:border-t [&>tr+tr]:border-[#EEF2F1]">
+              {BANDING().map(([u, lama, baru]) => (
+                <tr key={u}>
+                  <td className="px-5 py-3 font-bold">{u}</td>
+                  <td className="px-5 py-3 text-[#4A5A57]">{lama}</td>
+                  <td className="px-5 py-3 font-semibold text-primary">{baru}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -162,8 +211,9 @@ export default function Kandungan() {
             <li>{tr("Mohon cuti dan buat tuntutan dari telefon — ambil gambar resit, AI mengisi borang.")}</li>
             <li>{tr("Semak baki cuti, slip gaji dan kehadiran bila-bila masa.")}</li>
             <li>{tr("Terima keputusan dan slip gaji terus di WhatsApp.")}</li>
+            <li>{tr("Muat turun Borang EA sendiri untuk e-Filing.")}</li>
           </ul>
-          <Link href="/masuk" className="self-start text-sm font-bold">
+          <Link href="/masuk" className="flex min-h-11 items-center self-start text-sm font-bold">
             {tr("Sudah dijemput? Log masuk ›")}</Link>
         </div>
         <div className="flex flex-col gap-3 rounded-card bg-surface p-6">
@@ -172,8 +222,9 @@ export default function Kandungan() {
             <li>{tr("Semua kelulusan di satu tempat — atau terus dari WhatsApp dengan membalas LULUS.")}</li>
             <li>{tr("Gaji, KWSP, PERKESO, SIP dan PCB dikira secara automatik, termasuk fail untuk bank.")}</li>
             <li>{tr("Papan Pemuka harian: siapa tiada, siapa lewat, apa yang perlu diluluskan.")}</li>
+            <li>{tr("Borang EA, C.P.8D dan ringkasan Borang E dijana daripada rekod gaji.")}</li>
           </ul>
-          <Link href="/daftar" className="self-start text-sm font-bold">
+          <Link href="/daftar" className="flex min-h-11 items-center self-start text-sm font-bold">
             {tr("Daftar syarikat ›")}</Link>
         </div>
       </section>
@@ -182,8 +233,8 @@ export default function Kandungan() {
         <h2 className="m-0 mb-6 text-2xl font-extrabold md:text-[34px]">{tr("Soalan lazim")}</h2>
         <div className="flex flex-col rounded-card bg-surface px-5 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
           {SOALAN().map(([q, a]) => (
-            <details key={q} className="group py-4">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-base font-bold [&::-webkit-details-marker]:hidden">
+            <details key={q} className="group py-2">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-base font-bold [&::-webkit-details-marker]:hidden">
                 {q}
                 <span aria-hidden="true" className="text-xl text-primary transition-transform group-open:rotate-45">
                   +
@@ -204,8 +255,8 @@ export default function Kandungan() {
         </div>
       </section>
 
-      <footer className="mx-auto flex max-w-[1120px] flex-wrap items-center gap-x-5 gap-y-2 px-4 pt-2 pb-10 text-sm text-muted">
-        <span>{tr("© 2026 HRBoost.io")}</span>
+      <footer className="mx-auto flex max-w-[1120px] flex-wrap items-center gap-x-5 gap-y-0 px-4 pt-2 pb-10 text-sm text-muted [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center">
+        <span>{tr("© {0} HRBoost.io", "2026")}</span>
         <span className="grow" />
         <Link href="/privasi#privasi">{tr("Notis privasi (PDPA)")}</Link>
         <Link href="/privasi#terma">{tr("Terma")}</Link>

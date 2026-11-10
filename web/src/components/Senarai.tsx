@@ -128,7 +128,7 @@ export function Cip({ on, onClick, children }: { on: boolean; onClick: () => voi
       type="button"
       aria-pressed={on}
       onClick={onClick}
-      className={`h-[34px] rounded-full px-3 text-xs font-bold ${on ? "border-[1.5px] border-primary bg-[#E3F1EE] text-primary" : "border border-[#D5DEDC] bg-surface text-[#4A5A57]"}`}
+      className={`h-10 rounded-full px-3.5 text-[13px] font-bold ${on ? "border-[1.5px] border-primary bg-[#E3F1EE] text-primary" : "border border-[#D5DEDC] bg-surface text-[#4A5A57]"}`}
     >
       {children}
     </button>

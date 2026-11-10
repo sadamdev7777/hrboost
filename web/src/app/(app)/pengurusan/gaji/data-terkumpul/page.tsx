@@ -1,6 +1,7 @@
 "use client";
 
 import { tr } from "@/lib/i18n";
+import { BarisStat, KadStat } from "@/components/Modul";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
@@ -127,6 +128,14 @@ function DataTerkumpul() {
           {tr("Jika syarikat mula menggunakan HRBoost pada pertengahan tahun, isi jumlah gaji kasar, KWSP pekerja dan PCB yang telah dibayar dalam sistem lama sejak Januari. Ini diperlukan supaya PCB dikira dengan tepat (kaedah berkomputer LHDN). Gunakan angka daripada slip gaji / borang CP39 terdahulu.")}</span>
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
+        {d.data && d.data.length > 0 && (
+          <BarisStat>
+            <KadStat label={tr("Pekerja")} nilai={d.data.length} />
+            <KadStat label={tr("Sudah diisi")} nilai={d.data.filter((r) => r.up_to_month != null).length} tone="success" />
+            <KadStat label={tr("Belum diisi")} nilai={d.data.filter((r) => r.up_to_month == null && !r.payroll_months).length} tone={d.data.some((r) => r.up_to_month == null && !r.payroll_months) ? "warning" : undefined} />
+            <KadStat label={tr("Jumlah PCB terkumpul")} nilai={`RM ${d.data.reduce((t, r) => t + Number(r.pcb ?? 0), 0).toLocaleString("en-MY", { minimumFractionDigits: 2 })}`} />
+          </BarisStat>
+        )}
         {d.data && (
           <div className="overflow-x-auto rounded-card bg-surface">
             <table className="w-full min-w-[720px] border-collapse text-left text-[13px]">

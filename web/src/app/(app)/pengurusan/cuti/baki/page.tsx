@@ -10,7 +10,7 @@ import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { TabModul } from "@/components/TabModul";
 import { HadPeranan } from "@/components/Senarai";
-import { Jadual, Kosong } from "@/components/Modul";
+import { BarisStat, Jadual, KadStat, Kosong } from "@/components/Modul";
 
 const fmt = (x: number) => (Number.isInteger(x) ? String(x) : x.toFixed(1));
 
@@ -62,6 +62,18 @@ function Kandungan() {
           )}
         </div>
         {d.error && <ErrorBox message={d.error} />}
+        {baris.length > 0 && (() => {
+          const al = baris.map((b) => b.items.AL).filter(Boolean);
+          const purata = al.length ? al.reduce((t, x) => t + x.available, 0) / al.length : 0;
+          return (
+            <BarisStat>
+              <KadStat label={tr("Pekerja")} nilai={baris.length} />
+              <KadStat label={tr("Purata baki cuti tahunan")} nilai={tr("{0} hari", fmt(Math.round(purata * 10) / 10))} />
+              <KadStat label={tr("Baki cuti tahunan ≤ 2 hari")} nilai={al.filter((x) => x.available <= 2).length} tone={al.some((x) => x.available <= 2) ? "warning" : undefined} />
+              <KadStat label={tr("Hari menunggu kelulusan")} nilai={fmt(baris.reduce((t, b) => t + Object.values(b.items).reduce((u, x) => u + x.pending, 0), 0))} />
+            </BarisStat>
+          );
+        })()}
         {d.loading && !d.data && <Loading />}
         {d.data && baris.length === 0 && (
           <div className="rounded-card bg-surface px-4">

@@ -200,7 +200,7 @@ function RingkasanHarian({ cid }: { cid: string }) {
           }}
         />
       </div>
-      <button type="button" onClick={() => setLihat(!lihat)} className="self-start py-1 text-[13px] font-bold text-primary">
+      <button type="button" onClick={() => setLihat(!lihat)} className="flex min-h-11 items-center self-start text-[13px] font-bold text-primary">
         {lihat ? tr("Sembunyikan pratonton") : tr("Pratonton mesej hari ini")}
       </button>
       {lihat && (

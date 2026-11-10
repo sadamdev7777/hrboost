@@ -1,6 +1,7 @@
 "use client";
 
 import { tr } from "@/lib/i18n";
+import { BarisStat, KadStat } from "@/components/Modul";
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { hasRole, useMe } from "@/lib/me";
@@ -241,6 +242,17 @@ function Kandungan() {
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         {d.data && baris.length === 0 && <div className="rounded-card bg-surface px-4 py-8 text-center text-sm text-muted">{tr("Tiada data bagi tempoh ini.")}</div>}
+        {baris.length > 0 && (
+          <BarisStat>
+            <KadStat label={tr("Baris")} nilai={baris.length} />
+            {jenis.lajur
+              .filter((l) => jumlahLajur(baris, l))
+              .slice(0, 3)
+              .map((l) => (
+                <KadStat key={l.k} label={tr("Jumlah {0}", tr(l.label).toLowerCase())} nilai={jumlahLajur(baris, l)} />
+              ))}
+          </BarisStat>
+        )}
         {baris.length > 0 && (
           <div className="overflow-x-auto rounded-card bg-surface">
             <table className="w-full min-w-[560px] border-collapse text-sm">

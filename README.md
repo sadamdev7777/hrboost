@@ -280,6 +280,14 @@ Tetapan dan "Saya" (klik nama) berada di bawah menu sisi. Di telefon, tab "Lagi"
 - **Kelulusan → Dalam syarikat** (HR / CEO / Pentadbir): semua permohonan yang menunggu, pelulus semasa, dan butang Ingatkan (WhatsApp, sekali setiap 2 jam — `approval_remind`).
 - Ujian: `hrboost_tests_r_ea_nama.sql`, `web/e2e/ea-nama.cjs`.
 
+### Log masuk e-mel (tanpa OTP telefon)
+
+- **Daftar syarikat** (`/daftar`): e-mel + kata laluan (+ WhatsApp pilihan) → `auth.signUp` dengan pautan pengesahan ke `/daftar/sahkan` → `register_company_email` mencipta syarikat daripada metadata pendaftaran → `/mula`.
+- **Jemputan pekerja** (`/jemputan/[token]`): 4 digit IC (`invite_check_ic`) → e-mel + kata laluan → pautan pengesahan kembali ke jemputan → `accept_invite_email`. E-mel yang sudah mempunyai akaun boleh log masuk terus.
+- **Lupa kata laluan**: `resetPasswordForEmail` → `/masuk/set-semula` (sesi pemulihan) → kata laluan baharu, sesi lain dilog keluar.
+- E-mel dihantar oleh Supabase Auth. Tempatan: Mailpit (`http://127.0.0.1:54324`, `enable_confirmations = true`). Staging/produksi: tetapkan SMTP tersuai (cth. Resend: `smtp.resend.com`, port 465, pengguna `resend`) di Supabase → Authentication → SMTP; tanpa SMTP tersuai Supabase hanya menghantar 2 e-mel sejam kepada ahli pasukan projek. Templat: `supabase/templates/pengesahan.html`, `set-semula.html`.
+- Ujian: `web/e2e/syarikat-baharu.cjs`, `orientasi.cjs`, `kata-laluan.cjs` membaca pautan daripada Mailpit (`e2e/_demo.cjs`). Audit UI: `node web/e2e/audit-ui.cjs` (sasaran sentuh, label, jadual tanpa ringkasan).
+
 ### HR lebih mudah
 
 - **Kalendar berkanun** (Papan Pemuka): KWSP, PERKESO & SIP, PCB (CP39), HRDF — tarikh akhir hari ke-15 bulan berikutnya; Borang EA (28 Feb) & Borang E (31 Mac). Tarikh disimpan sebagai data (`platform_settings.statutory_deadlines`). "Tanda dihantar" → `statutory_submissions`. Peringatan WhatsApp kepada HR & Kewangan 5 dan 1 hari sebelum (`statutory_reminders`, pg_cron 9:07 pagi MYT).

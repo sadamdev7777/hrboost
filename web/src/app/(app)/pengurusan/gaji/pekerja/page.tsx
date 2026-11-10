@@ -69,7 +69,7 @@ function GajiPekerja() {
         {d.loading && !j && <Loading />}
         {j && (
           <>
-            <div className="grid grid-cols-2 gap-2 lg:grid-cols-5 lg:gap-3">
+            <div data-ringkasan className="grid grid-cols-2 gap-2 lg:grid-cols-5 lg:gap-3">
               <Angka n={String(j.rows.length)} label={tr("Pekerja aktif")} />
               <Angka n={String(belum.length)} label={tr("Belum ada gaji pokok")} tone={belum.length ? "warning" : undefined} />
               <Angka n={ringgit(t.gross)} label={tr("Jumlah gaji kasar")} kecil />

@@ -1,6 +1,7 @@
 "use client";
 
 import { tr } from "@/lib/i18n";
+import { BarisStat, KadStat } from "@/components/Modul";
 import Link from "next/link";
 import { useState } from "react";
 import { useData } from "@/lib/useData";
@@ -44,6 +45,14 @@ export default function SaSyarikat() {
       </div>
       {d.error && <ErrorBox message={d.error} />}
       {!d.data && !d.error && <Loading />}
+      {d.data && (
+        <BarisStat>
+          <KadStat label={tr("Syarikat")} nilai={d.data.length} onClick={() => setF("all")} aktif={f === "all"} />
+          <KadStat label={tr("Aktif")} nilai={d.data.filter((r) => st(r) === "active").length} tone="success" onClick={() => setF("active")} aktif={f === "active"} />
+          <KadStat label={tr("Dalam persediaan")} nilai={d.data.filter((r) => st(r) === "onboarding").length} tone="warning" onClick={() => setF("onboarding")} aktif={f === "onboarding"} />
+          <KadStat label={tr("Pekerja aktif (semua syarikat)")} nilai={d.data.reduce((t, r) => t + Number(r.staff_active ?? 0), 0)} />
+        </BarisStat>
+      )}
       {d.data && (
         <div className="overflow-x-auto rounded-card bg-surface p-4">
           <table className="w-full min-w-[720px] text-sm">

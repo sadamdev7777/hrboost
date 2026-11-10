@@ -19,9 +19,9 @@ export default function Kandungan() {
               HRBoost<span className="text-primary">.io</span>
             </b>
           </Link>
-          <a href="#privasi" className="ml-auto text-sm font-bold">
+          <a href="#privasi" className="ml-auto flex min-h-11 items-center text-sm font-bold">
             {tr("Privasi")}</a>
-          <a href="#terma" className="text-sm font-bold">
+          <a href="#terma" className="flex min-h-11 items-center text-sm font-bold">
             {tr("Terma")}</a>
         </div>
       </nav>

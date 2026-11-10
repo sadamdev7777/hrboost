@@ -21,6 +21,7 @@ import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { ButangBantuan, KadPanduan } from "@/components/Panduan";
 import { useRouter } from "next/navigation";
 import { useSkrinLebar } from "@/lib/skrin";
+import { BarisStat, KadStat } from "@/components/Modul";
 import { useSimpanan } from "@/lib/simpanan";
 import { labelJenis } from "@/lib/hr";
 import { mintaTeks } from "@/components/Dialog";
@@ -130,6 +131,14 @@ function Senarai() {
       <TabModul modul="pekerja" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         {boleh && <KadPanduan id="pekerja" />}
+        {list.data && semua.length > 0 && (
+          <BarisStat>
+            <KadStat label={tr("Jumlah pekerja")} nilai={semua.length} kecil={tr("{0} jabatan", senaraiJab.length)} onClick={() => setTapis("semua")} aktif={tapis === "semua"} />
+            <KadStat label={tr("Aktif")} nilai={semua.filter((p) => p.activated && p.status === "active").length} tone="success" onClick={() => setTapis("aktif")} aktif={tapis === "aktif"} />
+            <KadStat label={tr("Dalam percubaan")} nilai={semua.filter((p) => p.status === "probation").length} tone="warning" onClick={() => setTapis("percubaan")} aktif={tapis === "percubaan"} />
+            <KadStat label={tr("Belum aktifkan akaun")} nilai={semua.filter((p) => !p.activated).length} tone={semua.some((p) => !p.activated) ? "danger" : undefined} onClick={() => setTapis("belum")} aktif={tapis === "belum"} />
+          </BarisStat>
+        )}
         <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center">
           <label className="flex h-12 items-center gap-2.5 rounded-[14px] bg-surface px-3.5 lg:w-[340px] lg:shrink-0">
             <svg

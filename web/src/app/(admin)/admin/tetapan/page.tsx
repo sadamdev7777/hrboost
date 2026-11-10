@@ -79,7 +79,7 @@ export default function SaTetapan() {
             </span>
           ))}
           <div className="flex gap-2">
-            <input value={baru} onChange={(e) => setBaru(e.target.value)} placeholder={tr("No. WhatsApp pengguna sedia ada")} className="h-10 min-w-0 grow rounded-[10px] border border-line px-2.5" />
+            <input value={baru} onChange={(e) => setBaru(e.target.value)} aria-label={tr("No. WhatsApp pengguna sedia ada")} placeholder={tr("No. WhatsApp pengguna sedia ada")} className="h-10 min-w-0 grow rounded-[10px] border border-line px-2.5" />
             <button
               type="button"
               disabled={!baru.trim()}

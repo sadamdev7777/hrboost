@@ -158,7 +158,7 @@ function SemakanGaji({ checks }: { checks: string[] }) {
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-card bg-warning-soft px-4 py-3 text-[13px] text-warning">
           <span className="grow">
             <b>{tr("Amaran:")}</b> {" "}{tr("{0} pekerja tiada data gaji terkumpul tahun ini — PCB mungkin kurang tepat ({1}).", terkumpul.length, nama(terkumpul))}</span>
-          <Link href="/pengurusan/gaji/data-terkumpul" className="font-bold text-warning!">
+          <Link href="/pengurusan/gaji/data-terkumpul" className="flex min-h-11 items-center font-bold text-warning!">
             {tr("Isi atau import Excel ›")}</Link>
         </div>
       )}

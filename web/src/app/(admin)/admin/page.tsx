@@ -54,7 +54,7 @@ export default function SaDashboard() {
             <section className="flex flex-col gap-3 rounded-card bg-surface p-5">
               <div className="flex items-center justify-between">
                 <b className="text-base font-extrabold">{tr("Perlu perhatian")}</b>
-                <Link href="/admin/syarikat" className="text-sm font-bold">
+                <Link href="/admin/syarikat" className="flex min-h-11 items-center text-sm font-bold">
                   {tr("Semua syarikat")}</Link>
               </div>
               {x.attention.length === 0 ? (
@@ -88,7 +88,7 @@ export default function SaDashboard() {
             <section className="flex flex-col gap-3 rounded-card bg-surface p-5">
               <div className="flex items-center justify-between">
                 <b className="text-base font-extrabold">{tr("Permohonan akses")}</b>
-                <Link href="/admin/akses" className="text-sm font-bold">
+                <Link href="/admin/akses" className="flex min-h-11 items-center text-sm font-bold">
                   {tr("Semak")}</Link>
               </div>
               {(g.data ?? []).filter((r) => r.status === "pending").length === 0 && <span className="text-sm text-muted">{tr("Tiada permohonan menunggu.")}</span>}

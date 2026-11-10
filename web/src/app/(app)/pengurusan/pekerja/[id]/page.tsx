@@ -288,7 +288,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
                   <span className="flex items-center justify-end gap-2">
                     <span className="tabular-nums">{topeng(sensitif.ic_no, 6, 2)}</span>
                     {(sensitif.ic_no || sensitif.bank_account_no) && (
-                      <button type="button" onClick={() => setTunjuk((x) => !x)} className="min-h-8 text-xs font-bold text-primary">
+                      <button type="button" onClick={() => setTunjuk((x) => !x)} className="min-h-11 px-1 text-xs font-bold text-primary">
                         {tunjuk ? tr("Sorok") : tr("Tunjuk")}</button>
                     )}
                   </span>

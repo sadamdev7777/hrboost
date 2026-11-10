@@ -84,7 +84,7 @@ export default function CutiPage() {
               <span key={`p${i}`} />
             ))}
             {(kal.data?.bulan === bulan ? kal.data.hari : []).map((d) => {
-              const cls = `flex h-[34px] items-center justify-center rounded-[9px] text-[13px] font-semibold ${
+              const cls = `flex h-10 items-center justify-center rounded-[9px] text-[13px] font-semibold ${
                 d.jenis ? GAYA[d.jenis] : d.weekend ? "text-[#9AA8A5]" : ""
               } ${d.date === todayISO() && !d.jenis ? "ring-1 ring-primary" : ""} ${pilih === d.date ? "outline-2 outline-offset-1 outline-ink" : ""}`;
               // Hari bertanda boleh ditekan untuk melihat siapa bercuti / nama cuti umum

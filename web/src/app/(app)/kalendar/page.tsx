@@ -138,7 +138,7 @@ function Lencana({ c, full }: { c: CutiKalendar; full: boolean }) {
     </span>
   );
   return full ? (
-    <Link href={`/pengurusan/pekerja/${c.employment_id}`} className="block">
+    <Link href={`/pengurusan/pekerja/${c.employment_id}`} className="flex min-h-9 items-center">
       {isi}
     </Link>
   ) : (

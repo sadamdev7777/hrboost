@@ -127,7 +127,7 @@ function StaffUtama({ me }: { me: Me }) {
           <section className="order-1 flex flex-col gap-2.5 lg:order-none">
             <div className="flex items-center justify-between">
               <h2 className="m-0 text-base font-extrabold">{tr("Permohonan saya")}</h2>
-              <Link href="/permohonan" className="text-[13px] font-bold">
+              <Link href="/permohonan" className="flex min-h-11 items-center text-[13px] font-bold">
                 {tr("Lihat semua")}</Link>
             </div>
             {mohon.error && <ErrorBox message={mohon.error} />}

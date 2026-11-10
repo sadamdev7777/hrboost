@@ -304,7 +304,7 @@ function Kandungan() {
                     </Link>
                   )}
                 </Panel>
-                <Link href="/pengurusan/akses" className="px-1 text-xs font-semibold text-muted!">
+                <Link href="/pengurusan/akses" className="flex min-h-11 items-center px-1 text-xs font-semibold text-muted!">
                   {tr("Anda hanya boleh melihat {0}. Mohon akses syarikat lain ›", a.company_code)}</Link>
               </div>
             </div>

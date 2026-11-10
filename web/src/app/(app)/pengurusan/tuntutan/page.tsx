@@ -139,7 +139,7 @@ function Kandungan() {
                       </span>
                     </td>
                     <td>
-                      <Link href={t.approval_request_id ? `/kelulusan/${t.approval_request_id}` : "#"} className="flex flex-col text-ink!">
+                      <Link href={t.approval_request_id ? `/kelulusan/${t.approval_request_id}` : "#"} className="flex min-h-11 flex-col justify-center text-ink!">
                         <b className="font-semibold">{t.title}</b>
                         <span className="text-xs text-muted">{t.types ?? ""}</span>
                       </Link>
