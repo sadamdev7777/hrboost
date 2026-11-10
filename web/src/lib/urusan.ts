@@ -105,6 +105,7 @@ export async function tolakSurat(id: string, sebab: string) {
 }
 
 export type DataSurat = {
+  logo_path?: string | null;
   kind: JenisSurat;
   purpose: string;
   addressed_to: string | null;

@@ -10,6 +10,8 @@ import { ButangUtama, HadPeranan, Seksyen, Suis } from "@/components/Senarai";
 import { getOtDigunakan, setOtDigunakan } from "@/lib/urusan";
 import { beritahu } from "@/components/Dialog";
 import { NEGERI } from "@/lib/senarai";
+import { MuatNaikLogo } from "@/components/Logo";
+import { useMeContext } from "@/lib/me";
 
 
 type Syarikat = {
@@ -26,6 +28,7 @@ type Syarikat = {
   socso_employer_no: string | null;
   lhdn_employer_no: string | null;
   hrdf_registered: boolean;
+  logo_path: string | null;
 };
 
 const cls = "h-10 min-w-0 grow rounded-[10px] border border-[#D5DEDC] bg-surface px-2.5 text-sm font-semibold text-ink outline-none focus:border-primary disabled:bg-page";
@@ -43,12 +46,13 @@ function ProfilSyarikat() {
   const me = useMe();
   const cid = me.active!.companyId;
   const admin = me.roles.includes("admin");
+  const { reload: muatSemula } = useMeContext();
   const d = useData(
     async () =>
       must(
         await getSupabase()
           .from("companies")
-          .select("name, code, reg_no, address, state, weekend_days, work_start, work_end, late_grace_minutes, epf_employer_no, socso_employer_no, lhdn_employer_no, hrdf_registered")
+          .select("name, code, reg_no, address, state, weekend_days, work_start, work_end, late_grace_minutes, epf_employer_no, socso_employer_no, lhdn_employer_no, hrdf_registered, logo_path")
           .eq("id", cid)
           .single(),
       ) as Syarikat,
@@ -59,6 +63,21 @@ function ProfilSyarikat() {
       <BackHeader title={tr("Profil syarikat")} href="/pengurusan/tetapan" />
       {d.error && <ErrorBox message={d.error} />}
       {d.loading && !d.data && <Loading />}
+      {d.data && (
+        <section className="flex flex-col gap-2 px-4 pt-2 pb-1">
+          <Seksyen>{tr("LOGO SYARIKAT")}</Seksyen>
+          <MuatNaikLogo
+            companyId={cid}
+            nama={d.data.name}
+            path={d.data.logo_path}
+            boleh={me.roles.includes("hr") || admin}
+            onChange={() => {
+              d.reload();
+              muatSemula();
+            }}
+          />
+        </section>
+      )}
       {d.data && <Borang s={d.data} admin={admin} cid={cid} onSaved={d.reload} />}
       {d.data && <SuisLebihMasa cid={cid} boleh={me.roles.includes("hr") || admin} />}
     </Screen>

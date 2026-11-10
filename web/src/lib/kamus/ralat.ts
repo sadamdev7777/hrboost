@@ -309,4 +309,5 @@ export const RALAT: Record<string, string> = {
   "Sila sahkan 4 digit akhir kad pengenalan anda sekali lagi.": "Please confirm the last 4 digits of your IC again.",
   "E-mel ini sudah digunakan oleh akaun lain. Gunakan e-mel lain atau hubungi HR.": "This email is already used by another account. Use another email or contact HR.",
   "Nombor WhatsApp tidak sah": "Invalid WhatsApp number",
+  "Laluan logo tidak sah": "Invalid logo path",
 };

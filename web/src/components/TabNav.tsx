@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoSyarikat } from "./Logo";
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -143,8 +144,13 @@ export function MenuSisi() {
 
   return (
     <aside aria-label={tr("Menu sisi")} className="sticky top-0 hidden h-dvh w-[248px] shrink-0 flex-col gap-1 overflow-y-auto border-r border-line-soft bg-surface px-3 py-5 lg:flex print:hidden!">
+      {me.active?.logoPath && (
+        <div className="px-2 pb-2">
+          <LogoSyarikat path={me.active.logoPath} nama={me.active.companyName} className="h-11 max-w-full object-left" />
+        </div>
+      )}
       <div className="flex items-center gap-2.5 px-2 pb-4">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold text-white">HR</span>
+        {!me.active?.logoPath && <span className="flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold text-white">HR</span>}
         <span className="flex min-w-0 flex-col">
           <b className="line-clamp-2 text-[13px] leading-snug font-extrabold" title={me.active?.companyName}>
             {me.active?.companyName ?? "HRBoost"}

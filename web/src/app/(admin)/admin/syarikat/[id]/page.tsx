@@ -1,5 +1,7 @@
 "use client";
 
+import { LogoSyarikat } from "@/components/Logo";
+import { getLogoSemuaSyarikat } from "@/lib/logo";
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -36,6 +38,7 @@ const SEBAB = [tr("Penyalahgunaan / spam"), tr("Permintaan Pentadbir syarikat"),
 export default function SaSyarikatButiran() {
   const { id } = useParams<{ id: string }>();
   const d = useData(() => rpc<Butiran>("sa_company_detail", { p_company: id }), [id]);
+  const logo = useData(() => getLogoSemuaSyarikat().catch(() => ({}) as Record<string, string>), []);
   const [had, setHad] = useState<{ wa: string; ai: string } | null>(null);
   const [sah, setSah] = useState(false);
   const [sebab, setSebab] = useState(SEBAB[0]);
@@ -65,6 +68,7 @@ export default function SaSyarikatButiran() {
       <Link href="/admin/syarikat" className="text-sm font-bold">
         {tr("← Semua syarikat")}</Link>
       <div className="flex flex-wrap items-center gap-3">
+        {logo.data?.[id] && <LogoSyarikat path={logo.data[id]} nama={x.name} className="h-12 max-w-[200px] object-left" />}
         <h1 className="m-0 text-2xl font-extrabold">{x.name}</h1>
         <span className={`rounded-lg px-2 py-0.5 text-xs font-bold ${LABEL_STATUS_SYARIKAT[st].c}`}>{LABEL_STATUS_SYARIKAT[st].l}</span>
       </div>

@@ -2725,6 +2725,11 @@ isOneToOne: false
 "sa_company_detail":
 { Args: { "p_company": string }; Returns: Json
                            },
+"sa_company_logos":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "company_id": string,"logo_path": string
+            }[]
+                           },
 "sa_company_overview":
 { Args: Record<PropertyKey, never>; Returns: {
               "admins": string,"ai_limit": number,"ai_used": number,"code": string,"company_id": string,"created_at": string,"name": string,"onboarding_steps": number,"staff_active": number,"status": string,"wa_limit": number,"wa_used": number
@@ -2781,6 +2786,9 @@ isOneToOne: false
                            },
 "set_company_holidays":
 { Args: { "p_company": string,"p_holiday_ids": (string)[],"p_year": number }; Returns: number
+                           },
+"set_company_logo":
+{ Args: { "p_company": string,"p_path": string }; Returns: undefined
                            },
 "set_department_head":
 { Args: { "p_department": string,"p_person": string }; Returns: undefined

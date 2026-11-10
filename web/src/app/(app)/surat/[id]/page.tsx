@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoSyarikat } from "@/components/Logo";
 import { tr } from "@/lib/i18n";
 import { useParams } from "next/navigation";
 import { useMe } from "@/lib/me";
@@ -51,6 +52,11 @@ function Kertas({ s }: { s: DataSurat }) {
   return (
     <article className="kertas mx-auto flex max-w-[794px] flex-col gap-5 bg-white px-8 py-10 font-serif text-[14px] leading-relaxed text-black shadow-sm sm:px-14">
       <header className="flex flex-col gap-0.5 border-b-2 border-black pb-3 text-center">
+        {s.logo_path && (
+          <span className="mb-2 flex justify-center">
+            <LogoSyarikat path={s.logo_path} nama={s.company.name} className="h-16 max-w-[260px]" />
+          </span>
+        )}
         <b className="text-lg tracking-wide uppercase">{s.company.name}</b>
         {s.company.reg_no && <span className="text-xs">({s.company.reg_no})</span>}
         {s.company.address && <span className="text-xs">{s.company.address}</span>}

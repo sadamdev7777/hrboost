@@ -12,6 +12,7 @@ export type Pekerjaan = {
   companyId: string;
   companyCode: string;
   companyName: string;
+  logoPath: string | null;
   employeeNo: string;
   departmentId: string | null;
   departmentName: string | null;
@@ -81,7 +82,7 @@ async function loadMe(preferredCompany: string | null): Promise<State> {
   const { data: emps, error: eErr } = await sb
     .from("employments")
     .select(
-      "id, company_id, employee_no, department_id, work_start, companies(code, name, work_start, work_end, late_grace_minutes), departments(name), positions(title)",
+      "id, company_id, employee_no, department_id, work_start, companies(code, name, logo_path, work_start, work_end, late_grace_minutes), departments(name), positions(title)",
     )
     .eq("person_id", person.id)
     .in("status", ["probation", "active"])
@@ -95,6 +96,7 @@ async function loadMe(preferredCompany: string | null): Promise<State> {
       companyId: e.company_id,
       companyCode: e.companies!.code,
       companyName: e.companies!.name,
+      logoPath: e.companies!.logo_path ?? null,
       employeeNo: e.employee_no,
       departmentId: e.department_id,
       departmentName: e.departments?.name ?? null,

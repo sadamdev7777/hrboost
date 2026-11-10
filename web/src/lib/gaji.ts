@@ -94,7 +94,7 @@ export type Slip = {
   totalDeduction: number;
   unpaidDays: number;
   lines: { code: string; description: string; kind: "earning" | "deduction" | "employer"; amount: number }[];
-  company: { name: string; code: string; reg_no: string | null; epf: string | null; socso: string | null; lhdn: string | null };
+  company: { name: string; code: string; reg_no: string | null; epf: string | null; socso: string | null; lhdn: string | null; logo_path?: string | null };
   employee: {
     fullName: string;
     employeeNo: string;

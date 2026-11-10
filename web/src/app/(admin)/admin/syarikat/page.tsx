@@ -7,6 +7,8 @@ import { useState } from "react";
 import { useData } from "@/lib/useData";
 import { LABEL_STATUS_SYARIKAT, rpc, tarikhPendek } from "@/lib/admin";
 import { ErrorBox, Loading } from "@/components/ui";
+import { LogoSyarikat } from "@/components/Logo";
+import { getLogoSemuaSyarikat } from "@/lib/logo";
 
 type Row = { company_id: string; name: string; code: string; status: string; admins: string | null; staff_active: number; onboarding_steps: number; created_at: string };
 const TAPIS = [
@@ -19,6 +21,7 @@ const TAPIS = [
 // Rujukan reka bentuk: design/SA_Syarikat.dc.html
 export default function SaSyarikat() {
   const d = useData(() => rpc<Row[]>("sa_company_overview"), []);
+  const logo = useData(() => getLogoSemuaSyarikat().catch(() => ({}) as Record<string, string>), []);
   const [cari, setCari] = useState("");
   const [f, setF] = useState("all");
   const st = (r: Row) => (r.status === "suspended" ? "suspended" : r.onboarding_steps < 6 ? "onboarding" : "active");
@@ -71,8 +74,19 @@ export default function SaSyarikat() {
               {rows.map((r) => (
                 <tr key={r.company_id} className="border-t border-[#EEF2F1]">
                   <td className="py-3">
-                    <b>{r.name}</b>
-                    <div className="text-xs text-muted">{r.code}</div>
+                    <span className="flex items-center gap-3">
+                      <span className="flex h-9 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#EEF2F1] bg-white">
+                        {logo.data?.[r.company_id] ? (
+                          <LogoSyarikat path={logo.data[r.company_id]} nama={r.name} className="max-h-full max-w-full" />
+                        ) : (
+                          <span className="text-[11px] font-extrabold text-muted">{r.code.slice(0, 4)}</span>
+                        )}
+                      </span>
+                      <span>
+                        <b>{r.name}</b>
+                        <div className="text-xs text-muted">{r.code}</div>
+                      </span>
+                    </span>
                   </td>
                   <td className="py-3">{r.admins ?? "-"}</td>
                   <td className="py-3">{r.staff_active}</td>

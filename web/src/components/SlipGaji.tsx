@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoSyarikat } from "./Logo";
 import { tr } from "@/lib/i18n";
 import type { Slip } from "@/lib/gaji";
 import { BULAN_PENUH, BULAN_RINGKAS } from "@/lib/gaji";
@@ -25,6 +26,7 @@ export function SlipGaji({ s }: { s: Slip }) {
     <article className="slip mx-auto flex w-full max-w-[794px] flex-col gap-4 bg-white p-6 text-[12px] text-ink sm:p-10" aria-label={tr("Slip gaji")}>
       <header className="flex items-start justify-between gap-4 border-b-2 border-primary pb-3">
         <div className="flex flex-col gap-0.5">
+          {s.company.logo_path && <LogoSyarikat path={s.company.logo_path} nama={s.company.name} className="mb-1.5 h-12 max-w-[200px] object-left" />}
           <b className="text-[15px] font-extrabold uppercase">{s.company.name}</b>
           {s.company.reg_no && <span className="text-muted">{tr("No. Syarikat {0}", s.company.reg_no)}</span>}
           <span className="text-muted">
