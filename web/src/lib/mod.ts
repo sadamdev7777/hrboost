@@ -53,7 +53,7 @@ export function useMod(): { mod: Mod; boleh: boolean; tukar: (m: Mod) => void } 
 
 export type IkonNav =
   | "home" | "plus" | "check" | "user" | "chart" | "users" | "card" | "settings" | "org" | "calendar" | "document" | "bell" | "chat"
-  | "clock" | "receipt" | "userplus" | "inbox" | "grid";
+  | "clock" | "receipt" | "userplus" | "inbox" | "grid" | "wallet" | "sparkle" | "cake";
 /** `padan`: awalan laluan lain yang turut menandakan item ini aktif (tab dalam modul). */
 export type ItemNav = { href: string; label: string; pendek?: string; ikon: IkonNav; roles?: string[]; padan?: string[] };
 export type KumpulanNav = { tajuk: string | null; items: ItemNav[] };
@@ -63,6 +63,46 @@ export const NAV_PEKERJA: ItemNav[] = [
   { href: "/mohon", label: tr("Mohon"), ikon: "plus" },
   { href: "/kelulusan", label: tr("Kelulusan"), ikon: "check" },
   { href: "/saya", label: tr("Saya"), ikon: "user" },
+];
+
+/**
+ * Menu sisi desktop Mod Pekerja: urusan harian dikumpulkan supaya Slip gaji, Cuti, Tuntutan dan Kehadiran
+ * boleh dibuka terus (di telefon kekal 4 tab bawah; item yang sama ada dalam Saya).
+ */
+export const MENU_PEKERJA: KumpulanNav[] = [
+  {
+    tajuk: null,
+    items: [
+      { href: "/utama", label: tr("Utama"), ikon: "home" },
+      { href: "/mohon", label: tr("Mohon"), ikon: "plus" },
+      { href: "/kelulusan", label: tr("Kelulusan"), ikon: "check" },
+    ],
+  },
+  {
+    tajuk: tr("URUSAN SAYA"),
+    items: [
+      { href: "/gaji", label: tr("Slip gaji"), ikon: "wallet" },
+      { href: "/cuti", label: tr("Cuti"), ikon: "calendar" },
+      { href: "/tuntutan", label: tr("Tuntutan"), ikon: "receipt" },
+      { href: "/kehadiran", label: tr("Kehadiran"), ikon: "clock" },
+      { href: "/permohonan", label: tr("Permohonan saya"), ikon: "document" },
+    ],
+  },
+  {
+    tajuk: tr("SYARIKAT"),
+    items: [
+      { href: "/pengumuman", label: tr("Pengumuman"), ikon: "bell" },
+      { href: "/kalendar", label: tr("Kalendar pasukan"), ikon: "users" },
+      { href: "/hari-jadi", label: tr("Hari Jadi"), ikon: "cake" },
+    ],
+  },
+  {
+    tajuk: tr("BANTUAN"),
+    items: [
+      { href: "/tanya-hr", label: tr("Tanya HR"), ikon: "chat" },
+      { href: "/pembantu-ai", label: tr("Pembantu AI"), ikon: "sparkle" },
+    ],
+  },
 ];
 
 const HR_CEO = ["hr", "ceo", "admin"];

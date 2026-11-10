@@ -5,11 +5,11 @@ import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { IconBell, IconCalendar, IconChat, IconCard, IconChart, IconCheckSquare, IconClock, IconDocument, IconGrid, IconHome, IconInbox, IconPlusCircle, IconOrg, IconReceipt, IconSettings, IconUser, IconUserPlus, IconUsers } from "./icons";
+import { IconBell, IconCalendar, IconChat, IconCard, IconChart, IconCheckSquare, IconClock, IconDocument, IconGrid, IconHome, IconInbox, IconPlusCircle, IconOrg, IconReceipt, IconSettings, IconUser, IconUserPlus, IconUsers, IconWallet, IconSparkle, IconCake } from "./icons";
 import { getBilanganTugasan } from "@/lib/data";
 import { useData } from "@/lib/useData";
 import { useMeContext } from "@/lib/me";
-import { NAV_TETAPAN, itemAktif, lamanUtama, menuHrUntuk, navUntuk, semuaItemHr, useMod, type IkonNav, type ItemNav, type Mod } from "@/lib/mod";
+import { MENU_PEKERJA, NAV_TETAPAN, itemAktif, lamanUtama, menuHrUntuk, navUntuk, semuaItemHr, useMod, type IkonNav, type ItemNav, type Mod } from "@/lib/mod";
 import { getSupabase } from "@/lib/supabase";
 import { BackHeader } from "./ui";
 import { useSkrinLebar } from "@/lib/skrin";
@@ -34,6 +34,9 @@ export const IKON: Record<IkonNav, (p: { size?: number }) => ReactNode> = {
   userplus: IconUserPlus,
   inbox: IconInbox,
   grid: IconGrid,
+  wallet: IconWallet,
+  sparkle: IconSparkle,
+  cake: IconCake,
 };
 
 function Lencana({ n }: { n: number }) {
@@ -121,9 +124,9 @@ export function MenuSisi() {
   const lebar = useSkrinLebar();
   if (!me || !lebar) return null;
   const hr = mod === "hr";
-  const kumpulan = hr ? menuHrUntuk(me) : [{ tajuk: null, items: navUntuk(me, mod) }];
-  const aktif = itemAktif(hr ? semuaItemHr(me) : kumpulan[0].items, path);
-  const sayaAktif = hr && (path === "/saya" || path.startsWith("/saya/"));
+  const kumpulan = hr ? menuHrUntuk(me) : MENU_PEKERJA;
+  const aktif = itemAktif(hr ? semuaItemHr(me) : MENU_PEKERJA.flatMap((k) => k.items), path);
+  const sayaAktif = ["/saya", "/profil"].some((x) => path === x || path.startsWith(x + "/"));
 
   const pautan = (n: ItemNav) => {
     const Ikon = IKON[n.ikon];
@@ -150,7 +153,9 @@ export function MenuSisi() {
         </div>
       )}
       <div className="flex items-center gap-2.5 px-2 pb-4">
-        {!me.active?.logoPath && <span className="flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold text-white">HR</span>}
+        {!me.active?.logoPath && (
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-primary text-[11px] font-extrabold text-white">{(me.active?.companyCode ?? "HR").slice(0, 3)}</span>
+        )}
         <span className="flex min-w-0 flex-col">
           <b className="line-clamp-2 text-[13px] leading-snug font-extrabold" title={me.active?.companyName}>
             {me.active?.companyName ?? "HRBoost"}
@@ -184,7 +189,7 @@ export function MenuSisi() {
       </nav>
       <div className="mt-auto flex flex-col gap-1.5 border-t border-line-soft pt-3">
         {hr && pautan(NAV_TETAPAN)}
-        {hr ? (
+        {(
           <Link
             href="/saya"
             aria-current={sayaAktif ? "page" : undefined}
@@ -195,13 +200,12 @@ export function MenuSisi() {
             </span>
             <span className="flex min-w-0 flex-col leading-tight">
               <b className="truncate text-[13px] text-ink">{me.name}</b>
-              <span className="truncate text-xs text-muted">{tr("Profil & urusan saya")}</span>
+              <span className="truncate text-xs text-muted">{hr ? tr("Profil & urusan saya") : tr("Profil, bahasa & tetapan")}</span>
             </span>
           </Link>
-        ) : null}
+        )}
         <TukarMod />
-        <div className="flex items-center justify-between gap-2 px-2">
-          {!hr && <span className="truncate text-[13px] font-bold">{me.name}</span>}
+        <div className="flex items-center justify-end gap-2 px-2">
           <button type="button" onClick={() => void getSupabase().auth.signOut()} className="flex min-h-10 shrink-0 items-center text-[13px] font-bold whitespace-nowrap text-danger">
             {tr("Log keluar")}</button>
         </div>
