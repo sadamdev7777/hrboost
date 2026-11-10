@@ -8,7 +8,7 @@ import { ringgit, tarikh, tarikhTempatan, type StatusPermohonan } from "@/lib/fo
 import { BULAN_PENUH } from "@/lib/gaji";
 import { getPendahuluanHr, tandaPendahuluanDibayar } from "@/lib/urusan";
 import { ErrorBox, Loading, Screen, StatusPill } from "@/components/ui";
-import { PengepalaAkar } from "@/components/TabNav";
+import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { TabGaji } from "@/components/TabGaji";
 import { HadPeranan } from "@/components/Senarai";
 import { beritahu, sahkan } from "@/components/Dialog";
@@ -28,7 +28,7 @@ function Kandungan() {
   const d = useData(() => getPendahuluanHr(emp.companyId), [emp.companyId]);
   return (
     <Screen lebar="lebar">
-      <PengepalaAkar title={tr("Gaji")} backHr="/pengurusan" />
+      <PengepalaAkar title={tr("Penggajian")} />
       <TabGaji />
       <main className="flex grow flex-col gap-3 px-4 pt-4 pb-6 lg:px-0">
         <span className="text-sm leading-normal text-subtle">
@@ -82,6 +82,7 @@ function Kandungan() {
           </div>
         )}
       </main>
+      <TabNav />
     </Screen>
   );
 }

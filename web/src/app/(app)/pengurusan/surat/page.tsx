@@ -1,6 +1,7 @@
 "use client";
 
 import { tr } from "@/lib/i18n";
+import { TabModul } from "@/components/TabModul";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -9,7 +10,7 @@ import { useData } from "@/lib/useData";
 import { tarikh, tarikhTempatan } from "@/lib/format";
 import { getSurat, keluarkanSurat, LABEL_SURAT, STATUS_SURAT, tolakSurat } from "@/lib/urusan";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
-import { PengepalaAkar } from "@/components/TabNav";
+import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { HadPeranan, Tag } from "@/components/Senarai";
 import { beritahu, mintaTeks, sahkan } from "@/components/Dialog";
 
@@ -61,7 +62,8 @@ function Kandungan() {
 
   return (
     <Screen lebar="lebar">
-      <PengepalaAkar title={tr("Surat")} backHr="/pengurusan" />
+      <PengepalaAkar title={tr("Peti HR")} />
+      <TabModul modul="peti" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         <span className="text-sm leading-normal text-subtle">
           {tr("Pekerja memohon surat pengesahan melalui Mohon → Surat. Surat dijana daripada rekod pekerja dan boleh disimpan sebagai PDF. Alamat syarikat pada kepala surat diubah di")}{" "}
@@ -132,6 +134,7 @@ function Kandungan() {
           </div>
         )}
       </main>
+      <TabNav />
     </Screen>
   );
 }

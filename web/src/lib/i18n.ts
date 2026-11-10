@@ -66,6 +66,14 @@ export function tr(ms: string, ...v: unknown[]): string {
 }
 export const t = tr;
 
+/**
+ * Teks yang sama dalam BM tetapi berbeza dalam English mengikut konteks
+ * (cth. "Lulus" = butang "Approve", tetapi status "Approved"). Terjemahan diberi terus.
+ */
+export function trKonteks(ms: string, en: string): string {
+  return bahasa() === "ms" ? ms : en;
+}
+
 /** Bahasa untuk Intl (nombor, tarikh). */
 export function lokal(): string {
   return bahasa() === "ms" ? "ms-MY" : "en-MY";

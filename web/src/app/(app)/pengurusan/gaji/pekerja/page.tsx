@@ -47,8 +47,7 @@ function GajiPekerja() {
   return (
     <Screen lebar="lebar">
       <PengepalaAkar
-        title={tr("Gaji")}
-        backHr="/pengurusan"
+        title={tr("Penggajian")}
         action={
           <span className="mr-1 flex items-center gap-1">
             <button type="button" onClick={() => setImp(true)} className="flex min-h-11 items-center px-2 text-[13px] font-bold text-primary">

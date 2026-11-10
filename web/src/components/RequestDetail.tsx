@@ -1,6 +1,6 @@
 "use client";
 
-import { tr, trRalat } from "@/lib/i18n";
+import { tr, trRalat, trKonteks } from "@/lib/i18n";
 import { beritahu, sahkan } from "@/components/Dialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -409,7 +409,7 @@ async function loadDetail(mode: Mode) {
     const pending = mineAll.find((t) => t.status === "pending");
     const mine = !!me && mineAll.some((t) => t.approver_person_id === me.id);
     const name = namaPeringkat(s.name);
-    if (approved) return { order: s.step_order, name, state: "approved", right: approved.acted_at ? masa(approved.acted_at) : tr("Lulus"), mine, comment: approved.comment };
+    if (approved) return { order: s.step_order, name, state: "approved", right: approved.acted_at ? masa(approved.acted_at) : trKonteks("Lulus", "Approved"), mine, comment: approved.comment };
     if (rejected) return { order: s.step_order, name, state: "rejected", right: tr("Ditolak"), mine, comment: rejected.comment };
     if (returned) return { order: s.step_order, name, state: "returned", right: tr("Dikembalikan"), mine, comment: returned.comment };
     if (pending && req.status === "pending")

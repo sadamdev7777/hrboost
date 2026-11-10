@@ -7,7 +7,7 @@ import { useData } from "@/lib/useData";
 import { arkibPengumuman, getBelumBaca, getPengumuman, siarPengumuman, type Pengumuman } from "@/lib/urusan";
 import { bilaDihantar } from "@/lib/format";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
-import { PengepalaAkar } from "@/components/TabNav";
+import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Suis, inputKecil } from "@/components/Senarai";
 import { beritahu, sahkan } from "@/components/Dialog";
 
@@ -50,7 +50,7 @@ function Kandungan() {
 
   return (
     <Screen lebar="lebar">
-      <PengepalaAkar title={tr("Pengumuman")} backHr="/pengurusan" />
+      <PengepalaAkar title={tr("Pengumuman")} />
       <main className="flex grow flex-col gap-4 px-4 pt-1 pb-6 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] lg:items-start lg:gap-5 lg:px-0">
         <section className="flex flex-col gap-3 rounded-card bg-surface px-4 py-4 lg:px-5">
           <h2 className="m-0 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("PENGUMUMAN BAHARU")}</h2>
@@ -126,6 +126,7 @@ function Kandungan() {
         </section>
       </main>
       {lihat && <BelumBaca a={lihat} onClose={() => setLihat(null)} />}
+      <TabNav />
     </Screen>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { tr } from "@/lib/i18n";
+import { TabModul } from "@/components/TabModul";
 import Link from "next/link";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -59,6 +60,7 @@ function SenaraiJabatan() {
             {tr("+ Tambah jabatan")}</button>
         }
       />
+      <TabModul modul="pekerja" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         <span className="text-sm leading-normal text-subtle">
           {tr("Ketua jabatan menjadi pelulus pertama bagi pasukannya. Untuk memindahkan pekerja ke jabatan lain, buka profil pekerja → Ubah gaji & jawatan.")}</span>

@@ -1,8 +1,27 @@
+
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
   
-  "public": {
+  "graphql_public": {
+          Tables: {
+            [_ in never]: never
+          }
+          Views: {
+            [_ in never]: never
+          }
+          Functions: {
+            "graphql":
+{ Args: { "extensions"?: Json,"operationName"?: string,"query"?: string,"variables"?: Json }; Returns: Json
+                           }
+          }
+          Enums: {
+            [_ in never]: never
+          }
+          CompositeTypes: {
+            [_ in never]: never
+          }
+        },"public": {
           Tables: {
             "accounting_sync_queue": {
                   Row: {
@@ -2207,6 +2226,12 @@ isOneToOne: false
 "hr_add_pay_component":
 { Args: { "p_company": string,"p_epf"?: boolean,"p_kind": string,"p_name": string,"p_socso"?: boolean,"p_taxable"?: boolean }; Returns: string
                            },
+"hr_attendance_day":
+{ Args: { "p_company": string,"p_date"?: string }; Returns: Json
+                           },
+"hr_claims":
+{ Args: { "p_company": string,"p_from": string,"p_to": string }; Returns: Json
+                           },
 "hr_current_pay":
 { Args: { "p_employment": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: {
               "amount": number,"code": string,"effective_from": string,"name": string
@@ -2238,6 +2263,12 @@ isOneToOne: false
 { Args: { "p_company": string,"p_rows": Json,"p_year": number }; Returns: {
               "employee_no": string,"leave_code": string,"message": string,"ok": boolean
             }[]
+                           },
+"hr_leave_overview":
+{ Args: { "p_company": string }; Returns: Json
+                           },
+"hr_onboarding":
+{ Args: { "p_company": string }; Returns: Json
                            },
 "hr_opening_balances":
 { Args: { "p_company": string,"p_year": number }; Returns: {
@@ -2997,7 +3028,11 @@ export type CompositeTypes<
   : never
 
 export const Constants = {
-  "public": {
+  "graphql_public": {
+          Enums: {
+            
+          }
+        },"public": {
           Enums: {
             "accounting_system": ["quickbooks", "niagawan", "csv", "none"],"action_channel": ["web", "whatsapp", "ai_agent", "system"],"app_role": ["staff", "dept_head", "hr", "finance", "ceo", "admin"],"approver_type": ["dept_head", "direct_manager", "specific_person", "role"],"employment_status": ["probation", "active", "resigned", "terminated", "retired"],"employment_type": ["permanent", "contract", "part_time", "intern"],"leave_half": ["full", "am", "pm"],"notify_status": ["pending", "sent", "failed", "skipped"],"notify_target": ["subject", "subject_manager", "subject_dept_head", "role_hr", "role_ceo", "specific_person", "cover_person", "dept_peers"],"payroll_status": ["draft", "calculated", "pending", "approved", "paid", "locked", "returned", "rejected", "cancelled"],"request_status": ["draft", "pending", "approved", "rejected", "returned", "cancelled"],"request_type": ["leave", "claim", "attendance_correction", "payroll_run", "overtime", "salary_advance"],"sla_mode": ["none", "same_day", "hours"],"step_mode": ["any", "all"],"sync_status": ["pending", "success", "failed", "skipped"],"task_status": ["pending", "approved", "rejected", "returned", "superseded"]
           }

@@ -1,6 +1,7 @@
 "use client";
 
 import { tr } from "@/lib/i18n";
+import { TabModul } from "@/components/TabModul";
 import Link from "next/link";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -8,7 +9,7 @@ import { useData } from "@/lib/useData";
 import { tarikh } from "@/lib/format";
 import { getFleksibel, LABEL_FLEKSIBEL, putuskanFleksibel, STATUS_FLEKSIBEL } from "@/lib/urusan";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
-import { PengepalaAkar } from "@/components/TabNav";
+import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { HadPeranan, Tag } from "@/components/Senarai";
 import { beritahu, mintaTeks } from "@/components/Dialog";
 
@@ -48,7 +49,8 @@ function Kandungan() {
 
   return (
     <Screen lebar="lebar">
-      <PengepalaAkar title={tr("Kerja fleksibel")} backHr="/pengurusan" />
+      <PengepalaAkar title={tr("Kehadiran")} />
+      <TabModul modul="kehadiran" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         <span className="text-sm leading-normal text-subtle">
           {tr("Akta Kerja 1955 (Bahagian XIIC): pekerja boleh memohon perubahan waktu, hari atau tempat bekerja. Majikan wajib memberi jawapan bertulis dalam 60 hari dari tarikh permohonan, dan menyatakan sebab jika tidak meluluskan.")}</span>
@@ -92,6 +94,7 @@ function Kandungan() {
           </div>
         )}
       </main>
+      <TabNav />
     </Screen>
   );
 }

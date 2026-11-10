@@ -1,4 +1,4 @@
-import { tr, trRalat } from "@/lib/i18n";
+import { tr, trRalat, trKonteks } from "@/lib/i18n";
 // Format tarikh, masa, nombor telefon dan label (ikut bahasa antara muka, lib/i18n).
 // Semua masa dipaparkan mengikut zon Asia/Kuala_Lumpur.
 
@@ -181,7 +181,7 @@ export type StatusPermohonan = "draft" | "pending" | "approved" | "rejected" | "
 export const LABEL_STATUS: Record<StatusPermohonan, string> = {
   draft: tr("Draf"),
   pending: tr("Menunggu"),
-  approved: tr("Lulus"),
+  approved: trKonteks("Lulus", "Approved"),
   rejected: tr("Ditolak"),
   returned: tr("Dikembalikan"),
   cancelled: tr("Dibatalkan"),

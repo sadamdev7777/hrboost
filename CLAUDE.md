@@ -99,6 +99,8 @@ Reka bentuk setiap skrin ada dalam folder `design/` (fail `NamaSkrin.dc.html`). 
 
 Menu "Pengurusan" dalam `Saya` hanya dipaparkan jika `has_role(company, '{hr,finance,ceo,admin}')`.
 
+**Menu Mod HR ikut modul** (`MENU_HR`, `web/src/lib/mod.ts`): Papan Pemuka · Kelulusan · Pengumuman · ORANG (Pekerja, Orientasi) · MASA (Cuti, Kehadiran) · WANG (Penggajian, Tuntutan perbelanjaan) · LAIN-LAIN (Peti HR, Laporan) · Tetapan di bawah, "Saya" melalui nama. Alat kecil ialah tab dalam modul (`TabModul`), bukan item menu baharu. Modul ditapis ikut peranan.
+
 ## 6. Keselamatan & PDPA
 
 - RLS hidup pada semua jadual. Frontend guna kunci anon sahaja; tindakan sensitif melalui RPC `security definer`.

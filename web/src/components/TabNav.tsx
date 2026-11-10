@@ -4,18 +4,17 @@ import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { IconBell, IconCalendar, IconChat, IconCard, IconChart, IconCheckSquare, IconDocument, IconHome, IconPlusCircle, IconOrg, IconSettings, IconUser, IconUsers } from "./icons";
+import { IconBell, IconCalendar, IconChat, IconCard, IconChart, IconCheckSquare, IconClock, IconDocument, IconGrid, IconHome, IconInbox, IconPlusCircle, IconOrg, IconReceipt, IconSettings, IconUser, IconUserPlus, IconUsers } from "./icons";
 import { getBilanganTugasan } from "@/lib/data";
 import { useData } from "@/lib/useData";
 import { useMeContext } from "@/lib/me";
-import { NAV_HR_LAGI, itemAktif, lamanUtama, navUntuk, useMod, type ItemNav, type Mod } from "@/lib/mod";
+import { NAV_TETAPAN, itemAktif, lamanUtama, menuHrUntuk, navUntuk, semuaItemHr, useMod, type IkonNav, type ItemNav, type Mod } from "@/lib/mod";
 import { getSupabase } from "@/lib/supabase";
 import { BackHeader } from "./ui";
 import { useSkrinLebar } from "@/lib/skrin";
 import { bukaCari } from "./CariPantas";
-import { hasRole } from "@/lib/me";
 
-const IKON: Record<ItemNav["ikon"], (p: { size?: number }) => ReactNode> = {
+export const IKON: Record<IkonNav, (p: { size?: number }) => ReactNode> = {
   home: IconHome,
   plus: IconPlusCircle,
   check: IconCheckSquare,
@@ -29,6 +28,11 @@ const IKON: Record<ItemNav["ikon"], (p: { size?: number }) => ReactNode> = {
   document: IconDocument,
   bell: IconBell,
   chat: IconChat,
+  clock: IconClock,
+  receipt: IconReceipt,
+  userplus: IconUserPlus,
+  inbox: IconInbox,
+  grid: IconGrid,
 };
 
 function Lencana({ n }: { n: number }) {
@@ -39,7 +43,7 @@ function Lencana({ n }: { n: number }) {
 
 /**
  * Navigasi bawah (telefon sahaja; disorok pada skrin lebar kerana menu sisi dipaparkan).
- * Mod Pekerja: 4 tab (CLAUDE.md §1). Mod HR: Papan Pemuka, Pekerja, Kelulusan, Gaji, Saya (ikut peranan).
+ * Mod Pekerja: 4 tab (CLAUDE.md §1). Mod HR: Papan Pemuka, Pekerja, Kelulusan, Gaji + "Lagi" (modul lain, Saya).
  */
 export function TabNav() {
   const { data } = useData(getBilanganTugasan, []);
@@ -49,7 +53,13 @@ export function TabNav() {
   const items = navUntuk(me, mod);
   const path = usePathname();
   const lebar = useSkrinLebar();
-  const aktif = itemAktif(items, path);
+  // Mod HR: halaman modul yang tiada dalam tab bawah (cth. Cuti) menandakan "Lagi".
+  let aktif = itemAktif(items, path);
+  if (mod === "hr" && me) {
+    const sebenar = itemAktif(semuaItemHr(me), path);
+    if (sebenar && !items.some((n) => n.href === sebenar)) aktif = "/pengurusan/menu";
+    if (path === "/saya" || path.startsWith("/saya/")) aktif = "/pengurusan/menu";
+  }
   if (lebar) return null;
   return (
     <nav
@@ -100,7 +110,7 @@ export function TukarMod({ className = "" }: { className?: string }) {
   );
 }
 
-/** Menu sisi untuk skrin lebar (≥ 1024px). */
+/** Menu sisi untuk skrin lebar (≥ 1024px). Mod HR: berkumpulan ikut modul; Tetapan & akaun di bawah. */
 export function MenuSisi() {
   const { data } = useData(getBilanganTugasan, []);
   const { state } = useMeContext();
@@ -109,20 +119,20 @@ export function MenuSisi() {
   const path = usePathname();
   const lebar = useSkrinLebar();
   if (!me || !lebar) return null;
-  const utama = navUntuk(me, mod);
-  const lagi = mod === "hr" ? NAV_HR_LAGI.filter((n) => !n.roles || hasRole(me, n.roles as Parameters<typeof hasRole>[1])) : [];
-  const semua = [...utama, ...lagi];
-  const aktif = itemAktif(semua, path);
+  const hr = mod === "hr";
+  const kumpulan = hr ? menuHrUntuk(me) : [{ tajuk: null, items: navUntuk(me, mod) }];
+  const aktif = itemAktif(hr ? semuaItemHr(me) : kumpulan[0].items, path);
+  const sayaAktif = hr && (path === "/saya" || path.startsWith("/saya/"));
 
   const pautan = (n: ItemNav) => {
     const Ikon = IKON[n.ikon];
-    const on = aktif === n.href;
+    const on = aktif === n.href && !sayaAktif;
     return (
       <Link
         key={n.href}
         href={n.href}
         aria-current={on ? "page" : undefined}
-        className={`flex h-11 items-center gap-3 rounded-[12px] px-3 text-sm ${on ? "bg-[#E3F1EE] font-extrabold text-primary!" : "font-semibold text-ink! hover:bg-[#EEF2F1]"}`}
+        className={`flex h-10 items-center gap-3 rounded-[12px] px-3 text-sm ${on ? "bg-[#E3F1EE] font-extrabold text-primary!" : "font-semibold text-ink! hover:bg-[#EEF2F1]"}`}
       >
         <Ikon size={20} />
         <span className="min-w-0 grow truncate">{tr(n.label)}</span>
@@ -132,23 +142,23 @@ export function MenuSisi() {
   };
 
   return (
-    <aside aria-label={tr("Menu sisi")} className="sticky top-0 hidden h-dvh w-[248px] shrink-0 flex-col gap-1 border-r border-line-soft bg-surface px-3 py-5 lg:flex print:hidden!">
+    <aside aria-label={tr("Menu sisi")} className="sticky top-0 hidden h-dvh w-[248px] shrink-0 flex-col gap-1 overflow-y-auto border-r border-line-soft bg-surface px-3 py-5 lg:flex print:hidden!">
       <div className="flex items-center gap-2.5 px-2 pb-4">
-        <span className="flex size-9 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold text-white">HR</span>
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold text-white">HR</span>
         <span className="flex min-w-0 flex-col">
           <b className="line-clamp-2 text-[13px] leading-snug font-extrabold" title={me.active?.companyName}>
             {me.active?.companyName ?? "HRBoost"}
           </b>
           <span className="text-xs text-muted">
-            {me.active?.companyCode} · {mod === "hr" ? tr("Mod HR") : tr("Mod Pekerja")}
+            {me.active?.companyCode} · {hr ? tr("Mod HR") : tr("Mod Pekerja")}
           </span>
         </span>
       </div>
-      {mod === "hr" && (
+      {hr && (
         <button
           type="button"
           onClick={bukaCari}
-          className="mb-2 flex h-10 items-center gap-2 rounded-[12px] border border-line bg-page px-3 text-left text-[13px] text-muted hover:border-primary"
+          className="mb-2 flex h-10 shrink-0 items-center gap-2 rounded-[12px] border border-line bg-page px-3 text-left text-[13px] text-muted hover:border-primary"
         >
           <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <circle cx="11" cy="11" r="7" />
@@ -159,15 +169,34 @@ export function MenuSisi() {
         </button>
       )}
       <nav className="flex flex-col gap-0.5" aria-label={tr("Menu utama")}>
-        {utama.map(pautan)}
-        {lagi.length > 0 && <span className="px-3 pt-4 pb-1 text-[11px] font-bold tracking-[0.04em] text-muted">{tr("PENGURUSAN")}</span>}
-        {lagi.map(pautan)}
+        {kumpulan.map((k, i) => (
+          <div key={i} className="flex flex-col gap-0.5">
+            {k.tajuk && <span className="px-3 pt-3.5 pb-1 text-[11px] font-bold tracking-[0.04em] text-muted">{tr(k.tajuk)}</span>}
+            {k.items.map(pautan)}
+          </div>
+        ))}
       </nav>
-      <div className="mt-auto flex flex-col gap-2 border-t border-line-soft pt-3">
+      <div className="mt-auto flex flex-col gap-1.5 border-t border-line-soft pt-3">
+        {hr && pautan(NAV_TETAPAN)}
+        {hr ? (
+          <Link
+            href="/saya"
+            aria-current={sayaAktif ? "page" : undefined}
+            className={`flex min-h-11 items-center gap-2.5 rounded-[12px] px-2 hover:bg-[#EEF2F1] ${sayaAktif ? "bg-[#E3F1EE]" : ""}`}
+          >
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-soft text-xs font-extrabold text-primary">
+              {me.name.slice(0, 2).toUpperCase()}
+            </span>
+            <span className="flex min-w-0 flex-col leading-tight">
+              <b className="truncate text-[13px] text-ink">{me.name}</b>
+              <span className="truncate text-xs text-muted">{tr("Profil & urusan saya")}</span>
+            </span>
+          </Link>
+        ) : null}
         <TukarMod />
         <div className="flex items-center justify-between gap-2 px-2">
-          <span className="truncate text-[13px] font-bold">{me.name}</span>
-          <button type="button" onClick={() => void getSupabase().auth.signOut()} className="flex min-h-11 shrink-0 items-center text-[13px] font-bold whitespace-nowrap text-danger">
+          {!hr && <span className="truncate text-[13px] font-bold">{me.name}</span>}
+          <button type="button" onClick={() => void getSupabase().auth.signOut()} className="flex min-h-10 shrink-0 items-center text-[13px] font-bold whitespace-nowrap text-danger">
             {tr("Log keluar")}</button>
         </div>
       </div>

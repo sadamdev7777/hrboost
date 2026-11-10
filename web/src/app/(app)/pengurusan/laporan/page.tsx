@@ -9,7 +9,7 @@ import { getLaporan, type JenisLaporan } from "@/lib/berkanun";
 import { todayISO } from "@/lib/format";
 import { BULAN_PENUH } from "@/lib/gaji";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
-import { PengepalaAkar } from "@/components/TabNav";
+import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { ButangBantuan, KadPanduan } from "@/components/Panduan";
 import { HadPeranan, inputKecil } from "@/components/Senarai";
 
@@ -283,6 +283,7 @@ function Kandungan() {
           {sah ? tr("Tempoh: {0} hingga {1}", dari.split("-").reverse().join("/"), hingga.split("-").reverse().join("/")) : tr("Tarikh tidak sah.")}
         </span>
       </main>
+      <TabNav />
     </Screen>
   );
 }

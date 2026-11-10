@@ -1,6 +1,7 @@
 "use client";
 
 import { tr } from "@/lib/i18n";
+import { TabModul } from "@/components/TabModul";
 import Link from "next/link";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -8,7 +9,7 @@ import { useData } from "@/lib/useData";
 import { bilaDihantar } from "@/lib/format";
 import { getSoalan, getStatistikSoalan, jawabSoalan, type SoalanHr } from "@/lib/urusan";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
-import { PengepalaAkar } from "@/components/TabNav";
+import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { HadPeranan, Tag } from "@/components/Senarai";
 import { beritahu } from "@/components/Dialog";
 
@@ -35,7 +36,8 @@ function Kandungan() {
 
   return (
     <Screen lebar="lebar">
-      <PengepalaAkar title={tr("Soalan HR")} backHr="/pengurusan" />
+      <PengepalaAkar title={tr("Peti HR")} />
+      <TabModul modul="peti" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         {s && (
           <div className="grid grid-cols-2 gap-2 lg:grid-cols-4 lg:gap-3">
@@ -74,6 +76,7 @@ function Kandungan() {
             {tr("Pengetahuan AI")}</Link>{" "}
           {tr("supaya Pembantu AI boleh menjawab terus.")}</span>
       </main>
+      <TabNav />
     </Screen>
   );
 }

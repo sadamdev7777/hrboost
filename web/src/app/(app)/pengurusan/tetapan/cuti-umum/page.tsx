@@ -1,6 +1,7 @@
 "use client";
 
 import { tr } from "@/lib/i18n";
+import { TabModul } from "@/components/TabModul";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
@@ -68,6 +69,7 @@ function CutiUmum() {
           d.data && <span className="mr-2 flex h-9 items-center rounded-full bg-[#E3F1EE] px-3 text-[13px] font-extrabold text-primary">{NEGERI_RINGKAS[d.data.state] ?? d.data.state}</span>
         }
       />
+      <TabModul modul="cuti" />
       <div className="mx-5 grid grid-cols-2 gap-1 rounded-[14px] bg-[#E4EAE8] p-1">
         {[y0, y0 + 1].map((y) => (
           <button key={y} type="button" onClick={() => setTahun(y)} className={`h-10 rounded-[10px] text-sm ${tahun === y ? "bg-surface font-extrabold" : "font-semibold text-[#4A5A57]"}`}>

@@ -1,6 +1,7 @@
 "use client";
 
 import { tr } from "@/lib/i18n";
+import { TabNav } from "@/components/TabNav";
 import { hasRole, useMe } from "@/lib/me";
 import { useState } from "react";
 import { getSupabase } from "@/lib/supabase";
@@ -154,6 +155,7 @@ function Menu() {
 </div>
 </div>
       </main>
+      <TabNav />
     </Screen>
   );
 }

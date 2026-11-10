@@ -1,6 +1,7 @@
 "use client";
 
 import { tr, trRalat } from "@/lib/i18n";
+import { TabModul } from "@/components/TabModul";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useMe } from "@/lib/me";
@@ -9,7 +10,7 @@ import { addDays, dow, todayISO } from "@/lib/format";
 import { BULAN_PENUH } from "@/lib/gaji";
 import { getKalendar, type CutiKalendar, type Kalendar } from "@/lib/urusan";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
-import { PengepalaAkar } from "@/components/TabNav";
+import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { useSkrinLebar } from "@/lib/skrin";
 
 const HARI = [tr("Isn"), tr("Sel"), tr("Rab"), tr("Kha"), tr("Jum"), tr("Sab"), tr("Ahd")];
@@ -66,6 +67,7 @@ export default function KalendarPage() {
   return (
     <Screen lebar="lebar">
       <PengepalaAkar title={tr("Kalendar pasukan")} back="/saya" />
+      <TabModul modul="cuti" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1 rounded-full bg-surface p-1">
@@ -111,6 +113,7 @@ export default function KalendarPage() {
         {d.data && (lebar ? <Grid hari={hari} t={t} full={d.data.full} /> : <Senarai hari={hari} t={t} full={d.data.full} />)}
         {d.data && !d.data.full && <span className="text-xs text-muted">{tr("Anda melihat cuti jabatan anda sahaja. Jenis cuti hanya dipaparkan kepada HR.")}</span>}
       </main>
+      <TabNav />
     </Screen>
   );
 }

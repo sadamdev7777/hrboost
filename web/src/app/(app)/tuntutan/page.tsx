@@ -1,6 +1,6 @@
 "use client";
 
-import { tr } from "@/lib/i18n";
+import { tr, trKonteks } from "@/lib/i18n";
 import Link from "next/link";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
@@ -93,7 +93,7 @@ function Pill({ t }: { t: Tuntutan }) {
     t.status === "pending"
       ? [t.waitingFor ? tr("Di {0}", t.waitingFor.split(", ").map(namaPeringkat).join(", ")) : tr("Menunggu"), "text-warning bg-warning-soft"]
       : t.status === "approved"
-        ? [t.paidAt ? tr("Dibayar") : tr("Lulus"), "text-success bg-success-soft"]
+        ? [t.paidAt ? tr("Dibayar") : trKonteks("Lulus", "Approved"), "text-success bg-success-soft"]
         : t.status === "rejected"
           ? [tr("Ditolak"), "text-danger bg-danger-soft"]
           : t.status === "returned"

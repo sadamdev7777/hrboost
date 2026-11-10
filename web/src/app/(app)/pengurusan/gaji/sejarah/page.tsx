@@ -66,7 +66,7 @@ function Sejarah() {
 
   return (
     <Screen>
-      <PengepalaAkar title={tr("Gaji")} backHr="/pengurusan" />
+      <PengepalaAkar title={tr("Penggajian")} />
       <TabGaji />
       <main className="flex grow flex-col gap-3 px-4 py-4 lg:px-0">
         {d.error && <ErrorBox message={d.error} />}

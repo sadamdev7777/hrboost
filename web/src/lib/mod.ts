@@ -51,7 +51,12 @@ export function useMod(): { mod: Mod; boleh: boolean; tukar: (m: Mod) => void } 
   return { mod, boleh, tukar };
 }
 
-export type ItemNav = { href: string; label: string; pendek?: string; ikon: "home" | "plus" | "check" | "user" | "chart" | "users" | "card" | "settings" | "org" | "calendar" | "document" | "bell" | "chat"; roles?: string[] };
+export type IkonNav =
+  | "home" | "plus" | "check" | "user" | "chart" | "users" | "card" | "settings" | "org" | "calendar" | "document" | "bell" | "chat"
+  | "clock" | "receipt" | "userplus" | "inbox" | "grid";
+/** `padan`: awalan laluan lain yang turut menandakan item ini aktif (tab dalam modul). */
+export type ItemNav = { href: string; label: string; pendek?: string; ikon: IkonNav; roles?: string[]; padan?: string[] };
+export type KumpulanNav = { tajuk: string | null; items: ItemNav[] };
 
 export const NAV_PEKERJA: ItemNav[] = [
   { href: "/utama", label: tr("Utama"), ikon: "home" },
@@ -60,38 +65,90 @@ export const NAV_PEKERJA: ItemNav[] = [
   { href: "/saya", label: tr("Saya"), ikon: "user" },
 ];
 
-export const NAV_HR: ItemNav[] = [
-  { href: "/pengurusan", label: tr("Papan Pemuka"), pendek: tr("Utama"), ikon: "chart" },
-  { href: "/pengurusan/pekerja", label: tr("Pekerja"), ikon: "users", roles: ["hr", "ceo", "admin"] },
-  { href: "/kelulusan", label: tr("Kelulusan"), ikon: "check" },
-  { href: "/pengurusan/gaji", label: tr("Gaji"), ikon: "card", roles: ["hr", "finance", "admin"] },
-  { href: "/saya", label: tr("Saya"), ikon: "user" },
+const HR_CEO = ["hr", "ceo", "admin"];
+
+/**
+ * Menu Mod HR (menu sisi desktop & halaman "Lagi" di telefon), disusun ikut modul HR.
+ * Alat kecil ialah tab dalam modul (contoh: Kalendar pasukan & Cuti umum dalam Cuti).
+ */
+export const MENU_HR: KumpulanNav[] = [
+  {
+    tajuk: null,
+    items: [
+      { href: "/pengurusan", label: tr("Papan Pemuka"), pendek: tr("Utama"), ikon: "chart" },
+      { href: "/kelulusan", label: tr("Kelulusan"), ikon: "check" },
+      { href: "/pengurusan/pengumuman", label: tr("Pengumuman"), ikon: "bell", roles: HR_CEO },
+    ],
+  },
+  {
+    tajuk: tr("ORANG"),
+    items: [
+      { href: "/pengurusan/pekerja", label: tr("Pekerja"), ikon: "users", roles: HR_CEO, padan: ["/pengurusan/carta", "/pengurusan/tetapan/jabatan"] },
+      { href: "/pengurusan/orientasi", label: tr("Orientasi"), ikon: "userplus", roles: HR_CEO },
+    ],
+  },
+  {
+    tajuk: tr("MASA"),
+    items: [
+      { href: "/pengurusan/cuti", label: tr("Cuti"), ikon: "calendar", roles: HR_CEO, padan: ["/kalendar", "/pengurusan/tetapan/cuti-umum"] },
+      { href: "/pengurusan/kehadiran", label: tr("Kehadiran"), ikon: "clock", roles: HR_CEO, padan: ["/pengurusan/kerja-fleksibel"] },
+    ],
+  },
+  {
+    tajuk: tr("WANG"),
+    items: [
+      { href: "/pengurusan/gaji", label: tr("Penggajian"), ikon: "card", roles: ["hr", "finance", "admin"] },
+      { href: "/pengurusan/tuntutan", label: tr("Tuntutan perbelanjaan"), pendek: tr("Tuntutan"), ikon: "receipt", roles: ["hr", "finance", "ceo", "admin"] },
+    ],
+  },
+  {
+    tajuk: tr("LAIN-LAIN"),
+    items: [
+      { href: "/pengurusan/soalan", label: tr("Peti HR"), ikon: "inbox", roles: ["hr", "admin"], padan: ["/pengurusan/surat"] },
+      { href: "/pengurusan/laporan", label: tr("Laporan"), ikon: "chart" },
+    ],
+  },
 ];
 
-/** Item tambahan dalam menu sisi (desktop) Mod HR. */
-export const NAV_HR_LAGI: ItemNav[] = [
-  { href: "/kalendar", label: tr("Kalendar pasukan"), ikon: "calendar" },
-  { href: "/pengurusan/surat", label: tr("Surat"), ikon: "document", roles: ["hr", "admin"] },
-  { href: "/pengurusan/pengumuman", label: tr("Pengumuman"), ikon: "bell", roles: ["hr", "ceo", "admin"] },
-  { href: "/pengurusan/soalan", label: tr("Soalan HR"), ikon: "chat", roles: ["hr", "admin"] },
-  { href: "/pengurusan/kerja-fleksibel", label: tr("Kerja fleksibel"), ikon: "calendar", roles: ["hr", "admin"] },
-  { href: "/pengurusan/laporan", label: tr("Laporan"), ikon: "chart" },
-  { href: "/pengurusan/tetapan/jabatan", label: tr("Jabatan"), ikon: "org", roles: ["hr", "admin"] },
-  { href: "/pengurusan/tetapan", label: tr("Tetapan"), ikon: "settings" },
+/** Tetapan: di bahagian bawah menu sisi. */
+export const NAV_TETAPAN: ItemNav = { href: "/pengurusan/tetapan", label: tr("Tetapan"), ikon: "settings" };
+
+/** Navigasi bawah (telefon) Mod HR: 4 modul utama + "Lagi" (semua modul, Saya, tukar mod). */
+const NAV_HR_BAWAH: ItemNav[] = [
+  { href: "/pengurusan", label: tr("Papan Pemuka"), pendek: tr("Utama"), ikon: "chart" },
+  { href: "/pengurusan/pekerja", label: tr("Pekerja"), ikon: "users", roles: HR_CEO },
+  { href: "/kelulusan", label: tr("Kelulusan"), ikon: "check" },
+  { href: "/pengurusan/gaji", label: tr("Penggajian"), ikon: "card", roles: ["hr", "finance", "admin"] },
+  { href: "/pengurusan/menu", label: tr("Lagi"), ikon: "grid" },
 ];
+
+type Peranan = Parameters<typeof hasRole>[1];
+const boleh = (me: Me, n: ItemNav) => !n.roles || hasRole(me, n.roles as Peranan);
+
+/** Menu HR mengikut peranan pengguna (kumpulan kosong disorok). */
+export function menuHrUntuk(me: Me): KumpulanNav[] {
+  return MENU_HR.map((k) => ({ ...k, items: k.items.filter((n) => boleh(me, n)) })).filter((k) => k.items.length);
+}
 
 export function navUntuk(me: Me | null, mod: Mod): ItemNav[] {
   if (mod === "pekerja" || !me) return NAV_PEKERJA;
-  return NAV_HR.filter((n) => !n.roles || hasRole(me, n.roles as Parameters<typeof hasRole>[1]));
+  return NAV_HR_BAWAH.filter((n) => boleh(me, n));
 }
 
-/** Item yang aktif: padanan awalan terpanjang (cth. /pengurusan/gaji mengatasi /pengurusan). */
+/** Semua item Mod HR (untuk menentukan item aktif). */
+export function semuaItemHr(me: Me): ItemNav[] {
+  return [...menuHrUntuk(me).flatMap((k) => k.items), NAV_TETAPAN, ...NAV_HR_BAWAH];
+}
+
+/** Item yang aktif: padanan awalan terpanjang (termasuk `padan`), cth. /pengurusan/gaji mengatasi /pengurusan. */
 export function itemAktif(items: ItemNav[], path: string): string | null {
-  let best: string | null = null;
+  let best: { href: string; len: number } | null = null;
   for (const n of items) {
-    if ((path === n.href || path.startsWith(n.href + "/")) && (!best || n.href.length > best.length)) best = n.href;
+    for (const awalan of [n.href, ...(n.padan ?? [])]) {
+      if ((path === awalan || path.startsWith(awalan + "/")) && (!best || awalan.length > best.len)) best = { href: n.href, len: awalan.length };
+    }
   }
-  return best;
+  return best?.href ?? null;
 }
 
 export function lamanUtama(mod: Mod): string {

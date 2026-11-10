@@ -151,3 +151,24 @@ export const IconBell = (p: P) => (
     <path d="M13.7 21a2 2 0 0 1-3.4 0" />
   </Svg>
 );
+export const IconUserPlus = (p: P) => (
+  <Svg {...p}>
+    <circle cx="9" cy="8" r="4" />
+    <path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7" />
+    <path d="M19 8v6M16 11h6" />
+  </Svg>
+);
+export const IconInbox = (p: P) => (
+  <Svg {...p}>
+    <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+    <path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z" />
+  </Svg>
+);
+export const IconGrid = (p: P) => (
+  <Svg {...p}>
+    <rect x="3" y="3" width="7" height="7" rx="1.5" />
+    <rect x="14" y="3" width="7" height="7" rx="1.5" />
+    <rect x="3" y="14" width="7" height="7" rx="1.5" />
+    <rect x="14" y="14" width="7" height="7" rx="1.5" />
+  </Svg>
+);

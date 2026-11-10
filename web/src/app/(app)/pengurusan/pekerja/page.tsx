@@ -1,6 +1,7 @@
 "use client";
 
 import { tr } from "@/lib/i18n";
+import { TabModul } from "@/components/TabModul";
 import Link from "next/link";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -126,6 +127,7 @@ function Senarai() {
           )
         }
       />
+      <TabModul modul="pekerja" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         {boleh && <KadPanduan id="pekerja" />}
         <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center">

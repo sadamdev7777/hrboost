@@ -27,7 +27,7 @@ import { getSenaraiPekerja } from "@/lib/hr";
 import { getBenderaGaji, type BenderaGaji } from "@/lib/berkanun";
 import { namaPeringkat, todayISO } from "@/lib/format";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
-import { PengepalaAkar } from "@/components/TabNav";
+import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { TabGaji } from "@/components/TabGaji";
 import { ButangBantuan, KadPanduan } from "@/components/Panduan";
 import { useSearchParams } from "next/navigation";
@@ -84,7 +84,6 @@ function ProsesGaji() {
   return (
     <Screen>
       <PengepalaAkar
-        backHr="/pengurusan"
         title={tr("Gaji {0} {1}", BULAN_PENUH[tempoh.m - 1].slice(0, 3), tempoh.y)}
         action={
           <div className="mr-1 flex items-center gap-1">
@@ -132,6 +131,7 @@ function ProsesGaji() {
           <ErrorBox message={tr("Gaji bulan ini telah ditolak. Hubungi Kewangan / CEO.")} />
         </main>
       )}
+      <TabNav />
     </Screen>
   );
 }

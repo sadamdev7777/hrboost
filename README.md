@@ -249,10 +249,28 @@ node supabase/scripts/ujian-fungsi-crosschex.cjs
 
 ### Mod HR & paparan desktop
 
-- HR / Kewangan / CEO / Pentadbir masuk ke **Mod HR** secara lalai: laman utama ialah Papan Pemuka "Pusat Tindakan" (`/pengurusan`: angka utama, perlu tindakan dengan butang Lulus, status gaji bulan ini, siapa tiada, minggu ini — `hr_dashboard_extra`), tab telefon: Utama, Pekerja, Kelulusan, Gaji, Saya (ikut peranan). Suis "Tukar ke Mod Pekerja" (Saya / menu sisi) untuk urusan diri sendiri; pilihan disimpan dalam pelayar. Pekerja biasa kekal 4 tab (CLAUDE.md §1).
+- HR / Kewangan / CEO / Pentadbir masuk ke **Mod HR** secara lalai: laman utama ialah Papan Pemuka "Pusat Tindakan" (`/pengurusan`: angka utama, perlu tindakan dengan butang Lulus, status gaji bulan ini, siapa tiada, minggu ini — `hr_dashboard_extra`), tab telefon: Utama, Pekerja, Kelulusan, Penggajian, Lagi (ikut peranan). Suis "Tukar ke Mod Pekerja" (Saya / menu sisi) untuk urusan diri sendiri; pilihan disimpan dalam pelayar. Pekerja biasa kekal 4 tab (CLAUDE.md §1).
 - Skrin ≥ 1024px: menu sisi kiri untuk semua pengguna, kandungan dilebarkan (`Screen lebar="lebar"` untuk skrin pengurusan), jadual untuk Pekerja dan Gaji Pekerja, lembaran menjadi dialog di tengah. Telefon tidak berubah.
 - Kelulusan (desktop): senarai + butiran sebelah-menyebelah, lulus ramai sekali gus, konteks pada setiap baris (baki selepas, rakan sejabatan bercuti, lampiran — `approval_task_context`). Carian pantas Ctrl+K (pekerja & tindakan). Loceng pemberitahuan (`notifications.read_at`). Jadual Pekerja boleh diisih, ditapis ikut jabatan dan dieksport CSV.
 - Gaji Pekerja: KWSP, PERKESO, SIP, HRDF, PCB, gaji bersih dan kos majikan dikira automatik (`pay_estimate` / `hr_pay_preview`, fungsi kiraan yang sama dengan Proses Gaji) — langsung semasa menaip, dalam jadual dan jumlah syarikat. RPC `hr_pay_table`, `hr_set_pay` (mengikut tarikh berkuat kuasa; 0 = hentikan elaun), `hr_add_pay_component` (jenis elaun / potongan tetap baharu). Komisen, kerja lebih masa dan tuntutan kekal dalam Proses Gaji. Setiap paparan & perubahan direkodkan dalam `data_access_log`.
+
+### Menu HR ikut modul
+
+Menu Mod HR (`MENU_HR` dalam `web/src/lib/mod.ts`) disusun ikut modul HR supaya tidak mengelirukan; setiap pengguna hanya melihat modul mengikut peranan:
+
+| Kumpulan | Modul | Tab dalam modul (`TabModul`) |
+|---|---|---|
+| — | Papan Pemuka, Kelulusan, Pengumuman | |
+| ORANG | Pekerja (`/pengurusan/pekerja`) | Senarai pekerja · Carta organisasi (`/pengurusan/carta`) · Jabatan |
+| | Orientasi (`/pengurusan/orientasi`, `hr_onboarding`) | pekerja baharu, jemputan, langkah orientasi, senarai semak, percubaan |
+| MASA | Cuti (`/pengurusan/cuti`, `hr_leave_overview`) | Ringkasan · Baki cuti · Kalendar pasukan · Cuti umum |
+| | Kehadiran (`/pengurusan/kehadiran`, `hr_attendance_day`) | Kehadiran harian · Pembetulan masa · Kerja fleksibel |
+| WANG | Penggajian (`/pengurusan/gaji`) | Bulan ini · Gaji pekerja · Pendahuluan · Sejarah |
+| | Tuntutan perbelanjaan (`/pengurusan/tuntutan`, `hr_claims`; HR, Kewangan, CEO) | |
+| LAIN-LAIN | Peti HR (`/pengurusan/soalan`) | Soalan HR · Permintaan surat |
+| | Laporan | |
+
+Tetapan dan "Saya" (klik nama) berada di bawah menu sisi. Di telefon, tab "Lagi" (`/pengurusan/menu`) menyenaraikan semua modul. Ujian: `hrboost_tests_q_modul_hr.sql`, `web/e2e/modul-hr.cjs`.
 
 ### HR lebih mudah
 
