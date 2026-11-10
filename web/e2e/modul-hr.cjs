@@ -36,9 +36,9 @@ const teksMenu = (p) => p.locator('aside[aria-label="Menu sisi"]').innerText();
   // Data ujian tempatan: Amin bercuti hari ini (diluluskan), Zuerin masuk 9:15 (lewat), tuntutan Amin menunggu.
   const C = '00000000-0000-0000-0000-0000000000c1';
   sql(`insert into leave_requests(employment_id, leave_type_id, start_date, end_date, days, status)
-       select '00000000-0000-0000-0000-0000000000e4', id, current_date, current_date, 1, 'approved' from leave_types where company_id='${C}' and code='AL'`);
+       select '00000000-0000-0000-0000-0000000000e4', id, (now() at time zone 'Asia/Kuala_Lumpur')::date, (now() at time zone 'Asia/Kuala_Lumpur')::date, 1, 'approved' from leave_types where company_id='${C}' and code='AL'`);
   sql(`insert into attendance_records(employment_id, work_date, clock_in, late_minutes, source)
-       values ('00000000-0000-0000-0000-0000000000e3', current_date, (current_date + time '09:15') at time zone 'Asia/Kuala_Lumpur', 15, 'manual')`);
+       values ('00000000-0000-0000-0000-0000000000e3', (now() at time zone 'Asia/Kuala_Lumpur')::date, ((now() at time zone 'Asia/Kuala_Lumpur')::date + time '09:15') at time zone 'Asia/Kuala_Lumpur', 15, 'manual')`);
   sql(`insert into claims(id, employment_id, title, total_amount, status) values ('00000000-0000-0000-0000-0000000c1a99','00000000-0000-0000-0000-0000000000e4','Tol ke Melaka',88.40,'pending')`);
 
   const b = await chromium.launch();

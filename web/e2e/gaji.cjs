@@ -76,10 +76,14 @@ async function login(browser, phone) {
   log('3. Lily: muat turun fail & tanda dibayar');
   await p.reload();
   await p.waitForSelector('text=MUAT TURUN');
-  const [dl] = await Promise.all([p.waitForEvent('download'), p.click('text=Fail bayaran bank >> xpath=../.. >> button')]);
+  // Fail bayaran bank kini dibuka dalam dialog format bank (FailBank)
+  await p.click('text=Fail bayaran bank >> xpath=../.. >> button');
+  await p.waitForSelector('[role=dialog] >> text=Fail bayaran bank >> visible=true');
+  const [dl] = await Promise.all([p.waitForEvent('download'), p.click('[role=dialog] button:has-text("Muat turun fail") >> visible=true')]);
+  await p.keyboard.press('Escape');
   const fs = require('fs');
   const isi = fs.readFileSync(await dl.path(), 'utf8');
-  expect(isi.includes('Nama,No. Akaun,Bank,Jumlah,Rujukan') && isi.split('\n').length >= 7, 'fail bayaran bank: 6 pekerja');
+  expect(isi.includes('Nama,No. Akaun,Bank,Kod Bank,Jumlah,Rujukan') && isi.trim().split(/\r?\n/).length >= 7, 'fail bayaran bank: 6 pekerja');
   await p.screenshot({ path: `${shots}/f-bayar.png` });
   await p.click('button:has-text("Tandakan telah dibayar")');
   await p.waitForSelector('text=Slip gaji telah dihantar kepada 6 pekerja');

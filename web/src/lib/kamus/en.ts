@@ -2455,6 +2455,7 @@ export const EN: Record<string, string> = {
  "Tuntutan yang diluluskan mengikut jenis dan jabatan (ikut tarikh perbelanjaan).": "Approved claims by type and department (by expense date).",
  "Tuntutan yang diluluskan untuk dibayar": "Approved claims to be paid",
  "Turun": "Move down",
+ "Tutup": "Close",
  "Tutup buat sementara jika berlaku serangan spam": "Close temporarily in case of a spam attack",
  "Tutup pendaftaran": "Close registration",
  "Tutup susunan lajur": "Close column layout",

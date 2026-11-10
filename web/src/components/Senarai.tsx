@@ -2,7 +2,7 @@
 
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { hasRole, useMe } from "@/lib/me";
 import type { Database } from "@/lib/database.types";
 import { BackHeader, Screen } from "./ui";
@@ -86,6 +86,11 @@ export function MedanBorang({ label, children, nota }: { label: string; children
 
 /** Lembaran bawah generik (borang ringkas dalam skrin yang sama). */
 export function Lembaran({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [onClose]);
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 lg:items-center lg:p-6" onClick={onClose}>
       <div
@@ -95,7 +100,12 @@ export function Lembaran({ title, onClose, children }: { title: string; onClose:
         className="flex max-h-[90dvh] w-full max-w-[480px] flex-col gap-3 overflow-y-auto rounded-t-[20px] bg-surface px-4 pt-5 pb-5 lg:max-w-[560px] lg:rounded-[20px] lg:px-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="m-0 text-lg font-extrabold">{title}</h2>
+        <div className="flex items-start gap-2">
+          <h2 className="m-0 grow pt-2 text-lg font-extrabold">{title}</h2>
+          <button type="button" aria-label={tr("Tutup")} onClick={onClose} className="-mt-1 -mr-2 flex size-11 shrink-0 items-center justify-center rounded-full text-2xl leading-none text-muted">
+            ×
+          </button>
+        </div>
         {children}
       </div>
     </div>
