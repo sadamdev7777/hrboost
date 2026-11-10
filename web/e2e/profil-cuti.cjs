@@ -37,7 +37,7 @@ async function login(browser, phone) {
   expect(await p.isVisible('text=Sakit (MC)'), 'baki Tahunan & Sakit (MC) dipaparkan');
   await p.click('button[aria-label="Bulan seterusnya"]');
   await p.waitForSelector('h2:has-text("Disember 2026")');
-  await p.waitForSelector('span[title="Hari Krismas"]');
+  await p.waitForSelector('[title="Hari Krismas"]');
   expect(true, 'kalendar Disember menunjukkan Hari Krismas sebagai cuti umum');
   await p.screenshot({ path: `${shots}/d2-cuti.png` });
 

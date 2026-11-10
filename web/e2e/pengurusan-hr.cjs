@@ -78,6 +78,9 @@ async function login(browser, phone) {
   await p.goto(BASE + '/pengurusan/pekerja');
   await p.click('a:has-text("Amin")');
   await p.waitForSelector('text=No. pekerja');
+  // IC bertopeng sehingga HR menekan "Tunjuk"
+  await p.waitForSelector('text=951109••••••34 >> visible=true');
+  await p.click('button:has-text("Tunjuk") >> visible=true');
   await p.waitForSelector('text=951109-14-1234');
   expect(true, 'HR terus melihat kad pengenalan & bank (tanpa butang Papar)');
   await p.click('button:has-text("Sahkan akaun")');
