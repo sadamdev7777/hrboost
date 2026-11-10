@@ -64,8 +64,6 @@ async function masuk(b, email, vp) {
   log('3. Tarikh tamat permit — Amin');
   await p.goto(BASE + '/pengurusan/pekerja');
   await p.click(V('a:has-text("Amin")'));
-  await p.waitForSelector(V('text=⋯ Lagi'));
-  await p.click(V('summary:has-text("⋯ Lagi")'));
   await p.click(V('button:has-text("Tarikh tamat kontrak")'));
   const dlm = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
   const dlg = p.locator(V('[role=dialog]'));

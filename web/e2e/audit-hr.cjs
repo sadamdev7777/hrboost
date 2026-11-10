@@ -81,8 +81,7 @@ async function mohonCuti(b, email, hariDepan) {
   await p.waitForURL(/\/pengurusan\/pekerja\/[0-9a-f-]+$/);
   await p.waitForSelector(V('h1:has-text("Zuerin")'));
   expect(true, 'Ctrl+K → "zuer" → profil Zuerin');
-  await p.click(V('summary:has-text("Lagi")'));
-  expect(await p.locator(V('text=Tamatkan pekerjaan')).count() === 1, 'Profil Pekerja: tajuk & menu ⋯ Lagi (Tamatkan)');
+  expect(await p.locator(V('text=Tamatkan pekerjaan')).count() === 1 && (await p.locator(V('text=Draf surat (AI)')).count()) === 1, 'Profil Pekerja: semua tindakan dipaparkan tanpa menu tersembunyi');
   await p.keyboard.press('Control+k');
   await p.fill('[role=dialog][aria-label="Carian pantas"] input', 'sejarah');
   await p.waitForSelector('[role=dialog][aria-label="Carian pantas"] button:has-text("Sejarah gaji")');

@@ -310,4 +310,9 @@ export const RALAT: Record<string, string> = {
   "E-mel ini sudah digunakan oleh akaun lain. Gunakan e-mel lain atau hubungi HR.": "This email is already used by another account. Use another email or contact HR.",
   "Nombor WhatsApp tidak sah": "Invalid WhatsApp number",
   "Laluan logo tidak sah": "Invalid logo path",
+  "Medan tidak dikenali: %": "Unknown field: %",
+  "No. kad pengenalan mesti 12 digit": "IC number must be 12 digits",
+  "Status perkahwinan tidak sah": "Invalid marital status",
+  "No. kad pengenalan ini sudah digunakan oleh orang lain": "This IC number is already used by someone else",
+  "Nombor WhatsApp ini sudah digunakan oleh orang lain": "This WhatsApp number is already used by someone else",
 };

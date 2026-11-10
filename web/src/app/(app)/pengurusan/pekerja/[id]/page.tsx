@@ -1,7 +1,8 @@
 "use client";
 
-import { tr } from "@/lib/i18n";
-import { mintaTeks, sahkan } from "@/components/Dialog";
+import { tr, trRalat } from "@/lib/i18n";
+import { beritahu, mintaTeks, sahkan } from "@/components/Dialog";
+import { BANK } from "@/lib/senarai";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { Suspense, useRef, useState, useSyncExternalStore } from "react";
@@ -19,6 +20,7 @@ import {
   JENIS_DOKUMEN,
   JENIS_PEKERJAAN,
   kemasKiniPekerjaan,
+  kemasKiniPeribadi,
   labelJenis,
   putuskanBank,
   simpanDokumen,
@@ -106,7 +108,7 @@ function bacaPautan(id: string) {
 }
 
 function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja; reload: () => void; bolehUbah: boolean; baru: boolean; keDokumen: () => void }) {
-  const [lembaran, setLembaran] = useState<null | "ubah" | "tamat" | "tarikh">(null);
+  const [lembaran, setLembaran] = useState<null | "ubah" | "tamat" | "tarikh" | "peribadi">(null);
   // HR terus melihat maklumat peribadi; setiap paparan direkodkan dalam data_access_log (hr_view_sensitive).
   const sd = useData(() => (bolehUbah ? bukaMaklumatSensitif(p.id) : Promise.resolve(null as MaklumatSensitif | null)), [p.id, bolehUbah]);
   const sensitif = sd.data;
@@ -230,45 +232,39 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
       )}
 
       {bolehUbah && !tamat && (
-        <div className="flex flex-wrap gap-2">
-          <button type="button" onClick={() => setLembaran("ubah")} className="flex h-11 items-center rounded-full bg-primary px-4 text-sm font-bold text-white">
-            {tr("Ubah gaji & jawatan")}</button>
-          {p.status === "probation" && (
-            <button
-              type="button"
-              onClick={async () => {
-                if (!(await sahkan({ tajuk: `Sahkan jawatan ${p.name}?`, mesej: "Tempoh percubaan tamat dan jawatan disahkan mulai hari ini.", ok: "Sahkan jawatan" }))) return;
-                try {
-                  await kemasKiniPekerjaan(p.id, { confirm: true });
-                  reload();
-                } catch (e) {
-                  setRalat(e instanceof Error ? e.message : "Ralat");
-                }
-              }}
-              className="flex h-11 items-center rounded-full border border-line bg-surface px-4 text-sm font-bold"
-            >
-              {tr("Sahkan jawatan")}</button>
-          )}
-          <button type="button" onClick={keDokumen} className="flex h-11 items-center rounded-full border border-line bg-surface px-4 text-sm font-bold">
-            {tr("Dokumen")}</button>
-          <details className="relative">
-            <summary className="flex h-11 cursor-pointer list-none items-center rounded-full border border-line bg-surface px-4 text-sm font-bold [&::-webkit-details-marker]:hidden">
-              {tr("⋯ Lagi")}</summary>
-            <div className="absolute right-0 z-20 mt-1 flex w-64 flex-col overflow-hidden rounded-[14px] border border-line bg-surface shadow-lg [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-              {!p.activated && (
-                <button type="button" onClick={jemputSemula} disabled={busy} className="min-h-11 px-4 text-left text-sm font-semibold disabled:opacity-60">
-                  {busy ? tr("Menghantar…") : tr("Hantar semula jemputan")}
-                </button>
-              )}
-              <Link href={`/pembantu-ai?pekerja=${p.id}&surat=1`} className="flex min-h-11 items-center px-4 text-sm font-semibold text-[#4A3B8C]!">
-                {tr("Draf surat (AI): pengesahan, amaran…")}</Link>
-              <button type="button" onClick={() => setLembaran("tarikh")} className="min-h-11 px-4 text-left text-sm font-semibold">
-                {tr("Tarikh tamat kontrak, permit & pasport")}</button>
-              <button type="button" onClick={() => setLembaran("tamat")} disabled={!!p.endStatus} className="min-h-11 px-4 text-left text-sm font-semibold text-danger disabled:opacity-50">
-                {tr("Tamatkan pekerjaan")}</button>
-            </div>
-          </details>
-        </div>
+        <section aria-label={tr("Tindakan")} className="flex flex-col gap-2">
+          <Seksyen>{tr("TINDAKAN")}</Seksyen>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <Tindakan utama onClick={() => setLembaran("ubah")} tajuk={tr("Ubah gaji & jawatan")} keterangan={tr("Gaji, elaun, jawatan, jabatan, ketua")} />
+            {p.status === "probation" && (
+              <Tindakan
+                onClick={async () => {
+                  if (!(await sahkan({ tajuk: tr("Sahkan jawatan {0}?", p.name), mesej: tr("Tempoh percubaan tamat dan jawatan disahkan mulai hari ini."), ok: tr("Sahkan jawatan") }))) return;
+                  try {
+                    await kemasKiniPekerjaan(p.id, { confirm: true });
+                    reload();
+                  } catch (e) {
+                    setRalat(e instanceof Error ? e.message : tr("Ralat"));
+                  }
+                }}
+                tajuk={tr("Sahkan jawatan")}
+                keterangan={tr("Tamatkan tempoh percubaan")}
+              />
+            )}
+            <Tindakan onClick={keDokumen} tajuk={tr("Dokumen")} keterangan={tr("Kontrak, surat tawaran, sijil")} />
+            <Tindakan href={`/pembantu-ai?pekerja=${p.id}&surat=1`} ai tajuk={tr("Draf surat (AI)")} keterangan={tr("Pengesahan, amaran, tawaran, pelepasan")} />
+            <Tindakan onClick={() => setLembaran("tarikh")} tajuk={tr("Tarikh tamat kontrak, permit & pasport")} keterangan={tr("Peringatan sebelum tamat")} />
+            {!p.activated && <Tindakan onClick={jemputSemula} disabled={busy} tajuk={busy ? tr("Menghantar…") : tr("Hantar semula jemputan")} keterangan={tr("Pautan pengaktifan baharu melalui WhatsApp")} />}
+          </div>
+          <button
+            type="button"
+            onClick={() => setLembaran("tamat")}
+            disabled={!!p.endStatus}
+            className="flex min-h-11 items-center self-start px-1 text-sm font-bold text-danger disabled:opacity-50"
+          >
+            {tr("Tamatkan pekerjaan")}
+          </button>
+        </section>
       )}
       {bolehUbah && p.status === "probation" && !p.endStatus && <PanelPercubaan employmentId={p.id} onTamatkan={() => setLembaran("tamat")} onUbah={reload} />}
       {bolehUbah && !tamat && <SenaraiSemakPekerja employmentId={p.id} hr />}
@@ -276,7 +272,14 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
       <div className="flex flex-col gap-3">
       {bolehUbah && (
         <>
-          <Seksyen>{tr("MAKLUMAT PERIBADI")}</Seksyen>
+          <div className="flex items-center justify-between gap-2">
+            <Seksyen>{tr("MAKLUMAT PERIBADI")}</Seksyen>
+            {sensitif && (
+              <button type="button" onClick={() => setLembaran("peribadi")} className="flex h-10 items-center rounded-full border border-primary bg-surface px-4 text-[13px] font-bold text-primary">
+                {tr("Ubah maklumat")}
+              </button>
+            )}
+          </div>
           {sd.error && <ErrorBox message={sd.error} />}
           {!sensitif ? (
             !sd.error && <Loading />
@@ -333,6 +336,19 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
           onDone={() => {
             setLembaran(null);
             reload();
+          }}
+        />
+      )}
+      {lembaran === "peribadi" && sensitif && (
+        <UbahPeribadi
+          employmentId={p.id}
+          s={sensitif}
+          onClose={() => setLembaran(null)}
+          onDone={() => {
+            setLembaran(null);
+            sd.reload();
+            reload();
+            beritahu(tr("Maklumat peribadi dikemas kini. Pekerja dimaklumkan melalui WhatsApp."));
           }}
         />
       )}
@@ -939,5 +955,141 @@ function BarisRekod({ href, tajuk, kecil, status }: { href?: string; tajuk: stri
     </Link>
   ) : (
     <div className="flex min-h-12 items-center justify-between gap-2 py-2">{isi}</div>
+  );
+}
+
+/** Butang tindakan profil pekerja: tajuk + keterangan ringkas, semua dipaparkan (tiada menu tersembunyi). */
+function Tindakan({ tajuk, keterangan, onClick, href, utama, ai, disabled }: { tajuk: string; keterangan: string; onClick?: () => void; href?: string; utama?: boolean; ai?: boolean; disabled?: boolean }) {
+  const cls = `flex min-h-14 flex-col justify-center gap-0.5 rounded-[14px] border px-4 py-2.5 text-left disabled:opacity-60 ${
+    utama ? "border-primary bg-primary text-white!" : ai ? "border-[#D9D2F1] bg-[#F3F0FC] text-[#4A3B8C]! hover:border-ai" : "border-line bg-surface text-ink! hover:border-primary"
+  }`;
+  const isi = (
+    <>
+      <b className="text-sm font-extrabold">{tajuk}</b>
+      <span className={`text-xs ${utama ? "text-white/80" : "text-muted"}`}>{keterangan}</span>
+    </>
+  );
+  return href ? (
+    <Link href={href} className={cls}>
+      {isi}
+    </Link>
+  ) : (
+    <button type="button" onClick={onClick} disabled={disabled} className={cls}>
+      {isi}
+    </button>
+  );
+}
+
+const STATUS_KAHWIN = [
+  { id: "bujang", label: tr("Bujang") },
+  { id: "berkahwin", label: tr("Berkahwin") },
+  { id: "duda_janda", label: tr("Duda / Janda") },
+];
+
+const kotak = "h-11 w-full rounded-[12px] border border-line bg-surface px-3 text-sm text-ink outline-none focus:border-primary";
+function Label({ t, children }: { t: string; children: React.ReactNode }) {
+  return (
+    <label className="flex flex-col gap-1 text-[13px] font-bold text-[#4A5A57]">
+      {t}
+      {children}
+    </label>
+  );
+}
+
+/** HR mengemas kini maklumat peribadi pekerja. Hanya medan yang berubah dihantar. */
+function UbahPeribadi({ employmentId, s, onClose, onDone }: { employmentId: string; s: MaklumatSensitif; onClose: () => void; onDone: () => void }) {
+  const asal = {
+    full_name: s.full_name ?? "",
+    ic_no: s.ic_no ?? "",
+    phone_whatsapp: s.phone ?? "",
+    address: s.address ?? "",
+    marital_status: s.marital_status ?? "",
+    children_count: String(s.children_count ?? 0),
+    bank_name: s.bank_name ?? "",
+    bank_account_no: s.bank_account_no ?? "",
+    epf_no: s.epf_no ?? "",
+    socso_no: s.socso_no ?? "",
+    tax_no: s.tax_no ?? "",
+  };
+  const [f, setF] = useState(asal);
+  const [busy, setBusy] = useState(false);
+  const [ralat, setRalat] = useState<string | null>(null);
+  const set = (k: keyof typeof asal) => (e: { target: { value: string } }) => setF({ ...f, [k]: e.target.value });
+  const ubah = (Object.keys(asal) as (keyof typeof asal)[]).filter((k) => f[k].trim() !== asal[k].trim());
+
+  async function simpan() {
+    if (!ubah.length) return onClose();
+    setBusy(true);
+    setRalat(null);
+    try {
+      await kemasKiniPeribadi(employmentId, Object.fromEntries(ubah.map((k) => [k, k === "children_count" ? Number(f[k]) || 0 : f[k].trim() || null])));
+      onDone();
+    } catch (e) {
+      setRalat(e instanceof Error ? trRalat(e.message) : tr("Ralat"));
+    }
+    setBusy(false);
+  }
+
+  return (
+    <Lembaran title={tr("Ubah maklumat peribadi")} onClose={onClose}>
+      <span className="text-xs leading-normal text-muted">{tr("Nama penuh dan no. kad pengenalan mesti sama seperti kad pengenalan (untuk slip gaji, KWSP dan Borang EA). Pekerja akan dimaklumkan tentang perubahan.")}</span>
+      <Label t={tr("Nama penuh (ikut kad pengenalan)")}>
+        <input value={f.full_name} onChange={set("full_name")} className={kotak} />
+      </Label>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <Label t={tr("No. kad pengenalan")}>
+          <input value={f.ic_no} onChange={set("ic_no")} inputMode="numeric" placeholder="900101-14-1234" className={kotak} />
+        </Label>
+        <Label t={tr("WhatsApp")}>
+          <input value={f.phone_whatsapp} onChange={set("phone_whatsapp")} inputMode="tel" placeholder="012-345 6789" className={kotak} />
+        </Label>
+      </div>
+      <Label t={tr("Alamat")}>
+        <textarea value={f.address} onChange={set("address")} rows={2} className="w-full rounded-[12px] border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:border-primary" />
+      </Label>
+      <div className="grid grid-cols-2 gap-3">
+        <Label t={tr("Status perkahwinan")}>
+          <select value={f.marital_status} onChange={set("marital_status")} className={kotak}>
+            <option value="">-</option>
+            {STATUS_KAHWIN.map((x) => (
+              <option key={x.id} value={x.id}>
+                {x.label}
+              </option>
+            ))}
+          </select>
+        </Label>
+        <Label t={tr("Anak (PCB)")}>
+          <input type="number" min={0} max={30} value={f.children_count} onChange={set("children_count")} className={kotak} />
+        </Label>
+      </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <Label t={tr("Bank")}>
+          <select value={f.bank_name} onChange={set("bank_name")} className={kotak}>
+            <option value="">-</option>
+            {[...new Set([...(f.bank_name && !BANK.includes(f.bank_name) ? [f.bank_name] : []), ...BANK])].map((b) => (
+              <option key={b}>{b}</option>
+            ))}
+          </select>
+        </Label>
+        <Label t={tr("No. akaun bank")}>
+          <input value={f.bank_account_no} onChange={set("bank_account_no")} inputMode="numeric" className={kotak} />
+        </Label>
+      </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <Label t={tr("No. KWSP")}>
+          <input value={f.epf_no} onChange={set("epf_no")} className={kotak} />
+        </Label>
+        <Label t={tr("No. PERKESO")}>
+          <input value={f.socso_no} onChange={set("socso_no")} className={kotak} />
+        </Label>
+        <Label t={tr("No. cukai")}>
+          <input value={f.tax_no} onChange={set("tax_no")} className={kotak} />
+        </Label>
+      </div>
+      {ralat && <ErrorBox message={ralat} />}
+      <button type="button" onClick={simpan} disabled={busy} className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-50">
+        {busy ? tr("Menyimpan…") : ubah.length ? tr("Simpan {0} perubahan", ubah.length) : tr("Tiada perubahan")}
+      </button>
+    </Lembaran>
   );
 }

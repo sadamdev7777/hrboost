@@ -239,6 +239,11 @@ export async function bukaMaklumatSensitif(employmentId: string): Promise<Maklum
   return must(await getSupabase().rpc("hr_view_sensitive", { p_employment: employmentId, p_via: "web" })) as unknown as MaklumatSensitif;
 }
 
+/** HR mengemas kini maklumat peribadi pekerja (hanya medan yang dihantar). Pekerja dimaklumkan melalui WhatsApp. */
+export async function kemasKiniPeribadi(employmentId: string, data: Record<string, string | number | boolean | null>) {
+  must(await getSupabase().rpc("hr_update_person", { p_employment: employmentId, p_data: data as never, p_via: "web" }));
+}
+
 export async function putuskanBank(requestId: string, lulus: boolean, nota?: string) {
   must(await getSupabase().rpc("decide_bank_change", { p_request: requestId, p_approve: lulus, p_note: nota ?? "", p_via: "web" }));
 }

@@ -2367,6 +2367,9 @@ isOneToOne: false
 "hr_update_employment":
 { Args: { "p_data": Json,"p_employment": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
                            },
+"hr_update_person":
+{ Args: { "p_data": Json,"p_employment": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
+                           },
 "hr_view_sensitive":
 { Args: { "p_employment": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: Json
                            },
