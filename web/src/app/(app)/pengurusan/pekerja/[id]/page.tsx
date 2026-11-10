@@ -33,13 +33,14 @@ import { setTarikhTamat } from "@/lib/berkanun";
 import { SenaraiSemakPekerja } from "@/components/SenaraiSemak";
 import { PanelPercubaan } from "@/components/Percubaan";
 import { SejarahPekerja } from "@/components/SejarahPekerja";
+import { AsetSyarikat, GarisMasaKerja, Keluarga, LatihanSijil } from "@/components/ProfilLanjut";
 import { hari, julatTarikh, masa, paparTelefon, ringgit, tarikh, todayISO, type StatusPermohonan } from "@/lib/format";
 import { Avatar, BackHeader, ErrorBox, Loading, Screen, StatusPill } from "@/components/ui";
 import { RingkasanKiraan, UbahGaji, usePratonton } from "@/components/GajiPekerja";
 import type { KomponenTetap } from "@/lib/gaji";
 import { HadPeranan, Kotak, Lembaran, Medan, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
 
-const TABS = ["Maklumat", "Cuti", "Tuntutan", "Kehadiran", "Gaji", "Dokumen", "Sejarah"] as const;
+const TABS = ["Maklumat", "Kerjaya", "Cuti", "Tuntutan", "Kehadiran", "Gaji", "Dokumen", "Aset", "Sejarah"] as const;
 type TabId = (typeof TABS)[number];
 const BULAN = [tr("Jan"), tr("Feb"), tr("Mac"), tr("Apr"), tr("Mei"), tr("Jun"), tr("Jul"), tr("Ogo"), tr("Sep"), tr("Okt"), tr("Nov"), tr("Dis")];
 const tarikhPenuh = (iso: string) => `${Number(iso.slice(8, 10))} ${BULAN[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
@@ -90,7 +91,18 @@ function Profil() {
         {p.data && tab === "Tuntutan" && <TabTuntutan id={id} />}
         {p.data && tab === "Kehadiran" && <TabKehadiran id={id} />}
         {p.data && tab === "Gaji" && <TabGaji id={id} nama={p.data.name} tarikhMula={p.data.joinDate} />}
+        {p.data && tab === "Kerjaya" && (
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:items-start">
+            <GarisMasaKerja employmentId={id} boleh={bolehUbah} />
+            <LatihanSijil employmentId={id} boleh={bolehUbah} />
+          </div>
+        )}
         {p.data && tab === "Dokumen" && <TabDokumen p={p.data} bolehUbah={bolehUbah} />}
+        {p.data && tab === "Aset" && (
+          <div className="lg:max-w-[760px]">
+            <AsetSyarikat employmentId={id} boleh={bolehUbah} />
+          </div>
+        )}
         {p.data && tab === "Sejarah" && (bolehUbah ? <SejarahPekerja employmentId={id} /> : <span className="text-sm text-muted">{tr("Sejarah perubahan hanya untuk HR.")}</span>)}
       </main>
     </Screen>
@@ -296,7 +308,10 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
                     )}
                   </span>
                 </Medan>
+                <Medan label={tr("Warganegara")}>{sensitif.nationality === "MY" || !sensitif.nationality ? tr("Malaysia") : sensitif.nationality}</Medan>
+                {sensitif.passport_no && <Medan label={tr("No. pasport")}>{sensitif.passport_no}</Medan>}
                 <Medan label={tr("WhatsApp")}>{sensitif.phone ? paparTelefon(sensitif.phone) : "-"}</Medan>
+                <Medan label={tr("E-mel peribadi")}>{sensitif.email ?? "-"}</Medan>
                 <Medan label={tr("Alamat")}>{sensitif.address ?? "-"}</Medan>
                 <Medan label={tr("Status perkahwinan")}>{sensitif.marital_status ?? "-"}</Medan>
                 <Medan label={tr("Anak (PCB)")}>{sensitif.children_count}</Medan>
@@ -308,6 +323,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
                   </Medan>
                 ))}
               </Kotak>
+              <Keluarga employmentId={p.id} boleh={bolehUbah} />
               {sensitif.bank_change && (
                 <div className="flex flex-col gap-2.5 rounded-[14px] bg-warning-soft px-4 py-3">
                   <span className="text-[13px] font-semibold text-warning">
@@ -1010,6 +1026,9 @@ function UbahPeribadi({ employmentId, s, onClose, onDone }: { employmentId: stri
     epf_no: s.epf_no ?? "",
     socso_no: s.socso_no ?? "",
     tax_no: s.tax_no ?? "",
+    nationality: s.nationality ?? "MY",
+    email: s.email ?? "",
+    passport_no: s.passport_no ?? "",
   };
   const [f, setF] = useState(asal);
   const [busy, setBusy] = useState(false);
@@ -1042,6 +1061,23 @@ function UbahPeribadi({ employmentId, s, onClose, onDone }: { employmentId: stri
         </Label>
         <Label t={tr("WhatsApp")}>
           <input value={f.phone_whatsapp} onChange={set("phone_whatsapp")} inputMode="tel" placeholder="012-345 6789" className={kotak} />
+        </Label>
+      </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <Label t={tr("Warganegara")}>
+          <select value={f.nationality} onChange={set("nationality")} className={kotak}>
+            {[["MY", tr("Malaysia")], ["ID", tr("Indonesia")], ["BD", tr("Bangladesh")], ["NP", tr("Nepal")], ["MM", tr("Myanmar")], ["IN", tr("India")], ["PH", tr("Filipina")], ["PK", tr("Pakistan")], ["VN", tr("Vietnam")], ["LAIN", tr("Lain-lain")]].map(([v, l]) => (
+              <option key={v} value={v}>
+                {l}
+              </option>
+            ))}
+          </select>
+        </Label>
+        <Label t={tr("No. pasport")}>
+          <input value={f.passport_no} onChange={set("passport_no")} className={kotak} />
+        </Label>
+        <Label t={tr("E-mel peribadi")}>
+          <input type="email" value={f.email} onChange={set("email")} className={kotak} />
         </Label>
       </div>
       <Label t={tr("Alamat")}>

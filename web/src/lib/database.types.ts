@@ -729,6 +729,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"company_assets": {
+                  Row: {
+                    "category": string | null,"created_at": string,"employment_id": string,"id": string,"issued_on": string | null,"name": string,"note": string | null,"returned_on": string | null,"serial_no": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "category"?: string | null,"created_at"?: string,"employment_id": string,"id"?: string,"issued_on"?: string | null,"name": string,"note"?: string | null,"returned_on"?: string | null,"serial_no"?: string | null
+                  }
+                  Update: {
+                    "category"?: string | null,"created_at"?: string,"employment_id"?: string,"id"?: string,"issued_on"?: string | null,"name"?: string,"note"?: string | null,"returned_on"?: string | null,"serial_no"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_assets_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"company_holiday_choices": {
                   Row: {
                     "company_id": string,"holiday_id": string,"year": number
@@ -1015,6 +1035,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"family_members": {
+                  Row: {
+                    "birth_date": string | null,"created_at": string,"disabled": boolean,"employment_id": string,"ic_no": string | null,"id": string,"name": string,"note": string | null,"relation": string,"studying": string | null,"working": boolean | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "birth_date"?: string | null,"created_at"?: string,"disabled"?: boolean,"employment_id": string,"ic_no"?: string | null,"id"?: string,"name": string,"note"?: string | null,"relation": string,"studying"?: string | null,"working"?: boolean | null
+                  }
+                  Update: {
+                    "birth_date"?: string | null,"created_at"?: string,"disabled"?: boolean,"employment_id"?: string,"ic_no"?: string | null,"id"?: string,"name"?: string,"note"?: string | null,"relation"?: string,"studying"?: string | null,"working"?: boolean | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "family_members_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"flexible_work_requests": {
                   Row: {
                     "change_types": (string)[],"company_id": string,"created_at": string,"decided_at": string | null,"decided_by": string | null,"decision_note": string | null,"details": string,"due_date": string,"employment_id": string,"end_date": string | null,"id": string,"start_date": string,"status": string
@@ -1168,6 +1208,32 @@ isOneToOne: false
       columns: ["company_id"]
 isOneToOne: false
       referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"job_timeline": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"department": string | null,"effective_date": string,"employment_id": string,"employment_type": string | null,"event": string,"id": string,"manager": string | null,"note": string | null,"position": string | null,"source": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"department"?: string | null,"effective_date": string,"employment_id": string,"employment_type"?: string | null,"event": string,"id"?: string,"manager"?: string | null,"note"?: string | null,"position"?: string | null,"source"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"department"?: string | null,"effective_date"?: string,"employment_id"?: string,"employment_type"?: string | null,"event"?: string,"id"?: string,"manager"?: string | null,"note"?: string | null,"position"?: string | null,"source"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "job_timeline_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "job_timeline_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
       referencedColumns: ["id"]
     }
                   ]
@@ -1683,14 +1749,14 @@ isOneToOne: false
                   ]
                 },"persons": {
                   Row: {
-                    "address": string | null,"auth_user_id": string | null,"bank_account_no": string | null,"bank_name": string | null,"children_count": number,"created_at": string,"date_of_birth": string | null,"email": string | null,"full_name": string,"gender": string | null,"hide_birthday": boolean,"ic_no": string | null,"id": string,"is_active": boolean,"language": string,"marital_status": string | null,"passport_expiry": string | null,"passport_no": string | null,"permit_expiry": string | null,"phone_whatsapp": string | null,"photo_path": string | null,"preferred_name": string | null,"spouse_working": boolean | null,"updated_at": string
+                    "address": string | null,"auth_user_id": string | null,"bank_account_no": string | null,"bank_name": string | null,"children_count": number,"created_at": string,"date_of_birth": string | null,"email": string | null,"full_name": string,"gender": string | null,"hide_birthday": boolean,"ic_no": string | null,"id": string,"is_active": boolean,"language": string,"marital_status": string | null,"nationality": string | null,"passport_expiry": string | null,"passport_no": string | null,"permit_expiry": string | null,"phone_whatsapp": string | null,"photo_path": string | null,"preferred_name": string | null,"spouse_working": boolean | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "address"?: string | null,"auth_user_id"?: string | null,"bank_account_no"?: string | null,"bank_name"?: string | null,"children_count"?: number,"created_at"?: string,"date_of_birth"?: string | null,"email"?: string | null,"full_name": string,"gender"?: string | null,"hide_birthday"?: boolean,"ic_no"?: string | null,"id"?: string,"is_active"?: boolean,"language"?: string,"marital_status"?: string | null,"passport_expiry"?: string | null,"passport_no"?: string | null,"permit_expiry"?: string | null,"phone_whatsapp"?: string | null,"photo_path"?: string | null,"preferred_name"?: string | null,"spouse_working"?: boolean | null,"updated_at"?: string
+                    "address"?: string | null,"auth_user_id"?: string | null,"bank_account_no"?: string | null,"bank_name"?: string | null,"children_count"?: number,"created_at"?: string,"date_of_birth"?: string | null,"email"?: string | null,"full_name": string,"gender"?: string | null,"hide_birthday"?: boolean,"ic_no"?: string | null,"id"?: string,"is_active"?: boolean,"language"?: string,"marital_status"?: string | null,"nationality"?: string | null,"passport_expiry"?: string | null,"passport_no"?: string | null,"permit_expiry"?: string | null,"phone_whatsapp"?: string | null,"photo_path"?: string | null,"preferred_name"?: string | null,"spouse_working"?: boolean | null,"updated_at"?: string
                   }
                   Update: {
-                    "address"?: string | null,"auth_user_id"?: string | null,"bank_account_no"?: string | null,"bank_name"?: string | null,"children_count"?: number,"created_at"?: string,"date_of_birth"?: string | null,"email"?: string | null,"full_name"?: string,"gender"?: string | null,"hide_birthday"?: boolean,"ic_no"?: string | null,"id"?: string,"is_active"?: boolean,"language"?: string,"marital_status"?: string | null,"passport_expiry"?: string | null,"passport_no"?: string | null,"permit_expiry"?: string | null,"phone_whatsapp"?: string | null,"photo_path"?: string | null,"preferred_name"?: string | null,"spouse_working"?: boolean | null,"updated_at"?: string
+                    "address"?: string | null,"auth_user_id"?: string | null,"bank_account_no"?: string | null,"bank_name"?: string | null,"children_count"?: number,"created_at"?: string,"date_of_birth"?: string | null,"email"?: string | null,"full_name"?: string,"gender"?: string | null,"hide_birthday"?: boolean,"ic_no"?: string | null,"id"?: string,"is_active"?: boolean,"language"?: string,"marital_status"?: string | null,"nationality"?: string | null,"passport_expiry"?: string | null,"passport_no"?: string | null,"permit_expiry"?: string | null,"phone_whatsapp"?: string | null,"photo_path"?: string | null,"preferred_name"?: string | null,"spouse_working"?: boolean | null,"updated_at"?: string
                   }
                   Relationships: [
                     
@@ -1914,6 +1980,26 @@ isOneToOne: false
       columns: ["submitted_by"]
 isOneToOne: false
       referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"trainings": {
+                  Row: {
+                    "created_at": string,"employment_id": string,"end_date": string | null,"expiry_date": string | null,"id": string,"kind": string,"note": string | null,"provider": string | null,"start_date": string | null,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"employment_id": string,"end_date"?: string | null,"expiry_date"?: string | null,"id"?: string,"kind": string,"note"?: string | null,"provider"?: string | null,"start_date"?: string | null,"title": string
+                  }
+                  Update: {
+                    "created_at"?: string,"employment_id"?: string,"end_date"?: string | null,"expiry_date"?: string | null,"id"?: string,"kind"?: string,"note"?: string | null,"provider"?: string | null,"start_date"?: string | null,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "trainings_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
       referencedColumns: ["id"]
     }
                   ]
@@ -2301,6 +2387,11 @@ isOneToOne: false
               "days_left": number,"employment_id": string,"expiry": string,"kind": string,"name": string,"text": string
             }[]
                            },
+"hr_expiring_certs":
+{ Args: { "p_company": string }; Returns: {
+              "employment_id": string,"expiry_date": string,"name": string,"title": string
+            }[]
+                           },
 "hr_import_basic_pay":
 { Args: { "p_company": string,"p_rows": Json }; Returns: {
               "employee_no": string,"message": string,"ok": boolean
@@ -2574,6 +2665,9 @@ isOneToOne: false
                            },
 "onboarding_toggle":
 { Args: { "p_done": boolean,"p_item": string }; Returns: undefined
+                           },
+"own_or_hr_employment":
+{ Args: { "p_employment": string }; Returns: boolean
                            },
 "password_reset_check":
 { Args: { "p_ic_last4": string,"p_token": string }; Returns: Json

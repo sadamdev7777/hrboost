@@ -219,6 +219,9 @@ export async function getButiranPekerja(employmentId: string): Promise<ButiranPe
 export type MaklumatSensitif = {
   full_name: string;
   ic_no: string | null;
+  nationality: string | null;
+  passport_no: string | null;
+  passport_expiry: string | null;
   date_of_birth: string | null;
   gender: string | null;
   marital_status: string | null;
