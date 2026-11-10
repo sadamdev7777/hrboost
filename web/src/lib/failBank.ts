@@ -200,7 +200,7 @@ export function nilaiSel(c: LajurBank, b: BarisBayaran, f: FormatBank, ctx: { ta
     case "amaun": v = fmtAmaun(b.net, f.amaun); break;
     case "no_kp": v = f.kpTanpaSengkang ? (b.ic_no ?? "").replace(/\D/g, "") : (b.ic_no ?? ""); break;
     case "jenis_id": v = c.nilai || "NRIC"; break;
-    case "rujukan": v = (c.nilai || "GAJI {tempoh}").replace("{tempoh}", ctx.tempoh.replace(/\D/g, "")); break;
+    case "rujukan": v = (c.nilai || "GAJI{tempoh}").replace("{tempoh}", ctx.tempoh.replace(/\D/g, "")); break;
     case "keterangan": v = (c.nilai || "GAJI {tempoh}").replace("{tempoh}", ctx.tempoh); break;
     case "tarikh": v = fmtTarikh(ctx.tarikh, f.tarikh); break;
     case "no_pekerja": v = b.employee_no; break;

@@ -288,6 +288,10 @@ Tetapan dan "Saya" (klik nama) berada di bawah menu sisi. Di telefon, tab "Lagi"
 - E-mel dihantar oleh Supabase Auth. Tempatan: Mailpit (`http://127.0.0.1:54324`, `enable_confirmations = true`). Staging/produksi: tetapkan SMTP tersuai (cth. Resend: `smtp.resend.com`, port 465, pengguna `resend`) di Supabase → Authentication → SMTP; tanpa SMTP tersuai Supabase hanya menghantar 2 e-mel sejam kepada ahli pasukan projek. Templat: `supabase/templates/pengesahan.html`, `set-semula.html`.
 - Ujian: `web/e2e/syarikat-baharu.cjs`, `orientasi.cjs`, `kata-laluan.cjs` membaca pautan daripada Mailpit (`e2e/_demo.cjs`). Audit UI: `node web/e2e/audit-ui.cjs` (sasaran sentuh, label, jadual tanpa ringkasan).
 
+### Fail bayaran bank
+
+Penggajian → langkah Bayar atau Sejarah → **Bank**: pilih format (Umum, Maybank2u Biz Bulk Payment, CIMB BizChannel BizConverter, bank lain IBG/DuitNow), susun lajur supaya sama dengan templat yang dimuat turun daripada portal bank, pratonton dan muat turun CSV/TXT. Kod SWIFT/BIC dipadankan daripada nama bank pekerja; amaran jika tiada akaun, kod bank tidak dikenali atau tiada no. KP. Format disimpan per syarikat (`companies.bank_file_format`, `set_bank_file_format`); baris bayaran daripada `payroll_bank_rows` (akses direkod). Pratetap ialah titik mula — sahkan dengan templat terkini bank sebelum gaji sebenar pertama. Ujian: `web/e2e/fail-bank.cjs`.
+
 ### HR lebih mudah
 
 - **Kalendar berkanun** (Papan Pemuka): KWSP, PERKESO & SIP, PCB (CP39), HRDF — tarikh akhir hari ke-15 bulan berikutnya; Borang EA (28 Feb) & Borang E (31 Mac). Tarikh disimpan sebagai data (`platform_settings.statutory_deadlines`). "Tanda dihantar" → `statutory_submissions`. Peringatan WhatsApp kepada HR & Kewangan 5 dan 1 hari sebelum (`statutory_reminders`, pg_cron 9:07 pagi MYT).
