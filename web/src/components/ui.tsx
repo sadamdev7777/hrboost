@@ -9,17 +9,19 @@ import { LABEL_STATUS, inisial, type StatusPermohonan } from "@/lib/format";
 
 const LEBAR = {
   sempit: "lg:max-w-[560px]",
-  sederhana: "lg:max-w-[760px]",
-  lebar: "lg:max-w-[1240px]",
+  sederhana: "lg:max-w-[760px] 2xl:max-w-[840px]",
+  lebar: "lg:max-w-[1240px] 2xl:max-w-[1560px]",
 } as const;
 
 /**
  * Bingkai skrin: lajur telefon (≤ 480px) pada telefon; pada skrin lebar (≥ 1024px)
  * kandungan dilebarkan (lalai "lebar") dan dijajarkan ke kiri bersebelahan menu sisi.
+ * Pada monitor sangat lebar (≥ 1536px) kandungan dilebarkan lagi dan diletakkan di tengah
+ * ruang selepas menu sisi supaya tiada ruang kosong yang besar di sebelah kanan.
  */
 export function Screen({ children, lebar = "lebar" }: { children: ReactNode; lebar?: keyof typeof LEBAR }) {
   // "sempit" = halaman awam / di luar aplikasi (tanpa menu sisi): kekal di tengah.
-  const kiri = lebar === "sempit" ? "" : "lg:mx-0 lg:px-8";
+  const kiri = lebar === "sempit" ? "" : "lg:mx-0 lg:px-8 2xl:mx-auto 2xl:px-10";
   return <div className={`mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-page text-ink ${kiri} ${LEBAR[lebar]}`}>{children}</div>;
 }
 

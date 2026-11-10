@@ -138,7 +138,7 @@ function Betulkan() {
           ))}
         </div>
         <label className="flex flex-col gap-1.5">
-          <span className="text-[13px] font-bold text-[#4A5A57]">{tr("Keterangan {0}", sebab === "lain" ? "" : "(pilihan)")}</span>
+          <span className="text-[13px] font-bold text-[#4A5A57]">{sebab === "lain" ? tr("Keterangan") : tr("Keterangan (pilihan)")}</span>
           <input
             value={ket}
             onChange={(e) => setKet(e.target.value)}

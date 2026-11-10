@@ -43,7 +43,7 @@ export default function LupaPage() {
               {tr("Masukkan e-mel akaun anda. Kami akan menghantar pautan untuk menetapkan kata laluan baharu. Anda perlu mengesahkan 4 digit akhir kad pengenalan.")}</span>
           </div>
           <label className="flex flex-col gap-2 text-sm font-bold">
-            E-mel
+            {tr("E-mel")}
             <input type="email" inputMode="email" autoComplete="username" placeholder={tr("nama@contoh.com")} value={email} onChange={(e) => setEmail(e.target.value)} className={medanMasuk} />
           </label>
           {error && (

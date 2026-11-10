@@ -61,7 +61,7 @@ function StaffUtama({ me }: { me: Me }) {
               <div className="flex flex-col gap-1">
                 <span className="text-[13px] opacity-90">{tr("Baki cuti tahunan {0}", year)}</span>
                 <span className="text-[40px] leading-none font-extrabold">
-                  {al ? hari(al.available) : "–"} <span className="text-lg font-semibold">hari</span>
+                  {al ? hari(al.available) : "–"} <span className="text-lg font-semibold">{tr("hari")}</span>
                 </span>
               </div>
               {al && al.pending > 0 && (

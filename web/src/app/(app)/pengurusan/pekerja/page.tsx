@@ -128,8 +128,8 @@ function Senarai() {
       />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         {boleh && <KadPanduan id="pekerja" />}
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-          <label className="flex h-12 items-center gap-2.5 rounded-[14px] bg-surface px-3.5 lg:w-[360px]">
+        <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center">
+          <label className="flex h-12 items-center gap-2.5 rounded-[14px] bg-surface px-3.5 lg:w-[340px] lg:shrink-0">
             <svg
               aria-hidden="true"
               width="18"
@@ -152,13 +152,13 @@ function Senarai() {
               className="h-full grow bg-transparent text-sm outline-none"
             />
           </label>
-          <div className="flex gap-2 overflow-x-auto pb-1">
+          <div className="flex gap-2 overflow-x-auto pb-1 lg:shrink-0 lg:overflow-visible lg:pb-0">
             {TAPIS.map((t) => (
               <button
                 key={t.id}
                 type="button"
                 onClick={() => setTapis(t.id)}
-                className={`h-9 shrink-0 rounded-full px-3.5 text-[13px] font-bold ${tapis === t.id ? "bg-primary text-white" : "bg-surface text-[#4A5A57]"}`}
+                className={`h-9 shrink-0 rounded-full px-3.5 text-[13px] font-bold whitespace-nowrap ${tapis === t.id ? "bg-primary text-white" : "bg-surface text-[#4A5A57]"}`}
               >
                 {tr(t.label)}
                 {t.id === "semua" && list.data ? ` · ${semua.length}` : ""}
@@ -169,7 +169,7 @@ function Senarai() {
             aria-label={tr("Tapis jabatan")}
             value={jab}
             onChange={(e) => setJab(e.target.value)}
-            className="h-9 rounded-full border border-line bg-surface px-3 text-[13px] font-bold text-[#4A5A57]"
+            className="h-9 max-w-[260px] shrink-0 rounded-full border border-line bg-surface px-3 text-[13px] font-bold text-[#4A5A57]"
           >
             <option value="">{tr("Semua jabatan")}</option>
             {senaraiJab.map((j) => (
@@ -179,12 +179,12 @@ function Senarai() {
             ))}
           </select>
           {(tapis !== "semua" || jab) && (
-            <button type="button" onClick={simpanPaparan} className="h-9 shrink-0 rounded-full px-2 text-[13px] font-bold text-primary">
+            <button type="button" onClick={simpanPaparan} className="h-9 shrink-0 rounded-full px-2 text-[13px] font-bold whitespace-nowrap text-primary">
               {tr("+ Simpan paparan")}</button>
           )}
           {lebar && <PilihLajur />}
           {lebar && tapisan.length > 0 && (
-            <button type="button" onClick={() => eksportCSV(tapisan, emp.companyCode)} className="ml-auto h-9 rounded-full border border-primary px-4 text-[13px] font-bold text-primary">
+            <button type="button" onClick={() => eksportCSV(tapisan, emp.companyCode)} className="ml-auto h-9 shrink-0 rounded-full border border-primary px-4 text-[13px] font-bold whitespace-nowrap text-primary">
               {tr("Eksport CSV")}</button>
           )}
         </div>
@@ -288,8 +288,8 @@ const LAJUR_LALAI: LajurPilihan[] = ["department", "position", "roles", "status"
 function PilihLajur() {
   const [lajur, setLajur] = useSimpanan<LajurPilihan[]>("hrb_pekerja_lajur", LAJUR_LALAI);
   return (
-    <details className="relative">
-      <summary className="flex h-9 cursor-pointer list-none items-center rounded-full border border-line bg-surface px-3.5 text-[13px] font-bold text-[#4A5A57] [&::-webkit-details-marker]:hidden">
+    <details className="relative shrink-0">
+      <summary className="flex h-9 cursor-pointer list-none items-center rounded-full border border-line bg-surface px-3.5 text-[13px] font-bold whitespace-nowrap text-[#4A5A57] [&::-webkit-details-marker]:hidden">
         {tr("Lajur ▾")}</summary>
       <div className="absolute right-0 z-20 mt-1 flex w-52 flex-col rounded-[14px] border border-line bg-surface p-2 shadow-lg">
         {LAJUR_PILIHAN.map((l) => (

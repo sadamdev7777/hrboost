@@ -85,7 +85,7 @@ export default function DaftarSyarikatPage() {
           {tr("No. WhatsApp")}<input className={input} type="tel" value={f.phone} onChange={set("phone")} aria-invalid={salah === "phone" || undefined} placeholder={tr("+60 1x-xxx xxxx")} autoComplete="tel" />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-bold">
-          E-mel
+          {tr("E-mel")}
           <input className={input} type="email" value={f.email} onChange={set("email")} aria-invalid={salah === "email" || undefined} placeholder={tr("nama@syarikat.com")} autoComplete="email" />
         </label>
         <label className="flex min-h-11 items-start gap-3 text-sm leading-normal">

@@ -204,7 +204,7 @@ function Kotak({ children }: { children: React.ReactNode }) {
 function Baris({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="flex min-h-12 items-center gap-2.5 text-sm">
-      <span className="w-[120px] shrink-0 text-muted">{label}</span>
+      <span className="w-[120px] shrink-0 text-muted lg:w-[170px]">{label}</span>
       {children}
     </label>
   );

@@ -62,7 +62,7 @@ function GajiPekerja() {
       <main className="flex grow flex-col gap-3 px-4 pt-4 pb-6 lg:px-0">
         <span className="text-sm leading-normal text-subtle">
           {tr("Gaji pokok dan elaun / potongan tetap. KWSP, PERKESO, SIP, HRDF dan PCB dikira secara automatik. Komisen, kerja lebih masa dan tuntutan ditambah semasa")}{" "}
-          <Link href="/pengurusan/gaji" className="font-bold">
+          <Link href="/pengurusan/gaji" className="font-bold whitespace-nowrap">
             {tr("Proses Gaji")}</Link>
           .
         </span>

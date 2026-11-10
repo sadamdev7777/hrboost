@@ -125,7 +125,7 @@ export function MenuSisi() {
         className={`flex h-11 items-center gap-3 rounded-[12px] px-3 text-sm ${on ? "bg-[#E3F1EE] font-extrabold text-primary!" : "font-semibold text-ink! hover:bg-[#EEF2F1]"}`}
       >
         <Ikon size={20} />
-        <span className="grow">{tr(n.label)}</span>
+        <span className="min-w-0 grow truncate">{tr(n.label)}</span>
         {n.href === "/kelulusan" && (data ?? 0) > 0 && <Lencana n={data ?? 0} />}
       </Link>
     );
@@ -154,8 +154,8 @@ export function MenuSisi() {
             <circle cx="11" cy="11" r="7" />
             <path d="M20 20l-3.5-3.5" />
           </svg>
-          <span className="grow">{tr("Cari pekerja…")}</span>
-          <kbd className="rounded border border-line px-1.5 font-sans text-[11px]">{tr("Ctrl K")}</kbd>
+          <span className="min-w-0 grow truncate">{tr("Cari pekerja…")}</span>
+          <kbd className="shrink-0 rounded border border-line px-1.5 font-sans text-[11px] whitespace-nowrap">{tr("Ctrl K")}</kbd>
         </button>
       )}
       <nav className="flex flex-col gap-0.5" aria-label={tr("Menu utama")}>
@@ -167,7 +167,7 @@ export function MenuSisi() {
         <TukarMod />
         <div className="flex items-center justify-between gap-2 px-2">
           <span className="truncate text-[13px] font-bold">{me.name}</span>
-          <button type="button" onClick={() => void getSupabase().auth.signOut()} className="flex min-h-11 items-center text-[13px] font-bold text-danger">
+          <button type="button" onClick={() => void getSupabase().auth.signOut()} className="flex min-h-11 shrink-0 items-center text-[13px] font-bold whitespace-nowrap text-danger">
             {tr("Log keluar")}</button>
         </div>
       </div>

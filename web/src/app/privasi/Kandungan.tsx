@@ -77,7 +77,7 @@ export default function Kandungan() {
 
         <H2 id="hubungi">{tr("8. Hubungi")}</H2>
         <P>
-          E-mel: <a href="mailto:hi@hrboost.io">{tr("hi@hrboost.io")}</a>
+          {tr("E-mel")}: <a href="mailto:hi@hrboost.io">{tr("hi@hrboost.io")}</a>
           <br />
           {tr("WhatsApp:")}{" "}<a href="https://wa.me/60194442424">019-444 2424</a>
           <br />
