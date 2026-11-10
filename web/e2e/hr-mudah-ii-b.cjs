@@ -46,11 +46,10 @@ async function lulusSemua(b, email) {
   log('1. Amin — Tanya HR, pendahuluan gaji, kerja fleksibel');
   let { ctx, p } = await masuk(b, 'amin@demo.hrboost.io', TELEFON);
   await p.goto(BASE + '/tanya-hr');
-  await p.fill('textarea[aria-label=Soalan]', 'Bolehkah saya membawa baki cuti tahunan ke tahun hadapan?');
-  await p.click(V('button:has-text("Tanya")'));
-  // Pembantu AI tidak dikonfigurasi secara tempatan → soalan terus kepada HR; jika ada AI, hantar kepada HR
-  const ai = await p.waitForSelector(V('text=JAWAPAN PEMBANTU AI'), { timeout: 8000 }).then(() => true).catch(() => false);
-  if (ai) await p.click(V('button:has-text("Hantar kepada HR")'));
+  // Tanya HR = Pembantu AI + hantar kepada HR. Tanpa kunci AI (tempatan) skrin menawarkan hantar terus kepada HR.
+  await p.fill('#soalan', 'Bolehkah saya membawa baki cuti tahunan ke tahun hadapan?');
+  await p.press('#soalan', 'Enter');
+  await p.click(V('button:has-text("Hantar kepada HR")'), { timeout: 30000 });
   await p.waitForSelector(V('text=Menunggu HR'), { timeout: 15000 });
   expect(true, 'soalan dihantar kepada HR');
   await p.goto(BASE + '/mohon/pendahuluan');

@@ -775,6 +775,7 @@ export const EN: Record<string, string> = {
  "Hantar semula kepada pekerja": "Resend to employees",
  "Hantar semula pautan": "Resend link",
  "Hantar semula pautan pengesahan": "Resend verification link",
+ "Hantar soalan ini terus kepada HR?": "Send this question straight to HR?",
  "Hantar untuk kelulusan": "Submit for approval",
  "Hantar {0}": "Submit {0}",
  "Hantar {0} jemputan sekarang": "Send {0} invitations now",
@@ -1274,6 +1275,7 @@ export const EN: Record<string, string> = {
  "Masa keluar tidak sah (contoh: 18:05).": "Invalid clock-out time (e.g. 18:05).",
  "Masa masuk tidak sah (contoh: 8:55).": "Invalid clock-in time (e.g. 8:55).",
  "Masih ada {0} langkah: {1}.": "{0} steps remaining: {1}.",
+ "Masih perlukan bantuan? Hantar kepada HR": "Still need help? Send to HR",
  "Masuk": "In",
  "Masuk / keluar": "In / out",
  "Masuk ke HRBoost": "Enter HRBoost",
@@ -1668,7 +1670,9 @@ export const EN: Record<string, string> = {
  "Pembantu AI": "AI Assistant",
  "Pembantu AI belum diaktifkan untuk syarikat ini.": "AI Assistant is not yet enabled for this company.",
  "Pembantu AI di WhatsApp": "AI Assistant on WhatsApp",
+ "Pembantu AI menjawab serta-merta daripada data anda dan buku panduan syarikat. Jika belum jelas, tekan “Hantar kepada HR” — HR akan membalas melalui WhatsApp.": "The AI assistant answers instantly from your data and the company handbook. If it is still unclear, tap “Send to HR” and HR will reply on WhatsApp.",
  "Pembantu AI menjawab soalan pekerja berdasarkan dokumen di sini sahaja. Ia tidak meneka polisi.": "The AI Assistant answers employee questions based only on the documents here. It does not guess policy.",
+ "Pembantu AI tidak tersedia sekarang.": "The AI assistant is not available right now.",
  "Pemberitahuan": "Notifications",
  "Pemberitahuan, {0} belum dibaca": "Notifications, {0} unread",
  "Pembetulan": "Correction",
@@ -2802,6 +2806,7 @@ export const EN: Record<string, string> = {
  "↑↓ pilih": "↑↓ select",
  "⋯ Lagi": "⋯ More",
  "✓ Aliran kelulusan cuti & tuntutan aktif": "✓ Leave & claim approval flows active",
+ "✓ Dihantar kepada HR. Jawapan akan dihantar melalui WhatsApp.": "✓ Sent to HR. The answer will be sent on WhatsApp.",
  "✓ Jenis cuti & {0} cuti umum mengikut Akta Kerja": "✓ Leave types & {0} public holidays according to the Employment Act",
  "✓ {0} jabatan{1}": "✓ {0} departments{1}"
 };

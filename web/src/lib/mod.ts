@@ -99,8 +99,7 @@ export const MENU_PEKERJA: KumpulanNav[] = [
   {
     tajuk: tr("BANTUAN"),
     items: [
-      { href: "/tanya-hr", label: tr("Tanya HR"), ikon: "chat" },
-      { href: "/pembantu-ai", label: tr("Pembantu AI"), ikon: "sparkle" },
+      { href: "/tanya-hr", label: tr("Tanya HR"), ikon: "sparkle", padan: ["/pembantu-ai"] },
     ],
   },
 ];

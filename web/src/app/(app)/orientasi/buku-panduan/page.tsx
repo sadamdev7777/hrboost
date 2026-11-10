@@ -96,7 +96,7 @@ export default function OrientasiBukuPanduanPage() {
         className="flex flex-col gap-2 rounded-[14px] bg-ai-soft px-3.5 py-3"
         onSubmit={(e) => {
           e.preventDefault();
-          router.push("/pembantu-ai");
+          router.push("/tanya-hr");
         }}
       >
         <span className="flex items-center gap-2 text-[13px] font-extrabold text-ai-hover">

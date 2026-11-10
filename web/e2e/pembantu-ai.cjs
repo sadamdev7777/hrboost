@@ -43,7 +43,7 @@ async function login(browser, phone) {
   log('2. Amin: Pembantu AI');
   ({ ctx, p } = await login(browser, '100000004'));
   await p.goto(BASE + '/saya');
-  await p.click('a:has-text("Pembantu AI")');
+  await p.click('a:has-text("Tanya HR")');
   await p.waitForSelector('text=CUBA TANYA');
   await p.screenshot({ path: `${shots}/ai-pembantu.png` });
   await p.click('button:has-text("Berapakah baki cuti saya?")');

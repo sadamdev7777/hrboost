@@ -95,7 +95,7 @@ export default function OrientasiSelesaiPage() {
               {tr("Mohon cuti")}</Item>
             <Item href="/tuntutan/baru" icon={<IconReceipt size={18} />}>
               {tr("Buat tuntutan dengan gambar resit")}</Item>
-            <Item href="/pembantu-ai" icon={<IconChat size={18} />} tone="bg-[#EDE9F8] text-ai">
+            <Item href="/tanya-hr" icon={<IconChat size={18} />} tone="bg-[#EDE9F8] text-ai">
               {tr("Tanya sebarang soalan melalui WhatsApp")}</Item>
           </div>
         </div>
