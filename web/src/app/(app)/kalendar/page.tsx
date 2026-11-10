@@ -12,6 +12,7 @@ import { getKalendar, type CutiKalendar, type Kalendar } from "@/lib/urusan";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { useSkrinLebar } from "@/lib/skrin";
+import { useMod } from "@/lib/mod";
 
 const HARI = [tr("Isn"), tr("Sel"), tr("Rab"), tr("Kha"), tr("Jum"), tr("Sab"), tr("Ahd")];
 const HARI_PENUH = [tr("Ahad"), tr("Isnin"), tr("Selasa"), tr("Rabu"), tr("Khamis"), tr("Jumaat"), tr("Sabtu")];
@@ -48,6 +49,7 @@ function binaHari(k: Kalendar, dari: string, hingga: string): Hari[] {
 /** Kalendar cuti pasukan: siapa bercuti, cuti umum dan hari jadi dalam satu bulan. */
 export default function KalendarPage() {
   const me = useMe();
+  const { mod } = useMod();
   const emp = me.active!;
   const t = todayISO();
   const lebar = useSkrinLebar();
@@ -66,7 +68,7 @@ export default function KalendarPage() {
 
   return (
     <Screen lebar="lebar">
-      <PengepalaAkar title={tr("Kalendar pasukan")} back="/saya" />
+      <PengepalaAkar title={mod === "hr" ? tr("Cuti") : tr("Kalendar pasukan")} back="/saya" />
       <TabModul modul="cuti" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         <div className="flex flex-wrap items-center gap-2">

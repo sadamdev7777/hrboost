@@ -8,7 +8,8 @@ import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { getJabatan, getSenaraiPekerja, type Jabatan } from "@/lib/hr";
 import { inisial } from "@/lib/format";
-import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
+import { ErrorBox, Loading, Screen } from "@/components/ui";
+import { PengepalaAkar } from "@/components/TabNav";
 import { HadPeranan } from "@/components/Senarai";
 import { BorangJabatan, PilihKetua, padamJabatan } from "@/components/Jabatan";
 
@@ -51,19 +52,21 @@ function SenaraiJabatan() {
   };
 
   return (
-    <Screen lebar="sederhana">
-      <BackHeader
-        title={tr("Jabatan")}
-        href="/pengurusan/tetapan"
+    <Screen lebar="lebar">
+      <PengepalaAkar
+        title={tr("Pekerja")}
+        back="/pengurusan"
         action={
-          <button type="button" onClick={() => setBaru(true)} className="mr-1 flex h-10 items-center rounded-full bg-primary px-4 text-[13px] font-bold text-white">
-            {tr("+ Tambah jabatan")}</button>
+          <button type="button" onClick={() => setBaru(true)} className="flex h-10 items-center rounded-full bg-primary px-4 text-[13px] font-bold text-white">
+            {tr("+ Tambah jabatan")}
+          </button>
         }
       />
       <TabModul modul="pekerja" />
-      <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
+      <main className="flex grow flex-col gap-3 px-4 pt-3 pb-6 lg:px-0">
         <span className="text-sm leading-normal text-subtle">
-          {tr("Ketua jabatan menjadi pelulus pertama bagi pasukannya. Untuk memindahkan pekerja ke jabatan lain, buka profil pekerja → Ubah gaji & jawatan.")}</span>
+          {tr("Ketua jabatan menjadi pelulus pertama bagi pasukannya. Untuk memindahkan pekerja ke jabatan lain, buka profil pekerja → Ubah gaji & jawatan.")}
+        </span>
         {d.error && <ErrorBox message={d.error} />}
         {ralat && <ErrorBox message={ralat} />}
         {d.loading && !d.data && <Loading />}
@@ -77,8 +80,7 @@ function SenaraiJabatan() {
                   <div key={j.id} className="flex min-h-16 flex-wrap items-center gap-x-3 gap-y-2 py-3">
                     <span className="flex min-w-0 grow basis-40 flex-col gap-0.5">
                       <b className="text-sm font-bold">{j.name}</b>
-                      <span className={`text-xs ${!j.headPersonId && n ? "text-warning" : "text-muted"}`}>
-                        {tr("{0} pekerja{1}", n, !j.headPersonId && n ? tr(" · tiada ketua") : "")}</span>
+                      <span className={`text-xs ${!j.headPersonId && n ? "text-warning" : "text-muted"}`}>{tr("{0} pekerja{1}", n, !j.headPersonId && n ? tr(" · tiada ketua") : "")}</span>
                     </span>
                     <button
                       type="button"
@@ -96,7 +98,8 @@ function SenaraiJabatan() {
                     </button>
                     <span className="flex gap-1">
                       <button type="button" onClick={() => setNama(j)} className="flex h-10 items-center px-2.5 text-[13px] font-bold text-primary">
-                        {tr("Namakan semula")}</button>
+                        {tr("Namakan semula")}
+                      </button>
                       {n === 0 && (
                         <button type="button" onClick={() => buang(j)} className="flex h-10 items-center px-2.5 text-[13px] font-bold text-danger">
                           {padam === j.id ? tr("Sahkan padam") : tr("Padam")}
@@ -111,7 +114,8 @@ function SenaraiJabatan() {
               <div className="flex items-center justify-between gap-2 rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] text-warning">
                 <span>{tr("{0} pekerja belum mempunyai jabatan.", tanpaJabatan)}</span>
                 <Link href="/pengurusan/pekerja" className="font-bold text-warning!">
-                  {tr("Lihat pekerja")}</Link>
+                  {tr("Lihat pekerja")}
+                </Link>
               </div>
             )}
           </>

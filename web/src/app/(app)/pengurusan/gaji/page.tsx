@@ -85,14 +85,14 @@ function ProsesGaji() {
   return (
     <Screen>
       <PengepalaAkar
-        title={tr("Gaji {0} {1}", BULAN_PENUH[tempoh.m - 1].slice(0, 3), tempoh.y)}
+        title={tr("Penggajian")}
         action={
           <div className="mr-1 flex items-center gap-1">
             <ButangBantuan id="gaji" />
             <button type="button" aria-label={tr("Bulan sebelumnya")} onClick={() => setTempoh(geser(tempoh.y, tempoh.m, -1))} className="flex size-11 items-center justify-center rounded-full text-lg">
               ‹
             </button>
-            <span className="flex h-9 items-center rounded-full bg-[#E3F1EE] px-3 text-[13px] font-extrabold text-primary">{emp.companyCode}</span>
+            <span className="flex h-9 items-center rounded-full bg-[#E3F1EE] px-3 text-[13px] font-extrabold whitespace-nowrap text-primary">{`${BULAN_PENUH[tempoh.m - 1].slice(0, 3)} ${tempoh.y}`}</span>
             <button type="button" aria-label={tr("Bulan seterusnya")} onClick={() => setTempoh(geser(tempoh.y, tempoh.m, 1))} className="flex size-11 items-center justify-center rounded-full text-lg">
               ›
             </button>
