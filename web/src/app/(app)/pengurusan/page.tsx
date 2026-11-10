@@ -1,6 +1,6 @@
 "use client";
 
-import { tr, trRalat } from "@/lib/i18n";
+import { tr, trRalat, trTajuk } from "@/lib/i18n";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { hasRole, useMe } from "@/lib/me";
@@ -20,6 +20,7 @@ import { ringkasSemakHr } from "@/components/SenaraiSemak";
 import { getTugasSemakSaya } from "@/lib/berkanun";
 import { getFleksibel, getSoalan, getSurat } from "@/lib/urusan";
 import { KadPengumuman } from "@/components/Pengumuman";
+import { getTugasanHr } from "@/lib/modul";
 import { getKalendarBerkanun, getTarikhTamat, tandaDihantar, type KewajipanBerkanun } from "@/lib/berkanun";
 import { beritahu, mintaTeks } from "@/components/Dialog";
 
@@ -47,7 +48,7 @@ function Kandungan() {
   const hariIni = todayISO();
   const d = useData(async () => {
     const sb = getSupabase();
-    const [asas, tambahan, tugas, jadi, berkanun, tamat, semak, surat, soalan, fleksibel] = await Promise.all([
+    const [asas, tambahan, tugas, jadi, berkanun, tamat, semak, surat, soalan, fleksibel, todo] = await Promise.all([
       getDashboard(emp.companyId),
       getDashboardTambahan(emp.companyId),
       getTugasSaya(emp.companyId),
@@ -58,10 +59,12 @@ function Kandungan() {
       hasRole(me, ["hr", "admin"]) ? getSurat(emp.companyId).catch(() => []) : Promise.resolve([]),
       hasRole(me, ["hr", "admin"]) ? getSoalan(emp.companyId).catch(() => []) : Promise.resolve([]),
       hasRole(me, ["hr", "admin"]) ? getFleksibel(emp.companyId).catch(() => []) : Promise.resolve([]),
+      getTugasanHr(emp.companyId).catch(() => null),
     ]);
     return { asas, tambahan, tugas, jadi: must(jadi) ?? [], berkanun, tamat, semak: ringkasSemakHr(semak), surat: surat.filter((s) => s.status === "pending").length,
       soalan: soalan.filter((q) => q.status === "open").length,
       fleksibel: fleksibel.filter((f) => f.status === "pending"),
+      todo,
     };
   }, [emp.companyId]);
   const [sibuk, setSibuk] = useState<string | null>(null);
@@ -82,7 +85,9 @@ function Kandungan() {
   const a = x?.asas;
   const t = x?.tambahan;
   const dijangka = a ? Math.max(a.headcount - a.on_leave.length, 0) : 0;
-  const tindakan = x && a ? x.tugas.length + a.attention.length + (t?.no_salary ? 1 : 0) + x.tamat.length + x.semak.length + (x.surat ? 1 : 0) + (x.soalan ? 1 : 0) + x.fleksibel.length : 0;
+  const td = x?.todo;
+  const tambahHr = td ? [td.stuck, td.not_activated, td.probation_ending, urusGaji ? td.claims_unpaid.n : 0].filter((v) => (v ?? 0) > 0).length : 0;
+  const tindakan = x && a ? x.tugas.length + a.attention.length + (t?.no_salary ? 1 : 0) + x.tamat.length + x.semak.length + (x.surat ? 1 : 0) + (x.soalan ? 1 : 0) + x.fleksibel.length + tambahHr : 0;
 
   async function tanda(k: KewajipanBerkanun) {
     const ruj = await mintaTeks({
@@ -160,7 +165,7 @@ function Kandungan() {
                     <div key={k.task_id} className="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-2 py-2.5 text-sm">
                       <Tag tone={k.sla_breached ? "danger" : "primary"}>{JENIS[k.request_type] ?? tr("Permohonan")}</Tag>
                       <span className="flex min-w-0 grow basis-40 flex-col">
-                        <b className="truncate font-bold">{k.title}</b>
+                        <b className="truncate font-bold">{trTajuk(k.title)}</b>
                         <span className="truncate text-xs text-muted">
                           {[k.requester_nickname, tr("peringkat {0}", k.step_name), tarikh(k.submitted_at)].filter(Boolean).join(" · ")}
                         </span>
@@ -184,6 +189,18 @@ function Kandungan() {
                   {x.tugas.length > 6 && (
                     <Link href="/kelulusan" className="flex min-h-11 items-center text-[13px] font-bold">
                       {tr("Lihat semua {0} permohonan", x.tugas.length)}</Link>
+                  )}
+                  {(td?.stuck ?? 0) > 0 && (
+                    <Baris tag={tr("Tersangkut")} tone="danger" teks={tr("{0} permohonan melepasi tempoh kelulusan (SLA)", td!.stuck)} href="/kelulusan?tab=syarikat" aksi={tr("Ingatkan")} />
+                  )}
+                  {(td?.not_activated ?? 0) > 0 && (
+                    <Baris tag={tr("Orientasi")} tone="warning" teks={tr("{0} pekerja belum mengaktifkan akaun", td!.not_activated)} href="/pengurusan/orientasi" aksi={tr("Jemput")} />
+                  )}
+                  {(td?.probation_ending ?? 0) > 0 && (
+                    <Baris tag={tr("Percubaan")} tone="warning" teks={tr("{0} tempoh percubaan tamat dalam 30 hari", td!.probation_ending)} href="/pengurusan/orientasi" aksi={tr("Semak")} />
+                  )}
+                  {urusGaji && (td?.claims_unpaid.n ?? 0) > 0 && (
+                    <Baris tag={tr("Tuntutan")} tone="primary" teks={tr("{0} tuntutan diluluskan belum dibayar ({1})", td!.claims_unpaid.n, ringgit(td!.claims_unpaid.amount))} href="/pengurusan/tuntutan" aksi={tr("Lihat")} />
                   )}
                   {t.no_salary ? (
                     <Baris tag={tr("Gaji")} tone="warning" teks={tr("{0} pekerja belum mempunyai gaji pokok", t.no_salary)} href="/pengurusan/gaji/pekerja" aksi={tr("Tetapkan")} />
@@ -277,9 +294,15 @@ function Kandungan() {
                     <span className="text-subtle">{tr("Tuntutan diluluskan")}</span>
                     <b>{ringgit(a.claims_approved_month)}</b>
                   </div>
-                  <Link href="/pengurusan/akses" className="flex min-h-11 items-center text-[13px] font-bold">
-                    {tr("Anda hanya boleh melihat {0}. Mohon akses syarikat lain", a.company_code)}</Link>
+                  {urusGaji && td && (
+                    <Link href="/pengurusan/tuntutan" className="flex min-h-12 items-center justify-between text-sm text-ink!">
+                      <span className="text-subtle">{tr("Diluluskan, belum dibayar")}</span>
+                      <b>{ringgit(td.claims_unpaid.amount)}</b>
+                    </Link>
+                  )}
                 </Panel>
+                <Link href="/pengurusan/akses" className="px-1 text-xs font-semibold text-muted!">
+                  {tr("Anda hanya boleh melihat {0}. Mohon akses syarikat lain ›", a.company_code)}</Link>
               </div>
             </div>
           </>

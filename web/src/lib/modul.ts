@@ -2,7 +2,7 @@
 
 // Data untuk halaman modul HR (menu baharu): Cuti, Kehadiran, Tuntutan perbelanjaan, Orientasi.
 // Setiap RPC menyemak peranan di pangkalan data (lihat migrasi 20261202000000_modul_hr.sql).
-import { trRalat } from "@/lib/i18n";
+import { trRalat, trTajuk } from "@/lib/i18n";
 import { getSupabase } from "./supabase";
 import { must } from "./useData";
 import type { StatusPermohonan } from "./format";
@@ -142,4 +142,44 @@ export function muatTurunCSV(namaFail: string, baris: (string | number)[][]) {
   a.download = namaFail;
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+// ---------------------------------------------------------------- Tugasan HR & permohonan tersangkut
+export type TugasanHr = {
+  not_activated: number | null;
+  probation_ending: number | null;
+  claims_unpaid: { n: number; amount: number };
+  questions_open: number | null;
+  letters_pending: number | null;
+  flexible_pending: number | null;
+  stuck: number | null;
+  pending_all: number | null;
+};
+export async function getTugasanHr(companyId: string): Promise<TugasanHr> {
+  const r = must(await getSupabase().rpc("hr_todo", { p_company: companyId })) as unknown as TugasanHr;
+  return { ...r, claims_unpaid: { n: n(r.claims_unpaid?.n), amount: n(r.claims_unpaid?.amount) } };
+}
+
+export type PermohonanTersangkut = {
+  id: string;
+  request_type: string;
+  title: string;
+  submitted_at: string;
+  sla_due_at: string | null;
+  overdue: boolean;
+  requester: string;
+  step_name: string | null;
+  approvers: string | null;
+  last_reminded_at: string | null;
+};
+export async function getPermohonanSyarikat(companyId: string): Promise<PermohonanTersangkut[]> {
+  return ((must(await getSupabase().rpc("hr_pending_requests", { p_company: companyId })) ?? []) as unknown as PermohonanTersangkut[]).map((x) => ({
+    ...x,
+    title: trTajuk(x.title),
+    step_name: x.step_name ? x.step_name.split(", ").map(trRalat).join(", ") : null,
+  }));
+}
+/** Peringatan WhatsApp kepada pelulus semasa; memulangkan bilangan pelulus yang diingatkan. */
+export async function ingatkanPelulus(requestId: string): Promise<number> {
+  return Number(must(await getSupabase().rpc("approval_remind", { p_request: requestId })));
 }

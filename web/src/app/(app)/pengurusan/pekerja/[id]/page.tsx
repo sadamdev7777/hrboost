@@ -76,7 +76,7 @@ function Profil() {
             onClick={() => setTab(t)}
             className={`h-10 shrink-0 border-b-[3px] px-3 text-sm whitespace-nowrap ${tab === t ? "border-primary font-extrabold text-primary" : "border-transparent font-semibold text-[#4A5A57]"}`}
           >
-            {t}
+            {tr(t)}
           </button>
         ))}
       </div>
@@ -110,6 +110,10 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
   // HR terus melihat maklumat peribadi; setiap paparan direkodkan dalam data_access_log (hr_view_sensitive).
   const sd = useData(() => (bolehUbah ? bukaMaklumatSensitif(p.id) : Promise.resolve(null as MaklumatSensitif | null)), [p.id, bolehUbah]);
   const sensitif = sd.data;
+  // IC & akaun bank bertopeng sehingga HR menekan "Tunjuk" (PDPA: kurangkan pendedahan di skrin).
+  const [tunjuk, setTunjuk] = useState(false);
+  const topeng = (v: string | null | undefined, depan: number, belakang: number) =>
+    !v ? "-" : tunjuk || v.length <= depan + belakang ? v : v.slice(0, depan) + "•".repeat(Math.max(3, v.length - depan - belakang)) + v.slice(-belakang);
   const [ralat, setRalat] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [pautanBaru, setPautanBaru] = useState<string | null>(null);
@@ -280,12 +284,20 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
             <>
               <Kotak>
                 <Medan label={tr("Nama penuh")}>{sensitif.full_name}</Medan>
-                <Medan label={tr("No. kad pengenalan")}>{sensitif.ic_no ?? "-"}</Medan>
+                <Medan label={tr("No. kad pengenalan")}>
+                  <span className="flex items-center justify-end gap-2">
+                    <span className="tabular-nums">{topeng(sensitif.ic_no, 6, 2)}</span>
+                    {(sensitif.ic_no || sensitif.bank_account_no) && (
+                      <button type="button" onClick={() => setTunjuk((x) => !x)} className="min-h-8 text-xs font-bold text-primary">
+                        {tunjuk ? tr("Sorok") : tr("Tunjuk")}</button>
+                    )}
+                  </span>
+                </Medan>
                 <Medan label={tr("WhatsApp")}>{sensitif.phone ? paparTelefon(sensitif.phone) : "-"}</Medan>
                 <Medan label={tr("Alamat")}>{sensitif.address ?? "-"}</Medan>
                 <Medan label={tr("Status perkahwinan")}>{sensitif.marital_status ?? "-"}</Medan>
                 <Medan label={tr("Anak (PCB)")}>{sensitif.children_count}</Medan>
-                <Medan label={tr("Bank")}>{sensitif.bank_name ? `${sensitif.bank_name} · ${sensitif.bank_account_no}` : "-"}</Medan>
+                <Medan label={tr("Bank")}>{sensitif.bank_name ? `${sensitif.bank_name} · ${topeng(sensitif.bank_account_no, 0, 4)}` : "-"}</Medan>
                 <Medan label={tr("KWSP / PERKESO / Cukai")}>{[sensitif.epf_no, sensitif.socso_no, sensitif.tax_no].map((x) => x ?? "-").join(" / ")}</Medan>
                 {(sensitif.emergency ?? []).map((w, i) => (
                   <Medan key={i} label={tr("Waris: {0}", w.name)}>

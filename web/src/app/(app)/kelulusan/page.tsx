@@ -1,10 +1,11 @@
 "use client";
 
-import { tr } from "@/lib/i18n";
+import { tr, trTajuk } from "@/lib/i18n";
 import { beritahu } from "@/components/Dialog";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { useMe, type Me } from "@/lib/me";
+import { hasRole, useMe, type Me } from "@/lib/me";
+import { getPermohonanSyarikat, ingatkanPelulus } from "@/lib/modul";
 import { getSupabase } from "@/lib/supabase";
 import { mesejRalat, must, useData } from "@/lib/useData";
 import { paparPermohonan } from "@/lib/data";
@@ -30,7 +31,11 @@ const ROLE_LABEL: Record<string, string> = { hr: "HR", ceo: "CEO", finance: tr("
 
 export default function KelulusanPage() {
   const me = useMe();
-  const [tab, setTab] = useState<"pending" | "history">("pending");
+  // ?tab=syarikat (pautan dari Papan Pemuka: permohonan tersangkut)
+  const [tab, setTab] = useState<"pending" | "history" | "syarikat">(() =>
+    typeof window !== "undefined" && new URLSearchParams(window.location.search).get("tab") === "syarikat" ? "syarikat" : "pending",
+  );
+  const pantau = !!me.active && hasRole(me, ["hr", "ceo", "admin"]);
   const [filter, setFilter] = useState<Filter>("all");
   const [rejecting, setRejecting] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -130,7 +135,7 @@ export default function KelulusanPage() {
           <span className="text-right text-[13px] font-semibold text-muted">{labelPeranan(me)}</span>
         </div>
 
-        <div role="tablist" className="grid grid-cols-3 gap-1 rounded-[14px] bg-[#E4EAE8] p-1">
+        <div role="tablist" className={`grid ${pantau ? "grid-cols-4" : "grid-cols-3"} gap-1 rounded-[14px] bg-[#E4EAE8] p-1`}>
           <button
             role="tab"
             aria-selected={tab === "pending"}
@@ -147,6 +152,15 @@ export default function KelulusanPage() {
             className={`h-10 rounded-[10px] text-[13px] ${tab === "history" ? "bg-surface font-extrabold text-ink" : "font-semibold text-subtle"}`}
           >
             {tr("Sejarah")}</button>
+          {pantau && (
+            <button
+              role="tab"
+              aria-selected={tab === "syarikat"}
+              onClick={() => setTab("syarikat")}
+              className={`h-10 rounded-[10px] text-[13px] whitespace-nowrap ${tab === "syarikat" ? "bg-surface font-extrabold text-ink" : "font-semibold text-subtle"}`}
+            >
+              {tr("Dalam syarikat")}</button>
+          )}
         </div>
 
         {error && <ErrorBox message={error} />}
@@ -291,6 +305,8 @@ export default function KelulusanPage() {
           </>
         )}
 
+        {tab === "syarikat" && pantau && <SenaraiSyarikat companyId={me.active!.companyId} />}
+
         {tab === "history" && (
           <div className="flex flex-col gap-2.5">
             {history.error && <ErrorBox message={history.error} />}
@@ -299,7 +315,7 @@ export default function KelulusanPage() {
             {history.data?.map((h) => (
               <div key={h.taskId} className="flex items-center justify-between gap-2 rounded-card bg-surface px-4 py-3">
                 <span className="flex flex-col gap-0.5">
-                  <b className="text-sm">{h.title}</b>
+                  <b className="text-sm">{trTajuk(h.title)}</b>
                   <span className="text-xs text-muted">
                     {h.step} · {h.actedAt ? `${hariTarikh(tarikhTempatan(h.actedAt))}, ${masa(h.actedAt)}` : ""}
                   </span>
@@ -447,3 +463,72 @@ async function loadHistory(personId: string) {
     };
   });
 }
+
+/**
+ * HR / CEO / Pentadbir: semua permohonan yang masih menunggu dalam syarikat, siapa pelulus semasa
+ * dan sudah berapa lama. Butang "Ingatkan" menghantar WhatsApp kepada pelulus (sekali setiap 2 jam).
+ */
+function SenaraiSyarikat({ companyId }: { companyId: string }) {
+  const d = useData(() => getPermohonanSyarikat(companyId), [companyId]);
+  const [sibuk, setSibuk] = useState<string | null>(null);
+  const [ralat, setRalat] = useState<string | null>(null);
+  const [hanyaLewat, setHanyaLewat] = useState(false);
+  const semua = d.data ?? [];
+  const papar = hanyaLewat ? semua.filter((r) => r.overdue) : semua;
+  const lewat = semua.filter((r) => r.overdue).length;
+  const [kini] = useState(() => Date.now());
+
+  async function ingat(id: string, pelulus: string | null) {
+    setSibuk(id);
+    setRalat(null);
+    try {
+      const n = await ingatkanPelulus(id);
+      beritahu(tr("Peringatan WhatsApp dihantar kepada {0}.", pelulus ?? tr("{0} pelulus", n)));
+      d.reload();
+    } catch (e) {
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
+    } finally {
+      setSibuk(null);
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-2.5">
+      <span className="text-[13px] text-subtle">
+        {tr("Semua permohonan yang masih menunggu dalam syarikat. Ingatkan pelulus jika permohonan tersangkut.")}</span>
+      <div className="flex gap-2">
+        <button type="button" onClick={() => setHanyaLewat(false)} aria-pressed={!hanyaLewat} className={`h-9 rounded-full px-3.5 text-[13px] font-bold whitespace-nowrap ${!hanyaLewat ? "bg-ink text-white" : "bg-surface text-[#4A5A57]"}`}>
+          {tr("Semua · {0}", semua.length)}</button>
+        <button type="button" onClick={() => setHanyaLewat(true)} aria-pressed={hanyaLewat} className={`h-9 rounded-full px-3.5 text-[13px] font-bold whitespace-nowrap ${hanyaLewat ? "bg-danger text-white" : "bg-surface text-danger"}`}>
+          {tr("Melepasi SLA · {0}", lewat)}</button>
+      </div>
+      {ralat && <ErrorBox message={ralat} />}
+      {d.error && <ErrorBox message={d.error} />}
+      {d.loading && !d.data && <Loading />}
+      {d.data && papar.length === 0 && <Empty>{tr("Tiada permohonan yang menunggu.")}</Empty>}
+      {papar.map((r) => {
+        const baruDiingat = r.last_reminded_at && kini - new Date(r.last_reminded_at).getTime() < 2 * 3600e3;
+        return (
+          <div key={r.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-card bg-surface px-4 py-3">
+            <Link href={`/kelulusan/${r.id}`} className="flex min-w-0 grow basis-60 flex-col gap-0.5 text-ink!">
+              <b className="text-sm">{r.title}</b>
+              <span className="text-xs text-muted">
+                {tr("{0} · dihantar {1}", r.requester, `${hariTarikh(tarikhTempatan(r.submitted_at))}, ${masa(r.submitted_at)}`)}</span>
+              <span className={`text-xs font-semibold ${r.overdue ? "text-danger" : "text-subtle"}`}>
+                {r.overdue ? tr("Melepasi SLA · ") : ""}
+                {tr("Menunggu {0}", [r.step_name, r.approvers].filter(Boolean).join(": ") || "–")}</span>
+            </Link>
+            <button
+              type="button"
+              disabled={!!baruDiingat || sibuk === r.id || !r.approvers}
+              onClick={() => ingat(r.id, r.approvers)}
+              className="h-10 shrink-0 rounded-full border border-primary px-4 text-[13px] font-bold whitespace-nowrap text-primary disabled:border-line disabled:text-muted"
+            >
+              {baruDiingat ? tr("Telah diingatkan") : tr("Ingatkan")}</button>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+

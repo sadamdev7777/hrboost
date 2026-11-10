@@ -1,12 +1,12 @@
 "use client";
 
 import { tr } from "@/lib/i18n";
-import { TabNav } from "@/components/TabNav";
+import { TabNav, PengepalaAkar } from "@/components/TabNav";
 import { hasRole, useMe } from "@/lib/me";
 import { useState } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
-import { BackHeader, ErrorBox, Screen } from "@/components/ui";
+import { ErrorBox, Screen } from "@/components/ui";
 import { ButangBantuan, KadPanduan } from "@/components/Panduan";
 import { BarisPautan, HadPeranan, Kotak, Seksyen } from "@/components/Senarai";
 
@@ -72,9 +72,8 @@ function Menu() {
 
   return (
     <Screen>
-      <BackHeader
+      <PengepalaAkar
         title={tr("Tetapan")}
-        href="/saya"
         action={<span className="mr-2 flex items-center gap-2"><ButangBantuan id="tetapan" /><span className="flex h-9 items-center rounded-full bg-[#E3F1EE] px-3 text-[13px] font-extrabold text-primary">{emp.companyCode}</span></span>}
       />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">

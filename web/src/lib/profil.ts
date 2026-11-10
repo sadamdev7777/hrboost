@@ -1,6 +1,6 @@
 "use client";
 
-import { tr } from "@/lib/i18n";
+import { tr, trRalat } from "@/lib/i18n";
 import { getSupabase } from "./supabase";
 import { must } from "./useData";
 import { addDays, dow, todayISO, type StatusPermohonan } from "./format";
@@ -41,7 +41,7 @@ export async function getKalendarCuti(emp: Pekerjaan, bulan: string): Promise<Da
       date: d,
       weekend: weekend.includes(dow(d)),
       jenis: ph ? "ph" : saya ? "me" : lain.length ? "ot" : null,
-      label: ph ? ph.name : saya ? tr("Saya") : lain.length ? lain.map((c) => c.name).join(", ") : null,
+      label: [ph ? trRalat(ph.name) : null, saya ? tr("Saya") : null, ...lain.map((c) => c.name)].filter(Boolean).join(", ") || null,
     });
   }
   return {

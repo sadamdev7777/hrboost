@@ -1,6 +1,6 @@
 "use client";
 
-import { tr, trRalat, trKonteks } from "@/lib/i18n";
+import { tr, trRalat, trKonteks, trTajuk } from "@/lib/i18n";
 import { beritahu, sahkan } from "@/components/Dialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -182,7 +182,7 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
               ))}
             </div>
           )}
-          {!x.leave && !x.claim && <Field label={tr("Permohonan")} value={x.req.title} />}
+          {!x.leave && !x.claim && <Field label={tr("Permohonan")} value={trTajuk(x.req.title)} />}
         </section>
 
         {x.req.ai_summary && (

@@ -1,6 +1,6 @@
 "use client";
 
-import { tr } from "@/lib/i18n";
+import { tr, trRalat } from "@/lib/i18n";
 import Link from "next/link";
 import { useMe, type Me } from "@/lib/me";
 import { useData } from "@/lib/useData";
@@ -91,7 +91,7 @@ function StaffUtama({ me }: { me: Me }) {
               </span>
               <span className="flex grow flex-col">
                 <span className="text-xs text-muted">{tr("Cuti umum seterusnya")}</span>
-                <b className="font-bold">{cutiUmum.data.name}</b>
+                <b className="font-bold">{trRalat(cutiUmum.data.name)}</b>
               </span>
               <span className="text-[13px] font-semibold text-subtle">{hariTarikh(cutiUmum.data.holiday_date)}</span>
             </div>

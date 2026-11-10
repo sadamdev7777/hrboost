@@ -187,7 +187,7 @@ function Kandungan() {
 
   return (
     <Screen lebar="lebar">
-      <PengepalaAkar title={tr("Laporan")} backHr="/pengurusan" action={<ButangBantuan id="laporan" />} />
+      <PengepalaAkar title={tr("Laporan")} action={<ButangBantuan id="laporan" />} />
       <main className="flex grow flex-col gap-4 px-4 pt-2 pb-6 lg:px-0">
         <KadPanduan id="laporan" />
         <div role="tablist" aria-label={tr("Jenis laporan")} className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 lg:mx-0 lg:flex-wrap lg:px-0">

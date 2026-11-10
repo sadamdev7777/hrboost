@@ -159,7 +159,7 @@ function SemakanGaji({ checks }: { checks: string[] }) {
           <span className="grow">
             <b>{tr("Amaran:")}</b> {" "}{tr("{0} pekerja tiada data gaji terkumpul tahun ini — PCB mungkin kurang tepat ({1}).", terkumpul.length, nama(terkumpul))}</span>
           <Link href="/pengurusan/gaji/data-terkumpul" className="font-bold text-warning!">
-            {tr("Isi sekarang ›")}</Link>
+            {tr("Isi atau import Excel ›")}</Link>
         </div>
       )}
       {lain.length > 0 && (

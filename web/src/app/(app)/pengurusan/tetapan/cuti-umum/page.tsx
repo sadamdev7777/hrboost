@@ -1,6 +1,6 @@
 "use client";
 
-import { tr } from "@/lib/i18n";
+import { tr, trRalat } from "@/lib/i18n";
 import { TabModul } from "@/components/TabModul";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -98,7 +98,7 @@ function CutiUmum() {
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {wajib.map((h) => (
                 <div key={h.id} className="flex min-h-12 items-center justify-between gap-2 py-2 text-sm">
-                  <b className="font-bold">{h.name}</b>
+                  <b className="font-bold">{trRalat(h.name)}</b>
                   <span className="text-muted">{tarikh(h.holiday_date)}</span>
                 </div>
               ))}
@@ -110,12 +110,12 @@ function CutiUmum() {
                 return (
                   <div key={h.id} className="flex min-h-12 items-center gap-2 py-1 text-sm">
                     <span className="flex grow flex-col">
-                      <b className="font-bold">{h.name}</b>
+                      <b className="font-bold">{trRalat(h.name)}</b>
                       <span className="text-xs text-muted">{tarikh(h.holiday_date)}</span>
                     </span>
                     <Suis
                       on={on}
-                      label={`${on ? tr("Buang") : tr("Pilih")} ${h.name}`}
+                      label={`${on ? tr("Buang") : tr("Pilih")} ${trRalat(h.name)}`}
                       onChange={(v) => {
                         const s = new Set(dipilih);
                         if (v) s.add(h.id);

@@ -1,6 +1,6 @@
 "use client";
 
-import { tr } from "@/lib/i18n";
+import { tr, trRalat } from "@/lib/i18n";
 import Link from "next/link";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -112,7 +112,7 @@ function Baris({ h, today, grace }: { h: HariHadir; today: string; grace: number
         {h.date === today && <span className="text-[11px] text-muted">{tr("hari ini")}</span>}
       </span>
       {rehat && !h.clockIn ? (
-        <span className="col-span-2 text-[13px] text-muted">{h.holiday ?? (h.leave ? (CUTI[h.leave] ?? tr("Cuti")) : tr("Hujung minggu"))}</span>
+        <span className="col-span-2 text-[13px] text-muted">{(h.holiday && trRalat(h.holiday)) || (h.leave ? (CUTI[h.leave] ?? tr("Cuti")) : tr("Hujung minggu"))}</span>
       ) : (
         <>
           <span className={`font-semibold ${h.late > grace && h.correction !== "approved" ? "text-warning" : ""}`}>{h.clockIn ? jam(h.clockIn) : "—"}</span>

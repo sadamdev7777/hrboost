@@ -1,6 +1,6 @@
 "use client";
 
-import { tr } from "@/lib/i18n";
+import { tr, trTajuk } from "@/lib/i18n";
 import { getSupabase } from "./supabase";
 import { must } from "./useData";
 import {
@@ -131,26 +131,26 @@ export function paparPermohonan(p: { type: RequestType; title: string; context: 
   if (p.type === "leave" && typeof c.start_date === "string" && typeof c.end_date === "string") {
     const nama = p.title.split(" " + tarikh(c.start_date))[0];
     return {
-      title: `${nama} ${julatTarikh(c.start_date, c.end_date)}`,
+      title: trTajuk(`${nama} ${julatTarikh(c.start_date, c.end_date)}`),
       sub: tr("{0} hari · dihantar {1}", hari(Number(c.days ?? 0)), bilaDihantar(p.submittedAt)),
       days: Number(c.days ?? 0),
     };
   }
   if (p.type === "claim") {
     return {
-      title: p.title.replace(/^Tuntutan: /, "Tuntutan ").replace(/ \(RM[^)]*\)$/, ""),
+      title: trTajuk(p.title.replace(/^Tuntutan: /, "Tuntutan ").replace(/ \(RM[^)]*\)$/, "")),
       sub: `${ringgit(Number(c.amount ?? 0))} · ${tarikh(tarikhTempatan(p.submittedAt))}`,
       days: null,
     };
   }
   if (p.type === "attendance_correction") {
-    return { title: p.title.replace(/^Pembetulan kehadiran/, "Betulkan masa"), sub: tr("Pembetulan kehadiran"), days: null };
+    return { title: trTajuk(p.title.replace(/^Pembetulan kehadiran/, "Betulkan masa")), sub: tr("Pembetulan kehadiran"), days: null };
   }
   if (p.type === "overtime") {
     const jenis = c.day_type === "holiday" ? tr("cuti umum") : c.day_type === "rest" ? tr("hari rehat") : tr("hari biasa");
-    return { title: p.title, sub: `${jenis} · ${String(c.reason ?? "")}`.trim(), days: null };
+    return { title: trTajuk(p.title), sub: `${jenis} · ${String(c.reason ?? "")}`.trim(), days: null };
   }
-  return { title: p.title, sub: tr("Dihantar {0}", bilaDihantar(p.submittedAt)), days: null };
+  return { title: trTajuk(p.title), sub: tr("Dihantar {0}", bilaDihantar(p.submittedAt)), days: null };
 }
 
 /** "Kini di HR" daripada nama peringkat yang menunggu. */

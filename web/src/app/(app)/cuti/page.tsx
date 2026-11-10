@@ -1,18 +1,19 @@
 "use client";
 
-import { tr } from "@/lib/i18n";
+import { tr, bahasa } from "@/lib/i18n";
 import Link from "next/link";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { getBaki } from "@/lib/data";
 import { getKalendarCuti, getSejarahCuti, namaCutiRingkas, type HariKalendar } from "@/lib/profil";
-import { hari, julatTarikh, namaPeringkat, todayISO } from "@/lib/format";
+import { hari, hariTarikh, julatTarikh, namaPeringkat, todayISO } from "@/lib/format";
 import { IconBack, IconChevronRight } from "@/components/icons";
 import { BackHeader, ErrorBox, Loading, Screen, StatusPill } from "@/components/ui";
 
 const BULAN_PENUH = [tr("Januari"), tr("Februari"), tr("Mac"), tr("April"), tr("Mei"), tr("Jun"), tr("Julai"), tr("Ogos"), tr("September"), tr("Oktober"), tr("November"), tr("Disember")];
-const HARI_SINGKAT = ["I", "S", "R", "K", "J", "S", "A"];
+/** Inisial hari (Isnin dahulu). */
+const hariSingkat = () => (bahasa() === "ms" ? ["I", "S", "R", "K", "J", "S", "A"] : ["M", "T", "W", "T", "F", "S", "S"]);
 
 function geserBulan(b: string, n: number) {
   const [y, m] = b.split("-").map(Number);
@@ -31,6 +32,7 @@ export default function CutiPage() {
   const me = useMe();
   const emp = me.active!;
   const [bulan, setBulan] = useState(() => todayISO().slice(0, 7));
+  const [pilih, setPilih] = useState<string | null>(null);
   const baki = useData(() => getBaki(emp), [emp.id]);
   const kal = useData(() => getKalendarCuti(emp, bulan), [emp.id, bulan]);
   const sejarah = useData(() => getSejarahCuti(emp), [emp.id]);
@@ -73,7 +75,7 @@ export default function CutiPage() {
           </div>
           {kal.error && <ErrorBox message={kal.error} />}
           <div className="grid grid-cols-7 gap-1 text-center" aria-label={tr("Kalendar cuti pasukan")}>
-            {HARI_SINGKAT.map((h, i) => (
+            {hariSingkat().map((h, i) => (
               <span key={i} className="flex h-5 items-center justify-center text-[11px] font-bold text-muted">
                 {h}
               </span>
@@ -81,18 +83,27 @@ export default function CutiPage() {
             {Array.from({ length: pad }, (_, i) => (
               <span key={`p${i}`} />
             ))}
-            {(kal.data?.bulan === bulan ? kal.data.hari : []).map((d) => (
-              <span
-                key={d.date}
-                title={d.label ?? undefined}
-                className={`flex h-[34px] items-center justify-center rounded-[9px] text-[13px] font-semibold ${
-                  d.jenis ? GAYA[d.jenis] : d.weekend ? "text-[#9AA8A5]" : ""
-                } ${d.date === todayISO() && !d.jenis ? "ring-1 ring-primary" : ""}`}
-              >
-                {Number(d.date.slice(8))}
-              </span>
-            ))}
+            {(kal.data?.bulan === bulan ? kal.data.hari : []).map((d) => {
+              const cls = `flex h-[34px] items-center justify-center rounded-[9px] text-[13px] font-semibold ${
+                d.jenis ? GAYA[d.jenis] : d.weekend ? "text-[#9AA8A5]" : ""
+              } ${d.date === todayISO() && !d.jenis ? "ring-1 ring-primary" : ""} ${pilih === d.date ? "outline-2 outline-offset-1 outline-ink" : ""}`;
+              // Hari bertanda boleh ditekan untuk melihat siapa bercuti / nama cuti umum
+              return d.label ? (
+                <button key={d.date} type="button" title={d.label} aria-pressed={pilih === d.date} onClick={() => setPilih(pilih === d.date ? null : d.date)} className={cls}>
+                  {Number(d.date.slice(8))}
+                </button>
+              ) : (
+                <span key={d.date} className={cls}>
+                  {Number(d.date.slice(8))}
+                </span>
+              );
+            })}
           </div>
+          {pilih && kal.data?.hari.find((h) => h.date === pilih)?.label && (
+            <div role="status" className="rounded-[12px] bg-page px-3 py-2 text-[13px]">
+              <b>{hariTarikh(pilih)}:</b> {kal.data.hari.find((h) => h.date === pilih)!.label}
+            </div>
+          )}
           {kal.loading && !kal.data && <Loading />}
           <div className="flex flex-wrap gap-3 text-xs text-[#4A5A57]">
             <Petunjuk warna="bg-primary">{tr("Saya")}</Petunjuk>

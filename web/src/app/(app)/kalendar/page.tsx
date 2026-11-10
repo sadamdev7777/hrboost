@@ -37,7 +37,7 @@ function binaHari(k: Kalendar, dari: string, hingga: string): Hari[] {
     out.push({
       iso: d,
       cuti,
-      cutiUmum: k.holidays.find((h) => h.date === d)?.name ?? null,
+      cutiUmum: ((n) => (n ? trRalat(n) : null))(k.holidays.find((h) => h.date === d)?.name),
       jadi: k.birthdays.filter((b) => b.month === bulan && b.day === tarikh).map((b) => b.name),
       amaran,
     });

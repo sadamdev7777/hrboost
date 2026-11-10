@@ -62,7 +62,17 @@ function isi(s: string, v: unknown[]): string {
 /** Terjemah teks sumber Bahasa Melayu ke bahasa semasa. */
 export function tr(ms: string, ...v: unknown[]): string {
   if (bahasa() === "ms") return isi(ms, v);
-  return isi(EN[ms] ?? ms, v);
+  return tunggal(isi(EN[ms] ?? ms, v));
+}
+
+// "1 days" → "1 day" (kamus English menggunakan bentuk jamak bagi {0}).
+const TUNGGAL: Record<string, string> = {
+  days: "day", employees: "employee", requests: "request", claims: "claim", months: "month", years: "year",
+  minutes: "minute", hours: "hour", items: "item", people: "person", departments: "department", weeks: "week",
+  times: "time", rules: "rule", types: "type", steps: "step", levels: "level", approvers: "approver",
+};
+function tunggal(s: string): string {
+  return s.replace(/(^|[^\d.,])1 (days|employees|requests|claims|months|years|minutes|hours|items|people|departments|weeks|times|rules|types|steps|levels|approvers)\b/g, (_m, a: string, w: string) => `${a}1 ${TUNGGAL[w]}`);
 }
 export const t = tr;
 
@@ -102,8 +112,56 @@ export function trRalat(m: string): string {
     const x = m.match(p.re);
     if (x) {
       let i = 1;
-      return p.en.replace(/\[%\]|%/g, (t) => (t === "[%]" ? "%" : (x[i++] ?? "")));
+      return p.en.replace(/\[%\]|%/g, (t) => {
+        if (t === "[%]") return "%";
+        const v = x[i++] ?? "";
+        return RALAT[v] ?? EN[v] ?? v; // nilai seperti nama jenis cuti turut diterjemah
+      });
     }
   }
   return m;
 }
+
+// ---------------------------------------------------------------- Tajuk permohonan
+// Tajuk permohonan dijana oleh pangkalan data dalam BM (cth. "Cuti Tahunan 24 – 25 Dis",
+// "Tuntutan: Tol (RM 88.40)", "Kerja lebih masa 3 jam · 9 Nov"). Dalam mod English, awalan
+// dan nama bulan diterjemah; nama jenis cuti dicari dalam kamus.
+const BULAN_EN: Record<string, string> = { Mac: "Mar", Mei: "May", Ogo: "Aug", Okt: "Oct", Dis: "Dec" };
+const AWALAN: [RegExp, string][] = [
+  [/^Tuntutan: /, "Claim: "],
+  [/^Tuntutan /, "Claim "],
+  [/^Pembetulan kehadiran /, "Time correction "],
+  [/^Betulkan masa /, "Time correction "],
+  [/^Kerja lebih masa ([\d.,]+) jam/, "Overtime $1 hours"],
+  [/^Pendahuluan gaji /, "Salary advance "],
+  [/^Penilaian percubaan /, "Probation review "],
+];
+
+export function trTajuk(t: string): string {
+  if (bahasa() === "ms" || !t) return t;
+  let x = t;
+  let ganti = false;
+  for (const [re, en] of AWALAN) {
+    if (re.test(x)) {
+      x = x.replace(re, en);
+      ganti = true;
+      break;
+    }
+  }
+  if (!ganti) {
+    // awalan terpanjang yang ada dalam kamus (nama jenis cuti)
+    const w = x.split(" ");
+    for (let n = Math.min(4, w.length); n >= 1; n--) {
+      const k = w.slice(0, n).join(" ");
+      const en = RALAT[k] ?? EN[k];
+      if (en) {
+        x = [en, ...w.slice(n)].join(" ");
+        break;
+      }
+    }
+  }
+  return x
+    .replace(/\((\d+(?:\.\d+)?) hari\)/g, (_m, n: string) => `(${n} ${n === "1" ? "day" : "days"})`)
+    .replace(/\b(Mac|Mei|Ogo|Okt|Dis)\b/g, (m) => BULAN_EN[m] ?? m);
+}
+

@@ -2022,6 +2022,9 @@ isOneToOne: false
 "approval_create":
 { Args: { "p_context": Json,"p_employment": string,"p_reference": string,"p_sla_exempt": boolean,"p_title": string,"p_type": Database["public"]['Enums']["request_type"],"p_via": Database["public"]['Enums']["action_channel"] }; Returns: string
                            },
+"approval_remind":
+{ Args: { "p_request": string }; Returns: number
+                           },
 "approval_resolve_approvers":
 { Args: { "p_req": Omit<Database["public"]['Tables']["approval_requests"]['Row'], Database["public"]['Tables']["approval_requests"]['ComputedFields']>,"p_step": Omit<Database["public"]['Tables']["approval_workflow_steps"]['Row'], Database["public"]['Tables']["approval_workflow_steps"]['ComputedFields']> }; Returns: {
               "approver": string,"delegated_from": string
@@ -2281,6 +2284,9 @@ isOneToOne: false
 "hr_pay_table":
 { Args: { "p_company": string,"p_on"?: string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: Json
                            },
+"hr_pending_requests":
+{ Args: { "p_company": string }; Returns: Json
+                           },
 "hr_question_list":
 { Args: { "p_company": string,"p_mine"?: boolean }; Returns: {
               "ai_answer": string,"answer": string,"answered_at": string,"answered_by_name": string,"created_at": string,"employment_id": string,"id": string,"name": string,"question": string,"status": string
@@ -2302,6 +2308,9 @@ isOneToOne: false
                            },
 "hr_set_pay":
 { Args: { "p_effective_from": string,"p_employment": string,"p_items": Json,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
+                           },
+"hr_todo":
+{ Args: { "p_company": string }; Returns: Json
                            },
 "hr_update_employment":
 { Args: { "p_data": Json,"p_employment": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined

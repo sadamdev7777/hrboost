@@ -10,6 +10,8 @@ import { todayISO } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
 import { HadPeranan, inputKecil } from "@/components/Senarai";
 import { nilaiInput } from "@/components/GajiPekerja";
+import { ImportPukal } from "@/components/ImportPukal";
+import type { HasilImport } from "@/lib/berkanun";
 
 type Baris = {
   employment_id: string;
@@ -43,6 +45,30 @@ function DataTerkumpul() {
   const [busy, setBusy] = useState(false);
   const [ralat, setRalat] = useState<string[]>([]);
   const [ok, setOk] = useState<string | null>(null);
+  const [imp, setImp] = useState(false);
+
+  /** Import Excel/CSV: No. pekerja, Hingga bulan (1–11), Gaji kasar, KWSP pekerja, PCB. */
+  async function importBaris(b: Record<string, string>[]): Promise<HasilImport[]> {
+    const out: HasilImport[] = [];
+    for (const x of b) {
+      const r = (d.data ?? []).find((y) => y.employee_no.trim().toLowerCase() === (x.employee_no ?? "").trim().toLowerCase());
+      if (!r) {
+        out.push({ employee_no: x.employee_no, ok: false, message: tr("No. pekerja tidak dijumpai") });
+        continue;
+      }
+      const bulan = Number(x.up_to_month || bulanLalu);
+      const g = nilaiInput(x.gross ?? "");
+      const e = nilaiInput(x.epf ?? "");
+      const p = nilaiInput(x.pcb ?? "");
+      if (!(bulan >= 1 && bulan <= 11) || g === null || e === null || p === null) {
+        out.push({ employee_no: x.employee_no, ok: false, message: tr("Amaun atau bulan tidak sah") });
+        continue;
+      }
+      const { error } = await getSupabase().rpc("set_payroll_opening", { p_employment: r.employment_id, p_year: tahun, p_up_to_month: bulan, p_gross: g, p_epf: e, p_pcb: p });
+      out.push({ employee_no: x.employee_no, ok: !error, message: error ? error.message : tr("Disimpan") });
+    }
+    return out;
+  }
 
   const awal = (r: Baris): Nilai => ({
     bulan: String(r.up_to_month ?? bulanLalu),
@@ -88,7 +114,14 @@ function DataTerkumpul() {
 
   return (
     <Screen>
-      <BackHeader title={tr("Data gaji terkumpul {0}", tahun)} href="/pengurusan/gaji" />
+      <BackHeader
+        title={tr("Data gaji terkumpul {0}", tahun)}
+        href="/pengurusan/gaji"
+        action={
+          <button type="button" onClick={() => setImp(true)} className="mr-1 flex min-h-11 items-center px-2 text-[13px] font-bold whitespace-nowrap text-primary">
+            {tr("Import Excel")}</button>
+        }
+      />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         <span className="text-sm leading-normal text-subtle">
           {tr("Jika syarikat mula menggunakan HRBoost pada pertengahan tahun, isi jumlah gaji kasar, KWSP pekerja dan PCB yang telah dibayar dalam sistem lama sejak Januari. Ini diperlukan supaya PCB dikira dengan tepat (kaedah berkomputer LHDN). Gunakan angka daripada slip gaji / borang CP39 terdahulu.")}</span>
@@ -162,6 +195,24 @@ function DataTerkumpul() {
           {busy ? tr("Menyimpan…") : tr("Simpan semua")}
         </button>
       </div>
+      {imp && (
+        <ImportPukal
+          tajuk={tr("Import data gaji terkumpul")}
+          huraian={tr("Isi semua pekerja sekali gus daripada sistem lama. Lajur: No. pekerja, Hingga bulan (1–11), Gaji kasar, KWSP pekerja dan PCB (jumlah sejak Januari).")}
+          lajur={[
+            { k: "employee_no", label: tr("No. pekerja"), alias: /^(nopekerja|nopek|employeeno|empno|staffno|no)$/, wajib: true },
+            { k: "up_to_month", label: tr("Hingga bulan"), alias: /^(hinggabulan|bulan|month|uptomonth)/, jenis: "nombor" },
+            { k: "gross", label: tr("Gaji kasar"), alias: /^(gajikasar|gross|kasar)/, wajib: true, jenis: "nombor" },
+            { k: "epf", label: tr("KWSP pekerja"), alias: /^(kwsp|epf)/, wajib: true, jenis: "nombor" },
+            { k: "pcb", label: tr("PCB"), alias: /^(pcb|mtd|cukai)/, wajib: true, jenis: "nombor" },
+          ]}
+          templat={[tr("No. pekerja,Hingga bulan,Gaji kasar,KWSP pekerja,PCB"), ...(d.data ?? []).map((r) => `${r.employee_no},${r.up_to_month ?? bulanLalu},${r.gross ?? ""},${r.epf ?? ""},${r.pcb ?? ""}`)].join("\n")}
+          namaTemplat={tr("data-gaji-terkumpul-{0}.csv", tahun)}
+          hantar={importBaris}
+          onClose={() => setImp(false)}
+          onDone={() => d.reload()}
+        />
+      )}
     </Screen>
   );
 }

@@ -1,4 +1,4 @@
-import { tr, trRalat, trKonteks } from "@/lib/i18n";
+import { tr, trRalat, trKonteks, bahasa } from "@/lib/i18n";
 // Format tarikh, masa, nombor telefon dan label (ikut bahasa antara muka, lib/i18n).
 // Semua masa dipaparkan mengikut zon Asia/Kuala_Lumpur.
 
@@ -101,6 +101,7 @@ export function masaRingkas(ts: string): string {
 export function masaTeks(time: string): string {
   const [h, m] = time.split(":").map(Number);
   const h12 = h % 12 === 0 ? 12 : h % 12;
+  if (bahasa() !== "ms") return `${h12}:${String(m).padStart(2, "0")} ${h < 12 ? "am" : "pm"}`;
   const bhg = h < 12 ? tr("pagi") : h < 14 ? tr("tengah hari") : h < 19 ? tr("petang") : tr("malam");
   return `${h12}:${String(m).padStart(2, "0")} ${bhg}`;
 }
