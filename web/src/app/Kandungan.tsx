@@ -49,10 +49,10 @@ const SOALAN = () => [
 const SKRIN = () => {
   const d = `/skrin/${bahasa()}`;
   return [
-    { src: `${d}/pekerja-utama.webp`, alt: tr("Skrin utama pekerja: baki cuti, permohonan dan kehadiran"), tajuk: tr("Pekerja"), sub: tr("Baki cuti, permohonan dan kehadiran di satu skrin."), telefon: true },
-    { src: `${d}/pekerja-mohon-cuti.webp`, alt: tr("Skrin mohon cuti: jenis cuti, tarikh dan pelulus"), tajuk: tr("Mohon cuti"), sub: tr("Hari bekerja dan baki dikira semasa memilih tarikh."), telefon: true },
-    { src: `${d}/hr-papan-pemuka.webp`, alt: tr("Papan Pemuka HR: tindakan, kehadiran hari ini dan status gaji"), tajuk: tr("Papan Pemuka HR"), sub: tr("Semua yang perlu diuruskan hari ini, ikut modul HR."), telefon: false },
-    { src: `${d}/hr-gaji-pekerja.webp`, alt: tr("Jadual Gaji Pekerja dengan KWSP, PERKESO, SIP dan gaji bersih"), tajuk: tr("Gaji pekerja"), sub: tr("KWSP, PERKESO, SIP dan PCB dikira semasa anda menaip."), telefon: false },
+    { src: `${d}/pekerja-utama.webp`, alt: tr("Skrin utama pekerja: baki cuti, permohonan dan kehadiran"), tajuk: tr("Pekerja"), sub: tr("Baki cuti, permohonan dan kehadiran di satu skrin.") },
+    { src: `${d}/pekerja-mohon-cuti.webp`, alt: tr("Skrin mohon cuti: jenis cuti, tarikh dan pelulus"), tajuk: tr("Mohon cuti"), sub: tr("Hari bekerja dan baki dikira semasa memilih tarikh.") },
+    { src: `${d}/ketua-kelulusan.webp`, alt: tr("Skrin kelulusan ketua jabatan dengan butang Lulus dan Tolak"), tajuk: tr("Kelulusan"), sub: tr("Ketua melihat baki dan rakan yang bercuti, kemudian lulus dengan satu tekan.") },
+    { src: `${d}/hr-papan-pemuka.webp`, alt: tr("Papan Pemuka HR di telefon: tindakan, kehadiran dan gaji"), tajuk: tr("Papan Pemuka HR"), sub: tr("Semua yang perlu diuruskan hari ini — juga di telefon.") },
   ];
 };
 // Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
@@ -125,28 +125,17 @@ export default function Kandungan() {
 
       <section id="skrin" className="mx-auto max-w-[1120px] px-4 pt-14">
         <h2 className="m-0 text-2xl leading-tight font-extrabold md:text-[34px]">{tr("Lihat sendiri.")}</h2>
-        <p className="mt-3 mb-8 max-w-[680px] text-base text-[#4A5A57]">{tr("Skrin sebenar HRBoost — di telefon untuk pekerja, di komputer untuk HR. Contoh menggunakan data demo.")}</p>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-[repeat(2,minmax(0,0.6fr))_minmax(0,1.4fr)]">
-          {SKRIN().filter((x) => x.telefon).map((x) => (
+        <p className="mt-3 mb-8 max-w-[680px] text-base text-[#4A5A57]">{tr("Skrin sebenar HRBoost di telefon — untuk pekerja, ketua dan HR. Contoh menggunakan data demo.")}</p>
+        <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">
+          {SKRIN().map((x) => (
             <figure key={x.src} className="m-0 flex flex-col gap-2">
-              <Image src={x.src} alt={x.alt} width={780} height={1560} sizes="(min-width: 768px) 220px, 100vw" className="w-full rounded-[22px] border-4 border-ink shadow-md" />
+              <Image src={x.src} alt={x.alt} width={780} height={1560} sizes="(min-width: 1024px) 260px, 50vw" className="w-full rounded-[22px] border-4 border-ink shadow-md" />
               <figcaption className="flex flex-col">
                 <b className="text-sm">{x.tajuk}</b>
                 <span className="text-[13px] text-[#4A5A57]">{x.sub}</span>
               </figcaption>
             </figure>
           ))}
-          <div className="col-span-2 flex flex-col gap-4 md:col-span-1">
-            {SKRIN().filter((x) => !x.telefon).map((x) => (
-              <figure key={x.src} className="m-0 flex flex-col gap-2">
-                <Image src={x.src} alt={x.alt} width={2560} height={1520} sizes="(min-width: 768px) 620px, 100vw" className="w-full rounded-[14px] border border-line shadow-md" />
-                <figcaption className="flex flex-col">
-                  <b className="text-sm">{x.tajuk}</b>
-                  <span className="text-[13px] text-[#4A5A57]">{x.sub}</span>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
         </div>
       </section>
 

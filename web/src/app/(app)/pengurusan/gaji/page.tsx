@@ -1,6 +1,7 @@
 "use client";
 
 import { tr, trRalat } from "@/lib/i18n";
+import { FailBank } from "@/components/FailBank";
 import Link from "next/link";
 import { Suspense, useState } from "react";
 import { useMe } from "@/lib/me";
@@ -495,6 +496,8 @@ function Langkah4({ data, reload }: { data: Data; reload: () => void }) {
   const [busy, setBusy] = useState(false);
   const [ralat, setRalat] = useState<string | null>(null);
   const [tarikhBayar, setTarikhBayar] = useState(todayISO());
+  const [failBank, setFailBank] = useState(false);
+  const me = useMe();
   const dibayar = data.run.status !== "approved";
   const ym = `${data.run.period_year}${String(data.run.period_month).padStart(2, "0")}`;
   const j = (data.run.totals ?? {}) as unknown as Jumlah;
@@ -530,7 +533,7 @@ function Langkah4({ data, reload }: { data: Data; reload: () => void }) {
         </span>
         <Seksyen>{tr("MUAT TURUN")}</Seksyen>
         <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-          <Fail t={tr("Fail bayaran bank")} s={tr("Untuk dimuat naik ke perbankan internet")} onClick={() => turun("bank")} />
+          <Fail t={tr("Fail bayaran bank")} s={tr("Format Maybank2u Biz, CIMB BizChannel atau bank lain")} onClick={() => setFailBank(true)} />
           <Fail t={tr("Caruman KWSP")} s={tr("Data untuk i-Akaun Majikan")} onClick={() => turun("epf")} />
           <Fail t={tr("PERKESO & SIP")} s={tr("Data untuk ASSIST")} onClick={() => turun("socso")} />
           <Fail t={tr("PCB (CP39)")} s={tr("Data untuk e-PCB LHDN")} onClick={() => turun("pcb")} />
@@ -557,6 +560,9 @@ function Langkah4({ data, reload }: { data: Data; reload: () => void }) {
           <ButangUtama onClick={bayar} busy={busy}>
             {tr("Tandakan telah dibayar & hantar slip")}</ButangUtama>
         </div>
+      )}
+      {failBank && (
+        <FailBank runId={data.run.id} companyId={data.run.company_id} companyCode={me.active?.companyCode ?? ""} tarikhAwal={data.run.pay_date ?? tarikhBayar} onClose={() => setFailBank(false)} />
       )}
     </>
   );

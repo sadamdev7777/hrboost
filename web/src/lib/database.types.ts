@@ -679,14 +679,14 @@ isOneToOne: false
                   ]
                 },"companies": {
                   Row: {
-                    "accounting_config": NonNullable<Json>,"accounting_system": Database["public"]['Enums']["accounting_system"],"address": string | null,"ai_monthly_limit": number | null,"claim_submit_days": number | null,"code": string,"created_at": string,"created_by": string | null,"epf_employer_no": string | null,"epf_employer_rate": number | null,"hr_daily_digest": boolean,"hrdf_registered": boolean,"id": string,"late_grace_minutes": number,"lhdn_employer_no": string | null,"logo_path": string | null,"name": string,"onboarding_completed_at": string | null,"overtime_enabled": boolean,"payslip_preview": boolean,"reg_no": string | null,"size_band": string | null,"socso_employer_no": string | null,"state": string,"status": string,"suspended_at": string | null,"suspended_reason": string | null,"timezone": string,"wa_monthly_limit": number | null,"weekend_days": (number)[],"work_end": string,"work_start": string
+                    "accounting_config": NonNullable<Json>,"accounting_system": Database["public"]['Enums']["accounting_system"],"address": string | null,"ai_monthly_limit": number | null,"bank_file_format": Json | null,"claim_submit_days": number | null,"code": string,"created_at": string,"created_by": string | null,"epf_employer_no": string | null,"epf_employer_rate": number | null,"hr_daily_digest": boolean,"hrdf_registered": boolean,"id": string,"late_grace_minutes": number,"lhdn_employer_no": string | null,"logo_path": string | null,"name": string,"onboarding_completed_at": string | null,"overtime_enabled": boolean,"payslip_preview": boolean,"reg_no": string | null,"size_band": string | null,"socso_employer_no": string | null,"state": string,"status": string,"suspended_at": string | null,"suspended_reason": string | null,"timezone": string,"wa_monthly_limit": number | null,"weekend_days": (number)[],"work_end": string,"work_start": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"claim_submit_days"?: number | null,"code": string,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name": string,"onboarding_completed_at"?: string | null,"overtime_enabled"?: boolean,"payslip_preview"?: boolean,"reg_no"?: string | null,"size_band"?: string | null,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string
+                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"bank_file_format"?: Json | null,"claim_submit_days"?: number | null,"code": string,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name": string,"onboarding_completed_at"?: string | null,"overtime_enabled"?: boolean,"payslip_preview"?: boolean,"reg_no"?: string | null,"size_band"?: string | null,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string
                   }
                   Update: {
-                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"claim_submit_days"?: number | null,"code"?: string,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name"?: string,"onboarding_completed_at"?: string | null,"overtime_enabled"?: boolean,"payslip_preview"?: boolean,"reg_no"?: string | null,"size_band"?: string | null,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string
+                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"bank_file_format"?: Json | null,"claim_submit_days"?: number | null,"code"?: string,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name"?: string,"onboarding_completed_at"?: string | null,"overtime_enabled"?: boolean,"payslip_preview"?: boolean,"reg_no"?: string | null,"size_band"?: string | null,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string
                   }
                   Relationships: [
                     {
@@ -2589,6 +2589,9 @@ isOneToOne: false
 "pay_estimate":
 { Args: { "p_employment": string,"p_items": Json,"p_on": string }; Returns: Json
                            },
+"payroll_bank_rows":
+{ Args: { "p_run": string }; Returns: Json
+                           },
 "payroll_calculate":
 { Args: { "p_run": string }; Returns: Json
                            },
@@ -2769,6 +2772,9 @@ isOneToOne: false
                            },
 "set_attendance_integration":
 { Args: { "p_active"?: boolean,"p_api_url": string,"p_company": string,"p_key": string,"p_minutes"?: number,"p_secret": string }; Returns: undefined
+                           },
+"set_bank_file_format":
+{ Args: { "p_company": string,"p_format": Json }; Returns: undefined
                            },
 "set_company_code":
 { Args: { "p_code": string,"p_company": string }; Returns: string

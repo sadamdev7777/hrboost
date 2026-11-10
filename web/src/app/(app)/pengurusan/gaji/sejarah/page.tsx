@@ -1,6 +1,8 @@
 "use client";
 
 import { tr } from "@/lib/i18n";
+import { todayISO } from "@/lib/format";
+import { FailBank } from "@/components/FailBank";
 import Link from "next/link";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
@@ -55,8 +57,15 @@ function Sejarah() {
   );
   const [ralat, setRalat] = useState<string | null>(null);
 
+  const [bank, setBank] = useState<{ id: string; tarikh: string } | null>(null);
+
   async function fail(id: string, jenis: (typeof FAIL)[number][0], y: number, m: number) {
     setRalat(null);
+    if (jenis === "bank") {
+      const r = (d.data ?? []).find((x) => x.id === id) as { pay_date?: string | null } | undefined;
+      setBank({ id, tarikh: r?.pay_date ?? todayISO() });
+      return;
+    }
     try {
       await muatTurun(id, jenis, tr("{0}-{1}-{2}-{3}.csv", emp.companyCode, jenis, y, String(m).padStart(2, "0")));
     } catch (e) {
@@ -128,6 +137,7 @@ function Sejarah() {
         )}
       </main>
       <TabNav />
+      {bank && <FailBank runId={bank.id} companyId={emp.companyId} companyCode={emp.companyCode} tarikhAwal={bank.tarikh} onClose={() => setBank(null)} />}
     </Screen>
   );
 }
