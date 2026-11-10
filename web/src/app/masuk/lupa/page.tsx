@@ -1,10 +1,11 @@
 "use client";
 
-import { tr, trRalat } from "@/lib/i18n";
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useState } from "react";
 import { BackHeader } from "@/components/ui";
-import { EMEL_SAH, panggilSetSemula } from "@/lib/masuk";
+import { EMEL_SAH } from "@/lib/masuk";
+import { getSupabase } from "@/lib/supabase";
 import { medanMasuk } from "../MedanKataLaluan";
 
 export default function LupaPage() {
@@ -18,9 +19,12 @@ export default function LupaPage() {
     setError(null);
     if (!EMEL_SAH.test(email.trim())) return setError(tr("Sila masukkan alamat e-mel yang sah."));
     setBusy(true);
-    const r = await panggilSetSemula({ action: "request", email: email.trim() });
+    // Supabase Auth menghantar pautan (tidak mendedahkan sama ada e-mel berdaftar)
+    const { error: err } = await getSupabase().auth.resetPasswordForEmail(email.trim().toLowerCase(), {
+      redirectTo: `${window.location.origin}/masuk/set-semula`,
+    });
     setBusy(false);
-    if (!r.ok) return setError(r.error ? trRalat(r.error) : tr("Permintaan tidak dapat dihantar. Sila cuba lagi."));
+    if (err) return setError(err.status === 429 ? tr("Terlalu banyak cubaan. Sila tunggu sebentar dan cuba lagi.") : tr("Permintaan tidak dapat dihantar. Sila cuba lagi."));
     setDihantar(true);
   }
 
@@ -40,7 +44,7 @@ export default function LupaPage() {
           <div className="flex flex-col gap-1.5">
             <h1 className="m-0 text-xl font-extrabold">{tr("Lupa kata laluan")}</h1>
             <span className="text-sm leading-normal text-subtle">
-              {tr("Masukkan e-mel akaun anda. Kami akan menghantar pautan untuk menetapkan kata laluan baharu. Anda perlu mengesahkan 4 digit akhir kad pengenalan.")}</span>
+              {tr("Masukkan e-mel akaun anda. Kami akan menghantar pautan untuk menetapkan kata laluan baharu.")}</span>
           </div>
           <label className="flex flex-col gap-2 text-sm font-bold">
             {tr("E-mel")}
@@ -58,8 +62,6 @@ export default function LupaPage() {
           >
             {busy ? tr("Menghantar…") : tr("Hantar pautan")}
           </button>
-          <Link href="/masuk/telefon" className="flex min-h-11 items-center justify-center text-sm font-bold">
-            {tr("Log masuk dengan kod WhatsApp")}</Link>
         </form>
       )}
     </main>

@@ -901,14 +901,14 @@ isOneToOne: false
                   ]
                 },"employee_invites": {
                   Row: {
-                    "accepted_at": string | null,"attempts": number,"created_at": string,"employment_id": string,"expires_at": string,"id": string,"sent_at": string | null,"token_hash": string
+                    "accepted_at": string | null,"attempts": number,"created_at": string,"employment_id": string,"expires_at": string,"ic_verified_at": string | null,"id": string,"sent_at": string | null,"token_hash": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "accepted_at"?: string | null,"attempts"?: number,"created_at"?: string,"employment_id": string,"expires_at"?: string,"id"?: string,"sent_at"?: string | null,"token_hash": string
+                    "accepted_at"?: string | null,"attempts"?: number,"created_at"?: string,"employment_id": string,"expires_at"?: string,"ic_verified_at"?: string | null,"id"?: string,"sent_at"?: string | null,"token_hash": string
                   }
                   Update: {
-                    "accepted_at"?: string | null,"attempts"?: number,"created_at"?: string,"employment_id"?: string,"expires_at"?: string,"id"?: string,"sent_at"?: string | null,"token_hash"?: string
+                    "accepted_at"?: string | null,"attempts"?: number,"created_at"?: string,"employment_id"?: string,"expires_at"?: string,"ic_verified_at"?: string | null,"id"?: string,"sent_at"?: string | null,"token_hash"?: string
                   }
                   Relationships: [
                     {
@@ -2000,6 +2000,9 @@ isOneToOne: false
             "accept_invite":
 { Args: { "p_ic_last4": string,"p_token": string }; Returns: Json
                            },
+"accept_invite_email":
+{ Args: { "p_token": string }; Returns: Json
+                           },
 "add_employee":
 { Args: { "p_basic"?: number,"p_company": string,"p_department": string,"p_full_name": string,"p_ic": string,"p_join": string,"p_phone": string,"p_position": string,"p_preferred": string,"p_probation_months"?: number,"p_type"?: Database["public"]['Enums']["employment_type"] }; Returns: string
                            },
@@ -2146,6 +2149,9 @@ isOneToOne: false
             }[]
                            },
 "current_person_id":
+{ Args: Record<PropertyKey, never>; Returns: string
+                           },
+"current_verified_email":
 { Args: Record<PropertyKey, never>; Returns: string
                            },
 "decide_bank_change":
@@ -2388,6 +2394,9 @@ isOneToOne: false
       } },
 "ingest_punch":
 { Args: { "p_checktype"?: number,"p_company": string,"p_device_name"?: string,"p_device_sn"?: string,"p_raw"?: Json,"p_time": string,"p_uuid": string,"p_workno": string }; Returns: boolean
+                           },
+"invite_check_ic":
+{ Args: { "p_ic_last4": string,"p_token": string }; Returns: Json
                            },
 "invite_employee":
 { Args: { "p_base_url": string,"p_employment": string }; Returns: string
@@ -2660,6 +2669,9 @@ isOneToOne: false
                            },
 "register_company":
 { Args: { "p_company_name": string,"p_email"?: string,"p_full_name": string,"p_phone": string,"p_size": string }; Returns: string
+                           },
+"register_company_email":
+{ Args: { "p_company_name": string,"p_full_name": string,"p_phone"?: string,"p_size": string }; Returns: string
                            },
 "reject_letter":
 { Args: { "p_id": string,"p_reason": string }; Returns: undefined

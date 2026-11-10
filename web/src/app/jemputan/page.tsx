@@ -21,7 +21,7 @@ export default function JemputanPage() {
           e.preventDefault();
           const t = tokenDaripada(link);
           if (!t) {
-            setError("Pautan tidak sah. Salin pautan penuh daripada mesej WhatsApp HR.");
+            setError(tr("Pautan tidak sah. Salin pautan penuh daripada mesej WhatsApp HR."));
             return;
           }
           router.push(`/jemputan/${t}`);

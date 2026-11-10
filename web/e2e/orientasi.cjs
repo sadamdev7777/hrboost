@@ -9,6 +9,7 @@ const fs = require('fs');
 const os = require('os');
 const { chromium } = require('playwright');
 require('./_bahasa.cjs');
+const { emelDemo, pautanEmel } = require('./_demo.cjs');
 const { createClient } = require(path.join(__dirname, '../node_modules/@supabase/supabase-js'));
 
 const BASE = process.env.E2E_BASE || 'http://localhost:3000';
@@ -32,11 +33,10 @@ async function loginUI(browser, phoneLocal) {
   const p = await ctx.newPage();
   // Lencana Netlify di staging menutup butang bawah
   await p.addInitScript(() => { const st = document.createElement('style'); st.textContent = '#nl-badge-frame{display:none!important}'; document.addEventListener('DOMContentLoaded', () => document.head.appendChild(st)); });
-  await p.goto(BASE + '/masuk/telefon');
-  await p.fill('input[type=tel]', phoneLocal);
-  await p.click('button:has-text("Hantar kod")');
-  await p.waitForURL('**/masuk/kod');
-  await p.fill('input[autocomplete=one-time-code]', '123456');
+  await p.goto(BASE + '/masuk');
+  await p.fill('input[type=email]', emelDemo(phoneLocal));
+  await p.fill('input[autocomplete=current-password]', 'Demo1234');
+  await p.click('button[type=submit]');
   await p.waitForURL(/\/(utama|pengurusan)$/, { timeout: 15000 });
   return { ctx, p };
 }
@@ -52,7 +52,7 @@ async function loginUI(browser, phoneLocal) {
   // ---------- A. HR jemput pekerja baharu ----------
   log('A. Jemputan & orientasi');
   const hr = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } });
-  const v = await hr.auth.verifyOtp({ phone: '60100000002', token: '123456', type: 'sms' }); // Lily (HR)
+  const v = await hr.auth.signInWithPassword({ email: 'lily@demo.hrboost.io', password: 'Demo1234' }); // Lily (HR)
   expect(!v.error, 'HR log masuk');
   const { data: eid, error: e1 } = await hr.rpc('add_employee', {
     p_company: '00000000-0000-0000-0000-0000000000c1', p_full_name: 'Nurin Syafiqah binti Demo', p_preferred: 'Nurin',
@@ -71,19 +71,19 @@ async function loginUI(browser, phoneLocal) {
   await p.screenshot({ path: `${shots}/o1-daftar.png` });
   expect((await p.innerText('main, body')).includes('Percubaan 3 bulan'), 'paparan jemputan: jawatan, ketua, percubaan');
   await p.fill('input[inputmode=numeric]', '5521');
-  await p.click('button:has-text("Aktifkan akaun")');
-  await p.waitForURL('**/masuk/kod');
-  await p.fill('input[autocomplete=one-time-code]', '123456');
-  await p.waitForURL('**/akaun/kata-laluan**', { timeout: 20000 });
+  await p.click('button:has-text("Seterusnya")');
+  await p.waitForSelector('text=Akaun log masuk');
   await p.fill('input[type=email]', 'nurul@contoh.my');
-  await p.locator('input[autocomplete=new-password]').nth(0).fill('Rahsia123');
-  await p.locator('input[autocomplete=new-password]').nth(1).fill('Rahsia123');
-  await p.click('button:has-text("Simpan & teruskan")');
-  expect(true, 'langkah wajib: e-mel & kata laluan ditetapkan selepas OTP pertama');
+  await p.fill('input[autocomplete=new-password]', 'Rahsia123');
+  const mula = Date.now() - 2000;
+  await p.click('button:has-text("Cipta akaun & sahkan e-mel")');
+  await p.waitForSelector('text=Semak e-mel anda');
+  expect(true, 'IC disahkan → akaun e-mel dicipta → pautan pengesahan dihantar');
+  await p.goto(await pautanEmel('nurul@contoh.my', { selepas: mula }));
   await p.waitForURL('**/orientasi', { timeout: 20000 });
   await p.waitForSelector('text=1 daripada 8 selesai');
   await p.screenshot({ path: `${shots}/o2-senarai.png` });
-  expect(true, 'akaun diaktifkan (IC + OTP) -> senarai orientasi 1/8');
+  expect(true, 'akaun diaktifkan (IC + pautan e-mel) -> senarai orientasi 1/8');
 
   await p.click('a:has-text("Teruskan")');
   await p.waitForURL('**/orientasi/nama');

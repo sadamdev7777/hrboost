@@ -4,6 +4,7 @@
 
 const { chromium } = require('playwright');
 require('./_bahasa.cjs');
+const { emelDemo } = require('./_demo.cjs');
 const BASE = process.env.E2E_BASE || 'http://localhost:3000';
 const shots = process.env.E2E_SHOTS || require('os').tmpdir();
 const log = (...a) => console.log(...a);
@@ -15,11 +16,10 @@ async function login(browser, phoneLocal, who) {
   // Lencana Netlify di staging menutup butang bawah
   await p.addInitScript(() => { const st = document.createElement('style'); st.textContent = '#nl-badge-frame{display:none!important}'; document.addEventListener('DOMContentLoaded', () => document.head.appendChild(st)); });
   p.on('pageerror', (e) => log(`  [${who}] ralat halaman:`, e.message));
-  await p.goto(BASE + '/masuk/telefon');
-  await p.fill('input[type=tel]', phoneLocal);
-  await p.click('button:has-text("Hantar kod")');
-  await p.waitForURL('**/masuk/kod');
-  await p.fill('input[autocomplete=one-time-code]', '123456');
+  await p.goto(BASE + '/masuk');
+  await p.fill('input[type=email]', emelDemo(phoneLocal));
+  await p.fill('input[autocomplete=current-password]', 'Demo1234');
+  await p.click('button[type=submit]');
   await p.waitForURL(/\/(utama|pengurusan)$/, { timeout: 15000 });
   await p.waitForLoadState('networkidle');
   return { ctx, p };

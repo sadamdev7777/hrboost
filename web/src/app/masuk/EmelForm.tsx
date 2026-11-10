@@ -15,6 +15,14 @@ export function EmelForm() {
   const [keep, setKeep] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [belumSah, setBelumSah] = useState(false);
+  const [dihantar, setDihantar] = useState(false);
+
+  async function hantarPengesahan() {
+    const { error: err } = await getSupabase().auth.resend({ type: "signup", email: email.trim(), options: { emailRedirectTo: `${window.location.origin}/daftar/sahkan` } });
+    if (err) setError(err.status === 429 ? tr("Terlalu banyak cubaan. Sila tunggu sebentar dan cuba lagi.") : tr("E-mel tidak dapat dihantar. Sila cuba lagi."));
+    else setDihantar(true);
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,6 +34,11 @@ export function EmelForm() {
     const { error: err } = await getSupabase().auth.signInWithPassword({ email: email.trim(), password });
     if (err) {
       setBusy(false);
+      if (/not confirmed/i.test(err.message)) {
+        setBelumSah(true);
+        setError(tr("E-mel anda belum disahkan. Buka pautan pengesahan dalam e-mel anda."));
+        return;
+      }
       setError(err.status === 429 ? tr("Terlalu banyak cubaan. Sila tunggu sebentar dan cuba lagi.") : tr("E-mel atau kata laluan tidak betul."));
       return;
     }
@@ -60,6 +73,10 @@ export function EmelForm() {
           {error}
         </span>
       )}
+      {belumSah && (
+        <button type="button" onClick={hantarPengesahan} disabled={dihantar} className="min-h-11 self-start text-sm font-bold text-primary disabled:text-success">
+          {dihantar ? tr("Pautan pengesahan telah dihantar semula.") : tr("Hantar semula pautan pengesahan")}</button>
+      )}
       <button
         type="submit"
         disabled={busy}
@@ -67,10 +84,13 @@ export function EmelForm() {
       >
         {busy ? tr("Log masuk…") : tr("Log masuk")}
       </button>
-      <div className="flex flex-col items-center gap-0.5 rounded-[14px] bg-surface px-4 py-3 text-center text-[13px] leading-normal text-muted">
-        <span>{tr("Kali pertama log masuk? Sahkan nombor telefon anda dahulu.")}</span>
-        <Link href="/masuk/telefon" className="flex min-h-11 items-center font-bold">
-          {tr("Log masuk dengan kod WhatsApp")}</Link>
+      <div className="flex flex-col items-center gap-1 rounded-[14px] bg-surface px-4 py-3 text-center text-[13px] leading-normal text-muted">
+        <span>{tr("Pekerja baharu? Buka pautan jemputan yang dihantar oleh HR melalui WhatsApp untuk mengaktifkan akaun.")}</span>
+        <span>
+          {tr("Syarikat baharu?")}{" "}
+          <Link href="/daftar" className="font-bold">
+            {tr("Daftar percuma")}</Link>
+        </span>
       </div>
     </form>
   );

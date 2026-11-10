@@ -8,6 +8,7 @@ import { useState } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { telefonPenuh } from "@/lib/format";
 import { simpanPendaftaran } from "@/lib/daftar";
+import { MedanKataLaluan } from "../masuk/MedanKataLaluan";
 import { IconBack } from "@/components/icons";
 
 const SAIZ = ["1–10", "11–50", "51–200", "200+"];
@@ -17,6 +18,7 @@ const input = "h-12 rounded-field border border-line bg-surface px-4 text-base f
 export default function DaftarSyarikatPage() {
   const router = useRouter();
   const [f, setF] = useState({ company: "", size: "11–50", name: "", phone: "", email: "" });
+  const [kataLaluan, setKataLaluan] = useState("");
   const [setuju, setSetuju] = useState(false);
   const [busy, setBusy] = useState(false);
   const [ralat, setRalatAsal] = useState<string | null>(null);
@@ -31,17 +33,31 @@ export default function DaftarSyarikatPage() {
   async function hantar(e: React.FormEvent) {
     e.preventDefault();
     setRalat(null);
-    const phone = telefonPenuh(f.phone);
+    const email = f.email.trim().toLowerCase();
+    const phone = f.phone.trim() ? telefonPenuh(f.phone) : "";
     if (!f.company.trim()) return setRalat(tr("Sila isi nama syarikat."), "company");
     if (!f.name.trim()) return setRalat(tr("Sila isi nama penuh anda."), "name");
-    if (!phone) return setRalat(tr("Sila masukkan nombor WhatsApp Malaysia yang sah, contohnya 012-345 6789."), "phone");
-    if (f.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email)) return setRalat(tr("E-mel tidak sah."), "email");
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return setRalat(tr("Sila masukkan alamat e-mel yang sah."), "email");
+    if (kataLaluan.length < 8) return setRalat(tr("Kata laluan mesti sekurang-kurangnya 8 aksara."), "password");
+    if (f.phone.trim() && !phone) return setRalat(tr("Sila masukkan nombor WhatsApp Malaysia yang sah, contohnya 012-345 6789."), "phone");
     if (!setuju) return setRalat(tr("Sila bersetuju dengan Terma dan Notis Privasi."), "setuju");
     setBusy(true);
-    const { error } = await getSupabase().auth.signInWithOtp({ phone, options: { channel: "sms" } });
+    const daftar = { company: f.company.trim(), size: f.size, name: f.name.trim(), phone: phone || "" };
+    // Pautan pengesahan dalam e-mel membuka /daftar/sahkan; syarikat dicipta selepas e-mel disahkan
+    const { data, error } = await getSupabase().auth.signUp({
+      email,
+      password: kataLaluan,
+      options: { emailRedirectTo: `${window.location.origin}/daftar/sahkan`, data: { daftar } },
+    });
     setBusy(false);
-    if (error) return setRalat(error.status === 429 ? tr("Terlalu banyak cubaan. Sila tunggu sebentar.") : tr("Kod tidak dapat dihantar. Sila cuba lagi."));
-    simpanPendaftaran({ ...f, phone, company: f.company.trim(), name: f.name.trim(), email: f.email.trim() });
+    if (error) {
+      if (/already|registered|exists/i.test(error.message)) return setRalat(tr("E-mel ini sudah berdaftar. Sila log masuk."), "email");
+      if (/password/i.test(error.message)) return setRalat(tr("Kata laluan terlalu lemah. Gunakan sekurang-kurangnya 8 aksara dengan huruf dan nombor."), "password");
+      return setRalat(error.status === 429 ? tr("Terlalu banyak cubaan. Sila tunggu sebentar.") : tr("Pendaftaran tidak berjaya. Sila cuba lagi."));
+    }
+    // Supabase memulangkan pengguna tanpa identiti jika e-mel telah berdaftar (tidak mendedahkan ralat)
+    if (data.user && (data.user.identities ?? []).length === 0) return setRalat(tr("E-mel ini sudah berdaftar. Sila log masuk."), "email");
+    simpanPendaftaran({ ...daftar, email });
     router.push("/daftar/sahkan");
   }
 
@@ -82,16 +98,24 @@ export default function DaftarSyarikatPage() {
           {tr("Nama penuh")}<input className={input} value={f.name} onChange={set("name")} aria-invalid={salah === "name" || undefined} placeholder={tr("Nama anda")} autoComplete="name" />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-bold">
-          {tr("No. WhatsApp")}<input className={input} type="tel" value={f.phone} onChange={set("phone")} aria-invalid={salah === "phone" || undefined} placeholder={tr("+60 1x-xxx xxxx")} autoComplete="tel" />
-        </label>
-        <label className="flex flex-col gap-1.5 text-sm font-bold">
           {tr("E-mel")}
-          <input className={input} type="email" value={f.email} onChange={set("email")} aria-invalid={salah === "email" || undefined} placeholder={tr("nama@syarikat.com")} autoComplete="email" />
+          <input className={input} type="email" inputMode="email" value={f.email} onChange={set("email")} aria-invalid={salah === "email" || undefined} placeholder={tr("nama@syarikat.com")} autoComplete="email" />
+          <span className="text-xs font-normal text-muted">{tr("Pautan pengesahan akan dihantar ke e-mel ini. E-mel ini digunakan untuk log masuk.")}</span>
+        </label>
+        <div aria-invalid={salah === "password" || undefined} className="aria-[invalid=true]:[&_input]:border-danger">
+          <MedanKataLaluan label={tr("Kata laluan")} value={kataLaluan} onChange={setKataLaluan} autoComplete="new-password" bantuan={tr("Sekurang-kurangnya 8 aksara.")} />
+        </div>
+        <label className="flex flex-col gap-1.5 text-sm font-bold">
+          <span>
+            {tr("No. WhatsApp")} <span className="font-normal text-muted">{tr("(pilihan)")}</span>
+          </span>
+          <input className={input} type="tel" value={f.phone} onChange={set("phone")} aria-invalid={salah === "phone" || undefined} placeholder={tr("+60 1x-xxx xxxx")} autoComplete="tel" />
+          <span className="text-xs font-normal text-muted">{tr("Untuk menerima notifikasi kelulusan melalui WhatsApp. Boleh diisi kemudian.")}</span>
         </label>
         <label className="flex min-h-11 items-start gap-3 text-sm leading-normal">
           <input type="checkbox" checked={setuju} onChange={(e) => setSetuju(e.target.checked)} className="mt-0.5 size-5 shrink-0 accent-primary" />
           <span>
-            {tr("Saya bersetuju dengan")}{" "}<Link href="/privasi#terma">{tr("Terma")}</Link> dan <Link href="/privasi#privasi">{tr("Notis Privasi")}</Link>.
+            {tr("Saya bersetuju dengan")}{" "}<Link href="/privasi#terma">{tr("Terma")}</Link> {tr("dan")} <Link href="/privasi#privasi">{tr("Notis Privasi")}</Link>.
           </span>
         </label>
         {ralat && (
@@ -100,7 +124,7 @@ export default function DaftarSyarikatPage() {
           </span>
         )}
         <button type="submit" disabled={busy} className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
-          {busy ? tr("Menghantar…") : tr("Daftar & hantar kod WhatsApp")}
+          {busy ? tr("Menghantar…") : tr("Daftar & sahkan e-mel")}
         </button>
         <span className="text-center text-sm text-muted">
           {tr("Sudah mempunyai akaun?")}{" "}<Link href="/masuk">{tr("Log masuk")}</Link>

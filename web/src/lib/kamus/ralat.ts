@@ -304,4 +304,9 @@ export const RALAT: Record<string, string> = {
   "Borang EA hanya boleh dikeluarkan selepas tahun berakhir": "Form EA can only be issued after the year has ended",
   "Peringatan telah dihantar dalam 2 jam yang lalu": "A reminder was already sent in the last 2 hours",
   "Permohonan ini tidak lagi menunggu kelulusan": "This request is no longer awaiting approval",
+  "Sila sahkan e-mel anda dahulu melalui pautan yang dihantar": "Please verify your email first using the link we sent",
+  "Sila log masuk dahulu": "Please log in first",
+  "Sila sahkan 4 digit akhir kad pengenalan anda sekali lagi.": "Please confirm the last 4 digits of your IC again.",
+  "E-mel ini sudah digunakan oleh akaun lain. Gunakan e-mel lain atau hubungi HR.": "This email is already used by another account. Use another email or contact HR.",
+  "Nombor WhatsApp tidak sah": "Invalid WhatsApp number",
 };

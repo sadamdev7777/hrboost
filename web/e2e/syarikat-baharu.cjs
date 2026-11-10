@@ -1,13 +1,14 @@
-// Ujian hujung-ke-hujung Fasa G: syarikat baharu mendaftar sendiri (laman utama → daftar → OTP),
+// Ujian hujung-ke-hujung Fasa G: syarikat baharu mendaftar sendiri (laman utama → daftar → pautan e-mel),
 // melengkapkan 6 langkah persediaan (import CSV, ketua jabatan, peranan, jemputan), kemudian
 // Pentadbir Platform (Owner) melihat syarikat itu, menyahaktif & mengaktifkan semula.
-// Prasyarat: `npx supabase db reset`, aplikasi di localhost:3000. Nombor ujian 60100000008 (OTP 123456).
+// Prasyarat: `npx supabase db reset`, aplikasi di localhost:3000, Mailpit di 127.0.0.1:54324.
 // Jalankan: node web/e2e/syarikat-baharu.cjs
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
 require('./_bahasa.cjs');
+const { emelDemo, pautanEmel } = require('./_demo.cjs');
 
 const BASE = process.env.E2E_BASE || 'http://localhost:3000';
 const shots = process.env.E2E_SHOTS || os.tmpdir();
@@ -26,33 +27,30 @@ const expect = (ok, msg) => { if (!ok) throw new Error('SEMAKAN GAGAL: ' + msg);
     'NUR AISYAH BINTI RAHIM,Aisyah,,980808-14-4444,Akaun,Kerani,,01/02/2025,2500',
   ].join('\n'));
 
-  log('1. Laman utama → Daftar syarikat → OTP');
+  log('1. Laman utama → Daftar syarikat → sahkan e-mel');
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const p = await ctx.newPage();
   await p.addInitScript(() => { const st = document.createElement('style'); st.textContent = '#nl-badge-frame{display:none!important}'; document.addEventListener('DOMContentLoaded', () => document.head.appendChild(st)); });
   p.on('pageerror', (e) => log('   [ralat halaman]', e.message));
   await p.goto(BASE + '/');
-  await p.waitForSelector('text=Urus HR syarikat terus melalui WhatsApp.');
   await p.screenshot({ path: `${shots}/g-home.png`, fullPage: false });
-  await p.click('a:has-text("Daftar syarikat — percuma")');
+  await p.click('a[href="/daftar"] >> visible=true');
   await p.waitForURL('**/daftar');
   await p.fill('input[placeholder^="Contoh: Syarikat ABC"]', 'Syarikat Ujian Kenari Sdn Bhd');
   await p.click('button:has-text("1–10")');
   await p.fill('input[placeholder="Nama anda"]', 'Faizal bin Hashim');
-  await p.fill('input[type=tel]', '0100000008');
   await p.fill('input[type=email]', 'faizal@kenari.my');
+  await p.fill('input[autocomplete=new-password]', 'Rahsia123');
+  await p.fill('input[type=tel]', '0100000008');
   await p.check('input[type=checkbox]');
   await p.screenshot({ path: `${shots}/g-daftar.png` });
-  await p.click('button:has-text("Daftar & hantar kod WhatsApp")');
+  const mula = Date.now() - 2000;
+  await p.click('button:has-text("Daftar & sahkan e-mel")');
   await p.waitForURL('**/daftar/sahkan');
-  await p.fill('input[autocomplete=one-time-code]', '123456');
-  await p.click('button:has-text("Sahkan & cipta syarikat")');
-  await p.waitForURL('**/akaun/kata-laluan**', { timeout: 20000 });
-  await p.fill('input[type=email]', 'faizal@kenari.my');
-  await p.locator('input[autocomplete=new-password]').nth(0).fill('Rahsia123');
-  await p.locator('input[autocomplete=new-password]').nth(1).fill('Rahsia123');
-  await p.click('button:has-text("Simpan & teruskan")');
-  expect(true, 'langkah wajib: e-mel & kata laluan ditetapkan selepas OTP pertama');
+  await p.waitForSelector('text=Semak e-mel anda');
+  expect(true, 'pautan pengesahan dihantar ke e-mel (tiada OTP telefon)');
+  const pautan = await pautanEmel('faizal@kenari.my', { selepas: mula });
+  await p.goto(pautan);
   await p.waitForURL('**/mula', { timeout: 20000 });
   await p.waitForSelector('text=1 daripada 6 selesai');
   expect(true, 'syarikat dicipta; Faizal menjadi Pentadbir');
@@ -117,11 +115,10 @@ const expect = (ok, msg) => { if (!ok) throw new Error('SEMAKAN GAGAL: ' + msg);
   const a = await browser.newContext({ viewport: { width: 1280, height: 860 } });
   const q = await a.newPage();
   q.on('pageerror', (e) => log('   [ralat halaman]', e.message));
-  await q.goto(BASE + '/masuk/telefon');
-  await q.fill('input[type=tel]', '100000007');
-  await q.click('button:has-text("Hantar kod")');
-  await q.waitForURL('**/masuk/kod');
-  await q.fill('input[autocomplete=one-time-code]', '123456');
+  await q.goto(BASE + '/masuk');
+  await q.fill('input[type=email]', emelDemo('100000007'));
+  await q.fill('input[autocomplete=current-password]', 'Demo1234');
+  await q.click('button[type=submit]');
   await q.waitForURL('**/admin', { timeout: 15000 });
   await q.waitForSelector('text=Ringkasan platform');
   await q.screenshot({ path: `${shots}/g-sa-dashboard.png` });

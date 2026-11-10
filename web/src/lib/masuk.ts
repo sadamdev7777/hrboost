@@ -1,4 +1,3 @@
-import { tr } from "@/lib/i18n";
 import { getSupabase } from "./supabase";
 import { kiraLogMasuk } from "@/components/CadanganPasang";
 
@@ -6,6 +5,9 @@ import { kiraLogMasuk } from "@/components/CadanganPasang";
 export async function destinasiSelepasMasuk(): Promise<string> {
   kiraLogMasuk();
   const sb = getSupabase();
+  // Pendaftaran syarikat yang belum selesai (e-mel disahkan di peranti lain): cipta syarikat dahulu
+  const { data: u } = await sb.auth.getUser();
+  if ((u.user?.user_metadata as { daftar?: unknown } | undefined)?.daftar) return "/daftar/sahkan";
   const { data: sa } = await sb.from("platform_admins").select("person_id").limit(1);
   if (sa && sa.length > 0) {
     const { count } = await sb
@@ -21,17 +23,3 @@ export async function destinasiSelepasMasuk(): Promise<string> {
 export const MIN_KATA_LALUAN = 8;
 export const EMEL_SAH = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/** Panggil Edge Function password-reset; pulangkan ralat dalam bahasa Melayu jika gagal. */
-export async function panggilSetSemula(body: Record<string, string>): Promise<{ ok?: boolean; error?: string; code?: string; attempts_left?: number }> {
-  const { data, error } = await getSupabase().functions.invoke("password-reset", { body });
-  if (!error) return (data ?? {}) as { ok?: boolean };
-  const ctx = (error as { context?: unknown }).context;
-  if (ctx instanceof Response) {
-    try {
-      return (await ctx.json()) as { error?: string };
-    } catch {
-      /* abaikan */
-    }
-  }
-  return { error: tr("Permintaan tidak dapat dihantar. Sila cuba lagi.") };
-}

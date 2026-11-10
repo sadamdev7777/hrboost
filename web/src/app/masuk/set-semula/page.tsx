@@ -1,100 +1,104 @@
 "use client";
 
-import { tr, trRalat } from "@/lib/i18n";
+import { tr } from "@/lib/i18n";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { BackHeader, Loading } from "@/components/ui";
-import { MIN_KATA_LALUAN, panggilSetSemula } from "@/lib/masuk";
-import { MedanKataLaluan, medanMasuk } from "../MedanKataLaluan";
+import { getSupabase } from "@/lib/supabase";
+import { MIN_KATA_LALUAN, destinasiSelepasMasuk } from "@/lib/masuk";
+import { MedanKataLaluan } from "../MedanKataLaluan";
 
+/**
+ * Tetapkan kata laluan baharu daripada pautan e-mel (Supabase Auth: resetPasswordForEmail).
+ * Pautan memasang sesi pemulihan; pengguna terus menetapkan kata laluan baharu.
+ */
 export default function SetSemulaPage() {
-  return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-page text-ink">
-      <BackHeader href="/masuk" />
-      <Suspense fallback={<Loading />}>
-        <SetSemula />
-      </Suspense>
-    </main>
-  );
-}
-
-function SetSemula() {
-  const token = useSearchParams().get("t") ?? "";
-  const [ic4, setIc4] = useState("");
+  const router = useRouter();
+  const [sesi, setSesi] = useState<"memuat" | "ada" | "tiada">("memuat");
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [siap, setSiap] = useState(false);
+
+  useEffect(() => {
+    const sb = getSupabase();
+    let selesai = false;
+    const semak = async () => {
+      const { data } = await sb.auth.getSession();
+      if (data.session) {
+        selesai = true;
+        setSesi("ada");
+      }
+    };
+    const { data: sub } = sb.auth.onAuthStateChange((ev, s) => {
+      if (s && (ev === "PASSWORD_RECOVERY" || ev === "SIGNED_IN" || ev === "INITIAL_SESSION")) {
+        selesai = true;
+        setSesi("ada");
+      }
+    });
+    void semak();
+    // Pautan tamat / sudah digunakan: tiada sesi selepas URL diproses
+    const t = setTimeout(() => {
+      if (!selesai) setSesi("tiada");
+    }, 2500);
+    return () => {
+      clearTimeout(t);
+      sub.subscription.unsubscribe();
+    };
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!/^\d{4}$/.test(ic4)) return setError(tr("Sila masukkan 4 digit akhir kad pengenalan."));
     if (pw.length < MIN_KATA_LALUAN) return setError(tr("Kata laluan mestilah sekurang-kurangnya {0} aksara.", MIN_KATA_LALUAN));
     if (pw !== pw2) return setError(tr("Kedua-dua kata laluan tidak sama."));
     setBusy(true);
-    const r = await panggilSetSemula({ action: "reset", token, ic4, password: pw });
-    setBusy(false);
-    if (!r.ok) {
-      const msg = r.error ? trRalat(r.error) : tr("Kata laluan tidak dapat ditukar.");
-      return setError(r.attempts_left !== undefined ? tr("{0}. Baki cubaan: {1}.", msg, r.attempts_left) : msg);
+    const sb = getSupabase();
+    const { error: err } = await sb.auth.updateUser({ password: pw });
+    if (err) {
+      setBusy(false);
+      return setError(/different|same/i.test(err.message) ? tr("Kata laluan baharu mesti berbeza daripada kata laluan lama.") : tr("Kata laluan tidak dapat ditukar. Minta pautan baharu dan cuba lagi."));
     }
-    setSiap(true);
+    // Log keluar sesi lain (peranti lain) selepas kata laluan ditukar
+    await sb.auth.signOut({ scope: "others" });
+    router.replace(await destinasiSelepasMasuk());
   }
 
-  if (!token)
-    return (
-      <div className="flex flex-col gap-3 px-6 py-4">
-        <h1 className="m-0 text-xl font-extrabold">{tr("Pautan tidak lengkap")}</h1>
-        <p className="m-0 text-sm text-subtle">{tr("Buka semula pautan daripada e-mel anda, atau minta pautan baharu.")}</p>
-        <Link href="/masuk/lupa" className="font-bold">
-          {tr("Minta pautan baharu")}</Link>
-      </div>
-    );
-
-  if (siap)
-    return (
-      <div className="flex flex-col gap-3 px-6 py-4">
-        <h1 className="m-0 text-xl font-extrabold">{tr("Kata laluan telah ditukar")}</h1>
-        <p className="m-0 text-sm leading-normal text-subtle">{tr("Semua sesi lama telah dilog keluar. Log masuk sekarang dengan kata laluan baharu anda.")}</p>
-        <Link href="/masuk" className="mt-2 flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-on-primary!">
-          {tr("Log masuk")}</Link>
-      </div>
-    );
-
   return (
-    <form onSubmit={submit} noValidate className="flex grow flex-col gap-4 px-6 py-4">
-      <div className="flex flex-col gap-1.5">
-        <h1 className="m-0 text-xl font-extrabold">{tr("Tetapkan kata laluan baharu")}</h1>
-        <span className="text-sm leading-normal text-subtle">{tr("Untuk keselamatan, sahkan 4 digit akhir kad pengenalan anda.")}</span>
-      </div>
-      <label className="flex flex-col gap-2 text-sm font-bold">
-        {tr("4 digit akhir kad pengenalan")}<input
-          inputMode="numeric"
-          autoComplete="off"
-          maxLength={4}
-          placeholder="••••"
-          value={ic4}
-          onChange={(e) => setIc4(e.target.value.replace(/\D/g, "").slice(0, 4))}
-          className={`${medanMasuk} w-36! tracking-[0.3em]`}
-        />
-      </label>
-      <MedanKataLaluan label={tr("Kata laluan baharu")} value={pw} onChange={setPw} autoComplete="new-password" bantuan={tr("Sekurang-kurangnya {0} aksara.", MIN_KATA_LALUAN)} />
-      <MedanKataLaluan label={tr("Sahkan kata laluan")} value={pw2} onChange={setPw2} autoComplete="new-password" />
-      {error && (
-        <span role="alert" className="text-[13px] font-semibold text-danger">
-          {error}
-        </span>
+    <main className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-page text-ink">
+      <BackHeader href="/masuk" />
+      {sesi === "memuat" && <Loading />}
+      {sesi === "tiada" && (
+        <div className="flex flex-col gap-3 px-6 py-4">
+          <h1 className="m-0 text-xl font-extrabold">{tr("Pautan tidak sah atau telah tamat")}</h1>
+          <p className="m-0 text-sm text-subtle">{tr("Pautan untuk menetapkan semula kata laluan sah selama 1 jam dan hanya boleh digunakan sekali. Minta pautan baharu.")}</p>
+          <Link href="/masuk/lupa" className="mt-2 flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-on-primary!">
+            {tr("Minta pautan baharu")}</Link>
+        </div>
       )}
-      <button
-        type="submit"
-        disabled={busy}
-        className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-on-primary hover:bg-primary-hover disabled:opacity-60"
-      >
-        {busy ? tr("Menyimpan…") : tr("Simpan kata laluan")}
-      </button>
-    </form>
+      {sesi === "ada" && (
+        <form onSubmit={submit} noValidate className="flex grow flex-col gap-4 px-6 py-4">
+          <div className="flex flex-col gap-1.5">
+            <h1 className="m-0 text-xl font-extrabold">{tr("Tetapkan kata laluan baharu")}</h1>
+            <span className="text-sm leading-normal text-subtle">{tr("Selepas disimpan, anda terus log masuk dan semua peranti lain akan dilog keluar.")}</span>
+          </div>
+          <MedanKataLaluan label={tr("Kata laluan baharu")} value={pw} onChange={setPw} autoComplete="new-password" bantuan={tr("Sekurang-kurangnya {0} aksara.", MIN_KATA_LALUAN)} />
+          <MedanKataLaluan label={tr("Sahkan kata laluan")} value={pw2} onChange={setPw2} autoComplete="new-password" />
+          {error && (
+            <span role="alert" className="text-[13px] font-semibold text-danger">
+              {error}
+            </span>
+          )}
+          <button
+            type="submit"
+            disabled={busy}
+            className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-on-primary hover:bg-primary-hover disabled:opacity-60"
+          >
+            {busy ? tr("Menyimpan…") : tr("Simpan kata laluan")}
+          </button>
+        </form>
+      )}
+    </main>
   );
 }
