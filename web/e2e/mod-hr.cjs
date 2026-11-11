@@ -57,16 +57,16 @@ const navMobile = async (p) => (await p.locator('nav.sticky >> visible=true').lo
   await p.waitForSelector('[role=dialog] >> text=Gaji Amin');
   await p.fill('[role=dialog] label:has-text("Gaji Pokok") input', '3500');
   await p.fill('[role=dialog] label:has-text("Elaun Tetap") input', '250');
-  await p.waitForSelector('[role=dialog] >> text=3,309.75');
+  await p.waitForSelector('[role=dialog] >> text=3,281.60');
   const dlg = await p.innerText('[role=dialog]');
   expect(['KWSP pekerja', '414.00', 'KWSP majikan', '489.00', 'PERKESO pekerja', '18.75', 'SIP pekerja', '7.50', 'Gaji bersih', 'Jumlah kos majikan', '4,312.15', 'Levi HRD Corp'].every((t) => dlg.includes(t)),
-    'pratonton langsung: KWSP 414/489, PERKESO 18.75, SIP 7.50, bersih 3,309.75, kos majikan 4,312.15, HRDF');
+    'pratonton langsung: KWSP 414/489, PERKESO 18.75, SIP 7.50, SKBBK 28.15, bersih 3,281.60, kos majikan 4,312.15, HRDF');
   await p.screenshot({ path: `${shots}/hr-ubah-gaji.png` });
   await p.click('[role=dialog] button:has-text("Simpan gaji")');
   await p.waitForSelector('[role=dialog]', { state: 'detached' });
   await p.waitForSelector(V('tr:has-text("Amin") >> text=3,750.00'));
   const baris = await p.locator(V('tr:has-text("Amin")')).first().innerText();
-  expect(baris.includes('3,309.75') && baris.includes('414.00') && baris.includes('4,312.15'), 'jadual: kasar 3,750.00, KWSP 414.00, bersih 3,309.75, kos majikan 4,312.15');
+  expect(baris.includes('3,281.60') && baris.includes('414.00') && baris.includes('4,312.15'), 'jadual: kasar 3,750.00, KWSP 414.00, bersih 3,281.60, kos majikan 4,312.15');
   expect(await p.locator(V('tfoot')).count() === 1, 'baris jumlah syarikat dipaparkan');
 
   await p.click('button:has-text("Ubah ramai sekali gus")');
@@ -97,7 +97,7 @@ const navMobile = async (p) => (await p.locator('nav.sticky >> visible=true').lo
   await p.waitForTimeout(1000);
   const slip = await p.innerText('article');
   expect(slip.includes('3,500.00') && slip.includes('Elaun Tetap') && slip.includes('250.00'), 'slip Amin: gaji pokok 3,500.00 + Elaun Tetap 250.00');
-  expect(slip.includes('3,309.75') && slip.includes('414.00'), 'slip sebenar sepadan dengan pratonton (KWSP 414.00, bersih 3,309.75)');
+  expect(slip.includes('3,281.60') && slip.includes('414.00'), 'slip sebenar sepadan dengan pratonton (KWSP 414.00, bersih 3,281.60)');
   await ctx.close();
 
   log('4. Lily — telefon: tab Mod HR & tukar mod');
