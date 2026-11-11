@@ -1,5 +1,6 @@
 "use client";
 
+import { tawarLulusBerturut } from "@/lib/lulusBerturut";
 import { tr, trRalat, trKonteks, trTajuk } from "@/lib/i18n";
 import { beritahu, sahkan } from "@/components/Dialog";
 import { useRouter } from "next/navigation";
@@ -85,6 +86,7 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
     }
     setSheet(null);
     beritahu(action === "approve" ? tr("Diluluskan.") : action === "reject" ? tr("Ditolak. Pemohon dimaklumkan.") : tr("Dikembalikan kepada pemohon untuk pembetulan."));
+    if (action === "approve") await tawarLulusBerturut(myTask.id, me.personId);
     if (tertanam) tertanam.onSelesai();
     else router.push("/kelulusan");
   }

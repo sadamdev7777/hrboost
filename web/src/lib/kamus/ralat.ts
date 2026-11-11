@@ -388,4 +388,5 @@ export const RALAT: Record<string, string> = {
  "Sila namakan sambungan ini (cth. Claude di komputer pejabat)": "Please name this connection (e.g. Claude on my office computer)",
  "Maksimum 10 sambungan aktif. Batalkan sambungan lama dahulu.": "Maximum 10 active connections. Revoke an old one first.",
  "Sambungan tidak dijumpai": "Connection not found",
+ "Cuti ganti: %": "Replacement holiday: %",
 };

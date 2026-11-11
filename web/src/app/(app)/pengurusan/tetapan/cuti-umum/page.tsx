@@ -31,8 +31,12 @@ function CutiUmum() {
   const [tahun, setTahun] = useState(todayISO().slice(5, 7) >= "10" ? y0 + 1 : y0);
   const d = useData(async () => {
     const sb = getSupabase();
-    const [h, c] = await Promise.all([sb.rpc("company_holiday_options", { p_company: cid, p_year: tahun }), sb.from("companies").select("state").eq("id", cid).single()]);
-    return { h: must(h) ?? [], state: must(c).state };
+    const [h, c, g] = await Promise.all([
+      sb.rpc("company_holiday_options", { p_company: cid, p_year: tahun }),
+      sb.from("companies").select("state").eq("id", cid).single(),
+      sb.rpc("company_holidays", { p_company: cid, p_from: `${tahun}-01-01`, p_to: `${tahun}-12-31` }),
+    ]);
+    return { h: must(h) ?? [], state: must(c).state, ganti: (must(g) ?? []).filter((x) => x.name.startsWith("Cuti ganti: ")) };
   }, [cid, tahun]);
   const [pilih, setPilih] = useState<{
     tahun: number;
@@ -146,6 +150,20 @@ function CutiUmum() {
                 </div>
               </div>
             </div>
+            {d.data && d.data.ganti.length > 0 && (
+              <section aria-label={tr("Cuti ganti")} className="flex flex-col gap-2">
+                <Seksyen className="pt-1">{tr("CUTI GANTI {0} (AUTOMATIK)", tahun)}</Seksyen>
+                <span className="text-xs leading-snug text-muted">{tr("Cuti umum yang jatuh pada hari rehat syarikat diganti dengan hari bekerja berikutnya (Akta Kerja s.60D). Dikira mengikut pilihan di atas dan hari rehat syarikat.")}</span>
+                <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
+                  {d.data.ganti.map((g) => (
+                    <div key={g.holiday_date} className="flex min-h-11 items-center justify-between gap-3 py-2">
+                      <span>{tr("Cuti ganti: {0}", trRalat(g.name.replace("Cuti ganti: ", "")))}</span>
+                      <b className="shrink-0">{tarikh(g.holiday_date)}</b>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
             <span className="text-xs text-muted">{tr("Cuti umum tambahan yang diumumkan oleh kerajaan akan ditambah secara automatik dan boleh digantikan dengan hari lain.")}</span>
             {ralat && <ErrorBox message={ralat} />}
             {ok && <span className="text-sm font-semibold text-success">{tr("Disimpan. Pekerja akan dimaklumkan.")}</span>}

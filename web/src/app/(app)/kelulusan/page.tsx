@@ -1,5 +1,6 @@
 "use client";
 
+import { tawarLulusBerturut } from "@/lib/lulusBerturut";
 import { tr, trTajuk } from "@/lib/i18n";
 import { beritahu } from "@/components/Dialog";
 import Link from "next/link";
@@ -81,7 +82,10 @@ function Kelulusan({ tabAwal }: { tabAwal: "pending" | "syarikat" }) {
     setBusy(null);
     setRejecting(null);
     if (err) setError(mesejRalat(err.message, err.code));
-    else beritahu(action === "approve" ? tr("Diluluskan.") : tr("Ditolak. Pemohon dimaklumkan."));
+    else {
+      beritahu(action === "approve" ? tr("Diluluskan.") : tr("Ditolak. Pemohon dimaklumkan."));
+      if (action === "approve") await tawarLulusBerturut(taskId, me.personId);
+    }
     if (pilih === taskId) setPilih(null);
     tasks.reload();
   }

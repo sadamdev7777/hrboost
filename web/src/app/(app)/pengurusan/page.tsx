@@ -1,5 +1,6 @@
 "use client";
 
+import { tawarLulusBerturut } from "@/lib/lulusBerturut";
 import { tr, trRalat, trTajuk } from "@/lib/i18n";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
@@ -77,6 +78,7 @@ function Kandungan() {
     const { error } = await getSupabase().rpc("approval_act", { p_task: taskId, p_action: "approve", p_via: "web" });
     setSibuk(null);
     if (error) setRalat(mesejRalat(error.message, error.code));
+    else await tawarLulusBerturut(taskId, me.personId);
     d.reload();
   }
 
