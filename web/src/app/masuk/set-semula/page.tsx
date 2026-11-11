@@ -1,5 +1,6 @@
 "use client";
 
+import { KerangkaAwam, CIRI_DAFTAR } from "@/components/KerangkaAwam";
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -66,7 +67,8 @@ export default function SetSemulaPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-page text-ink">
+    <KerangkaAwam tajuk={tr("Kata laluan baharu")} kecil={tr("Pilih kata laluan baharu untuk akaun anda.")} ciri={CIRI_DAFTAR()}>
+    <main className="flex w-full flex-col bg-page text-ink lg:rounded-[20px] lg:bg-surface lg:py-4 lg:shadow-sm">
       <BackHeader href="/masuk" />
       {sesi === "memuat" && <Loading />}
       {sesi === "tiada" && (
@@ -100,5 +102,6 @@ export default function SetSemulaPage() {
         </form>
       )}
     </main>
+    </KerangkaAwam>
   );
 }

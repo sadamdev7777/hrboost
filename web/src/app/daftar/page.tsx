@@ -1,5 +1,6 @@
 "use client";
 
+import { KerangkaAwam, CIRI_DAFTAR } from "@/components/KerangkaAwam";
 import { tr } from "@/lib/i18n";
 import { Langkah } from "@/components/LangkahDaftar";
 import Link from "next/link";
@@ -62,7 +63,8 @@ export default function DaftarSyarikatPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-page text-ink">
+    <KerangkaAwam tajuk={tr("Daftar syarikat anda dalam 2 minit.")} kecil={tr("Anda akan menjadi Pentadbir syarikat dan boleh menjemput pekerja sejurus selepas itu.")} ciri={CIRI_DAFTAR()}>
+    <div className="flex w-full flex-col bg-page text-ink lg:rounded-[20px] lg:bg-surface lg:py-4 lg:shadow-sm">
       <header className="flex items-center px-3 pt-3 pb-1">
         <Link href="/" aria-label={tr("Kembali ke laman utama")} className="flex size-11 items-center justify-center rounded-full text-ink!">
           <IconBack />
@@ -131,5 +133,6 @@ export default function DaftarSyarikatPage() {
         </span>
       </form>
     </div>
+    </KerangkaAwam>
   );
 }

@@ -6,7 +6,8 @@ import { useSyncExternalStore } from "react";
 /**
  * Panduan ringkas setiap skrin HR.
  * Kali pertama skrin dibuka: kad panduan dipaparkan di atas kandungan (tidak menghalang kerja).
- * Selepas "Faham": kad disorok; butang "?" di pengepala memaparkannya semula.
+ * Selepas "Faham" atau ×: kad disorok, dan panduan skrin lain juga tidak lagi dipaparkan secara automatik
+ * (pengguna sudah tahu tentang butang "?"). Butang "?" di pengepala memaparkannya semula.
  */
 export const PANDUAN: Record<string, { tajuk: string; langkah: string[] }> = {
   papan: {
@@ -37,7 +38,7 @@ export const PANDUAN: Record<string, { tajuk: string; langkah: string[] }> = {
   laporan: {
     tajuk: tr("Laporan siap guna"),
     langkah: [
-      tr("Pilih laporan di atas, kemudian pilih tempoh (atau tekan Bulan ini, Suku ini, Tahun ini)."),
+      tr("Pilih laporan di bawah, kemudian pilih tempoh (atau tekan Bulan ini, Suku ini, Tahun ini)."),
       tr("Tekan Eksport CSV untuk membuka laporan dalam Excel."),
       tr("Laporan kos gaji hanya untuk HR dan Kewangan; setiap akses direkodkan."),
     ],
@@ -52,14 +53,16 @@ export const PANDUAN: Record<string, { tajuk: string; langkah: string[] }> = {
   },
 };
 
-const kunci = (id: string) => tr("hrb_panduan_{0}", id);
+const kunci = (id: string) => `hrb_panduan_${id}`;
+const KUNCI_SEMUA = "hrb_panduan_semua";
 const PERISTIWA = "hrb-panduan";
 
 function baca(id: string): "baru" | "tutup" | "buka" {
   try {
     const v = localStorage.getItem(kunci(id));
     // Pelayar automasi (ujian) tidak dipaparkan panduan kali pertama secara automatik.
-    return v === "tutup" ? "tutup" : v === "buka" ? "buka" : navigator.webdriver ? "tutup" : "baru";
+    if (v === "tutup" || v === "buka") return v;
+    return navigator.webdriver || localStorage.getItem(KUNCI_SEMUA) === "tutup" ? "tutup" : "baru";
   } catch {
     return "tutup";
   }
@@ -67,6 +70,7 @@ function baca(id: string): "baru" | "tutup" | "buka" {
 function tulis(id: string, v: "tutup" | "buka") {
   try {
     localStorage.setItem(kunci(id), v);
+    if (v === "tutup") localStorage.setItem(KUNCI_SEMUA, "tutup");
   } catch {
     /* storan disekat */
   }
@@ -108,18 +112,29 @@ export function KadPanduan({ id }: { id: string }) {
   const p = PANDUAN[id];
   if (!p || k === "tutup") return null;
   return (
-    <section aria-label={tr("Panduan")} className="flex flex-col gap-2 rounded-card border border-[#CFE6E1] bg-[#F1F8F6] px-4 py-3.5 lg:px-5">
-      <div className="flex items-start justify-between gap-3">
+    <section aria-label={tr("Panduan")} className="relative flex flex-col gap-3 rounded-card border border-[#CFE6E1] bg-[#F1F8F6] px-4 py-4 lg:px-5">
+      <div className="flex items-center gap-2 pr-10">
+        <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[11px] font-bold text-white">{tr("Panduan")}</span>
         <b className="text-sm font-extrabold text-primary">{p.tajuk}</b>
-        {k === "baru" && <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[11px] font-bold text-white">{tr("Panduan")}</span>}
       </div>
-      <ol className="m-0 flex flex-col gap-1.5 pl-5 text-[13px] leading-snug text-[#33433F]">
+      <button
+        type="button"
+        aria-label={tr("Tutup panduan")}
+        onClick={() => tulis(id, "tutup")}
+        className="absolute top-2 right-2 flex size-10 items-center justify-center rounded-full text-xl leading-none text-muted hover:bg-white"
+      >
+        ×
+      </button>
+      <ol className="m-0 grid list-none grid-cols-1 gap-2 p-0 lg:grid-cols-2 xl:grid-cols-3">
         {p.langkah.map((l, i) => (
-          <li key={i}>{l}</li>
+          <li key={i} className="flex items-start gap-2.5 rounded-[12px] bg-white/70 px-3 py-2.5 text-[13px] leading-snug text-[#33433F]">
+            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#E3F1EE] text-xs font-extrabold text-primary">{i + 1}</span>
+            <span>{l}</span>
+          </li>
         ))}
       </ol>
-      <div className="flex items-center justify-between gap-2 pt-1">
-        <span className="text-[11px] text-muted">{tr("Tekan ? di bahagian atas untuk melihat panduan ini semula.")}</span>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="text-[11px] text-muted">{tr("Panduan skrin lain tidak akan dipaparkan lagi selepas ini. Tekan ? di bahagian atas untuk melihatnya semula.")}</span>
         <button type="button" onClick={() => tulis(id, "tutup")} className="flex min-h-10 shrink-0 items-center rounded-full bg-primary px-4 text-[13px] font-bold text-white">
           {tr("Faham")}</button>
       </div>
