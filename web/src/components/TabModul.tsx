@@ -19,6 +19,8 @@ export const TAB_MODUL = {
       { href: "/pengurusan/gaji/pendahuluan", label: tr("Pendahuluan") },
       { href: "/pengurusan/gaji/sejarah", label: tr("Sejarah") },
       { href: "/pengurusan/gaji/ea", label: tr("Borang EA & E") },
+      { href: "/pengurusan/gaji/item", label: tr("Item gaji") },
+      { href: "/pengurusan/gaji/tetapan", label: tr("Tetapan") },
     ],
   },
   pekerja: {

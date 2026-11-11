@@ -49,6 +49,9 @@ Konsep utama:
 | `approval_act(task, 'approve'\|'reject'\|'return', komen, via, on_behalf)` | approver / agent | Lulus / tolak / hantar balik |
 | `approval_cancel(request, via, on_behalf)` | pemohon | Batal |
 | `submit_payroll_run(run)` | HR | Hantar gaji untuk kelulusan |
+| `hr_set_payroll_settings(company, data)`, `hr_save_pay_component(company, kod, data)` | HR / Kewangan | Tetapan Gaji (no. majikan, penandatangan, asas kiraan, slip, peta akaun GL) & katalog item (bendera cukai/KWSP/PERKESO/SIP/HRDF, medan EA) |
+| `payroll_add_cycle`, `payroll_reopen(run, sebab)`, `payroll_release_payslips(run, pada)` / `payroll_unrelease_payslips` | HR / Kewangan | Kitaran tambahan (bonus), buka semula, lepas / tarik balik slip |
+| `payroll_export(run, 'bank'\|'epf'\|'socso'\|'socso_txt'\|'pcb'\|'pcb_txt'\|'gl')`, `payroll_variance`, `payroll_readiness`, `pcb_ii_data`, `cp22_data` | HR / Kewangan | Fail berkanun (CP39 teks, PERKESO gabungan, CSV KWSP), jurnal GL, varians, kesediaan maklumat, PCB II, CP22 |
 | `add_employee(...)`, `create_invite(employment)` | HR | Tambah pekerja, jana token jemputan |
 | `invite_check_ic(token, ic4)` → `accept_invite_email(token)` | staff | Aktifkan akaun: sahkan 4 digit IC (5 cubaan), kemudian akaun e-mel yang disahkan diikat |
 | `complete_onboarding_step(employment, step)` | staff | Kemajuan onboarding (8 langkah) |
@@ -95,7 +98,7 @@ Reka bentuk setiap skrin ada dalam folder `design/` (fail `NamaSkrin.dc.html`). 
 
 **Staff:** `Main` (atau `KetuaUtama` untuk ketua jabatan) · `MohonCuti` · `Kelulusan` · `Butiran` · `PermohonanSaya` · `Saya` · `Cuti` · `Tuntutan` · `BuatClaim` · `Kehadiran` · `PembetulanMasa` · `Gaji` · `SlipGaji` (PDF) · `PembantuAI` · `Profil` · `ProfilUbah` · `HariJadi`
 
-**HR / pengurusan (satu syarikat):** `DashboardHR` · `AksesSyarikat` · `Pekerja` · `TambahPekerja` · `ProfilPekerja` · `ProsesGaji` → `GajiSemak` → `GajiBayar` · `Tetapan` dan sub: `AliranApproval`, `T_WakilKelulusan`, `Automasi`, `T_JenisCuti`, `CutiUmum`, `T_JenisClaim`, `T_Syarikat`, `T_KadarBerkanun`, `T_IntegrasiAkaun`, `T_Pengguna`, `T_PengetahuanAI`, `IntegrasiKehadiran`
+**HR / pengurusan (satu syarikat):** `DashboardHR` · `AksesSyarikat` · `Pekerja` · `TambahPekerja` · `ProfilPekerja` · `ProsesGaji` → `GajiSemak` → `GajiBayar` (kitaran tambahan, item bulan ini, varians, lepas slip, buka semula) · Penggajian → Item gaji (`/pengurusan/gaji/item`) · Tetapan Gaji (`/pengurusan/gaji/tetapan`) · CP22 & PCB II (`/pengurusan/gaji/cp22/[id]`, `/pengurusan/gaji/pcb/[id]`) · maklumat berkanun pekerja dalam ProfilPekerja → Gaji (`employment_statutory`, `tp1_reliefs`) · `Tetapan` dan sub: `AliranApproval`, `T_WakilKelulusan`, `Automasi`, `T_JenisCuti`, `CutiUmum`, `T_JenisClaim`, `T_Syarikat`, `T_KadarBerkanun`, `T_IntegrasiAkaun`, `T_Pengguna`, `T_PengetahuanAI`, `IntegrasiKehadiran`
 
 **Superadmin (desktop, `/admin`):** `SA_Dashboard` · `SA_Syarikat` · `SA_SyarikatButiran` · `SA_Akses` · `SA_Pengguna` · `SA_Log` · `SA_Tetapan`
 

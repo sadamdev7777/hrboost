@@ -8,7 +8,8 @@ import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
-import { BULAN_PENUH, muatTurun } from "@/lib/gaji";
+import { BULAN_PENUH } from "@/lib/gaji";
+import { eksport, type JenisFail } from "@/lib/gajiLengkap";
 import { ringgit, tarikh } from "@/lib/format";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { HadPeranan, Tag } from "@/components/Senarai";
@@ -25,12 +26,13 @@ const STATUS: Record<string, { l: string; t: "neutral" | "warning" | "primary" |
   paid: { l: tr("Dibayar"), t: "success" },
   locked: { l: tr("Dikunci"), t: "success" },
 };
-const FAIL = [
-  ["bank", tr("Bank")],
-  ["epf", tr("KWSP")],
-  ["socso", tr("PERKESO")],
-  ["pcb", "PCB"],
-] as const;
+const FAIL: [JenisFail, string, string][] = [
+  ["bank", tr("Bank"), "csv"],
+  ["epf", tr("KWSP"), "csv"],
+  ["socso_txt", tr("PERKESO (teks)"), "txt"],
+  ["pcb_txt", tr("CP39 (teks)"), "txt"],
+  ["gl", tr("Jurnal"), "csv"],
+];
 
 export default function SejarahGajiPage() {
   return (
@@ -48,10 +50,11 @@ function Sejarah() {
       must(
         await getSupabase()
           .from("payroll_runs")
-          .select("id, period_year, period_month, status, totals, pay_date")
+          .select("id, period_year, period_month, status, totals, pay_date, cycle_no, kind, label")
           .eq("company_id", emp.companyId)
           .order("period_year", { ascending: false })
-          .order("period_month", { ascending: false }),
+          .order("period_month", { ascending: false })
+          .order("cycle_no"),
       ) ?? [],
     [emp.companyId],
   );
@@ -59,7 +62,7 @@ function Sejarah() {
 
   const [bank, setBank] = useState<{ id: string; tarikh: string } | null>(null);
 
-  async function fail(id: string, jenis: (typeof FAIL)[number][0], y: number, m: number) {
+  async function fail(id: string, jenis: JenisFail, y: number, m: number, ext: string, kitaran: number) {
     setRalat(null);
     if (jenis === "bank") {
       const r = (d.data ?? []).find((x) => x.id === id) as { pay_date?: string | null } | undefined;
@@ -67,7 +70,7 @@ function Sejarah() {
       return;
     }
     try {
-      await muatTurun(id, jenis, tr("{0}-{1}-{2}-{3}.csv", emp.companyCode, jenis, y, String(m).padStart(2, "0")));
+      await eksport(id, jenis, `${emp.companyCode}-${jenis}-${y}-${String(m).padStart(2, "0")}${kitaran > 1 ? `-k${kitaran}` : ""}.${ext}`);
     } catch (e) {
       setRalat(e instanceof Error ? e.message : tr("Ralat"));
     }
@@ -93,6 +96,7 @@ function Sejarah() {
                   <span className="flex min-w-[160px] grow flex-col gap-0.5">
                     <b className="text-sm">
                       {BULAN_PENUH[r.period_month - 1]} {r.period_year}
+                      {r.kind === "additional" && <span className="text-primary"> · {r.label}</span>}
                     </b>
                     <span className="text-xs text-muted">
                       {t.headcount ? tr("{0} pekerja", t.headcount) : tr("Belum dikira")}
@@ -114,11 +118,11 @@ function Sejarah() {
                   <Tag tone={st.t}>{st.l}</Tag>
                   <span className="flex flex-wrap items-center gap-1.5">
                     {siap &&
-                      FAIL.map(([k, l]) => (
+                      FAIL.filter(([k]) => r.kind !== "additional" || k !== "socso_txt").map(([k, l, ext]) => (
                         <button
                           key={k}
                           type="button"
-                          onClick={() => fail(r.id, k, r.period_year, r.period_month)}
+                          onClick={() => fail(r.id, k, r.period_year, r.period_month, ext, r.cycle_no)}
                           className="flex h-9 items-center rounded-full border border-line px-3 text-xs font-bold"
                         >
                           {l}

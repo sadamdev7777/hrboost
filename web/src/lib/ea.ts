@@ -21,6 +21,13 @@ export type BarisEA = {
   months: number;
   b1a: number;
   b1b: number;
+  b1c: number;
+  b2: number;
+  b3: number;
+  b4: number;
+  b6: number;
+  cp38: number;
+  zakat: number;
   total_income: number;
   pcb: number;
   epf: number;
@@ -42,6 +49,13 @@ const angka = (r: BarisEA): BarisEA => ({
   months: Number(r.months),
   b1a: Number(r.b1a),
   b1b: Number(r.b1b),
+  b1c: Number(r.b1c ?? 0),
+  b2: Number(r.b2 ?? 0),
+  b3: Number(r.b3 ?? 0),
+  b4: Number(r.b4 ?? 0),
+  b6: Number(r.b6 ?? 0),
+  cp38: Number(r.cp38 ?? 0),
+  zakat: Number(r.zakat ?? 0),
   total_income: Number(r.total_income),
   pcb: Number(r.pcb),
   epf: Number(r.epf),

@@ -37,6 +37,7 @@ import { AsetSyarikat, GarisMasaKerja, Keluarga, LatihanSijil } from "@/componen
 import { hari, julatTarikh, masa, paparTelefon, ringgit, tarikh, todayISO, type StatusPermohonan } from "@/lib/format";
 import { Avatar, BackHeader, ErrorBox, Loading, Screen, StatusPill } from "@/components/ui";
 import { RingkasanKiraan, UbahGaji, usePratonton } from "@/components/GajiPekerja";
+import { PanelBerkanun } from "@/components/PanelBerkanun";
 import type { KomponenTetap } from "@/lib/gaji";
 import { HadPeranan, Kotak, Lembaran, Medan, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
 
@@ -776,12 +777,13 @@ function TabGaji({ id, nama, tarikhMula }: { id: string; nama: string; tarikhMul
   const komp = useData(
     async () =>
       buka
-        ? ((must(await getSupabase().from("pay_components").select("code, name, kind, epf_applicable, socso_applicable, taxable").eq("company_id", me.active!.companyId)) ?? [])
-            .filter((c) => !["COMMISSION", "OT", "CLAIM", "UNPAID"].includes(c.code))
+        ? ((must(await getSupabase().from("pay_components").select("code, name, kind, epf_applicable, socso_applicable, taxable, active, in_table").eq("company_id", me.active!.companyId)) ?? [])
+            .filter((c) => !["COMMISSION", "OT", "OT_LULUS", "CLAIM", "UNPAID", "ARREARS"].includes(c.code) && c.kind !== "benefit")
+            .filter((c) => (c.active && c.in_table) || (d.data ?? []).some((x) => x.code === c.code))
             .sort((a, b) => Number(a.code !== "BASIC") - Number(b.code !== "BASIC") || a.name.localeCompare(b.name))
             .map((c) => ({ code: c.code, name: c.name, kind: c.kind as "earning" | "deduction", epf: c.epf_applicable, socso: c.socso_applicable, taxable: c.taxable })) as KomponenTetap[])
         : [],
-    [buka, me.active!.companyId],
+    [buka, me.active!.companyId, (d.data ?? []).map((x) => x.code).join(",")],
   );
   const semasa = d.data ? Object.fromEntries(d.data.filter((c) => c.effective_from <= todayISO()).map((c) => [c.code, Number(c.amount)])) : null;
   const pr = usePratonton(id, semasa && semasa.BASIC ? semasa : null);
@@ -816,6 +818,7 @@ function TabGaji({ id, nama, tarikhMula }: { id: string; nama: string; tarikhMul
         />
       )}
       <BakiAwal id={id} />
+      <PanelBerkanun employmentId={id} nama={nama} />
     </>
   );
 }

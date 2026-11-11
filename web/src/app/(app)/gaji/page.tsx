@@ -74,6 +74,7 @@ export default function GajiPage() {
               >
                 {BULAN_RINGKAS[x.month - 1]}
                 {i === 0 ? ` ${x.year}` : ""}
+                {x.label ? ` · ${x.label}` : ""}
                 {x.draf ? tr(" · pratonton") : ""}
               </button>
             ))}

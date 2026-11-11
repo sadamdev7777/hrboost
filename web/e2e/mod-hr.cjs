@@ -79,9 +79,9 @@ const navMobile = async (p) => (await p.locator('nav.sticky >> visible=true').lo
   expect(true, 'ubah ramai: Zulfa 3,000.00, Farah + elaun 5,350.00');
 
   await p.click('button:has-text("+ Jenis elaun")');
-  await p.fill('[role=dialog] input[placeholder="Contoh: Elaun Telefon"]', 'Elaun Telefon');
+  await p.fill('[role=dialog] input[placeholder="Contoh: Elaun Telefon"]', 'Elaun Komunikasi');
   await p.click('[role=dialog] button:has-text("Tambah")');
-  await p.waitForSelector(V('th:has-text("ELAUN TELEFON")'));
+  await p.waitForSelector(V('th:has-text("ELAUN KOMUNIKASI")'));
   expect(true, 'jenis elaun baharu menjadi lajur jadual');
   await p.screenshot({ path: `${shots}/hr-gaji-pekerja-desktop.png` });
 

@@ -57,13 +57,14 @@ set test.uid='00000000-0000-0000-0000-00000000a004';
 select * from company_holidays('00000000-0000-0000-0000-0000000000c1','2026-12-01','2026-12-31');
 
 \echo '=== D4: ubah profil sendiri ==='
-select update_my_profile('{"preferred_name":" Amin Z ","address":"Shah Alam","children_count":"2","hide_birthday":true,
+select update_my_profile('{"preferred_name":" Amin Z ","address":"Shah Alam","hide_birthday":true,
   "contact_name":"Ibu Amin","contact_relationship":"Ibu","contact_phone":"0123456789"}');
 select preferred_name, address, children_count, hide_birthday from persons where id='00000000-0000-0000-0000-000000000004';
 select name, relationship, phone from emergency_contacts where person_id='00000000-0000-0000-0000-000000000004';
 \set ON_ERROR_STOP 0
 select update_my_profile('{"preferred_name":"  "}');
-select update_my_profile('{"children_count":"-1"}');
+-- bilangan anak kini perlu disahkan HR (submit_profile_change)
+select update_my_profile('{"children_count":"2"}');
 select update_my_profile('{"photo_path":"00000000-0000-0000-0000-000000000003/swafoto.jpg"}');
 \set ON_ERROR_STOP 1
 -- akaun bank & IC tidak boleh dikemas kini terus oleh pekerja (jika peranan Supabase wujud)

@@ -15,6 +15,8 @@ const TINDAKAN: { label: string; sub: string; href: string; roles: string[]; kat
   { label: tr("Proses gaji"), sub: tr("Gaji bulan ini"), href: "/pengurusan/gaji", roles: ["hr", "finance", "admin"], kata: tr("gaji payroll proses slip") },
   { label: tr("Gaji pekerja"), sub: tr("Gaji pokok & elaun"), href: "/pengurusan/gaji/pekerja", roles: ["hr", "finance", "admin"], kata: tr("gaji pokok elaun kwsp") },
   { label: tr("Sejarah gaji"), sub: tr("Bulan-bulan lepas & fail"), href: "/pengurusan/gaji/sejarah", roles: ["hr", "finance", "admin"], kata: tr("sejarah gaji fail bank kwsp perkeso") },
+  { label: tr("Tetapan gaji"), sub: tr("No. majikan, asas kiraan, slip, akaun"), href: "/pengurusan/gaji/tetapan", roles: ["hr", "finance", "admin"], kata: tr("tetapan gaji no majikan lhdn hari gaji prorata akaun gl") },
+  { label: tr("Item gaji"), sub: tr("Elaun, potongan, bonus, BIK"), href: "/pengurusan/gaji/item", roles: ["hr", "finance", "admin"], kata: tr("item gaji elaun potongan bonus bik katalog ea") },
   { label: tr("Kalendar pasukan"), sub: tr("Siapa bercuti bulan ini"), href: "/kalendar", roles: ["hr", "finance", "ceo", "admin"], kata: tr("kalendar cuti pasukan bercuti jadual calendar") },
   { label: tr("Surat"), sub: tr("Permohonan surat pengesahan"), href: "/pengurusan/surat", roles: ["hr", "admin"], kata: tr("surat pengesahan majikan gaji pinjaman bank letter") },
   { label: tr("Pengumuman"), sub: tr("Hantar kepada semua pekerja"), href: "/pengurusan/pengumuman", roles: ["hr", "ceo", "admin"], kata: tr("pengumuman notis announcement whatsapp semua") },

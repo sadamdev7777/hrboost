@@ -37,7 +37,7 @@ export async function getLarian(runId: string) {
   return must(
     await getSupabase()
       .from("payroll_runs")
-      .select("id, company_id, period_year, period_month, status, totals, pay_date, approval_request_id")
+      .select("id, company_id, period_year, period_month, status, totals, pay_date, approval_request_id, cycle_no, kind, label, payslip_release_at, pcb_receipt_no")
       .eq("id", runId)
       .single(),
   );
@@ -93,7 +93,11 @@ export type Slip = {
   net: number;
   totalDeduction: number;
   unpaidDays: number;
-  lines: { code: string; description: string; kind: "earning" | "deduction" | "employer"; amount: number }[];
+  lines: { code: string; description: string; kind: "earning" | "deduction" | "employer" | "benefit"; amount: number }[];
+  /** Kitaran tambahan (cth. Bonus Disember) — null bagi gaji bulanan */
+  label: string | null;
+  options: { leave_summary: boolean; ytd: boolean; disclaimer: string | null };
+  cuti: { name: string; available: number }[];
   company: { name: string; code: string; reg_no: string | null; epf: string | null; socso: string | null; lhdn: string | null; logo_path?: string | null };
   employee: {
     fullName: string;
@@ -121,6 +125,8 @@ export async function getSenaraiSlip(employmentId: string) {
     /** Gaji belum diluluskan: pratonton sahaja, jumlah mungkin berubah. */
     draf: !!(s as { draft?: boolean }).draft,
     adaLaporan: !!(s as { issue_open?: boolean }).issue_open,
+    /** Kitaran tambahan (cth. Bonus Disember) */
+    label: (s as { label?: string | null }).label ?? null,
   }));
 }
 
@@ -163,6 +169,9 @@ export async function getSlip(id: string): Promise<Slip> {
     period_month: number;
     pay_date: string | null;
     status: string;
+    kind?: string;
+    label?: string | null;
+    options?: Partial<Slip["options"]>;
     company: Slip["company"];
   } | null;
   if (!meta) throw new Error(tr("Slip gaji tidak dijumpai."));
@@ -174,17 +183,14 @@ export async function getSlip(id: string): Promise<Slip> {
       .eq("id", s.employment_id)
       .single(),
     sb.rpc("payslip_ytd", { p_payslip: id }),
-    sb
-      .from("leave_balances")
-      .select("available, leave_types!inner(code)")
-      .eq("employment_id", s.employment_id)
-      .eq("year", r.period_year)
-      .eq("leave_types.code", "AL")
-      .maybeSingle(),
+    sb.from("leave_balances").select("available, leave_types!inner(code, name, sort_order)").eq("employment_id", s.employment_id).eq("year", r.period_year),
   ]);
   const e = must(emp);
   const y = (must(ytd) ?? {}) as unknown as { gross: number; epf: number; pcb: number; months: number };
-  const b = (bal.data ?? null) as { available: number } | null;
+  const baki = ((bal.data ?? []) as unknown as { available: number; leave_types: { code: string; name: string; sort_order: number } }[]).sort(
+    (a, z) => a.leave_types.sort_order - z.leave_types.sort_order,
+  );
+  const b = baki.find((x) => x.leave_types.code === "AL") ?? null;
   return {
     id: s.id,
     year: r.period_year,
@@ -211,6 +217,9 @@ export async function getSlip(id: string): Promise<Slip> {
     },
     ytd: { gross: Number(y.gross ?? 0), epf: Number(y.epf ?? 0), pcb: Number(y.pcb ?? 0), months: Number(y.months ?? 0) },
     alBalance: b ? Number(b.available) : null,
+    label: r.kind === "additional" ? (r.label ?? null) : null,
+    options: { leave_summary: r.options?.leave_summary ?? true, ytd: r.options?.ytd ?? true, disclaimer: r.options?.disclaimer ?? null },
+    cuti: baki.filter((x) => ["AL", "MC", "HL", "EL", "RL"].includes(x.leave_types.code)).map((x) => ({ name: trRalat(x.leave_types.name), available: Number(x.available) })),
   };
 }
 

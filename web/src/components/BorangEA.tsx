@@ -29,10 +29,10 @@ function Baris({ no, label, nilai, tebal = false }: { no?: string; label: string
 
 /**
  * Borang EA (C.P.8A) satu pekerja, saiz A4. Susunan bahagian A–F mengikut borang LHDN;
- * item yang tidak direkodkan dalam HRBoost (contoh manfaat berupa barangan) dipaparkan 0.00.
+ * medan B diisi mengikut medan EA setiap item gaji (tab Item gaji).
  */
 export function BorangEA({ m, r }: { m: MajikanEA; r: BarisEA }) {
-  const jumlahB = r.b1a + r.b1b;
+  const jumlahB = r.b1a + r.b1b + r.b1c + r.b2 + r.b3 + r.b4 + r.b6;
   return (
     <article className="ea mx-auto w-full max-w-[794px] bg-white px-8 py-7 text-[#14211F] print:break-after-page print:px-0 print:py-0">
       <header className="flex items-start justify-between gap-4">
@@ -65,15 +65,15 @@ export function BorangEA({ m, r }: { m: MajikanEA; r: BarisEA }) {
       <Seksyen huruf="B" tajuk={tr("PENDAPATAN PENGGAJIAN, MANFAAT DAN TEMPAT KEDIAMAN (RM)")}>
         <Baris no="1.(a)" label={tr("Gaji kasar, upah atau gaji cuti (termasuk gaji lebih masa)")} nilai={rm(r.b1a)} />
         <Baris no="(b)" label={tr("Fi (termasuk fi pengarah), komisen atau bonus")} nilai={rm(r.b1b)} />
-        <Baris no="(c)" label={tr("Tip kasar, perkuisit, penerimaan sagu hati atau elaun-elaun lain")} nilai={rm(0)} />
+        <Baris no="(c)" label={tr("Tip kasar, perkuisit, penerimaan sagu hati atau elaun-elaun lain")} nilai={rm(r.b1c)} />
         <Baris no="(d)" label={tr("Cukai pendapatan yang dibayar oleh majikan bagi pihak pekerja")} nilai={rm(0)} />
         <Baris no="(e)" label={tr("Manfaat Skim Opsyen Saham Pekerja (ESOS)")} nilai={rm(0)} />
         <Baris no="(f)" label={tr("Ganjaran bagi tempoh")} nilai={rm(0)} />
-        <Baris no="2." label={tr("Butiran bayaran tunggakan dan lain-lain bagi tahun terdahulu dalam tahun semasa")} nilai={rm(0)} />
-        <Baris no="3." label={tr("Manfaat berupa barangan")} nilai={rm(0)} />
-        <Baris no="4." label={tr("Nilai tempat kediaman yang disediakan oleh majikan")} nilai={rm(0)} />
+        <Baris no="2." label={tr("Butiran bayaran tunggakan dan lain-lain bagi tahun terdahulu dalam tahun semasa")} nilai={rm(r.b2)} />
+        <Baris no="3." label={tr("Manfaat berupa barangan")} nilai={rm(r.b3)} />
+        <Baris no="4." label={tr("Nilai tempat kediaman yang disediakan oleh majikan")} nilai={rm(r.b4)} />
         <Baris no="5." label={tr("Bayaran balik daripada Kumpulan Wang Simpanan / Pencen yang tidak diluluskan")} nilai={rm(0)} />
-        <Baris no="6." label={tr("Pampasan kerana kehilangan pekerjaan")} nilai={rm(0)} />
+        <Baris no="6." label={tr("Pampasan kerana kehilangan pekerjaan")} nilai={rm(r.b6)} />
         <Baris label={trKonteks("JUMLAH", "TOTAL")} nilai={rm(jumlahB)} tebal />
       </Seksyen>
 
@@ -84,8 +84,8 @@ export function BorangEA({ m, r }: { m: MajikanEA; r: BarisEA }) {
 
       <Seksyen huruf="D" tajuk={tr("JUMLAH POTONGAN (RM)")}>
         <Baris no="1." label={tr("Potongan Cukai Bulanan (PCB) yang dibayar kepada LHDN")} nilai={rm(r.pcb)} />
-        <Baris no="2." label={tr("Arahan potongan CP38")} nilai={rm(0)} />
-        <Baris no="3." label={tr("Zakat yang dibayar melalui potongan gaji")} nilai={rm(0)} />
+        <Baris no="2." label={tr("Arahan potongan CP38")} nilai={rm(r.cp38)} />
+        <Baris no="3." label={tr("Zakat yang dibayar melalui potongan gaji")} nilai={rm(r.zakat)} />
       </Seksyen>
 
       <Seksyen huruf="E" tajuk={tr("CARUMAN YANG DIBAYAR OLEH PEKERJA (RM)")}>

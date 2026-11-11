@@ -679,14 +679,14 @@ isOneToOne: false
                   ]
                 },"companies": {
                   Row: {
-                    "accounting_config": NonNullable<Json>,"accounting_system": Database["public"]['Enums']["accounting_system"],"address": string | null,"ai_monthly_limit": number | null,"bank_file_format": Json | null,"claim_submit_days": number | null,"code": string,"created_at": string,"created_by": string | null,"epf_employer_no": string | null,"epf_employer_rate": number | null,"hr_daily_digest": boolean,"hrdf_registered": boolean,"id": string,"late_grace_minutes": number,"lhdn_employer_no": string | null,"logo_path": string | null,"name": string,"onboarding_completed_at": string | null,"overtime_enabled": boolean,"payslip_preview": boolean,"reg_no": string | null,"size_band": string | null,"socso_employer_no": string | null,"state": string,"status": string,"suspended_at": string | null,"suspended_reason": string | null,"timezone": string,"wa_monthly_limit": number | null,"weekend_days": (number)[],"work_end": string,"work_start": string
+                    "accounting_config": NonNullable<Json>,"accounting_system": Database["public"]['Enums']["accounting_system"],"address": string | null,"ai_monthly_limit": number | null,"bank_batch_id": string | null,"bank_corporate_id": string | null,"bank_file_format": Json | null,"claim_submit_days": number | null,"code": string,"company_bank_account": string | null,"company_bank_name": string | null,"created_at": string,"created_by": string | null,"epf_employer_no": string | null,"epf_employer_rate": number | null,"gl_accounts": NonNullable<Json>,"hours_per_day": number,"hr_daily_digest": boolean,"hrdf_registered": boolean,"id": string,"late_grace_minutes": number,"lhdn_c_no": string | null,"lhdn_employer_no": string | null,"logo_path": string | null,"name": string,"onboarding_completed_at": string | null,"ot_basis": string,"ot_items": (string)[],"overtime_enabled": boolean,"payday": number,"payslip_options": NonNullable<Json>,"payslip_preview": boolean,"prorate_basis": string,"reg_no": string | null,"signatory_email": string | null,"signatory_ic": string | null,"signatory_name": string | null,"signatory_phone": string | null,"signatory_position": string | null,"size_band": string | null,"skbbk_default": boolean,"socso_employer_no": string | null,"state": string,"status": string,"suspended_at": string | null,"suspended_reason": string | null,"timezone": string,"unpaid_basis": string,"unpaid_items": (string)[],"wa_monthly_limit": number | null,"weekend_days": (number)[],"work_end": string,"work_start": string,"zakat_no": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"bank_file_format"?: Json | null,"claim_submit_days"?: number | null,"code": string,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name": string,"onboarding_completed_at"?: string | null,"overtime_enabled"?: boolean,"payslip_preview"?: boolean,"reg_no"?: string | null,"size_band"?: string | null,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string
+                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"bank_batch_id"?: string | null,"bank_corporate_id"?: string | null,"bank_file_format"?: Json | null,"claim_submit_days"?: number | null,"code": string,"company_bank_account"?: string | null,"company_bank_name"?: string | null,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"gl_accounts"?: NonNullable<Json>,"hours_per_day"?: number,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_c_no"?: string | null,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name": string,"onboarding_completed_at"?: string | null,"ot_basis"?: string,"ot_items"?: (string)[],"overtime_enabled"?: boolean,"payday"?: number,"payslip_options"?: NonNullable<Json>,"payslip_preview"?: boolean,"prorate_basis"?: string,"reg_no"?: string | null,"signatory_email"?: string | null,"signatory_ic"?: string | null,"signatory_name"?: string | null,"signatory_phone"?: string | null,"signatory_position"?: string | null,"size_band"?: string | null,"skbbk_default"?: boolean,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"unpaid_basis"?: string,"unpaid_items"?: (string)[],"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string,"zakat_no"?: string | null
                   }
                   Update: {
-                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"bank_file_format"?: Json | null,"claim_submit_days"?: number | null,"code"?: string,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name"?: string,"onboarding_completed_at"?: string | null,"overtime_enabled"?: boolean,"payslip_preview"?: boolean,"reg_no"?: string | null,"size_band"?: string | null,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string
+                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"bank_batch_id"?: string | null,"bank_corporate_id"?: string | null,"bank_file_format"?: Json | null,"claim_submit_days"?: number | null,"code"?: string,"company_bank_account"?: string | null,"company_bank_name"?: string | null,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"gl_accounts"?: NonNullable<Json>,"hours_per_day"?: number,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_c_no"?: string | null,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name"?: string,"onboarding_completed_at"?: string | null,"ot_basis"?: string,"ot_items"?: (string)[],"overtime_enabled"?: boolean,"payday"?: number,"payslip_options"?: NonNullable<Json>,"payslip_preview"?: boolean,"prorate_basis"?: string,"reg_no"?: string | null,"signatory_email"?: string | null,"signatory_ic"?: string | null,"signatory_name"?: string | null,"signatory_phone"?: string | null,"signatory_position"?: string | null,"size_band"?: string | null,"skbbk_default"?: boolean,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"unpaid_basis"?: string,"unpaid_items"?: (string)[],"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_start"?: string,"zakat_no"?: string | null
                   }
                   Relationships: [
                     {
@@ -987,6 +987,26 @@ isOneToOne: false
       foreignKeyName: "employment_compensation_employment_id_fkey"
       columns: ["employment_id"]
 isOneToOne: false
+      referencedRelation: "employments"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"employment_statutory": {
+                  Row: {
+                    "child_disabled": number,"child_disabled_higher": number,"child_higher": number,"child_shared": boolean,"child_u18": number,"cp38_monthly": number,"cp38_until": string | null,"disabled": boolean,"eis": string,"employment_id": string,"epf_category": string,"epf_employee_rate": number | null,"resident": boolean,"skbbk": string,"socso_category": string,"spouse_disabled": boolean,"ssfw_no": string | null,"updated_at": string,"zakat_monthly": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "child_disabled"?: number,"child_disabled_higher"?: number,"child_higher"?: number,"child_shared"?: boolean,"child_u18"?: number,"cp38_monthly"?: number,"cp38_until"?: string | null,"disabled"?: boolean,"eis"?: string,"employment_id": string,"epf_category"?: string,"epf_employee_rate"?: number | null,"resident"?: boolean,"skbbk"?: string,"socso_category"?: string,"spouse_disabled"?: boolean,"ssfw_no"?: string | null,"updated_at"?: string,"zakat_monthly"?: number
+                  }
+                  Update: {
+                    "child_disabled"?: number,"child_disabled_higher"?: number,"child_higher"?: number,"child_shared"?: boolean,"child_u18"?: number,"cp38_monthly"?: number,"cp38_until"?: string | null,"disabled"?: boolean,"eis"?: string,"employment_id"?: string,"epf_category"?: string,"epf_employee_rate"?: number | null,"resident"?: boolean,"skbbk"?: string,"socso_category"?: string,"spouse_disabled"?: boolean,"ssfw_no"?: string | null,"updated_at"?: string,"zakat_monthly"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "employment_statutory_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: true
       referencedRelation: "employments"
       referencedColumns: ["id"]
     }
@@ -1549,14 +1569,14 @@ isOneToOne: false
                   ]
                 },"pay_components": {
                   Row: {
-                    "account_ref": string | null,"code": string,"company_id": string,"epf_applicable": boolean,"id": string,"kind": string,"name": string,"socso_applicable": boolean,"taxable": boolean
+                    "account_ref": string | null,"active": boolean,"category": string | null,"code": string,"company_id": string,"ea_field": string | null,"eis_applicable": boolean | null,"epf_applicable": boolean,"hrdf_applicable": boolean | null,"id": string,"in_table": boolean,"is_system": boolean,"kind": string,"name": string,"socso_applicable": boolean,"sort_order": number,"taxable": boolean
                   }
                   ComputedFields: never
                   Insert: {
-                    "account_ref"?: string | null,"code": string,"company_id": string,"epf_applicable"?: boolean,"id"?: string,"kind": string,"name": string,"socso_applicable"?: boolean,"taxable"?: boolean
+                    "account_ref"?: string | null,"active"?: boolean,"category"?: string | null,"code": string,"company_id": string,"ea_field"?: string | null,"eis_applicable"?: boolean | null,"epf_applicable"?: boolean,"hrdf_applicable"?: boolean | null,"id"?: string,"in_table"?: boolean,"is_system"?: boolean,"kind": string,"name": string,"socso_applicable"?: boolean,"sort_order"?: number,"taxable"?: boolean
                   }
                   Update: {
-                    "account_ref"?: string | null,"code"?: string,"company_id"?: string,"epf_applicable"?: boolean,"id"?: string,"kind"?: string,"name"?: string,"socso_applicable"?: boolean,"taxable"?: boolean
+                    "account_ref"?: string | null,"active"?: boolean,"category"?: string | null,"code"?: string,"company_id"?: string,"ea_field"?: string | null,"eis_applicable"?: boolean | null,"epf_applicable"?: boolean,"hrdf_applicable"?: boolean | null,"id"?: string,"in_table"?: boolean,"is_system"?: boolean,"kind"?: string,"name"?: string,"socso_applicable"?: boolean,"sort_order"?: number,"taxable"?: boolean
                   }
                   Relationships: [
                     {
@@ -1625,16 +1645,42 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"payroll_run_events": {
+                  Row: {
+                    "action": string,"actor": string | null,"at": string,"id": string,"note": string | null,"run_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "action": string,"actor"?: string | null,"at"?: string,"id"?: string,"note"?: string | null,"run_id": string
+                  }
+                  Update: {
+                    "action"?: string,"actor"?: string | null,"at"?: string,"id"?: string,"note"?: string | null,"run_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "payroll_run_events_actor_fkey"
+      columns: ["actor"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "payroll_run_events_run_id_fkey"
+      columns: ["run_id"]
+isOneToOne: false
+      referencedRelation: "payroll_runs"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"payroll_runs": {
                   Row: {
-                    "approval_request_id": string | null,"company_id": string,"created_at": string,"id": string,"pay_date": string | null,"period_month": number,"period_year": number,"prepared_by": string | null,"status": Database["public"]['Enums']["payroll_status"],"totals": Json | null,"payslip_visible_status": boolean | null
+                    "approval_request_id": string | null,"company_id": string,"created_at": string,"cycle_no": number,"id": string,"kind": string,"label": string | null,"pay_date": string | null,"payslip_release_at": string | null,"pcb_receipt_no": string | null,"period_month": number,"period_year": number,"prepared_by": string | null,"status": Database["public"]['Enums']["payroll_status"],"totals": Json | null,"payslip_visible_status": boolean | null
                   }
                   ComputedFields: "payslip_visible_status"
                   Insert: {
-                    "approval_request_id"?: string | null,"company_id": string,"created_at"?: string,"id"?: string,"pay_date"?: string | null,"period_month": number,"period_year": number,"prepared_by"?: string | null,"status"?: Database["public"]['Enums']["payroll_status"],"totals"?: Json | null
+                    "approval_request_id"?: string | null,"company_id": string,"created_at"?: string,"cycle_no"?: number,"id"?: string,"kind"?: string,"label"?: string | null,"pay_date"?: string | null,"payslip_release_at"?: string | null,"pcb_receipt_no"?: string | null,"period_month": number,"period_year": number,"prepared_by"?: string | null,"status"?: Database["public"]['Enums']["payroll_status"],"totals"?: Json | null
                   }
                   Update: {
-                    "approval_request_id"?: string | null,"company_id"?: string,"created_at"?: string,"id"?: string,"pay_date"?: string | null,"period_month"?: number,"period_year"?: number,"prepared_by"?: string | null,"status"?: Database["public"]['Enums']["payroll_status"],"totals"?: Json | null
+                    "approval_request_id"?: string | null,"company_id"?: string,"created_at"?: string,"cycle_no"?: number,"id"?: string,"kind"?: string,"label"?: string | null,"pay_date"?: string | null,"payslip_release_at"?: string | null,"pcb_receipt_no"?: string | null,"period_month"?: number,"period_year"?: number,"prepared_by"?: string | null,"status"?: Database["public"]['Enums']["payroll_status"],"totals"?: Json | null
                   }
                   Relationships: [
                     {
@@ -1703,14 +1749,14 @@ isOneToOne: false
                   ]
                 },"payslip_lines": {
                   Row: {
-                    "amount": number,"component_code": string,"description": string,"id": string,"kind": string,"payslip_id": string
+                    "amount": number,"component_code": string,"description": string,"id": string,"kind": string,"payslip_id": string,"ref_month": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "amount": number,"component_code": string,"description": string,"id"?: string,"kind": string,"payslip_id": string
+                    "amount": number,"component_code": string,"description": string,"id"?: string,"kind": string,"payslip_id": string,"ref_month"?: string | null
                   }
                   Update: {
-                    "amount"?: number,"component_code"?: string,"description"?: string,"id"?: string,"kind"?: string,"payslip_id"?: string
+                    "amount"?: number,"component_code"?: string,"description"?: string,"id"?: string,"kind"?: string,"payslip_id"?: string,"ref_month"?: string | null
                   }
                   Relationships: [
                     {
@@ -1723,14 +1769,14 @@ isOneToOne: false
                   ]
                 },"payslips": {
                   Row: {
-                    "eis_employee": number,"eis_employer": number,"employment_id": string,"epf_employee": number,"epf_employer": number,"gross": number,"hrdf": number,"id": string,"net": number,"payroll_run_id": string,"pcb": number,"pdf_path": string | null,"socso_employee": number,"socso_employer": number,"total_deduction": number,"unpaid_leave_days": number
+                    "cp38": number,"eis_employee": number,"eis_employer": number,"employment_id": string,"epf_employee": number,"epf_employer": number,"gross": number,"hrdf": number,"id": string,"net": number,"payroll_run_id": string,"pcb": number,"pdf_path": string | null,"skbbk_employee": number,"socso_employee": number,"socso_employer": number,"total_deduction": number,"unpaid_leave_days": number,"zakat": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "eis_employee"?: number,"eis_employer"?: number,"employment_id": string,"epf_employee"?: number,"epf_employer"?: number,"gross"?: number,"hrdf"?: number,"id"?: string,"net"?: number,"payroll_run_id": string,"pcb"?: number,"pdf_path"?: string | null,"socso_employee"?: number,"socso_employer"?: number,"total_deduction"?: number,"unpaid_leave_days"?: number
+                    "cp38"?: number,"eis_employee"?: number,"eis_employer"?: number,"employment_id": string,"epf_employee"?: number,"epf_employer"?: number,"gross"?: number,"hrdf"?: number,"id"?: string,"net"?: number,"payroll_run_id": string,"pcb"?: number,"pdf_path"?: string | null,"skbbk_employee"?: number,"socso_employee"?: number,"socso_employer"?: number,"total_deduction"?: number,"unpaid_leave_days"?: number,"zakat"?: number
                   }
                   Update: {
-                    "eis_employee"?: number,"eis_employer"?: number,"employment_id"?: string,"epf_employee"?: number,"epf_employer"?: number,"gross"?: number,"hrdf"?: number,"id"?: string,"net"?: number,"payroll_run_id"?: string,"pcb"?: number,"pdf_path"?: string | null,"socso_employee"?: number,"socso_employer"?: number,"total_deduction"?: number,"unpaid_leave_days"?: number
+                    "cp38"?: number,"eis_employee"?: number,"eis_employer"?: number,"employment_id"?: string,"epf_employee"?: number,"epf_employer"?: number,"gross"?: number,"hrdf"?: number,"id"?: string,"net"?: number,"payroll_run_id"?: string,"pcb"?: number,"pdf_path"?: string | null,"skbbk_employee"?: number,"socso_employee"?: number,"socso_employer"?: number,"total_deduction"?: number,"unpaid_leave_days"?: number,"zakat"?: number
                   }
                   Relationships: [
                     {
@@ -2009,6 +2055,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"tp1_reliefs": {
+                  Row: {
+                    "amount": number,"category": string,"created_at": string,"employment_id": string,"id": string,"month": number,"note": string | null,"year": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "amount": number,"category": string,"created_at"?: string,"employment_id": string,"id"?: string,"month": number,"note"?: string | null,"year": number
+                  }
+                  Update: {
+                    "amount"?: number,"category"?: string,"created_at"?: string,"employment_id"?: string,"id"?: string,"month"?: number,"note"?: string | null,"year"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "tp1_reliefs_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"trainings": {
                   Row: {
                     "created_at": string,"employment_id": string,"end_date": string | null,"expiry_date": string | null,"id": string,"kind": string,"note": string | null,"provider": string | null,"start_date": string | null,"title": string
@@ -2254,11 +2320,17 @@ isOneToOne: false
 "company_onboarding_state":
 { Args: { "p_company": string }; Returns: Json
                            },
+"company_working_days":
+{ Args: { "p_company": string,"p_from": string,"p_to": string }; Returns: number
+                           },
 "complete_company_step":
 { Args: { "p_company": string,"p_step": string }; Returns: Json
                            },
 "complete_onboarding_step":
 { Args: { "p_employment": string,"p_step": string }; Returns: number
+                           },
+"cp22_data":
+{ Args: { "p_employment": string }; Returns: Json
                            },
 "create_invite":
 { Args: { "p_employment": string }; Returns: string
@@ -2307,6 +2379,9 @@ isOneToOne: false
 "decide_probation":
 { Args: { "p_decision": string,"p_employment": string,"p_months"?: number }; Returns: undefined
                            },
+"digits":
+{ Args: { "p": string }; Returns: string
+                           },
 "ea_company_header":
 { Args: { "p_company": string,"p_year": number }; Returns: Json
                            },
@@ -2322,6 +2397,11 @@ isOneToOne: false
 "employment_history":
 { Args: { "p_employment": string,"p_include_access"?: boolean }; Returns: {
               "actor": string,"at": string,"field": string,"kind": string,"new_value": string,"note": string,"old_value": string
+            }[]
+                           },
+"employment_stat_effective":
+{ Args: { "p_employment": string,"p_on": string }; Returns: {
+              "age": number,"child_units": number,"cp38": number,"eis": boolean,"epf_category": string,"epf_employee_rate": number,"extra_relief": number,"foreign_worker": boolean,"resident": boolean,"skbbk": boolean,"socso_category": string,"zakat": number
             }[]
                            },
 "end_employment":
@@ -2480,11 +2560,17 @@ isOneToOne: false
               "amount": number,"created_at": string,"deduct_month": number,"deduct_year": number,"deducted": boolean,"disbursed_at": string,"employment_id": string,"id": string,"name": string,"reason": string,"status": Database["public"]['Enums']["request_status"]
             }[]
                            },
+"hr_save_pay_component":
+{ Args: { "p_code": string,"p_company": string,"p_data": Json }; Returns: string
+                           },
 "hr_set_expiry":
 { Args: { "p_contract_end": string,"p_employment": string,"p_passport_expiry": string,"p_permit_expiry": string }; Returns: undefined
                            },
 "hr_set_pay":
 { Args: { "p_effective_from": string,"p_employment": string,"p_items": Json,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined
+                           },
+"hr_set_payroll_settings":
+{ Args: { "p_company": string,"p_data": Json }; Returns: undefined
                            },
 "hr_set_preferred_names":
 { Args: { "p_company": string,"p_items": Json }; Returns: number
@@ -2653,7 +2739,7 @@ isOneToOne: false
                            },
 "my_payslips":
 { Args: { "p_employment": string }; Returns: {
-              "draft": boolean,"id": string,"issue_open": boolean,"net": number,"pay_date": string,"period_month": number,"period_year": number,"status": Database["public"]['Enums']["payroll_status"]
+              "draft": boolean,"id": string,"issue_open": boolean,"label": string,"net": number,"pay_date": string,"period_month": number,"period_year": number,"status": Database["public"]['Enums']["payroll_status"]
             }[]
                            },
 "my_probation_reviews_due":
@@ -2720,8 +2806,17 @@ isOneToOne: false
 "pay_component_is_fixed":
 { Args: { "p_code": string }; Returns: boolean
                            },
+"pay_divisor":
+{ Args: { "p_basis": string,"p_company": string,"p_from": string,"p_to": string }; Returns: number
+                           },
 "pay_estimate":
 { Args: { "p_employment": string,"p_items": Json,"p_on": string }; Returns: Json
+                           },
+"pay_fraction":
+{ Args: { "p_basis": string,"p_company": string,"p_d0": string,"p_d1": string,"p_end": string,"p_join": string }; Returns: number
+                           },
+"payroll_add_cycle":
+{ Args: { "p_company": string,"p_label": string,"p_month": number,"p_year": number }; Returns: string
                            },
 "payroll_bank_rows":
 { Args: { "p_run": string }; Returns: Json
@@ -2759,11 +2854,33 @@ isOneToOne: false
 "payroll_prepare":
 { Args: { "p_company": string,"p_month": number,"p_year": number }; Returns: Json
                            },
+"payroll_readiness":
+{ Args: { "p_company": string }; Returns: {
+              "employment_id": string,"missing": (string)[]
+            }[]
+                           },
+"payroll_release_payslips":
+{ Args: { "p_at"?: string,"p_run": string }; Returns: undefined
+                           },
+"payroll_reopen":
+{ Args: { "p_reason": string,"p_run": string }; Returns: undefined
+                           },
 "payroll_set_adjustment":
 { Args: { "p_amount": number,"p_code": string,"p_employment": string,"p_note"?: string,"p_run": string }; Returns: undefined
                            },
+"payroll_set_receipt":
+{ Args: { "p_receipt": string,"p_run": string }; Returns: undefined
+                           },
 "payroll_sync_extras":
 { Args: { "p_run": string }; Returns: undefined
+                           },
+"payroll_unrelease_payslips":
+{ Args: { "p_run": string }; Returns: undefined
+                           },
+"payroll_variance":
+{ Args: { "p_run": string }; Returns: {
+              "employee_no": string,"employment_id": string,"epf": number,"gross": number,"name": string,"net": number,"note": string,"pcb": number,"prev_epf": number,"prev_gross": number,"prev_net": number,"prev_pcb": number,"status": string
+            }[]
                            },
 "payslip_is_mine":
 { Args: { "p_payslip": string }; Returns: boolean
@@ -2782,6 +2899,14 @@ isOneToOne: false
                            },
 "payslip_ytd":
 { Args: { "p_payslip": string }; Returns: Json
+                           },
+"pcb_ii_data":
+{ Args: { "p_employment": string,"p_year": number }; Returns: Json
+                           },
+"pcb_statement":
+{ Args: { "p_employment": string,"p_year": number }; Returns: {
+              "cp38": number,"cycle_no": number,"month": number,"pay_date": string,"pcb": number,"receipt_no": string,"zakat": number
+            }[]
                            },
 "person_age":
 { Args: { "p_on": string,"p_person": string }; Returns: number
@@ -2842,6 +2967,9 @@ isOneToOne: false
                            },
 "revoke_company_access":
 { Args: { "p_grant": string }; Returns: undefined
+                           },
+"round5_odd":
+{ Args: { "p": number }; Returns: number
                            },
 "sa_access_grants":
 { Args: Record<PropertyKey, never>; Returns: {
@@ -2912,6 +3040,12 @@ isOneToOne: false
 "seed_company_defaults":
 { Args: { "p_company": string }; Returns: undefined
                            },
+"seed_pay_catalog":
+{ Args: { "p_company": string }; Returns: undefined
+                           },
+"sen":
+{ Args: { "p": number }; Returns: string
+                           },
 "set_attendance_integration":
 { Args: { "p_active"?: boolean,"p_api_url": string,"p_company": string,"p_key": string,"p_minutes"?: number,"p_secret": string }; Returns: undefined
                            },
@@ -2954,11 +3088,20 @@ isOneToOne: false
 "stat_epf":
 { Args: { "p_age": number,"p_date": string,"p_employer_override"?: number,"p_wage": number }; Returns: Record<string, unknown>
                            },
+"stat_epf2":
+{ Args: { "p_age": number,"p_category": string,"p_date": string,"p_employee_rate": number,"p_employer_override": number,"p_wage": number }; Returns: Record<string, unknown>
+                           },
 "stat_params":
 { Args: { "p_code": string,"p_date": string }; Returns: Json
                            },
 "stat_pcb":
 { Args: { "p_children": number,"p_date": string,"p_epf": number,"p_gross": number,"p_married": boolean,"p_month": number,"p_spouse_working": boolean,"p_ytd_epf": number,"p_ytd_gross": number,"p_ytd_pcb": number }; Returns: number
+                           },
+"stat_pcb_additional":
+{ Args: { "p_add_epf": number,"p_add_gross": number,"p_child_units": number,"p_date": string,"p_extra_relief": number,"p_lp": number,"p_married": boolean,"p_month": number,"p_reg_epf": number,"p_reg_gross": number,"p_resident": boolean,"p_spouse_working": boolean,"p_ytd_epf": number,"p_ytd_gross": number }; Returns: number
+                           },
+"stat_pcb2":
+{ Args: { "p_child_units": number,"p_date": string,"p_epf": number,"p_extra_relief": number,"p_gross": number,"p_lp_now": number,"p_lp_ytd": number,"p_married": boolean,"p_month": number,"p_resident": boolean,"p_spouse_working": boolean,"p_ytd_epf": number,"p_ytd_gross": number,"p_ytd_pcb": number,"p_zakat_now": number,"p_zakat_ytd": number }; Returns: number
                            },
 "stat_socso_eis":
 { Args: { "p_age": number,"p_code": string,"p_date": string,"p_wage": number }; Returns: Record<string, unknown>
@@ -3071,8 +3214,13 @@ isOneToOne: false
               "approval_request_id": string | null,
 "company_id": string,
 "created_at": string,
+"cycle_no": number,
 "id": string,
+"kind": string,
+"label": string | null,
 "pay_date": string | null,
+"payslip_release_at": string | null,
+"pcb_receipt_no": string | null,
 "period_month": number,
 "period_year": number,
 "prepared_by": string | null,

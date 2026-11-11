@@ -99,13 +99,13 @@ select name, note from payroll_differences(:'run');
 
 -- (Keterlihatan slip mengikut RLS diuji pada Supabase tempatan melalui e2e gaji.cjs — stub tidak menguatkuasakan RLS.)
 
-\echo '=== G4: hantar → Kewangan → CEO lulus ==='
+\echo '=== G4: hantar → CEO → Kewangan lulus ==='
 set test.uid='00000000-0000-0000-0000-00000000a002';
 select (submit_payroll_run(:'run')).status;
-set test.uid='00000000-0000-0000-0000-00000000a005';
-select approval_act((select t.id from approval_tasks t join payroll_runs r on r.approval_request_id = t.request_id where r.id = :'run' and t.status = 'pending'), 'approve', null) is not null as kewangan_lulus;
 set test.uid='00000000-0000-0000-0000-00000000a001';
 select approval_act((select t.id from approval_tasks t join payroll_runs r on r.approval_request_id = t.request_id where r.id = :'run' and t.status = 'pending'), 'approve', null) is not null as ceo_lulus;
+set test.uid='00000000-0000-0000-0000-00000000a005';
+select approval_act((select t.id from approval_tasks t join payroll_runs r on r.approval_request_id = t.request_id where r.id = :'run' and t.status = 'pending'), 'approve', null) is not null as kewangan_lulus;
 select status from payroll_runs where id = :'run';
 \set ON_ERROR_STOP 0
 set test.uid='00000000-0000-0000-0000-00000000a002';

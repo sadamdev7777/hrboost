@@ -9,7 +9,16 @@ import { tarikh } from "@/lib/format";
 const rm = (n: number) => n.toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const sorokIC = (ic: string | null) => (ic ? `••••••-••-${ic.replace(/\D/g, "").slice(-4)}` : "-");
 
-const LABEL_POTONGAN: Record<string, string> = { EPF: tr("KWSP (pekerja)"), SOCSO: tr("PERKESO (pekerja)"), EIS: tr("SIP / EIS (pekerja)"), PCB: tr("PCB / MTD"), UNPAID: tr("Cuti tanpa gaji") };
+const LABEL_POTONGAN: Record<string, string> = {
+  EPF: tr("KWSP (pekerja)"),
+  SOCSO: tr("PERKESO (pekerja)"),
+  EIS: tr("SIP / EIS (pekerja)"),
+  SKBBK: tr("Lindung 24 Jam (SKBBK)"),
+  PCB: tr("PCB / MTD"),
+  CP38: tr("CP38 (arahan LHDN)"),
+  ZAKAT: tr("Zakat"),
+  UNPAID: tr("Cuti tanpa gaji"),
+};
 const LABEL_MAJIKAN: Record<string, string> = { EPF_ER: tr("KWSP"), SOCSO_ER: tr("PERKESO"), EIS_ER: tr("SIP / EIS"), HRDF: "HRDF" };
 
 /** Slip gaji A4 (rujukan reka bentuk: design/SlipGaji.dc.html). Dicetak sebagai PDF melalui pelayar. */
@@ -17,6 +26,7 @@ export function SlipGaji({ s }: { s: Slip }) {
   const earn = s.lines.filter((l) => l.kind === "earning");
   const ded = s.lines.filter((l) => l.kind === "deduction");
   const er = s.lines.filter((l) => l.kind === "employer");
+  const bik = s.lines.filter((l) => l.kind === "benefit");
   const jumlahEarn = earn.reduce((a, l) => a + l.amount, 0);
   const jumlahDed = ded.reduce((a, l) => a + l.amount, 0);
   const ada = (code: string) => s.lines.some((l) => l.code === code);
@@ -37,6 +47,7 @@ export function SlipGaji({ s }: { s: Slip }) {
           <span className="font-bold">
             {BULAN_PENUH[s.month - 1]} {s.year}
           </span>
+          {s.label && <span className="font-bold text-primary">{s.label}</span>}
           {s.payDate && <span className="text-muted">{tr("Dibayar {0} {1}", tarikh(s.payDate), s.payDate.slice(0, 4))}</span>}
         </div>
       </header>
@@ -64,22 +75,33 @@ export function SlipGaji({ s }: { s: Slip }) {
         <b className="text-[22px] font-extrabold">{tr("RM {0}", rm(s.net))}</b>
       </section>
 
+      {bik.length > 0 && (
+        <section>
+          <Jadual tajuk={tr("MANFAAT BERUPA BARANGAN (BIK) — BERCUKAI, TIDAK DIBAYAR TUNAI")} baris={bik.map((l) => [l.description, rm(l.amount)])} />
+        </section>
+      )}
+
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Jadual tajuk={tr("CARUMAN MAJIKAN")} baris={er.map((l) => [LABEL_MAJIKAN[l.code] ?? l.description, rm(l.amount)])} />
-        <Jadual
-          tajuk={tr("TERKUMPUL {0} ({1}–{2})", s.year, BULAN_RINGKAS[0].toUpperCase(), BULAN_RINGKAS[s.month - 1].toUpperCase())}
-          baris={[
-            [tr("Pendapatan kasar"), rm(s.ytd.gross)],
-            [tr("KWSP pekerja"), rm(s.ytd.epf)],
-            ["PCB", rm(s.ytd.pcb)],
-            ...(s.alBalance !== null ? [[tr("Baki cuti tahunan"), tr("{0} hari", s.alBalance)] as [string, string]] : []),
-          ]}
-        />
+        {s.options.ytd && (
+          <Jadual
+            tajuk={tr("TERKUMPUL {0} ({1}–{2})", s.year, BULAN_RINGKAS[0].toUpperCase(), BULAN_RINGKAS[s.month - 1].toUpperCase())}
+            baris={[
+              [tr("Pendapatan kasar"), rm(s.ytd.gross)],
+              [tr("KWSP pekerja"), rm(s.ytd.epf)],
+              ["PCB", rm(s.ytd.pcb)],
+            ]}
+          />
+        )}
+        {s.options.leave_summary && s.cuti.length > 0 && (
+          <Jadual tajuk={tr("BAKI CUTI (HARI)")} baris={s.cuti.map((c) => [c.name, String(c.available)])} kanan={tr("Hari")} />
+        )}
       </section>
 
       <footer className="flex flex-col gap-1 border-t border-line-soft pt-3 text-[11px] text-muted">
         {ada("CLAIM") && <span>{tr("* Bayaran balik tuntutan tidak dikenakan KWSP, PERKESO atau cukai.")}</span>}
-        <span>{tr("Slip ini dijana oleh komputer. Tandatangan tidak diperlukan.")}</span>
+        {s.lines.some((l) => l.code === "ARREARS") && <span>{tr("Tunggakan gaji: perbezaan gaji bagi bulan terdahulu akibat kenaikan gaji berkuat kuasa ke belakang.")}</span>}
+        <span>{s.options.disclaimer || tr("Slip ini dijana oleh komputer. Tandatangan tidak diperlukan.")}</span>
         <div className="flex justify-between">
           <span className="font-bold">{tr("Sulit — untuk penerima sahaja.")}</span>
           <span>{tr("Rujukan slip {0}", rujukan)}</span>
@@ -98,13 +120,13 @@ function Row({ k, v }: { k: string; v: string }) {
   );
 }
 
-function Jadual({ tajuk, baris, jumlah }: { tajuk: string; baris: [string, string][]; jumlah?: [string, string] }) {
+function Jadual({ tajuk, baris, jumlah, kanan = "RM" }: { tajuk: string; baris: [string, string][]; jumlah?: [string, string]; kanan?: string }) {
   return (
     <table className="w-full border-collapse">
       <thead>
         <tr className="border-b border-ink text-left text-[11px] tracking-[0.04em] text-[#4A5A57]">
           <th className="py-1 font-bold">{tajuk}</th>
-          <th className="py-1 text-right font-bold">RM</th>
+          <th className="py-1 text-right font-bold">{kanan}</th>
         </tr>
       </thead>
       <tbody>

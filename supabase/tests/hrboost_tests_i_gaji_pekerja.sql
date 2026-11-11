@@ -41,8 +41,8 @@ select count(*) as sebelum from employment_compensation where employment_id = '0
 select hr_set_pay('00000000-0000-0000-0000-0000000000e4', '{"BASIC": 3300}', '2026-07-01');
 select count(*) = :sebelum as tiada_perubahan from employment_compensation where employment_id = '00000000-0000-0000-0000-0000000000e4';
 
-\echo '=== G4: komponen baharu "Elaun Telefon" ==='
-select hr_add_pay_component('00000000-0000-0000-0000-0000000000c1', 'Elaun Telefon', 'earning', false, false, true) as kod \gset
+\echo '=== G4: komponen baharu "Elaun Komunikasi" ==='
+select hr_add_pay_component('00000000-0000-0000-0000-0000000000c1', 'Elaun Komunikasi', 'earning', false, false, true) as kod \gset
 select :'kod' as kod;
 select hr_set_pay('00000000-0000-0000-0000-0000000000e4', jsonb_build_object(:'kod', 50), '2026-08-01');
 select (hr_pay_table('00000000-0000-0000-0000-0000000000c1', '2026-08-15')->'rows'->1->'items') as ogos;
@@ -61,7 +61,7 @@ select hr_set_pay('00000000-0000-0000-0000-0000000000e4', '{"BASIC": 0}', '2026-
 select hr_set_pay('00000000-0000-0000-0000-0000000000e4', '{"COMMISSION": 500}', '2026-09-01');
 select hr_set_pay('00000000-0000-0000-0000-0000000000e4', '{"BASIC": -1}', '2026-09-01');
 select hr_set_pay('00000000-0000-0000-0000-0000000000e4', '{"BASIC": 3000}', '2026-01-01');
-select hr_add_pay_component('00000000-0000-0000-0000-0000000000c1', 'Elaun Telefon', 'earning');
+select hr_add_pay_component('00000000-0000-0000-0000-0000000000c1', 'Elaun Komunikasi', 'earning');
 \echo '--- HR MTB tidak boleh lihat / ubah gaji DOIT'
 select hr_pay_table('00000000-0000-0000-0000-0000000000c2');
 select hr_pay_preview('00000000-0000-0000-0000-0000000000f5', '{"BASIC": 9999}');
