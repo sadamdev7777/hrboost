@@ -82,12 +82,11 @@ function Kelulusan({ tabAwal }: { tabAwal: "pending" | "syarikat" }) {
     setBusy(null);
     setRejecting(null);
     if (err) setError(mesejRalat(err.message, err.code));
-    else {
-      beritahu(action === "approve" ? tr("Diluluskan.") : tr("Ditolak. Pemohon dimaklumkan."));
-      if (action === "approve") await tawarLulusBerturut(taskId, me.personId);
-    }
+    else beritahu(action === "approve" ? tr("Diluluskan.") : tr("Ditolak. Pemohon dimaklumkan."));
     if (pilih === taskId) setPilih(null);
     tasks.reload();
+    // Muat semula senarai dahulu (tugasan yang diluluskan hilang serta-merta), kemudian tawarkan peringkat seterusnya
+    if (!err && action === "approve" && (await tawarLulusBerturut(taskId, me.personId)) > 0) tasks.reload();
   }
 
   // Pintasan papan kekunci (desktop): J/K atau ↓/↑ pilih, A lulus, X tanda

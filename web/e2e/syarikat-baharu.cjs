@@ -85,6 +85,7 @@ const expect = (ok, msg) => { if (!ok) throw new Error('SEMAKAN GAGAL: ' + msg);
     await b.click();
     await p.click('[role=dialog] button:has-text("Tetapkan ketua")');
     await p.waitForSelector('[role=dialog]', { state: 'detached' });
+    await p.waitForLoadState('networkidle');  // senarai jabatan dimuat semula selepas ketua ditetapkan
   }
   await p.click('button:has-text("Simpan & seterusnya")');
   await p.waitForURL('**/mula/peranan');

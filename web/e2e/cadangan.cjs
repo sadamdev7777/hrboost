@@ -31,7 +31,7 @@ async function masuk(b, email, vp = { width: 1440, height: 900 }) {
   return { ctx, p };
 }
 const sahkanDialog = async (p, ok) => {
-  await p.locator(V(`[role=dialog] button:has-text("${ok}")`)).last().click();
+  await p.locator(V(`[role=alertdialog] button:has-text("${ok}")`)).last().click();
 };
 
 (async () => {

@@ -78,8 +78,8 @@ function Kandungan() {
     const { error } = await getSupabase().rpc("approval_act", { p_task: taskId, p_action: "approve", p_via: "web" });
     setSibuk(null);
     if (error) setRalat(mesejRalat(error.message, error.code));
-    else await tawarLulusBerturut(taskId, me.personId);
     d.reload();
+    if (!error && (await tawarLulusBerturut(taskId, me.personId)) > 0) d.reload();
   }
 
   const lebar = useSkrinLebar();
