@@ -141,15 +141,15 @@ function Borang({ cid, awal, item, reload }: { cid: string; awal: TetapanGaji; i
             </Kad>
 
             <Kad tajuk={tr("ASAS PENGIRAAN")} nota={tr("Menentukan kadar sehari untuk prorata, cuti tanpa gaji dan kerja lebih masa.")}>
-              <PilihAsas label={tr("Prorata (pekerja mula / berhenti pertengahan bulan)")} v={f.prorate_basis} onChange={(v) => set("prorate_basis", v)} />
-              <PilihAsas label={tr("Potongan cuti tanpa gaji")} v={f.unpaid_basis} onChange={(v) => set("unpaid_basis", v)} />
+              <PilihAsas label={tr("Prorata (pekerja mula / berhenti pertengahan bulan)")} v={f.prorate_basis} onChange={(v) => set("prorate_basis", v)} hari={f.fixed_days} setHari={(n) => set("fixed_days", n)} />
+              <PilihAsas label={tr("Potongan cuti tanpa gaji")} v={f.unpaid_basis} onChange={(v) => set("unpaid_basis", v)} hari={f.fixed_days} setHari={(n) => set("fixed_days", n)} />
               <PilihItem
                 label={tr("Item dalam asas potongan cuti tanpa gaji (selain gaji pokok)")}
                 item={pendapatan}
                 pilih={f.unpaid_items}
                 onChange={(v) => set("unpaid_items", v)}
               />
-              <PilihAsas label={tr("Kadar kerja lebih masa")} v={f.ot_basis} onChange={(v) => set("ot_basis", v)} />
+              <PilihAsas label={tr("Kadar kerja lebih masa")} v={f.ot_basis} onChange={(v) => set("ot_basis", v)} hari={f.fixed_days} setHari={(n) => set("fixed_days", n)} />
               <PilihItem label={tr("Item dalam asas kerja lebih masa (selain gaji pokok)")} item={pendapatan} pilih={f.ot_items} onChange={(v) => set("ot_items", v)} />
               <Grid>
                 <MedanBorang label={tr("Jam bekerja sehari")} nota={tr("Kadar sejam = kadar sehari ÷ jam sehari")}>
@@ -249,18 +249,29 @@ function BarisSuis({ label, nota, on, onChange }: { label: string; nota?: string
   );
 }
 
-function PilihAsas({ label, v, onChange }: { label: string; v: Asas; onChange: (v: Asas) => void }) {
+function PilihAsas({ label, v, onChange, hari, setHari }: { label: string; v: Asas; onChange: (v: Asas) => void; hari: number; setHari: (n: number) => void }) {
   return (
     <div className="flex flex-col gap-1.5" role="group" aria-label={label}>
       <span className="text-[13px] font-bold text-[#4A5A57]">{label}</span>
       <div className="flex flex-wrap gap-2">
-        {(Object.keys(LABEL_ASAS) as Asas[]).map((a) => (
+        {(Object.keys(LABEL_ASAS) as Asas[]).filter((a) => a !== "fixed26" || v === "fixed26").map((a) => (
           <Cip key={a} on={v === a} onClick={() => onChange(a)}>
             {LABEL_ASAS[a]}
           </Cip>
         ))}
       </div>
-      <span className="text-xs text-muted">{tr("Contoh (Februari): {0}", contohAsas(v))}</span>
+      {v === "fixed" && (
+        <label className="flex items-center gap-2 text-[13px] font-bold text-[#4A5A57]">
+          {tr("Bilangan hari tetap")}
+          <input
+            className="h-10 w-20 rounded-[10px] border border-[#D5DEDC] bg-surface px-2.5 text-sm font-semibold"
+            inputMode="numeric"
+            value={String(hari)}
+            onChange={(e) => setHari(Math.min(31, Math.max(20, Number(e.target.value.replace(/\D/g, "")) || 26)))}
+          />
+        </label>
+      )}
+      <span className="text-xs text-muted">{tr("Contoh (Februari): {0}", contohAsas(v, 3000, hari))}</span>
     </div>
   );
 }

@@ -7,7 +7,7 @@ import { must } from "./useData";
 // ---------------------------------------------------------------------
 //  Tetapan Gaji syarikat
 // ---------------------------------------------------------------------
-export type Asas = "calendar" | "working" | "fixed26";
+export type Asas = "calendar" | "working" | "fixed26" | "fixed";
 export type PilihanSlip = { leave_summary: boolean; ytd: boolean; disclaimer: string | null; auto_release: boolean };
 export type TetapanGaji = {
   reg_no: string | null;
@@ -28,6 +28,8 @@ export type TetapanGaji = {
   bank_batch_id: string | null;
   payday: number;
   hours_per_day: number;
+  /** Bilangan hari bagi asas "fixed" (cth. 31) */
+  fixed_days: number;
   prorate_basis: Asas;
   unpaid_basis: Asas;
   ot_basis: Asas;
@@ -39,7 +41,7 @@ export type TetapanGaji = {
 };
 
 const LAJUR_TETAPAN =
-  "reg_no, lhdn_employer_no, lhdn_c_no, epf_employer_no, socso_employer_no, zakat_no, hrdf_registered, signatory_name, signatory_ic, signatory_position, signatory_email, signatory_phone, company_bank_name, company_bank_account, bank_corporate_id, bank_batch_id, payday, hours_per_day, prorate_basis, unpaid_basis, ot_basis, unpaid_items, ot_items, skbbk_default, payslip_options, gl_accounts";
+  "reg_no, lhdn_employer_no, lhdn_c_no, epf_employer_no, socso_employer_no, zakat_no, hrdf_registered, signatory_name, signatory_ic, signatory_position, signatory_email, signatory_phone, company_bank_name, company_bank_account, bank_corporate_id, bank_batch_id, payday, hours_per_day, fixed_days, prorate_basis, unpaid_basis, ot_basis, unpaid_items, ot_items, skbbk_default, payslip_options, gl_accounts";
 
 export async function getTetapanGaji(companyId: string): Promise<TetapanGaji> {
   const r = must(await getSupabase().from("companies").select(LAJUR_TETAPAN).eq("id", companyId).single()) as unknown as TetapanGaji;
@@ -59,11 +61,12 @@ export const LABEL_ASAS: Record<Asas, string> = {
   calendar: tr("Hari kalendar"),
   working: tr("Hari bekerja"),
   fixed26: tr("Tetap 26 hari"),
+  fixed: tr("Tetap (pilih bilangan hari)"),
 };
 
 /** Contoh kiraan untuk setiap asas (Februari 2027: 28 hari kalendar, 20 hari bekerja). */
-export function contohAsas(asas: Asas, gaji = 3000): string {
-  const pembahagi = asas === "calendar" ? 28 : asas === "working" ? 20 : 26;
+export function contohAsas(asas: Asas, gaji = 3000, hariTetap = 26): string {
+  const pembahagi = asas === "calendar" ? 28 : asas === "working" ? 20 : asas === "fixed" ? hariTetap : 26;
   return tr("RM {0} ÷ {1} = RM {2} sehari", gaji.toLocaleString("en-MY"), pembahagi, (gaji / pembahagi).toFixed(2));
 }
 

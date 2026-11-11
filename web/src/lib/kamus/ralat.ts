@@ -382,4 +382,6 @@ export const RALAT: Record<string, string> = {
  "PERKESO majikan": "Employer SOCSO",
  "SIP majikan": "Employer EIS",
  "Levi HRD Corp": "HRD Corp levy",
+ "Potongan pembaikan": "Repair deduction",
+ "Elaun KPI latihan industri": "Internship KPI allowance",
 };
