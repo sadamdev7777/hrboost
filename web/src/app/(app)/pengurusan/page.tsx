@@ -111,7 +111,7 @@ function Kandungan() {
       <header className="flex items-start justify-between gap-3 px-4 pt-5 pb-1 lg:px-0 lg:pt-7">
         <div className="flex flex-col gap-0.5">
           <span className="text-[13px] text-muted">{hariTarikh(hariIni)}</span>
-          <h1 className="m-0 text-xl font-extrabold lg:text-2xl">
+          <h1 className="m-0 text-lg leading-tight font-extrabold lg:text-2xl">
             {ucapan()} {me.name}
           </h1>
         </div>
@@ -126,6 +126,13 @@ function Kandungan() {
           )}
           <ButangBantuan id="papan" />
           <Loceng />
+          {!lebar && hasRole(me, ["hr", "admin"]) && (
+            <Link href="/pengurusan/pekerja/baru" aria-label={tr("Tambah pekerja")} className="flex size-10 items-center justify-center rounded-full bg-primary text-white!">
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+            </Link>
+          )}
         </span>
       </header>
       <main className="flex grow flex-col gap-4 px-4 pt-2 pb-5 lg:px-0">
@@ -135,7 +142,7 @@ function Kandungan() {
         {d.loading && !x && <Loading />}
         {x && a && t && (
           <>
-            <div className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-3 lg:overflow-visible lg:px-0 lg:pb-0">
+            <div className="grid grid-cols-2 gap-2 lg:grid-cols-4 lg:gap-3">
               <Kad label={tr("Pekerja aktif")} nilai={String(a.headcount)} href="/pengurusan/pekerja" />
               {t.attendance_connected ? (
                 <Kad
@@ -235,7 +242,7 @@ function Kandungan() {
                       key={m.kind + m.employment_id + m.expiry}
                       tag={TAMAT[m.kind]}
                       tone={m.days_left <= 7 ? "danger" : "warning"}
-                      teks={`${m.text} (${m.days_left < 0 ? tr("lewat {0} hari", -m.days_left) : m.days_left === 0 ? tr("hari ini") : tr("{0} hari lagi", m.days_left)})`}
+                      teks={`${trRalat(m.text).replace(/\d{2}\/\d{2}\/\d{4}/, tarikh(m.expiry))} (${m.days_left < 0 ? tr("lewat {0} hari", -m.days_left) : m.days_left === 0 ? tr("hari ini") : tr("{0} hari lagi", m.days_left)})`}
                       href={`/pengurusan/pekerja/${m.employment_id}`}
                       aksi={tr("Profil")}
                     />
@@ -245,7 +252,7 @@ function Kandungan() {
                       key={i}
                       tag={PERHATIAN[p.kind].tag}
                       tone={PERHATIAN[p.kind].tone}
-                      teks={p.text}
+                      teks={trRalat(p.text)}
                       href={p.request_id ? `/permohonan/${p.request_id}` : `/pengurusan/pekerja/${p.employment_id}`}
                       aksi={PERHATIAN[p.kind].aksi}
                     />
@@ -311,17 +318,6 @@ function Kandungan() {
           </>
         )}
       </main>
-      {!lebar && hasRole(me, ["hr", "admin"]) && (
-        <Link
-          href="/pengurusan/pekerja/baru"
-          aria-label={tr("Tambah pekerja")}
-          className="fixed right-4 bottom-[92px] z-20 flex size-14 items-center justify-center rounded-full bg-primary text-white! shadow-lg"
-        >
-          <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-        </Link>
-      )}
       <TabNav />
     </Screen>
   );
@@ -336,7 +332,7 @@ function Kad({ label, nilai, kecil, tone, href }: { label: string; nilai: string
       {kecil && <span className={`text-xs font-semibold ${warna}`}>{kecil}</span>}
     </>
   );
-  const cls = "flex min-h-[76px] min-w-[148px] shrink-0 snap-start flex-col gap-0.5 rounded-card bg-surface px-4 py-3 lg:min-h-[92px] lg:min-w-0 lg:gap-1 lg:px-5 lg:py-4";
+  const cls = "flex min-h-[76px] min-w-0 flex-col gap-0.5 rounded-card bg-surface px-3.5 py-3 lg:min-h-[92px] lg:gap-1 lg:px-5 lg:py-4";
   return href ? (
     <Link href={href} className={`${cls} text-ink! hover:bg-[#F7F9F8]`}>
       {isi}
@@ -356,14 +352,20 @@ function Panel({ tajuk, children }: { tajuk: string; children: ReactNode }) {
 }
 
 function Baris({ tag, tone, teks, href, aksi }: { tag: string; tone: "danger" | "warning" | "ai" | "primary"; teks: string; href: string; aksi: string }) {
+  // Seluruh baris boleh ditekan: label & teks disusun menegak supaya teks tidak terhimpit di telefon
   return (
-    <div className="flex min-h-14 items-center gap-3 py-2.5 text-sm">
-      <Tag tone={tone}>{tag}</Tag>
-      <span className="min-w-0 grow">{teks}</span>
-      <Link href={href} className="flex h-10 items-center rounded-full border border-line px-4 text-[13px] font-bold">
+    <Link href={href} className="flex min-h-14 items-center gap-3 py-2.5 text-sm text-ink! hover:bg-[#F7F9F8]">
+      <span className="flex min-w-0 grow flex-col items-start gap-1 lg:flex-row lg:items-center lg:gap-3">
+        <Tag tone={tone}>{tag}</Tag>
+        <span className="min-w-0 leading-snug">{teks}</span>
+      </span>
+      <span className="flex shrink-0 items-center gap-0.5 text-[13px] font-bold text-primary">
         {aksi}
-      </Link>
-    </div>
+        <span aria-hidden="true" className="text-lg leading-none">
+          ›
+        </span>
+      </span>
+    </Link>
   );
 }
 

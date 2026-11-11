@@ -72,7 +72,7 @@ export function HadPeranan({ roles, children, back = "/saya" }: { roles: Role[];
 }
 
 export const inputKecil =
-  "h-11 w-full rounded-[12px] border border-[#D5DEDC] bg-surface px-3 text-sm font-semibold text-ink outline-none focus:border-primary";
+  "h-11 w-full min-w-0 rounded-[12px] border border-[#D5DEDC] bg-surface px-3 text-sm font-semibold text-ink outline-none placeholder:font-normal placeholder:text-[#9AA8A5] focus:border-primary";
 
 export function MedanBorang({ label, children, nota }: { label: string; children: ReactNode; nota?: ReactNode }) {
   return (

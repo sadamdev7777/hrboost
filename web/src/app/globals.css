@@ -110,3 +110,16 @@ a:hover {
     text-align: left !important;
   }
 }
+
+/* iOS Safari: input tarikh mempunyai lebar minimum sendiri dan melimpah keluar daripada grid — paksa ikut lebar petak */
+input[type="date"],
+input[type="time"] {
+  min-width: 0;
+  max-width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+}
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+}

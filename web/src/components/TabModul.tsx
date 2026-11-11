@@ -3,6 +3,7 @@
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { hasRole, useMeContext } from "@/lib/me";
 import { useMod } from "@/lib/mod";
 
@@ -64,12 +65,32 @@ export function TabModul({ modul }: { modul: keyof typeof TAB_MODUL }) {
   const { mod } = useMod();
   const { state } = useMeContext();
   const me = state.status === "ready" ? state.me : null;
+  const ref = useRef<HTMLElement>(null);
+  const [lagi, setLagi] = useState(false);
+  // Tab terpotong di telefon: bayang di hujung menandakan boleh ditatal; tab aktif dibawa ke dalam paparan
+  const semak = useCallback(() => {
+    const n = ref.current;
+    if (n) setLagi(n.scrollWidth - n.scrollLeft - n.clientWidth > 4);
+  }, []);
+  useEffect(() => {
+    const n = ref.current;
+    if (!n) return;
+    n.querySelector<HTMLElement>("[aria-current=page]")?.scrollIntoView({ block: "nearest", inline: "center" });
+    semak();
+    window.addEventListener("resize", semak);
+    return () => window.removeEventListener("resize", semak);
+  }, [path, semak, me]);
   if (!me || (mod !== "hr" && !path.startsWith("/pengurusan"))) return null;
   const m = TAB_MODUL[modul];
   const tabs = (m.tabs as Tab[]).filter((t) => !t.roles || hasRole(me, t.roles as Parameters<typeof hasRole>[1]));
   if (tabs.length < 2) return null;
   return (
-    <nav aria-label={tr(m.label)} className="flex gap-0.5 overflow-x-auto border-b border-line-soft px-3 lg:px-0 print:hidden!">
+    <nav
+      ref={ref}
+      onScroll={semak}
+      aria-label={tr(m.label)}
+      className={`flex gap-0.5 overflow-x-auto border-b border-line-soft px-3 [scrollbar-width:none] lg:px-0 print:hidden! [&::-webkit-scrollbar]:hidden ${lagi ? "[mask-image:linear-gradient(to_right,#000_80%,transparent)]" : ""}`}
+    >
       {tabs.map((t) => {
         const on = path === t.href;
         return (

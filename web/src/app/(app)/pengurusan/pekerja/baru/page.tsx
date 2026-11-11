@@ -41,7 +41,8 @@ function Borang() {
   const [busy, setBusy] = useState(false);
   const [ralat, setRalat] = useState<string | null>(null);
   const set = <K extends keyof BorangPekerja>(k: K, v: BorangPekerja[K]) => setF({ ...f, [k]: v });
-  const deptId = f.departmentId || jab.data?.[0]?.id || "";
+  // Jabatan mesti dipilih sendiri (elak tersilap masuk jabatan pertama mengikut abjad); satu jabatan sahaja = terus dipilih
+  const deptId = f.departmentId || (jab.data?.length === 1 ? jab.data[0].id : "");
   const ketua = jab.data?.find((d) => d.id === deptId);
 
   async function simpan() {
@@ -49,6 +50,7 @@ function Borang() {
     const phone = telefonPenuh(f.phone);
     if (!f.fullName.trim()) return setRalat(tr("Sila isi nama penuh seperti dalam kad pengenalan."));
     if (!f.preferredName.trim()) return setRalat(tr("Sila isi nama panggilan."));
+    if (!deptId && (jab.data?.length ?? 0) > 0) return setRalat(tr("Sila pilih jabatan."));
     if (!phone) return setRalat(tr("Nombor WhatsApp tidak sah."));
     if (!/^\d{6}-?\d{2}-?\d{4}$/.test(f.ic.trim())) return setRalat(tr("No. kad pengenalan tidak sah (contoh: 981128-14-5521)."));
     if (f.basic && !(Number(f.basic) >= 0)) return setRalat(tr("Gaji pokok tidak sah."));
@@ -87,7 +89,7 @@ function Borang() {
         <MedanBorang label={tr("Nama panggilan")}>
           <input className={inputKecil} value={f.preferredName} onChange={(e) => set("preferredName", e.target.value)} placeholder={tr("Contoh: Nurin")} />
         </MedanBorang>
-        <div className="grid grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
           <MedanBorang label={tr("No. WhatsApp")}>
             <input className={inputKecil} type="tel" value={f.phone} onChange={(e) => set("phone", e.target.value)} placeholder={tr("01x-xxx xxxx")} />
           </MedanBorang>
@@ -97,9 +99,10 @@ function Borang() {
         </div>
 
         <Seksyen className="pt-1">{tr("PEKERJAAN DI {0}", emp.companyCode)}</Seksyen>
-        <div className="grid grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 [&_input]:min-w-0 [&_select]:min-w-0">
           <MedanBorang label={tr("Jabatan")}>
             <select className={inputKecil} value={deptId} onChange={(e) => set("departmentId", e.target.value)}>
+              {!deptId && <option value="">{tr("Pilih jabatan")}</option>}
               {(jab.data ?? []).map((d) => (
                 <option key={d.id} value={d.id}>
                   {d.name}
@@ -108,7 +111,7 @@ function Borang() {
             </select>
           </MedanBorang>
           <MedanBorang label={tr("Jawatan")}>
-            <input className={inputKecil} value={f.position} onChange={(e) => set("position", e.target.value)} placeholder={tr("Eksekutif")} />
+            <input className={inputKecil} value={f.position} onChange={(e) => set("position", e.target.value)} placeholder={tr("cth. Eksekutif Jualan")} />
           </MedanBorang>
           <MedanBorang label={tr("Tarikh mula")}>
             <input className={inputKecil} type="date" value={f.joinDate} onChange={(e) => set("joinDate", e.target.value)} />

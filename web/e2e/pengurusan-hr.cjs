@@ -64,7 +64,9 @@ async function login(browser, phone) {
   await p.fill('input[placeholder="Contoh: Nurin"]', 'Nurin');
   await p.fill('input[type=tel]', '0110000 0099');
   await p.fill('input[placeholder="981128-14-5521"]', '981128145521');
-  await p.fill('input[placeholder="Eksekutif"]', 'Eksekutif Tour');
+  await p.fill('input[placeholder="cth. Eksekutif Jualan"]', 'Eksekutif Tour');
+  // Jabatan mesti dipilih sendiri (tiada pilihan lalai)
+  await p.selectOption('main select >> nth=0', { index: 1 });
   await p.fill('input[placeholder="0.00"]', '2500');
   await p.screenshot({ path: `${shots}/d3-tambah.png` });
   await p.click('button:has-text("Simpan & jemput")');

@@ -33,7 +33,7 @@ const TAPIS: { id: Tapis; label: string }[] = [
   { id: "semua", label: tr("Semua") },
   { id: "aktif", label: tr("Aktif") },
   { id: "percubaan", label: tr("Percubaan") },
-  { id: "belum", label: tr("Belum aktif") },
+  { id: "belum", label: tr("Belum aktifkan akaun") },
 ];
 const AV = [
   "bg-[#E3F1EE] text-primary",
@@ -80,7 +80,7 @@ function Senarai() {
     )
       return false;
     if (jab && (p.department ?? "-") !== jab) return false;
-    if (tapis === "aktif") return p.activated && p.status === "active";
+    if (tapis === "aktif") return p.status === "active";
     if (tapis === "percubaan") return p.status === "probation";
     if (tapis === "belum") return !p.activated;
     return true;
@@ -92,19 +92,17 @@ function Senarai() {
     kumpulan.set(k, [...(kumpulan.get(k) ?? []), p]);
   }
 
+  const kiraTapis = (t: Tapis) =>
+    t === "semua" ? semua.length : t === "aktif" ? semua.filter((p) => p.status === "active").length : t === "percubaan" ? semua.filter((p) => p.status === "probation").length : semua.filter((p) => !p.activated).length;
+
   return (
     <Screen lebar="lebar">
       <PengepalaAkar
-        title={tr("Pekerja {0}", emp.companyCode)}
+        title={tr("Pekerja")}
         action={
           boleh && (
             <span className="flex items-center gap-2">
             <ButangBantuan id="pekerja" />
-            <Link
-              href="/pengurusan/tetapan/jabatan"
-              className="flex h-11 items-center rounded-full border border-line bg-surface px-4 text-sm font-bold text-primary!"
-            >
-              {tr("Jabatan")}</Link>
             <Link
               href="/pengurusan/pekerja/baru"
               aria-label={tr("Tambah pekerja")}
@@ -131,10 +129,10 @@ function Senarai() {
       <TabModul modul="pekerja" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         {boleh && <KadPanduan id="pekerja" />}
-        {list.data && semua.length > 0 && (
+        {lebar && list.data && semua.length > 0 && (
           <BarisStat>
             <KadStat label={tr("Jumlah pekerja")} nilai={semua.length} kecil={tr("{0} jabatan", senaraiJab.length)} onClick={() => setTapis("semua")} aktif={tapis === "semua"} />
-            <KadStat label={tr("Aktif")} nilai={semua.filter((p) => p.activated && p.status === "active").length} tone="success" onClick={() => setTapis("aktif")} aktif={tapis === "aktif"} />
+            <KadStat label={tr("Aktif bekerja")} nilai={semua.filter((p) => p.status === "active").length} tone="success" onClick={() => setTapis("aktif")} aktif={tapis === "aktif"} />
             <KadStat label={tr("Dalam percubaan")} nilai={semua.filter((p) => p.status === "probation").length} tone="warning" onClick={() => setTapis("percubaan")} aktif={tapis === "percubaan"} />
             <KadStat label={tr("Belum aktifkan akaun")} nilai={semua.filter((p) => !p.activated).length} tone={semua.some((p) => !p.activated) ? "danger" : undefined} onClick={() => setTapis("belum")} aktif={tapis === "belum"} />
           </BarisStat>
@@ -172,7 +170,7 @@ function Senarai() {
                 className={`h-9 shrink-0 rounded-full px-3.5 text-[13px] font-bold whitespace-nowrap ${tapis === t.id ? "bg-primary text-white" : "bg-surface text-[#4A5A57]"}`}
               >
                 {tr(t.label)}
-                {t.id === "semua" && list.data ? ` · ${semua.length}` : ""}
+                {list.data ? ` · ${kiraTapis(t.id)}` : ""}
               </button>
             ))}
           </div>
@@ -189,7 +187,7 @@ function Senarai() {
               </option>
             ))}
           </select>
-          {(tapis !== "semua" || jab) && (
+          {lebar && (tapis !== "semua" || jab) && (
             <button type="button" onClick={simpanPaparan} className="h-9 shrink-0 rounded-full px-2 text-[13px] font-bold whitespace-nowrap text-primary">
               {tr("+ Simpan paparan")}</button>
           )}

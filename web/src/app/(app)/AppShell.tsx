@@ -94,6 +94,13 @@ function Notis() {
   const cid = me?.active?.companyId;
   const admin = !!me?.roles.includes("admin");
   const [n, setN] = useState<{ notis: string | null; mula: boolean }>({ notis: null, mula: false });
+  // Banner persediaan boleh disembunyikan selama 7 hari (per pelayar)
+  const [sorok, setSorok] = useState(false);
+  useEffect(() => {
+    try {
+      setSorok(Number(localStorage.getItem("hrb_sorok_mula") ?? 0) > Date.now());
+    } catch {}
+  }, []);
   const path = usePathname();
   useEffect(() => {
     let batal = false;
@@ -118,9 +125,25 @@ function Notis() {
           {n.notis}
         </div>
       )}
-      {n.mula && !path.startsWith("/mula") && (
-        <Link href="/mula" className="block bg-[#E3F1EE] px-4 py-2.5 text-center text-[13px] font-bold text-primary!">
-          {tr("Persediaan syarikat belum selesai — teruskan")}</Link>
+      {n.mula && !sorok && !path.startsWith("/mula") && (
+        <div className="flex items-center bg-[#E3F1EE]">
+          <Link href="/mula" className="flex min-h-9 grow items-center justify-center px-3 py-1.5 text-center text-xs font-bold text-primary!">
+            {tr("Persediaan syarikat belum selesai — teruskan")}
+          </Link>
+          <button
+            type="button"
+            aria-label={tr("Sembunyikan selama 7 hari")}
+            onClick={() => {
+              try {
+                localStorage.setItem("hrb_sorok_mula", String(Date.now() + 7 * 864e5));
+              } catch {}
+              setSorok(true);
+            }}
+            className="flex size-9 shrink-0 items-center justify-center text-lg text-primary"
+          >
+            ×
+          </button>
+        </div>
       )}
     </>
   );

@@ -315,4 +315,13 @@ export const RALAT: Record<string, string> = {
   "Status perkahwinan tidak sah": "Invalid marital status",
   "No. kad pengenalan ini sudah digunakan oleh orang lain": "This IC number is already used by someone else",
   "Nombor WhatsApp ini sudah digunakan oleh orang lain": "This WhatsApp number is already used by someone else",
+  "Kontrak % tamat %": "%'s contract ends %",
+  "Permit kerja % tamat %": "%'s work permit expires %",
+  "Pasport % tamat %": "%'s passport expires %",
+  "Tempoh percubaan % tamat %": "%'s probation ends %",
+  "Pertukaran akaun bank % menunggu pengesahan": "%'s bank account change is awaiting confirmation",
+  "% lewat % kali bulan ini": "% was late % times this month",
+  "% tertangguh di %": "% overdue at %",
+  "% tertangguh": "% overdue",
+  "% (%) tamat %": "% (%) expires %",
 };
