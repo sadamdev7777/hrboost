@@ -118,6 +118,13 @@ export const IconChart = (p: P) => (
     <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
   </Svg>
 );
+export const IconTarget = (p: P) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <circle cx="12" cy="12" r="5" />
+    <circle cx="12" cy="12" r="1.5" />
+  </Svg>
+);
 export const IconUsers = (p: P) => (
   <Svg {...p}>
     <circle cx="9" cy="8" r="3.5" />

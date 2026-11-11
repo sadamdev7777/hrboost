@@ -338,6 +338,18 @@ npm --prefix web run lint
 npm --prefix web run build
 ```
 
+### Cadangan 5–17 (Disember 2026)
+- **Cuti ganti automatik** (Akta Kerja s.60D): `company_holidays_effective` — cuti umum pada hari rehat syarikat diganti hari bekerja berikutnya; diambil kira dalam kiraan hari cuti, gaji & kalendar. Senarai di Tetapan → Cuti umum.
+- **Prestasi halaman**: konteks pengguna dimuatkan dengan satu RPC (`my_context`) — sebelum ini 5 permintaan berturut setiap muat halaman. Indeks tambahan untuk kelulusan & gaji.
+- **Lulus berturut**: jika pelulus sama untuk peringkat seterusnya (cth. HR merangkap CEO), aplikasi menawarkan "Lulus juga" selepas meluluskan (tetap manual).
+- **Persediaan syarikat**: pengasas mengisi tarikh mula, jawatan & gaji pokok sendiri; pautan import data gaji terkumpul (YTD) apabila bertukar sistem.
+- **Slip gaji PDF** dalam pelayar + butang Kongsi (WhatsApp). Data gaji tidak dihantar ke pelayan.
+- **Pembantu AI** kini boleh menjawab soalan data (siapa bercuti, kelulusan menunggu, ringkasan HR/gaji, slip sendiri) melalui `agent_tool_call` — enjin alat yang sama dengan Sambungan AI (MCP).
+- **QuickBooks Online**: `qbo-oauth` + `accounting-sync`. Pemasangan: daftar aplikasi di developer.intuit.com, tetapkan rahsia `QBO_CLIENT_ID`, `QBO_CLIENT_SECRET`, `QBO_REDIRECT_URI` (= `https://<ref>.supabase.co/functions/v1/qbo-oauth`), `QBO_ENV`, `APP_URL`; jadualkan `accounting-sync` setiap 10 minit dengan pg_cron + pg_net (kunci service role dalam Vault). Belum diuji dengan akaun QuickBooks sebenar.
+- **Laporan bulanan CEO** melalui WhatsApp (1hb, 9:07 pagi) — suis & pratonton di Tetapan → Automasi.
+- **Penilaian prestasi & KPI**: HR → Prestasi (kitaran, KPI lalai, buka, pantau, muktamad); pekerja & ketua → Saya → Penilaian prestasi.
+- **Pemantauan ralat & sandaran**: lihat `docs/SANDARAN_DAN_PEMANTAUAN.md`.
+
 ## Bahasa (English / Bahasa Melayu)
 
 English ialah lalai; pengguna boleh menukar kepada Bahasa Melayu di **Saya → Bahasa** (disimpan dalam `persons.language` melalui `set_my_language`).

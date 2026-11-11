@@ -59,68 +59,64 @@ type Ctx = {
 const MeContext = createContext<Ctx | null>(null);
 const ACTIVE_KEY = "hrb_syarikat_aktif";
 
+type KonteksDb = {
+  person: { id: string; full_name: string; preferred_name: string | null; photo_path: string | null; email: string | null; language: string | null };
+  employments: {
+    id: string;
+    company_id: string;
+    company_code: string;
+    company_name: string;
+    logo_path: string | null;
+    employee_no: string;
+    department_id: string | null;
+    department_name: string | null;
+    position: string | null;
+    work_start: string;
+    work_end: string;
+    late_grace_minutes: number;
+  }[];
+  active_company: string | null;
+  roles: Role[];
+  heads: string[];
+  login: { has_password?: boolean; email?: string | null } | null;
+};
+
 async function loadMe(preferredCompany: string | null): Promise<State> {
   const sb = getSupabase();
   const { data: sess } = await sb.auth.getSession();
   const user = sess.session?.user;
   if (!user) return { status: "signed-out" };
 
-  const { data: person, error: pErr } = await sb
-    .from("persons")
-    .select("id, full_name, preferred_name, photo_path, email, language")
-    .eq("auth_user_id", user.id)
-    .maybeSingle();
-  if (pErr) return { status: "error", message: pErr.message };
-  if (!person) return { status: "no-person", userId: user.id, phone: user.phone ?? null };
+  // Satu panggilan: orang, pekerjaan, peranan, ketua jabatan & status log masuk (my_context)
+  const { data: ctxData, error: cErr } = await sb.rpc("my_context", preferredCompany ? { p_company: preferredCompany } : {});
+  if (cErr) return { status: "error", message: cErr.message };
+  const c = ctxData as unknown as KonteksDb | null;
+  if (!c) return { status: "no-person", userId: user.id, phone: user.phone ?? null };
+  const person = c.person;
   // Bahasa: pilihan pelayar ini didahulukan; jika belum dipilih, ikut pilihan yang disimpan pada akaun
   if (!bahasaDipilih() && (person.language === "ms" || person.language === "en") && person.language !== bahasa()) {
     tetapkanBahasa(person.language as "ms" | "en");
     return { status: "loading" };
   }
 
-  const loginP = sb.rpc("my_login_status");
-  const { data: emps, error: eErr } = await sb
-    .from("employments")
-    .select(
-      "id, company_id, employee_no, department_id, work_start, companies(code, name, logo_path, work_start, work_end, late_grace_minutes), departments(name), positions(title)",
-    )
-    .eq("person_id", person.id)
-    .in("status", ["probation", "active"])
-    .order("join_date");
-  if (eErr) return { status: "error", message: eErr.message };
-
-  const employments: Pekerjaan[] = (emps ?? [])
-    .filter((e) => e.companies) // syarikat dinyahaktif tidak kelihatan melalui RLS
-    .map((e) => ({
-      id: e.id,
-      companyId: e.company_id,
-      companyCode: e.companies!.code,
-      companyName: e.companies!.name,
-      logoPath: e.companies!.logo_path ?? null,
-      employeeNo: e.employee_no,
-      departmentId: e.department_id,
-      departmentName: e.departments?.name ?? null,
-      position: e.positions?.title ?? null,
-      workStart: (e.work_start ?? e.companies!.work_start).slice(0, 5),
-      workEnd: e.companies!.work_end.slice(0, 5),
-      graceMinutes: e.companies!.late_grace_minutes,
-    }));
-
-  const active = employments.find((e) => e.companyId === preferredCompany) ?? employments[0] ?? null;
-
-  let roles: Role[] = [];
-  let headOfDepartmentIds: string[] = [];
-  if (active) {
-    const [{ data: r }, { data: heads }] = await Promise.all([
-      sb.from("user_roles").select("role").eq("person_id", person.id).eq("company_id", active.companyId),
-      sb.from("departments").select("id").eq("company_id", active.companyId).eq("head_person_id", person.id),
-    ]);
-    roles = (r ?? []).map((x) => x.role);
-    headOfDepartmentIds = (heads ?? []).map((x) => x.id);
-  }
-
-  const { data: login } = await loginP;
-  const ls = (login ?? null) as { has_password?: boolean; email?: string | null } | null;
+  const employments: Pekerjaan[] = c.employments.map((e) => ({
+    id: e.id,
+    companyId: e.company_id,
+    companyCode: e.company_code,
+    companyName: e.company_name,
+    logoPath: e.logo_path ?? null,
+    employeeNo: e.employee_no,
+    departmentId: e.department_id,
+    departmentName: e.department_name ?? null,
+    position: e.position ?? null,
+    workStart: e.work_start,
+    workEnd: e.work_end,
+    graceMinutes: e.late_grace_minutes,
+  }));
+  const active = employments.find((e) => e.companyId === c.active_company) ?? null;
+  const roles = active ? c.roles : [];
+  const headOfDepartmentIds = active ? c.heads : [];
+  const ls = c.login;
 
   return {
     status: "ready",
@@ -156,7 +152,9 @@ export function MeProvider({ children }: { children: ReactNode }) {
       /* abaikan */
     }
     loadMe(preferred)
-      .then((s) => alive && setState(s))
+      .then((s) => {
+        if (alive) setState(s);
+      })
       .catch((e: unknown) => alive && setState({ status: "error", message: String(e) }));
     return () => {
       alive = false;

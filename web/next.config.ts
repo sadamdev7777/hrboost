@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
+  // Versi binaan untuk log ralat (Netlify menetapkan COMMIT_REF semasa binaan)
+  env: { NEXT_PUBLIC_RELEASE: (process.env.COMMIT_REF ?? "").slice(0, 7) },
   async headers() {
     return [
       {

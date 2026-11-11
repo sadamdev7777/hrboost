@@ -69,6 +69,34 @@ const ALAT: Anthropic.Beta.BetaTool[] = [
       additionalProperties: false,
     },
   },
+  // Alat data dikongsi dengan Sambungan AI (MCP) — agent_tool_call() menyemak peranan dalam pangkalan data
+  { name: "kelulusan_menunggu", description: "Permohonan yang menunggu kelulusan pengguna ini (pemohon, butiran, peringkat).", input_schema: { type: "object", properties: {}, additionalProperties: false } },
+  {
+    name: "siapa_bercuti",
+    description: "Kalendar cuti pasukan bagi julat tarikh (jabatan sendiri; seluruh syarikat bagi HR), termasuk cuti umum dan cuti ganti.",
+    input_schema: {
+      type: "object",
+      properties: { dari: { type: "string", description: "YYYY-MM-DD; kosong = hari ini" }, hingga: { type: "string", description: "YYYY-MM-DD; kosong = sama dengan dari" } },
+      required: ["dari", "hingga"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "cari_pekerja",
+    description: "HR/Kewangan/CEO/Pentadbir sahaja: cari pekerja ikut nama, no. pekerja, jabatan atau jawatan. Tiada IC, bank atau gaji.",
+    input_schema: { type: "object", properties: { carian: { type: "string" } }, required: ["carian"], additionalProperties: false },
+  },
+  { name: "ringkasan_hr", description: "HR/Kewangan/CEO/Pentadbir sahaja: bilangan pekerja, siapa bercuti hari ini, kelulusan tertangguh ikut jenis, tuntutan diluluskan belum dibayar.", input_schema: { type: "object", properties: {}, additionalProperties: false } },
+  {
+    name: "ringkasan_gaji",
+    description: "HR/Kewangan/CEO/Pentadbir sahaja: larian gaji bagi tahun/bulan dengan status dan jumlah syarikat (tiada gaji individu).",
+    input_schema: { type: "object", properties: { tahun: { type: "integer", description: "0 = semua / terkini" }, bulan: { type: "integer", description: "1-12; 0 = semua" } }, required: ["tahun", "bulan"], additionalProperties: false },
+  },
+  {
+    name: "slip_gaji_saya",
+    description: "Slip gaji pengguna ini yang telah dilepaskan: kasar, potongan, bersih dan butiran. Jangan dedahkan kepada orang lain.",
+    input_schema: { type: "object", properties: { tahun: { type: "integer", description: "0 = semua / terkini" }, bulan: { type: "integer", description: "1-12; 0 = semua" } }, required: ["tahun", "bulan"], additionalProperties: false },
+  },
 ];
 
 async function laksana(k: Konteks, nama: string, input: Record<string, unknown>): Promise<string> {
@@ -170,6 +198,25 @@ async function laksana(k: Konteks, nama: string, input: Record<string, unknown>)
       await sb.from("ai_action_log").insert({ conversation_id: k.conversationId, on_behalf_of: k.personId, action: "request_letter", payload: { jenis: input.jenis, tujuan: input.tujuan } });
       return `BERJAYA: permintaan dihantar kepada ${hr?.length ?? 0} pegawai HR.`;
     }
+    case "kelulusan_menunggu":
+    case "siapa_bercuti":
+    case "cari_pekerja":
+    case "ringkasan_hr":
+    case "ringkasan_gaji":
+    case "slip_gaji_saya": {
+      const peta: Record<string, [string, Record<string, unknown>]> = {
+        kelulusan_menunggu: ["list_pending_approvals", {}],
+        siapa_bercuti: ["who_is_on_leave", { from: input.dari || undefined, to: input.hingga || input.dari || undefined }],
+        cari_pekerja: ["search_employees", { query: input.carian }],
+        ringkasan_hr: ["hr_summary", {}],
+        ringkasan_gaji: ["payroll_summary", { year: input.tahun || undefined, month: input.bulan || undefined }],
+        slip_gaji_saya: ["get_my_payslips", { year: input.tahun || undefined, month: input.bulan || undefined }],
+      };
+      const [alat, args] = peta[nama];
+      const { data, error } = await sb.rpc("agent_tool_call", { p_person: k.personId, p_company: k.companyId, p_tool: alat, p_args: JSON.parse(JSON.stringify(args)) });
+      if (error) throw new Error(error.message);
+      return JSON.stringify(data).slice(0, 20000);
+    }
   }
   return "Alat tidak dikenali.";
 }
@@ -181,7 +228,7 @@ function sistem(k: Konteks): string {
     k.bahasa === "ms"
       ? "Jawab dalam bahasa Melayu rasmi (tiada bahasa pasar, tiada istilah Indonesia), ringkas dan mesra. Gunakan istilah: tuntutan, pekerja, pelulus, pengganti tugas, Kewangan."
       : "Reply in clear, friendly English, concisely. If the employee writes in Bahasa Melayu, reply in formal Bahasa Melayu instead. Data from tools may be in Bahasa Melayu: translate it in your reply.",
-    "Anda hanya boleh melihat data pekerja ini sendiri melalui alat yang disediakan. Jangan dedahkan atau meneka data pekerja lain.",
+    "Anda hanya boleh melihat data melalui alat yang disediakan: data pekerja ini sendiri, dan bagi HR/Kewangan/CEO/Pentadbir ringkasan syarikat (alat akan menolak jika pengguna tiada peranan itu). Jangan meneka data yang tiada dalam hasil alat. Gaji individu orang lain tidak boleh didedahkan.",
     "Untuk soalan polisi, gunakan cari_polisi dan tetapan_syarikat. Jangan meneka polisi: jika jawapan tiada dalam hasil alat, katakan anda tidak pasti, sarankan bertanya kepada HR, dan panggil catat_soalan_tidak_terjawab.",
     "Sebelum menghantar permohonan atau permintaan bagi pihak pekerja, nyatakan butirannya dan minta pengesahan. Hanya selepas pekerja bersetuju, panggil alat dengan sahkan=true.",
     k.channel === "whatsapp" ? "Mesej WhatsApp: elakkan jadual dan markdown; gunakan ayat pendek." : "Format ringkas; senarai pendek dibenarkan.",

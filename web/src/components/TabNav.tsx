@@ -5,7 +5,7 @@ import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { IconBell, IconCalendar, IconChat, IconCard, IconChart, IconCheckSquare, IconClock, IconDocument, IconGrid, IconHome, IconInbox, IconPlusCircle, IconOrg, IconReceipt, IconSettings, IconUser, IconUserPlus, IconUsers, IconWallet, IconSparkle, IconCake } from "./icons";
+import { IconBell, IconCalendar, IconChat, IconCard, IconChart, IconCheckSquare, IconClock, IconDocument, IconGrid, IconHome, IconInbox, IconPlusCircle, IconOrg, IconReceipt, IconSettings, IconUser, IconUserPlus, IconUsers, IconWallet, IconSparkle, IconCake, IconTarget } from "./icons";
 import { getBilanganTugasan } from "@/lib/data";
 import { useData } from "@/lib/useData";
 import { useMeContext } from "@/lib/me";
@@ -37,6 +37,7 @@ export const IKON: Record<IkonNav, (p: { size?: number }) => ReactNode> = {
   wallet: IconWallet,
   sparkle: IconSparkle,
   cake: IconCake,
+  target: IconTarget,
 };
 
 function Lencana({ n }: { n: number }) {

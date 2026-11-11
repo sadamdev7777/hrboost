@@ -4,6 +4,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { HosDialog, HosToast } from "@/components/Dialog";
 import { BahasaAwal, LangHtml } from "@/components/PilihBahasa";
+import { PelaporRalat } from "@/components/PelaporRalat";
 import { cookies } from "next/headers";
 import { Suspense, type ReactNode } from "react";
 
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <HosDialog />
         <HosToast />
         <LangHtml />
+        <PelaporRalat />
       </body>
     </html>
   );

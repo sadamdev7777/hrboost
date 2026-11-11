@@ -1,12 +1,14 @@
 "use client";
 
-import { tr } from "@/lib/i18n";
-import { useState } from "react";
+import { tr, trRalat } from "@/lib/i18n";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { sahkan } from "@/components/Dialog";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { namaJenisTuntutan } from "@/lib/claims";
-import { tarikh } from "@/lib/format";
+import { masaPanjang, tarikh } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
 import { HadPeranan, Seksyen, Tag, GrupLajur } from "@/components/Senarai";
 
@@ -93,9 +95,10 @@ function Akaun() {
                 ))}
               </select>
             </label>
-            {d.data.c.accounting_system === "quickbooks" && !sambung && (
-              <span className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] leading-normal text-warning">
-                {tr("Sambungan QuickBooks akan diaktifkan oleh Pentadbir Platform HRBoost setelah kunci aplikasi QuickBooks didaftarkan. Kunci tidak pernah dipaparkan di sini.")}</span>
+            {d.data.c.accounting_system === "quickbooks" && (
+              <Suspense fallback={null}>
+                <SambunganQbo cid={cid} onUbah={d.reload} />
+              </Suspense>
             )}
 
             <Seksyen className="pt-1">{tr("PADANAN AKAUN TUNTUTAN")}</Seksyen>
@@ -147,5 +150,139 @@ function Akaun() {
         </GrupLajur>
       </main>
     </Screen>
+  );
+}
+
+type StatusQbo = { connected: boolean; realm_id: string | null; connected_at: string | null; last_synced_at: string | null; last_error: string | null; pending: number; failed: number; synced: number };
+const MESEJ_QBO: Record<string, { t: string; ok: boolean }> = {
+  ok: { t: tr("QuickBooks berjaya disambungkan."), ok: true },
+  batal: { t: tr("Sambungan QuickBooks dibatalkan."), ok: false },
+  tamat: { t: tr("Pautan sambungan tamat tempoh. Sila cuba semula."), ok: false },
+  ralat: { t: tr("QuickBooks tidak dapat disambungkan. Sila cuba semula."), ok: false },
+};
+
+/** Sambungan QuickBooks Online: OAuth (qbo-oauth), status penyegerakan & "Segerak sekarang" (accounting-sync). */
+function SambunganQbo({ cid, onUbah }: { cid: string; onUbah: () => void }) {
+  const qbo = useSearchParams().get("qbo");
+  const st = useData(async () => must(await getSupabase().rpc("qbo_status", { p_company: cid })) as unknown as StatusQbo | null, [cid]);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [ralat, setRalat] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
+
+  async function panggil(fn: string, body: Record<string, unknown>) {
+    const { data, error } = await getSupabase().functions.invoke(fn, { body });
+    if (error) {
+      const b = await (error as { context?: Response }).context?.json?.().catch(() => null);
+      throw new Error(b?.error ?? error.message);
+    }
+    return data as Record<string, unknown>;
+  }
+  async function buat(k: string, f: () => Promise<void>) {
+    setBusy(k);
+    setRalat(null);
+    setInfo(null);
+    try {
+      await f();
+    } catch (e) {
+      setRalat(e instanceof Error ? trRalat(e.message) : tr("Ralat"));
+    }
+    setBusy(null);
+  }
+  const s = st.data;
+  const m = qbo ? MESEJ_QBO[qbo] : null;
+  return (
+    <div className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3">
+      {m && <span className={`rounded-[12px] px-3 py-2 text-[13px] font-semibold ${m.ok ? "bg-[#E3F1EE] text-primary" : "bg-warning-soft text-warning"}`}>{m.t}</span>}
+      {st.error && <ErrorBox message={st.error} />}
+      {s && !s.connected && (
+        <>
+          <span className="text-[13px] leading-snug text-muted">
+            {tr("Sambungkan akaun QuickBooks Online syarikat. Tuntutan yang diluluskan dihantar sebagai Bill dan gaji yang diluluskan sebagai Journal Entry secara automatik setiap 10 minit.")}
+          </span>
+          <button
+            type="button"
+            disabled={!!busy}
+            onClick={() =>
+              buat("sambung", async () => {
+                const r = await panggil("qbo-oauth", { company_id: cid });
+                window.location.href = String(r.url);
+              })
+            }
+            className="h-11 rounded-[12px] bg-primary text-sm font-extrabold text-white disabled:opacity-60"
+          >
+            {busy === "sambung" ? tr("Membuka QuickBooks…") : tr("Sambung QuickBooks")}
+          </button>
+        </>
+      )}
+      {s && s.connected && (
+        <>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            {[
+              [tr("Dihantar"), s.synced],
+              [tr("Dalam barisan"), s.pending],
+              [tr("Gagal"), s.failed],
+            ].map(([l, n]) => (
+              <span key={String(l)} className="flex flex-col rounded-[12px] bg-page py-2">
+                <b className="text-lg font-extrabold">{n}</b>
+                <span className="text-xs text-muted">{l}</span>
+              </span>
+            ))}
+          </div>
+          <span className="text-xs text-muted">
+            {tr("Syarikat QuickBooks {0}", s.realm_id ?? "-")}
+            {s.last_synced_at ? " · " + tr("terakhir disegerak {0}", masaPanjang(s.last_synced_at)) : ""}
+          </span>
+          {s.last_error && <span className="rounded-[12px] bg-danger-soft px-3 py-2 text-[13px] text-danger">{s.last_error}</span>}
+          {info && <span className="text-[13px] font-semibold text-success">{info}</span>}
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              disabled={!!busy}
+              onClick={() =>
+                buat("segerak", async () => {
+                  const r = await panggil("accounting-sync", { company_id: cid });
+                  setInfo(tr("{0} dihantar, {1} gagal.", Number(r.disegerak ?? 0), Number(r.gagal ?? 0)));
+                  st.reload();
+                })
+              }
+              className="h-10 rounded-full bg-primary px-4 text-[13px] font-bold text-white disabled:opacity-60"
+            >
+              {busy === "segerak" ? tr("Menyegerak…") : tr("Segerak sekarang")}
+            </button>
+            {s.failed > 0 && (
+              <button
+                type="button"
+                disabled={!!busy}
+                onClick={() =>
+                  buat("cuba", async () => {
+                    must(await getSupabase().rpc("accounting_retry", { p_company: cid }));
+                    st.reload();
+                  })
+                }
+                className="h-10 rounded-full border border-primary px-4 text-[13px] font-bold text-primary disabled:opacity-60"
+              >
+                {tr("Cuba semula yang gagal")}
+              </button>
+            )}
+            <button
+              type="button"
+              disabled={!!busy}
+              onClick={() =>
+                buat("putus", async () => {
+                  if (!(await sahkan({ tajuk: tr("Putuskan QuickBooks?"), mesej: tr("Tuntutan dan gaji tidak lagi dihantar ke QuickBooks sehingga disambung semula."), ok: tr("Putuskan"), bahaya: true }))) return;
+                  must(await getSupabase().rpc("qbo_disconnect", { p_company: cid }));
+                  st.reload();
+                  onUbah();
+                })
+              }
+              className="h-10 rounded-full px-3 text-[13px] font-bold text-danger disabled:opacity-60"
+            >
+              {tr("Putuskan")}
+            </button>
+          </div>
+        </>
+      )}
+      {ralat && <ErrorBox message={ralat} />}
+    </div>
   );
 }

@@ -63,9 +63,15 @@ Konsep utama:
 | `decide_company_access(grant, lulus, nota)` / `revoke_company_access(grant)` | superadmin / admin sasaran | |
 | `sa_company_overview()`, `sa_set_company_status()`, `sa_set_person_active()`, `sa_set_company_limits()` | superadmin | Agregat & kawalan |
 | `match_attendance_workno(employment, workno)` | HR | Padan workno CrossChex |
+| `my_context(company?)` | semua | Konteks pengguna (orang, pekerjaan, peranan, ketua, status log masuk) dalam satu panggilan — dimuatkan sekali setiap halaman |
+| `company_holidays(company, dari, hingga)` | ahli syarikat | Cuti umum + **cuti ganti automatik** (Akta Kerja s.60D: cuti pada hari rehat → hari bekerja berikutnya); `is_working_day` turut mengambil kiranya |
+| `hr_appraisal_cycle_save/open/close`, `hr_appraisal_cycles`, `hr_appraisal_list`, `my_appraisals`, `appraisal_detail`, `appraisal_set_items`, `appraisal_self_save`, `appraisal_manager_save`, `hr_appraisal_finalise` | HR / pekerja / ketua | Penilaian prestasi & KPI (skala 1–5, pemberat): kendiri → pelulus (pengurus/ketua) → HR muktamad. Markah pelulus disorok daripada pekerja sehingga muktamad |
+| `ceo_monthly_report_preview(company)`, `set_ceo_monthly_report(company, on)` | CEO / HR / Pentadbir | Laporan bulanan WhatsApp kepada CEO (agregat sahaja; pg_cron 1hb 9:07 pagi MYT) |
+| `qbo_connect_start`, `qbo_status`, `qbo_disconnect`, `accounting_retry` | Kewangan / Pentadbir | Sambungan QuickBooks Online (Tetapan → Integrasi Akaun) |
+| `log_client_error(...)` → `sa_client_errors(hari)` | semua → superadmin | Pemantauan ralat pelayar (tanpa perkhidmatan luar); `/admin/ralat` |
 
 ### Fungsi untuk Edge Function sahaja (service role)
-`ingest_punch`, `ingest_attendance`, `process_hr_events`, `approval_sla_tick`, `bump_usage`.
+`ingest_punch`, `ingest_attendance`, `process_hr_events`, `approval_sla_tick`, `bump_usage`, `agent_tool_call` (alat data dikongsi MCP & Pembantu AI), `integration_secret_set/get` (Vault), `qbo_connect_finish`, `accounting_queue_next/done`, `accounting_claim_bill`, `accounting_payroll_journal`, `ceo_monthly_report`.
 
 ## 4. Edge Functions & jadual (pg_cron)
 
@@ -80,8 +86,9 @@ Konsep utama:
 | `auth-sms-hook` | Auth hook | (Tidak digunakan lagi — log masuk kini e-mel sahaja) |
 | `ai-receipt`, `ai-ic` | HTTP | Baca resit / IC → isi borang; `bump_usage(company,'ai')` dahulu |
 | `payroll-calc` | HTTP | Kira gaji dari `statutory_rates` → `payslips` + `payslip_lines` |
-| `payslip-pdf` | selepas lulus | Jana PDF A4 (rujuk skrin SlipGaji) → Storage → WhatsApp |
-| `accounting-sync` | setiap 10 minit | `accounting_sync_queue` → QuickBooks (bill claim, jurnal gaji) |
+| (slip PDF) | dalam pelayar | Slip gaji PDF A4 dijana dalam pelayar (`web/src/lib/slipPdf.ts`, pdf-lib): "Muat turun PDF" & "Kongsi" (Web Share → WhatsApp). Lampiran automatik melalui WhatsApp menunggu API media Murpati |
+| `accounting-sync` | setiap 10 minit | `accounting_sync_queue` → QuickBooks (Bill tuntutan, Journal Entry gaji); cuba semula ≤ 5 kali |
+| `qbo-oauth` | HTTP | Sambung QuickBooks (OAuth 2.0); refresh token dalam Vault. Rahsia: `QBO_CLIENT_ID`, `QBO_CLIENT_SECRET`, `QBO_REDIRECT_URI`, `QBO_ENV` |
 
 Rahsia (CrossChex api_key/secret, QuickBooks, Murpati, AI) **hanya** dalam Supabase secrets / Vault. Tidak pernah dipaparkan semula di UI — HR hanya boleh "Tukar".
 

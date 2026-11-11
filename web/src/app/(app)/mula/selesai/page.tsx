@@ -77,7 +77,8 @@ function Selesai() {
             <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {[
                 [tr("Lengkapkan profil anda sendiri"), "/orientasi", tr("5 min")],
-                [tr("Tetapan gaji & no. majikan"), "/pengurusan/tetapan/syarikat", tr("Sebelum gaji pertama")],
+                [tr("Tetapan gaji & no. majikan"), "/pengurusan/gaji/tetapan", tr("Sebelum gaji pertama")],
+                [tr("Data gaji terkumpul tahun ini"), "/pengurusan/gaji/data-terkumpul", tr("Jika bertukar sistem")],
                 [tr("Sambungkan mesin kehadiran"), "/pengurusan/tetapan/kehadiran", tr("Pilihan")],
                 [tr("Semak cuti umum"), "/pengurusan/tetapan/cuti-umum", tr("Pilihan")],
               ].map(([t, h, n]) => (

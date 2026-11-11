@@ -53,7 +53,7 @@ export function useMod(): { mod: Mod; boleh: boolean; tukar: (m: Mod) => void } 
 
 export type IkonNav =
   | "home" | "plus" | "check" | "user" | "chart" | "users" | "card" | "settings" | "org" | "calendar" | "document" | "bell" | "chat"
-  | "clock" | "receipt" | "userplus" | "inbox" | "grid" | "wallet" | "sparkle" | "cake";
+  | "clock" | "receipt" | "userplus" | "inbox" | "grid" | "wallet" | "sparkle" | "cake" | "target";
 /** `padan`: awalan laluan lain yang turut menandakan item ini aktif (tab dalam modul). */
 export type ItemNav = { href: string; label: string; pendek?: string; ikon: IkonNav; roles?: string[]; padan?: string[] };
 export type KumpulanNav = { tajuk: string | null; items: ItemNav[] };
@@ -124,6 +124,7 @@ export const MENU_HR: KumpulanNav[] = [
     items: [
       { href: "/pengurusan/pekerja", label: tr("Pekerja"), ikon: "users", roles: HR_CEO, padan: ["/pengurusan/carta", "/pengurusan/tetapan/jabatan"] },
       { href: "/pengurusan/orientasi", label: tr("Orientasi"), ikon: "userplus", roles: HR_CEO },
+      { href: "/pengurusan/prestasi", label: tr("Prestasi"), ikon: "target", roles: HR_CEO },
     ],
   },
   {

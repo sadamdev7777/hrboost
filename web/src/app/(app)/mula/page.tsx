@@ -74,7 +74,8 @@ function Senarai() {
             <span className="pt-1 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("BOLEH DILAKUKAN KEMUDIAN")}</span>
             <div className="flex flex-col rounded-card bg-surface px-4 text-sm text-[#4A5A57] [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {[
-                [tr("No. majikan & tetapan gaji"), "/pengurusan/tetapan/syarikat"],
+                [tr("No. majikan & tetapan gaji"), "/pengurusan/gaji/tetapan"],
+                [tr("Import data gaji terkumpul tahun ini (jika bertukar sistem)"), "/pengurusan/gaji/data-terkumpul"],
                 [tr("Sambungkan mesin kehadiran"), "/pengurusan/tetapan/kehadiran"],
                 [tr("Muat naik buku panduan untuk AI"), "/pengurusan/tetapan/pengetahuan-ai"],
                 [tr("Daftar syarikat lain milik anda"), "/daftar"],

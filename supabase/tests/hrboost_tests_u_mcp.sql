@@ -68,3 +68,23 @@ do $$ begin
   assert (select count(*) from mcp_call_log where ok) >= 6, 'panggilan direkodkan';
   assert exists (select 1 from mcp_call_log where not ok and error like 'Hanya HR%'), 'penolakan direkodkan';
 end $$;
+
+\echo '=== M9: agent_tool_call (Pembantu AI, service role) — semakan peranan sama seperti MCP ==='
+reset test.uid; reset test.role;
+do $$ declare r jsonb; begin
+  r := agent_tool_call('00000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-0000000000c1','hr_summary','{}');
+  assert r ? 'headcount' or r is not null, 'HR dapat ringkasan';
+  begin
+    perform agent_tool_call('00000000-0000-0000-0000-000000000004','00000000-0000-0000-0000-0000000000c1','hr_summary','{}');
+    assert false, 'pekerja biasa tidak boleh hr_summary';
+  exception when assert_failure then raise; when others then null;
+  end;
+  begin
+    perform agent_tool_call('00000000-0000-0000-0000-000000000004','00000000-0000-0000-0000-0000000000c2','get_my_profile','{}');
+    assert false, 'syarikat lain ditolak';
+  exception when assert_failure then raise; when others then null;
+  end;
+end $$;
+do $$ begin
+  assert not has_function_privilege('authenticated','agent_tool_call(uuid,uuid,text,jsonb)','execute'), 'tidak terbuka kepada pengguna';
+end $$;

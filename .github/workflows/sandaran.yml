@@ -1,0 +1,38 @@
+# Sandaran harian pangkalan data (disulitkan) sebagai artifak GitHub, disimpan 30 hari.
+# Perlukan GitHub Secrets: SUPABASE_DB_URL dan SANDARAN_KATA_LALUAN. Tanpa keduanya, langkah dilangkau.
+name: sandaran-harian
+on:
+  schedule:
+    - cron: "23 18 * * *" # 2:23 pagi waktu Malaysia
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  sandaran:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      SANDARAN_KATA_LALUAN: ${{ secrets.SANDARAN_KATA_LALUAN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Semak rahsia
+        id: semak
+        run: |
+          if [ -n "$SUPABASE_DB_URL" ] && [ -n "$SANDARAN_KATA_LALUAN" ]; then echo "ada=1" >> "$GITHUB_OUTPUT"; else echo "Rahsia sandaran belum ditetapkan — dilangkau."; fi
+      - name: Pasang pg_dump 17
+        if: steps.semak.outputs.ada == '1'
+        run: |
+          sudo apt-get install -y wget ca-certificates
+          sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          wget -qO- https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo tee /etc/apt/trusted.gpg.d/pgdg.asc >/dev/null
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client-17
+      - name: Sandaran
+        if: steps.semak.outputs.ada == '1'
+        run: PATH="/usr/lib/postgresql/17/bin:$PATH" bash supabase/scripts/sandaran.sh sandaran
+      - uses: actions/upload-artifact@v4
+        if: steps.semak.outputs.ada == '1'
+        with:
+          name: sandaran-${{ github.run_id }}
+          path: sandaran/*.gpg
+          retention-days: 30

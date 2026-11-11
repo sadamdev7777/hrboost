@@ -13,6 +13,7 @@ const MENU = [
   { href: "/admin/pengguna", label: tr("Pengguna") },
   { href: "/admin/akses", label: tr("Permohonan akses") },
   { href: "/admin/log", label: tr("Log audit") },
+  { href: "/admin/ralat", label: tr("Ralat aplikasi") },
   { href: "/admin/tetapan", label: tr("Tetapan platform") },
 ];
 

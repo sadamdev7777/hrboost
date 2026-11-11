@@ -1,6 +1,6 @@
 "use client";
 
-import { tr } from "@/lib/i18n";
+import { tr, trRalat } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe, useMeContext } from "@/lib/me";
@@ -26,10 +26,23 @@ function Borang() {
   const ctx = useMeContext();
   const cid = me.active!.companyId;
   const router = useRouter();
-  const d = useData(
-    async () => must(await getSupabase().from("companies").select("name, code, reg_no, state, weekend_days, work_start, work_end, late_grace_minutes").eq("id", cid).single()),
-    [cid],
-  );
+  const eid = me.active!.id;
+  const d = useData(async () => {
+    const sb = getSupabase();
+    const [c, e, g] = await Promise.all([
+      sb.from("companies").select("name, code, reg_no, state, weekend_days, work_start, work_end, late_grace_minutes").eq("id", cid).single(),
+      sb.from("employments").select("join_date, positions(title)").eq("id", eid).single(),
+      sb
+        .from("employment_compensation")
+        .select("amount, effective_from, pay_components!inner(code)")
+        .eq("employment_id", eid)
+        .eq("pay_components.code", "BASIC")
+        .order("effective_from", { ascending: false })
+        .limit(1),
+    ]);
+    const emp = must(e);
+    return { ...must(c), join_date: emp.join_date, position: emp.positions?.title ?? "", basic: must(g)?.[0]?.amount ?? null };
+  }, [cid, eid]);
   const [f, setF] = useState<Record<string, string> | null>(null);
   const [busy, setBusy] = useState(false);
   const [ralat, setRalat] = useState<string | null>(null);
@@ -43,6 +56,9 @@ function Borang() {
     start: d.data.work_start.slice(0, 5),
     end: d.data.work_end.slice(0, 5),
     grace: String(d.data.late_grace_minutes),
+    join: d.data.join_date,
+    position: d.data.position,
+    basic: d.data.basic == null ? "" : String(d.data.basic),
   };
   const set = (k: string) => (e: { target: { value: string } }) => setF({ ...v, [k]: e.target.value });
 
@@ -50,6 +66,9 @@ function Borang() {
     setRalat(null);
     if (!v.name.trim()) return setRalat(tr("Sila isi nama syarikat."));
     if (v.end <= v.start) return setRalat(tr("Waktu keluar mesti selepas waktu masuk."));
+    const gaji = v.basic.trim() === "" ? null : Number(v.basic.replace(/,/g, ""));
+    if (gaji != null && !(gaji > 0)) return setRalat(tr("Gaji pokok tidak sah."));
+    if (!v.join) return setRalat(tr("Sila isi tarikh mula bekerja anda."));
     setBusy(true);
     try {
       const sb = getSupabase();
@@ -68,11 +87,20 @@ function Borang() {
           })
           .eq("id", cid),
       );
+      // Maklumat pengasas sendiri (pendaftar ialah pekerja pertama syarikat)
+      if (v.join !== d.data!.join_date) must(await sb.rpc("hr_set_join_date", { p_employment: eid, p_date: v.join }));
+      const ubah: Record<string, string | number> = {};
+      if (v.position.trim() !== d.data!.position) ubah.position = v.position.trim();
+      if (gaji != null && gaji !== d.data!.basic) {
+        ubah.basic = gaji;
+        ubah.effective_from = v.join;
+      }
+      if (Object.keys(ubah).length) must(await sb.rpc("hr_update_employment", { p_employment: eid, p_data: ubah, p_via: "web" }));
       await selesaiLangkah(cid, "company");
       ctx.reload();
       router.push("/mula/import");
     } catch (e) {
-      setRalat(e instanceof Error ? e.message : tr("Ralat"));
+      setRalat(e instanceof Error ? trRalat(e.message) : tr("Ralat"));
       setBusy(false);
     }
   }
@@ -136,6 +164,19 @@ function Borang() {
           <input className={inputKecil} inputMode="numeric" value={v.grace} onChange={set("grace")} />
         </MedanBorang>
       </div>
+      <Seksyen className="pt-1">{tr("MAKLUMAT ANDA SEBAGAI PEKERJA")}</Seksyen>
+      <span className="-mt-1 text-xs leading-snug text-muted">{tr("Anda juga direkodkan sebagai pekerja pertama syarikat ini. Maklumat ini digunakan untuk cuti, gaji dan KWSP anda.")}</span>
+      <div className="grid grid-cols-2 gap-2.5">
+        <MedanBorang label={tr("Tarikh mula bekerja")}>
+          <input type="date" className={inputKecil} value={v.join} onChange={set("join")} />
+        </MedanBorang>
+        <MedanBorang label={tr("Jawatan")}>
+          <input className={inputKecil} value={v.position} onChange={set("position")} placeholder={tr("cth. Pengarah Urusan")} />
+        </MedanBorang>
+      </div>
+      <MedanBorang label={tr("Gaji pokok sebulan (RM)")} nota={tr("Pilihan. Boleh diisi kemudian dalam Penggajian.")}>
+        <input className={inputKecil} inputMode="decimal" value={v.basic} onChange={set("basic")} placeholder="0.00" />
+      </MedanBorang>
       {ralat && <ErrorBox message={ralat} />}
     </MulaLayout>
   );

@@ -95,6 +95,7 @@ function Automasi() {
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         <GrupLajur>
         <RingkasanHarian cid={cid} />
+        <LaporanBulanan cid={cid} />
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         {cur && (
@@ -209,6 +210,53 @@ function RingkasanHarian({ cid }: { cid: string }) {
         <pre className="m-0 rounded-[12px] bg-[#E7F6E9] px-3.5 py-3 font-sans text-[13px] leading-relaxed whitespace-pre-wrap text-ink">
           {d.data.pratonton ?? tr("Tiada perkara untuk dilaporkan hari ini — mesej tidak akan dihantar.")}
         </pre>
+      )}
+      {ralat && <ErrorBox message={ralat} />}
+    </div>
+  );
+}
+
+/** Laporan bulanan WhatsApp kepada CEO (1 haribulan, 9:00 pagi). Agregat sahaja. */
+function LaporanBulanan({ cid }: { cid: string }) {
+  const d = useData(async () => {
+    const sb = getSupabase();
+    const [c, pr] = await Promise.all([
+      sb.from("companies").select("ceo_monthly_report").eq("id", cid).maybeSingle(),
+      sb.rpc("ceo_monthly_report_preview", { p_company: cid }),
+    ]);
+    return { on: (must(c) as { ceo_monthly_report?: boolean } | null)?.ceo_monthly_report ?? true, pratonton: (must(pr) as string | null) ?? null };
+  }, [cid]);
+  const [lihat, setLihat] = useState(false);
+  const [ralat, setRalat] = useState<string | null>(null);
+  if (!d.data) return d.error ? <ErrorBox message={d.error} /> : null;
+  return (
+    <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3">
+      <div className="flex items-center gap-3">
+        <span className="flex grow flex-col gap-0.5">
+          <b className="text-sm font-extrabold">{tr("Laporan bulanan kepada CEO")}</b>
+          <span className="text-xs leading-snug text-muted">
+            {tr("WhatsApp pada 1 haribulan jam 9:00 pagi: bilangan pekerja, kos gaji berbanding bulan lepas, cuti, MC, tuntutan dan kelulusan. Angka keseluruhan sahaja, tiada maklumat individu.")}
+          </span>
+        </span>
+        <Suis
+          on={d.data.on}
+          label={tr("Laporan bulanan kepada CEO")}
+          onChange={async (v) => {
+            setRalat(null);
+            try {
+              must(await getSupabase().rpc("set_ceo_monthly_report", { p_company: cid, p_on: v }));
+              d.reload();
+            } catch (e) {
+              setRalat(e instanceof Error ? trRalat(e.message) : tr("Ralat"));
+            }
+          }}
+        />
+      </div>
+      <button type="button" onClick={() => setLihat(!lihat)} className="flex min-h-11 items-center self-start text-[13px] font-bold text-primary">
+        {lihat ? tr("Sembunyikan pratonton") : tr("Pratonton laporan bulan lepas")}
+      </button>
+      {lihat && d.data.pratonton && (
+        <pre className="m-0 rounded-[12px] bg-[#E7F6E9] px-3.5 py-3 font-sans text-[13px] leading-relaxed whitespace-pre-wrap text-ink">{d.data.pratonton}</pre>
       )}
       {ralat && <ErrorBox message={ralat} />}
     </div>
