@@ -385,4 +385,7 @@ export const RALAT: Record<string, string> = {
  "Potongan pembaikan": "Repair deduction",
  "Elaun KPI latihan industri": "Internship KPI allowance",
  "Gaji telah dibayar sebelum tarikh ini. Tarikh mula tidak boleh selepas gaji pertama.": "Salary has been paid before this date. The start date cannot be after the first payroll.",
+ "Sila namakan sambungan ini (cth. Claude di komputer pejabat)": "Please name this connection (e.g. Claude on my office computer)",
+ "Maksimum 10 sambungan aktif. Batalkan sambungan lama dahulu.": "Maximum 10 active connections. Revoke an old one first.",
+ "Sambungan tidak dijumpai": "Connection not found",
 };

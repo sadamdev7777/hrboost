@@ -1405,6 +1405,52 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"mcp_call_log": {
+                  Row: {
+                    "at": string,"error": string | null,"id": number,"ok": boolean,"token_id": string,"tool": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "at"?: string,"error"?: string | null,"id"?: never,"ok": boolean,"token_id": string,"tool": string
+                  }
+                  Update: {
+                    "at"?: string,"error"?: string | null,"id"?: never,"ok"?: boolean,"token_id"?: string,"tool"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "mcp_call_log_token_id_fkey"
+      columns: ["token_id"]
+isOneToOne: false
+      referencedRelation: "mcp_tokens"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"mcp_tokens": {
+                  Row: {
+                    "company_id": string,"created_at": string,"expires_at": string,"id": string,"last_used_at": string | null,"name": string,"person_id": string,"revoked_at": string | null,"token_hash": string,"token_hint": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "company_id": string,"created_at"?: string,"expires_at"?: string,"id"?: string,"last_used_at"?: string | null,"name": string,"person_id": string,"revoked_at"?: string | null,"token_hash": string,"token_hint": string
+                  }
+                  Update: {
+                    "company_id"?: string,"created_at"?: string,"expires_at"?: string,"id"?: string,"last_used_at"?: string | null,"name"?: string,"person_id"?: string,"revoked_at"?: string | null,"token_hash"?: string,"token_hint"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "mcp_tokens_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "mcp_tokens_person_id_fkey"
+      columns: ["person_id"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"message_i18n": {
                   Row: {
                     "en": string,"frasa": boolean,"id": number,"kind": string,"ms": string,"sort": number
@@ -2705,6 +2751,20 @@ isOneToOne: false
                            },
 "match_attendance_workno":
 { Args: { "p_employment": string,"p_workno": string }; Returns: number
+                           },
+"mcp_call":
+{ Args: { "p_args"?: Json,"p_token": string,"p_tool": string }; Returns: Json
+                           },
+"mcp_token_create":
+{ Args: { "p_company": string,"p_name": string }; Returns: Json
+                           },
+"mcp_token_list":
+{ Args: { "p_company": string }; Returns: {
+              "calls_30d": number,"created_at": string,"expires_at": string,"id": string,"last_used_at": string,"name": string,"token_hint": string
+            }[]
+                           },
+"mcp_token_revoke":
+{ Args: { "p_id": string }; Returns: undefined
                            },
 "my_access_requests":
 { Args: Record<PropertyKey, never>; Returns: {

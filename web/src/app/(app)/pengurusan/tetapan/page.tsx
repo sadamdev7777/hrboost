@@ -51,6 +51,7 @@ const SEMUA_TETAPAN: { label: string; href: string; kata: string; roles?: ("hr" 
   { label: tr("Integrasi Akaun"), href: "/pengurusan/tetapan/akaun", kata: tr("quickbooks perakaunan akaun jurnal"), roles: ["finance", "admin"] },
   { label: tr("Pengetahuan AI"), href: "/pengurusan/tetapan/pengetahuan-ai", kata: tr("ai buku panduan polisi dokumen pembantu"), roles: ["hr", "admin"] },
   { label: tr("Integrasi Kehadiran"), href: "/pengurusan/tetapan/kehadiran", kata: tr("kehadiran crosschex mesin punch"), roles: ["hr", "admin"] },
+  { label: tr("Sambungan AI (MCP)"), href: "/sambungan-ai", kata: tr("mcp claude ai sambungan token penyambung") },
 ];
 
 function Menu() {
@@ -150,6 +151,8 @@ function Menu() {
             {tr("Pengetahuan AI")}</BarisPautan>
           <BarisPautan href="/pengurusan/tetapan/kehadiran" roles={["hr","admin"]} kanan={em(x && (x.attendance ? tr("CrossChex") : tr("Belum disambung")))}>
             {tr("Integrasi Kehadiran")}</BarisPautan>
+          <BarisPautan href="/sambungan-ai" kanan={em(tr("Claude & pembantu AI"))}>
+            {tr("Sambungan AI (MCP)")}</BarisPautan>
         </Kotak>
 </div>
 </div>

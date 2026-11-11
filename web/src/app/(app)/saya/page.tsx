@@ -78,6 +78,7 @@ export default function SayaPage() {
           <Baris href="/kalendar" icon={<IconCalendar size={18} />} label={tr("Kalendar pasukan")} />
           <Baris href="/pengumuman" icon={<IconBell size={18} />} label={tr("Pengumuman")} />
           <Baris href="/tanya-hr" icon={<IconSparkle size={18} />} tone="bg-[#EDE9F8] text-ai" label={tr("Tanya HR")} />
+          <Baris href="/sambungan-ai" icon={<IconSparkle size={18} />} tone="bg-[#EDE9F8] text-ai" label={tr("Sambungan AI (Claude)")} />
           <Baris href="/hari-jadi" icon={<IconCake size={18} />} tone="bg-[#FDEBD7] text-warning" label={tr("Hari Jadi")}>
             {hariIni.length > 0 && (
               <span className="text-[13px] font-bold text-warning">
