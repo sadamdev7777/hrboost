@@ -1,5 +1,5 @@
 // Ujian hujung-ke-hujung Fasa F: Lily (HR) proses gaji bulan semasa (komisen Amin) → kira →
-// hantar → Farah (Kewangan) & Sadam (CEO) lulus → Lily muat turun fail & tanda dibayar →
+// hantar → Sadam (CEO) & Farah (Kewangan) lulus → Lily muat turun fail & tanda dibayar →
 // Amin melihat slip (jumlah tersembunyi secara lalai) dan slip A4.
 // Prasyarat: `npx supabase db reset` (data demo dengan gaji), aplikasi di localhost:3000.
 // Jalankan: node web/e2e/gaji.cjs
@@ -47,7 +47,7 @@ async function login(browser, phone) {
   await p.click('button:has-text("Kira Gaji")');
   await p.waitForSelector('text=Jumlah kasar');
   const semak = await p.innerText('main');
-  expect(/RM [\d,]+\.\d\d/.test(semak) && semak.includes('Kewangan → CEO'), 'gaji dikira; aliran Kewangan → CEO');
+  expect(/RM [\d,]+\.\d\d/.test(semak) && semak.includes('CEO → Kewangan'), 'gaji dikira; aliran CEO → Kewangan');
   await p.screenshot({ path: `${shots}/f-semak.png` });
   await p.click('button:has-text("Lihat semua")');
   await p.click('a:has-text("Amin · DEMO004")');
@@ -60,8 +60,8 @@ async function login(browser, phone) {
   await p.waitForSelector('text=Menunggu kelulusan');
   expect(true, 'dihantar untuk kelulusan');
 
-  log('2. Farah (Kewangan) & Sadam (CEO) meluluskan');
-  for (const [phone, who] of [['100000005', 'Farah'], ['100000001', 'Sadam']]) {
+  log('2. Sadam (CEO) kemudian Farah (Kewangan) meluluskan');
+  for (const [phone, who] of [['100000001', 'Sadam'], ['100000005', 'Farah']]) {
     const a = await login(browser, phone);
     await a.p.goto(BASE + '/kelulusan');
     await a.p.click('main a[href^="/kelulusan/"]:has-text("Gaji")');

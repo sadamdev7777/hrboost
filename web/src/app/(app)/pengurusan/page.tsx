@@ -206,7 +206,7 @@ function Kandungan() {
                   {(td?.no_nickname ?? 0) > 0 && (
                     <Baris tag={tr("Pekerja")} tone="primary" teks={tr("{0} pekerja belum mempunyai nama panggilan", td!.no_nickname)} href="/pengurusan/pekerja/nama" aksi={tr("Isi")} />
                   )}
-                  {(td?.probation_ending ?? 0) > 0 && (
+                  {(td?.probation_ending ?? 0) > 0 && !a.attention.some((p) => p.kind === "probation") && (
                     <Baris tag={tr("Percubaan")} tone="warning" teks={tr("{0} tempoh percubaan tamat dalam 30 hari", td!.probation_ending)} href="/pengurusan/orientasi" aksi={tr("Semak")} />
                   )}
                   {urusGaji && (td?.claims_unpaid.n ?? 0) > 0 && (
@@ -221,7 +221,8 @@ function Kandungan() {
                       key={"fwa" + f.id}
                       tag={tr("Fleksibel")}
                       tone={f.days_left <= 14 ? "danger" : "warning"}
-                      teks={tr("{0} memohon kerja fleksibel · jawapan bertulis sebelum {1} ({2} hari)", f.name, tarikh(f.due_date), f.days_left)}
+                      teks={tr("{0} memohon kerja fleksibel", f.name)}
+                      kecil={tr("Jawapan bertulis sebelum {0} · {1} hari lagi", tarikh(f.due_date), f.days_left)}
                       href="/pengurusan/kerja-fleksibel"
                       aksi={tr("Putuskan")}
                     />
@@ -232,7 +233,8 @@ function Kandungan() {
                       key={"semak" + s.employment_id}
                       tag={tr("Orientasi")}
                       tone={s.lewat ? "danger" : "primary"}
-                      teks={tr("{0}: {1} perkara senarai semak pekerja baharu{2}", s.name, s.n, s.lewat ? tr(" ({0} lewat)", s.lewat) : "")}
+                      teks={tr("{0}: {1} perkara senarai semak pekerja baharu", s.name, s.n)}
+                      kecil={s.lewat ? tr("{0} sudah lewat", s.lewat) : undefined}
                       href={`/pengurusan/pekerja/${s.employment_id}`}
                       aksi={tr("Semak")}
                     />
@@ -242,7 +244,8 @@ function Kandungan() {
                       key={m.kind + m.employment_id + m.expiry}
                       tag={TAMAT[m.kind]}
                       tone={m.days_left <= 7 ? "danger" : "warning"}
-                      teks={`${trRalat(m.text).replace(/\d{2}\/\d{2}\/\d{4}/, tarikh(m.expiry))} (${m.days_left < 0 ? tr("lewat {0} hari", -m.days_left) : m.days_left === 0 ? tr("hari ini") : tr("{0} hari lagi", m.days_left)})`}
+                      teks={trRalat(m.text).replace(/\d{2}\/\d{2}\/\d{4}/, tarikh(m.expiry))}
+                      kecil={m.days_left < 0 ? tr("Lewat {0} hari", -m.days_left) : m.days_left === 0 ? tr("Hari ini") : tr("{0} hari lagi", m.days_left)}
                       href={`/pengurusan/pekerja/${m.employment_id}`}
                       aksi={tr("Profil")}
                     />
@@ -351,13 +354,16 @@ function Panel({ tajuk, children }: { tajuk: string; children: ReactNode }) {
   );
 }
 
-function Baris({ tag, tone, teks, href, aksi }: { tag: string; tone: "danger" | "warning" | "ai" | "primary"; teks: string; href: string; aksi: string }) {
+function Baris({ tag, tone, teks, kecil, href, aksi }: { tag: string; tone: "danger" | "warning" | "ai" | "primary"; teks: string; kecil?: string; href: string; aksi: string }) {
   // Seluruh baris boleh ditekan: label & teks disusun menegak supaya teks tidak terhimpit di telefon
   return (
     <Link href={href} className="flex min-h-14 items-center gap-3 py-2.5 text-sm text-ink! hover:bg-[#F7F9F8]">
       <span className="flex min-w-0 grow flex-col items-start gap-1 lg:flex-row lg:items-center lg:gap-3">
         <Tag tone={tone}>{tag}</Tag>
-        <span className="min-w-0 leading-snug">{teks}</span>
+        <span className="flex min-w-0 flex-col gap-0.5">
+          <span className="leading-snug">{teks}</span>
+          {kecil && <span className={`text-xs font-semibold ${tone === "danger" ? "text-danger" : tone === "warning" ? "text-warning" : "text-muted"}`}>{kecil}</span>}
+        </span>
       </span>
       <span className="flex shrink-0 items-center gap-0.5 text-[13px] font-bold text-primary">
         {aksi}

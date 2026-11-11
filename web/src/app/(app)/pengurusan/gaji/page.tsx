@@ -351,7 +351,7 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
         )}
         <SuisPratonton companyId={data.run.company_id} />
         <span className="rounded-[14px] bg-[#E3F1EE] px-4 py-3 text-[13px] leading-normal text-primary">
-          <b>{tr("Aliran kelulusan gaji: {0}", data.aliran.join(" → ") || tr("Kewangan → CEO"))}</b>{tr(". Pelulus akan menerima WhatsApp bersama ringkasan di atas.")}</span>
+          <b>{tr("Aliran kelulusan gaji: {0}", data.aliran.join(" → ") || tr("CEO → Kewangan"))}</b>{tr(". Pelulus akan menerima WhatsApp bersama ringkasan di atas.")}</span>
         {ralat && <ErrorBox message={ralat} />}
       </main>
       <div className="bar-bawah sticky bottom-0 grid grid-cols-[auto_1fr] gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">

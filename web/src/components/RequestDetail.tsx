@@ -14,7 +14,7 @@ import { ReasonSheet } from "./ReasonSheet";
 import { urlSementara } from "@/lib/upload";
 import { namaJenisTuntutan } from "@/lib/claims";
 
-const VIA: Record<string, string> = { web: "aplikasi", whatsapp: tr("WhatsApp"), ai_agent: tr("pembantu AI"), system: "sistem" };
+const VIA: Record<string, string> = { web: tr("aplikasi"), whatsapp: tr("WhatsApp"), ai_agent: tr("pembantu AI"), system: tr("sistem") };
 const TAJUK: Record<string, string> = {
   leave: tr("Permohonan Cuti"),
   claim: tr("Tuntutan"),

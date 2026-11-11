@@ -96,8 +96,8 @@ function SenaraiJabatan() {
                         tr("Pilih ketua")
                       )}
                     </button>
-                    <span className="flex gap-1">
-                      <button type="button" onClick={() => setNama(j)} className="flex h-10 items-center px-2.5 text-[13px] font-bold text-primary">
+                    <span className="flex basis-full gap-1 sm:basis-auto">
+                      <button type="button" onClick={() => setNama(j)} className="-ml-2.5 flex h-10 items-center px-2.5 text-[13px] font-bold text-primary sm:ml-0">
                         {tr("Namakan semula")}
                       </button>
                       {n === 0 && (

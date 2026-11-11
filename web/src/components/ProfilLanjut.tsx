@@ -38,7 +38,13 @@ const kotak = "h-11 w-full rounded-[12px] border border-line bg-surface px-3 tex
 
 function Borang({ tajuk, medan, asal, onClose, onSimpan }: { tajuk: string; medan: Medan[]; asal: Partial<Rekod>; onClose: () => void; onSimpan: (d: Record<string, unknown>) => Promise<void> }) {
   const [f, setF] = useState<Record<string, string | boolean>>(() =>
-    Object.fromEntries(medan.map((m) => [m.k, m.jenis === "suis" ? !!asal[m.k] : ((asal[m.k] as string | null) ?? (m.pilihan?.[0]?.v ?? ""))])),
+    Object.fromEntries(
+      medan.map((m) => [
+        m.k,
+        // Rekod baharu: tarikh wajib diisi hari ini secara lalai
+        m.jenis === "suis" ? !!asal[m.k] : ((asal[m.k] as string | null) ?? (m.jenis === "tarikh" && m.wajib && !asal.id ? new Date().toISOString().slice(0, 10) : (m.pilihan?.[0]?.v ?? ""))),
+      ]),
+    ),
   );
   const [busy, setBusy] = useState(false);
   const [ralat, setRalat] = useState<string | null>(null);
@@ -182,7 +188,7 @@ const tkh = (s: string | boolean | null | undefined) => (typeof s === "string" &
 // ---------------------------------------------------------------------------------------------
 // 1. Garis masa kerja
 export const LABEL_PERISTIWA: Record<string, string> = {
-  started: tr("Mula bekerja"),
+  started: tr("Mula bekerja di syarikat"),
   promoted: tr("Kenaikan / tukar jawatan"),
   transferred: tr("Pertukaran jabatan"),
   changed: tr("Tukar ketua"),
@@ -204,7 +210,8 @@ export function GarisMasaKerja({ employmentId, boleh }: { employmentId: string; 
       susun="effective_date"
       medan={[
         { k: "effective_date", label: tr("Tarikh berkuat kuasa"), jenis: "tarikh", wajib: true },
-        { k: "event", label: tr("Peristiwa"), jenis: "pilih", pilihan: Object.entries(LABEL_PERISTIWA).map(([v, l]) => ({ v, l })) },
+        // Peristiwa manual yang paling biasa didahulukan ("Mula bekerja" sudah direkod automatik)
+        { k: "event", label: tr("Peristiwa"), jenis: "pilih", pilihan: ["promoted", "transferred", "changed", "type_changed", "confirmed", "started", "ended"].map((v) => ({ v, l: LABEL_PERISTIWA[v] })) },
         { k: "position", label: tr("Jawatan") },
         { k: "department", label: tr("Jabatan") },
         { k: "manager", label: tr("Ketua") },

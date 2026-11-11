@@ -130,8 +130,12 @@ function Peranan() {
           <span className="grow text-[13px] text-[#4A5A57]">{tr("Ketua → Kewangan → CEO jika > RM1,000")}</span>
         </div>
         <div className="flex min-h-12 items-center gap-2">
-          <span className="w-[90px] shrink-0 font-bold">{tr("Betul masa & Gaji")}</span>
-          <span className="grow text-[13px] text-[#4A5A57]">{tr("Ketua · Kewangan → CEO")}</span>
+          <span className="w-[90px] shrink-0 font-bold">{tr("Betul masa")}</span>
+          <span className="grow text-[13px] text-[#4A5A57]">{tr("Ketua")}</span>
+        </div>
+        <div className="flex min-h-12 items-center gap-2">
+          <span className="w-[90px] shrink-0 font-bold">{tr("Gaji")}</span>
+          <span className="grow text-[13px] text-[#4A5A57]">{tr("HR → CEO → Kewangan (bayaran)")}</span>
         </div>
       </div>
       {!finance && <span className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] text-warning">{tr("Tetapkan sekurang-kurangnya seorang Kewangan untuk meluluskan tuntutan dan gaji.")}</span>}

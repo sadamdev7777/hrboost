@@ -203,7 +203,7 @@ function GajiPekerja() {
 function ButiranTelefon({ r, onClose, onUbah }: { r: BarisGaji; onClose: () => void; onUbah: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40" onClick={onClose}>
-      <div role="dialog" aria-modal="true" aria-label={tr("Gaji {0}", r.name)} className="flex max-h-[90dvh] w-full max-w-[480px] flex-col gap-3 overflow-y-auto rounded-t-[20px] bg-surface px-4 pt-5 pb-5" onClick={(e) => e.stopPropagation()}>
+      <div role="dialog" aria-modal="true" aria-label={tr("Gaji {0}", r.name)} className="flex max-h-[90dvh] w-full max-w-[480px] flex-col gap-3 overflow-y-auto rounded-t-[20px] bg-surface px-4 pt-5 pb-5 [&>*]:shrink-0" onClick={(e) => e.stopPropagation()}>
         <h2 className="m-0 text-lg font-extrabold">{tr("Gaji {0}", r.name)}</h2>
         {r.effective_from && <span className="-mt-2 text-xs text-muted">{tr("Berkuat kuasa mulai {0}", tarikh(r.effective_from))}</span>}
         <RingkasanKiraan k={r.items.BASIC > 0 ? r.calc : null} padat />

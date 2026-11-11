@@ -97,7 +97,7 @@ export function Lembaran({ title, onClose, children }: { title: string; onClose:
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="flex max-h-[90dvh] w-full max-w-[480px] flex-col gap-3 overflow-y-auto rounded-t-[20px] bg-surface px-4 pt-5 pb-5 lg:max-w-[560px] lg:rounded-[20px] lg:px-6"
+        className="flex max-h-[90dvh] w-full max-w-[480px] flex-col gap-3 overflow-y-auto rounded-t-[20px] bg-surface px-4 pt-5 pb-[max(20px,env(safe-area-inset-bottom))] lg:max-w-[560px] lg:rounded-[20px] lg:px-6 [&>*]:shrink-0"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start gap-2">

@@ -50,6 +50,14 @@ async function semak(p) {
       }
     }
     window.scrollTo(0, 0);
+    // 2b. Butang berwarna yang terhimpit (cth. butang Simpan dalam dialog yang panjang)
+    for (const e of document.querySelectorAll('button, a[href]')) {
+      if (!nampak(e) || !(e.innerText || '').trim()) continue;
+      const bg = getComputedStyle(e).backgroundColor;
+      if (bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') continue;
+      const h = e.getBoundingClientRect().height;
+      if (h < 36) isu.push(`butang nipis (${Math.round(h)}px): "${nama(e)}"`);
+    }
     // 3. Skrol mendatar
     // Mod telefon: kandungan yang terlalu lebar membesarkan viewport susun atur (clientWidth > lebar skrin)
     const lebarSusun = Math.max(document.documentElement.scrollWidth, document.documentElement.clientWidth);
@@ -62,6 +70,53 @@ async function semak(p) {
     }
     return [...new Set(isu)];
   });
+}
+
+// Dialog yang dibuka dan diperiksa juga (laluan, langkah klik)
+const DIALOG_HR = [
+  ['/pengurusan/pekerja/00000000-0000-0000-0000-0000000000e4', ['[role=tab]:has-text("Kerjaya")', 'button:has-text("+ Tambah peristiwa")']],
+  ['/pengurusan/pekerja/00000000-0000-0000-0000-0000000000e4', ['button:has-text("Ubah maklumat")']],
+  ['/pengurusan/pekerja/00000000-0000-0000-0000-0000000000e4', ['button:has-text("Ubah gaji & jawatan")']],
+  ['/pengurusan/gaji/pekerja', ['main a:has-text("Amin"), main button:has-text("Amin")', 'button:has-text("Ubah gaji")']],
+];
+
+async function imbasDialog(p, senarai, label, bahasa) {
+  let n = 0;
+  for (const [r, klik] of senarai) {
+    await p.goto(BASE + r);
+    await p.waitForLoadState('networkidle').catch(() => {});
+    let ok = true;
+    for (const k of klik) {
+      const el = p.locator(`${k} >> visible=true`).first();
+      if (!(await el.count())) { ok = false; break; }
+      await el.click().catch(() => { ok = false; });
+      await p.waitForTimeout(700);
+    }
+    if (!ok) continue; // label English tiada padanan — diuji dalam BM
+    const isu = await p.evaluate(() => {
+      const d = [...document.querySelectorAll('[role=dialog]')].pop();
+      if (!d) return ['dialog tidak dibuka'];
+      const out = [];
+      for (const e of d.querySelectorAll('button, a[href]')) {
+        const bg = getComputedStyle(e).backgroundColor;
+        if (!(e.innerText || '').trim() || bg === 'rgba(0, 0, 0, 0)') continue;
+        const h = e.getBoundingClientRect().height;
+        if (h < 40) out.push(`butang nipis dalam dialog (${Math.round(h)}px): "${e.innerText.trim().slice(0, 30)}"`);
+      }
+      const k = [...d.querySelectorAll('input:not([type=checkbox]), select, textarea')];
+      for (let i = 0; i < k.length; i++) for (let j = i + 1; j < k.length; j++) {
+        const a = k[i].getBoundingClientRect(), b = k[j].getBoundingClientRect();
+        if (Math.min(a.right, b.right) - Math.max(a.left, b.left) > 4 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 4) out.push('medan bertindih dalam dialog');
+      }
+      return [...new Set(out)];
+    });
+    if (isu.length) {
+      n++;
+      log(`   [${label} ${bahasa}] dialog ${r} → ${klik.join(' → ')}`);
+      for (const x of isu) log('       ' + x);
+    }
+  }
+  return n;
 }
 
 async function imbas(b, email, routes, label, bahasa) {
@@ -86,6 +141,7 @@ async function imbas(b, email, routes, label, bahasa) {
       for (const x of isu.slice(0, 8)) log('       ' + x);
     }
   }
+  if (label === 'HR' && bahasa === 'ms') n += await imbasDialog(p, DIALOG_HR, label, bahasa);
   await ctx.close();
   return n;
 }
