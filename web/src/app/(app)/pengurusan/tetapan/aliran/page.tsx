@@ -7,7 +7,7 @@ import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { namaPeringkat } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
-import { ButangUtama, HadPeranan, Lembaran, MedanBorang, inputKecil } from "@/components/Senarai";
+import { ButangUtama, HadPeranan, Lembaran, MedanBorang, inputKecil, GrupLajur } from "@/components/Senarai";
 import type { Database } from "@/lib/database.types";
 
 type ReqType = Database["public"]["Enums"]["request_type"];
@@ -111,9 +111,9 @@ function Aliran() {
   }
 
   return (
-    <Screen lebar="sederhana">
+    <Screen lebar="lebar">
       <BackHeader title={tr("Aliran Kelulusan")} href="/pengurusan/tetapan" />
-      <div role="tablist" className="mx-5 grid grid-cols-4 gap-1 rounded-[14px] bg-[#E4EAE8] p-1">
+      <div role="tablist" className="mx-5 grid grid-cols-4 gap-1 lg:mx-4 lg:flex lg:[&>*]:flex-1 rounded-[14px] bg-[#E4EAE8] p-1">
         {JENIS.map((j) => (
           <button
             key={j.id}
@@ -131,6 +131,7 @@ function Aliran() {
         ))}
       </div>
       <main className="flex grow flex-col gap-2.5 px-4 pt-3.5 pb-4">
+        <GrupLajur>
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         {steps.map((s, i) => (
@@ -181,6 +182,7 @@ function Aliran() {
         <span className="text-xs text-muted">{tr("Tiada kelulusan automatik. Perubahan terpakai kepada permohonan baharu dan peringkat seterusnya bagi permohonan yang sedang berjalan.")}</span>
         {ralat && <ErrorBox message={ralat} />}
         {ok && <span className="text-sm font-semibold text-success">{tr("Aliran kelulusan disimpan.")}</span>}
+        </GrupLajur>
       </main>
       {draf?.jenis === jenis && (
         <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">

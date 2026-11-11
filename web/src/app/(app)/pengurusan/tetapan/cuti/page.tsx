@@ -9,7 +9,7 @@ import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
 import { ImportPukal } from "@/components/ImportPukal";
 import { importBakiCuti } from "@/lib/berkanun";
 import { getSenaraiPekerja } from "@/lib/hr";
-import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Suis, Tag, inputKecil, inputSempit } from "@/components/Senarai";
+import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Suis, Tag, inputKecil, inputSempit, GrupLajur } from "@/components/Senarai";
 
 const WAJIB = ["AL", "MC", "HL", "ML", "PL"];
 const NAMA: Record<string, string> = { AL: tr("Tahunan"), MC: tr("Sakit (MC)"), HL: tr("Kemasukan hospital"), ML: tr("Bersalin"), PL: tr("Paterniti") };
@@ -106,9 +106,10 @@ function JenisCuti() {
   }
 
   return (
-    <Screen lebar="sederhana">
+    <Screen lebar="lebar">
       <BackHeader title={tr("Jenis cuti")} href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
+        <GrupLajur>
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         <Seksyen>{tr("MENGIKUT AKTA KERJA · MINIMUM")}</Seksyen>
@@ -171,6 +172,7 @@ function JenisCuti() {
           </span>
           <span className="text-[13px] font-bold text-primary">{tr("Import")}</span>
         </button>
+        </GrupLajur>
       </main>
       {imp && (
         <ImportPukal

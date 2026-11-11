@@ -8,7 +8,7 @@ import { must, useData } from "@/lib/useData";
 import { getSenaraiPekerja } from "@/lib/hr";
 import { masa, tarikh } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
-import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
+import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Tag, inputKecil, GrupLajur } from "@/components/Senarai";
 
 type Status = {
   configured: boolean;
@@ -74,9 +74,10 @@ function Integrasi() {
   const bersambung = s?.configured && !s.last_error && !!s.last_synced_at;
 
   return (
-    <Screen lebar="sederhana">
+    <Screen lebar="lebar">
       <BackHeader title={tr("Integrasi Kehadiran")} href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-4">
+        <GrupLajur>
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         {s && (
@@ -162,6 +163,7 @@ function Integrasi() {
             {mesej && <span className={`rounded-[12px] px-3 py-2 text-[13px] font-semibold ${mesej.ok ? "bg-success-soft text-success" : "bg-danger-soft text-danger"}`}>{mesej.text}</span>}
           </>
         )}
+        </GrupLajur>
       </main>
       {s?.configured && (
         <div className="bar-bawah sticky bottom-0 grid grid-cols-2 gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">

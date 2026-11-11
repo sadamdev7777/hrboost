@@ -9,7 +9,7 @@ import { must, useData } from "@/lib/useData";
 import { tarikh, todayISO } from "@/lib/format";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar } from "@/components/TabNav";
-import { ButangUtama, HadPeranan, Seksyen, Suis } from "@/components/Senarai";
+import { ButangUtama, HadPeranan, Seksyen, Suis, GrupLajur } from "@/components/Senarai";
 
 const NEGERI_RINGKAS: Record<string, string> = {
   "WP Kuala Lumpur": tr("WP KL"),
@@ -85,6 +85,7 @@ function CutiUmum() {
         ))}
       </div>
       <main className="flex grow flex-col gap-2.5 px-4 pt-3 pb-4 lg:px-0">
+        <GrupLajur>
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         {d.data && semua.length === 0 && (
@@ -150,6 +151,7 @@ function CutiUmum() {
             {ok && <span className="text-sm font-semibold text-success">{tr("Disimpan. Pekerja akan dimaklumkan.")}</span>}
           </>
         )}
+        </GrupLajur>
       </main>
       {d.data && semua.length > 0 && (
         <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">

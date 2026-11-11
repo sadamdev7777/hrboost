@@ -10,7 +10,7 @@ import { getJabatan, getSenaraiPekerja, type Jabatan } from "@/lib/hr";
 import { inisial } from "@/lib/format";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar } from "@/components/TabNav";
-import { HadPeranan } from "@/components/Senarai";
+import { HadPeranan, GrupLajur } from "@/components/Senarai";
 import { BorangJabatan, PilihKetua, padamJabatan } from "@/components/Jabatan";
 
 export default function JabatanTetapanPage() {
@@ -64,6 +64,7 @@ function SenaraiJabatan() {
       />
       <TabModul modul="pekerja" />
       <main className="flex grow flex-col gap-3 px-4 pt-3 pb-6 lg:px-0">
+        <GrupLajur>
         <span className="text-sm leading-normal text-subtle">
           {tr("Ketua jabatan menjadi pelulus pertama bagi pasukannya. Untuk memindahkan pekerja ke jabatan lain, buka profil pekerja → Ubah gaji & jawatan.")}
         </span>
@@ -120,6 +121,7 @@ function SenaraiJabatan() {
             )}
           </>
         )}
+        </GrupLajur>
       </main>
       {baru && <BorangJabatan cid={cid} onClose={() => setBaru(false)} onDone={selesai} />}
       {nama && <BorangJabatan cid={cid} jabatan={nama} onClose={() => setNama(null)} onDone={selesai} />}

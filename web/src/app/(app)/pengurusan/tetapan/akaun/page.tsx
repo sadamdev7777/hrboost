@@ -8,7 +8,7 @@ import { must, useData } from "@/lib/useData";
 import { namaJenisTuntutan } from "@/lib/claims";
 import { tarikh } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
-import { HadPeranan, Seksyen, Tag } from "@/components/Senarai";
+import { HadPeranan, Seksyen, Tag, GrupLajur } from "@/components/Senarai";
 
 const SISTEM: Record<string, string> = { quickbooks: tr("QuickBooks Online"), niagawan: tr("Niagawan"), csv: tr("Eksport CSV"), none: tr("Belum dipilih") };
 const STATUS: Record<string, { label: string; tone: "success" | "warning" | "danger" | "neutral" }> = {
@@ -63,9 +63,10 @@ function Akaun() {
   }
 
   return (
-    <Screen lebar="sederhana">
+    <Screen lebar="lebar">
       <BackHeader title={tr("Integrasi perakaunan")} href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
+        <GrupLajur>
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         {d.data && (
@@ -143,6 +144,7 @@ function Akaun() {
             <span className="text-xs text-muted">{tr("Sistem lain (contohnya Niagawan): eksport CSV setiap bulan daripada skrin Proses Gaji.")}</span>
           </>
         )}
+        </GrupLajur>
       </main>
     </Screen>
   );

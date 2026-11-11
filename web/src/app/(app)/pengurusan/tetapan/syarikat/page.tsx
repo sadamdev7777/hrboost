@@ -6,7 +6,7 @@ import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
-import { ButangUtama, HadPeranan, Seksyen, Suis } from "@/components/Senarai";
+import { ButangUtama, HadPeranan, Seksyen, Suis, GrupLajur } from "@/components/Senarai";
 import { getOtDigunakan, setOtDigunakan } from "@/lib/urusan";
 import { beritahu } from "@/components/Dialog";
 import { NEGERI } from "@/lib/senarai";
@@ -59,7 +59,7 @@ function ProfilSyarikat() {
     [cid],
   );
   return (
-    <Screen lebar="sederhana">
+    <Screen lebar="lebar">
       <BackHeader title={tr("Profil syarikat")} href="/pengurusan/tetapan" />
       {d.error && <ErrorBox message={d.error} />}
       {d.loading && !d.data && <Loading />}
@@ -140,6 +140,7 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
   return (
     <>
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-4">
+        <GrupLajur>
         {!admin && <span className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] text-warning">{tr("Hanya Pentadbir syarikat boleh mengubah maklumat ini.")}</span>}
         <Seksyen>{tr("SYARIKAT")}</Seksyen>
         <Kotak>
@@ -205,6 +206,7 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
         </Kotak>
         {ralat && <ErrorBox message={ralat} />}
         {ok && <span className="text-sm font-semibold text-success">{tr("Profil syarikat disimpan.")}</span>}
+        </GrupLajur>
       </main>
       {admin && (
         <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">

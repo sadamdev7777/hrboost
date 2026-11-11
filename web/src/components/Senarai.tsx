@@ -2,7 +2,7 @@
 
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
-import { useEffect, type ReactNode } from "react";
+import { Children, Fragment, isValidElement, useEffect, type ReactElement, type ReactNode } from "react";
 import { hasRole, useMe } from "@/lib/me";
 import type { Database } from "@/lib/database.types";
 import { BackHeader, Screen } from "./ui";
@@ -12,6 +12,34 @@ type Role = Database["public"]["Enums"]["app_role"];
 /** Label seksyen huruf besar: "PERLU PERHATIAN" */
 export function Seksyen({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <span className={`text-xs font-bold tracking-[0.04em] text-[#4A5A57] ${className}`}>{children}</span>;
+}
+
+/**
+ * Susun atur halaman tetapan pada desktop: setiap tajuk <Seksyen> bersama kandungan selepasnya menjadi satu kumpulan,
+ * dan kumpulan disusun dalam 2 lajur pada skrin lebar (≥ 1024px). Pada telefon kekal satu lajur.
+ * Kandungan sebelum tajuk pertama (cth. nota / ralat) merentangi kedua-dua lajur.
+ * Jika hanya ada satu kumpulan, kandungan dipaparkan selebar halaman.
+ */
+export function GrupLajur({ children }: { children: ReactNode }) {
+  const rata = (n: ReactNode): ReactNode[] =>
+    Children.toArray(n).flatMap((c) => (isValidElement(c) && c.type === Fragment ? rata((c as ReactElement<{ children?: ReactNode }>).props.children) : [c]));
+  const kumpulan: { tajuk: boolean; isi: ReactNode[] }[] = [];
+  for (const c of rata(children)) {
+    if (isValidElement(c) && c.type === Seksyen) kumpulan.push({ tajuk: true, isi: [c] });
+    else if (!kumpulan.length) kumpulan.push({ tajuk: false, isi: [c] });
+    else kumpulan[kumpulan.length - 1].isi.push(c);
+  }
+  const bertajuk = kumpulan.filter((k) => k.tajuk).length;
+  if (bertajuk < 2) return <>{children}</>;
+  return (
+    <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6 lg:gap-y-5">
+      {kumpulan.map((k, i) => (
+        <div key={i} className={`flex flex-col gap-2 ${k.tajuk ? "" : "lg:col-span-2"}`}>
+          {k.isi}
+        </div>
+      ))}
+    </div>
+  );
 }
 
 /** Kotak putih dengan baris dipisahkan garis halus. */
@@ -85,7 +113,7 @@ export function MedanBorang({ label, children, nota }: { label: string; children
 }
 
 /** Lembaran bawah generik (borang ringkas dalam skrin yang sama). */
-export function Lembaran({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+export function Lembaran({ title, onClose, children, besar }: { title: string; onClose: () => void; children: ReactNode; /** Dialog lebar pada desktop (borang panjang) */ besar?: boolean }) {
   useEffect(() => {
     const k = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", k);
@@ -97,7 +125,7 @@ export function Lembaran({ title, onClose, children }: { title: string; onClose:
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="flex max-h-[90dvh] w-full max-w-[480px] flex-col gap-3 overflow-y-auto rounded-t-[20px] bg-surface px-4 pt-5 pb-[max(20px,env(safe-area-inset-bottom))] lg:max-w-[560px] lg:rounded-[20px] lg:px-6 [&>*]:shrink-0"
+        className={`flex max-h-[90dvh] w-full flex-col gap-3 overflow-y-auto rounded-t-[20px] bg-surface px-4 pt-5 pb-[max(20px,env(safe-area-inset-bottom))] lg:rounded-[20px] lg:px-6 [&>*]:shrink-0 ${besar ? "max-w-[720px] lg:max-w-[1080px]" : "max-w-[480px] lg:max-w-[560px]"}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start gap-2">

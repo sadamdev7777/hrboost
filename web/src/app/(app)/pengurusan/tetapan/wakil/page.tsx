@@ -8,7 +8,7 @@ import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { addDays, julatTarikh, todayISO } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
-import { ButangUtama, HadPeranan, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
+import { ButangUtama, HadPeranan, MedanBorang, Seksyen, Tag, inputKecil, GrupLajur } from "@/components/Senarai";
 
 const JENIS: Record<string, string> = { leave: tr("Cuti"), claim: "tuntutan", attendance_correction: tr("pembetulan masa"), payroll_run: "gaji", overtime: tr("kerja lebih masa"), salary_advance: tr("pendahuluan gaji"), profile_change: tr("kemas kini profil") };
 
@@ -75,9 +75,10 @@ function Wakil() {
   }
 
   return (
-    <Screen lebar="sederhana">
+    <Screen lebar="lebar">
       <BackHeader title={tr("Wakil kelulusan")} href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
+        <GrupLajur>
         <div className="rounded-[14px] bg-[#E3F1EE] px-4 py-3 text-[13px] leading-normal text-primary">
           {tr("Apabila pelulus bercuti, tugasan kelulusan akan terus dihantar kepada wakil supaya tidak tertangguh.")}</div>
         <Seksyen>{tr("AKTIF & AKAN DATANG")}</Seksyen>
@@ -139,6 +140,7 @@ function Wakil() {
           <ButangUtama onClick={simpan} busy={busy}>
             {tr("Simpan wakil")}</ButangUtama>
         </div>
+        </GrupLajur>
       </main>
     </Screen>
   );

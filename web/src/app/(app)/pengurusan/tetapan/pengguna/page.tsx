@@ -9,7 +9,7 @@ import { must, useData } from "@/lib/useData";
 import { getSenaraiPekerja, LABEL_PERANAN } from "@/lib/hr";
 import { inisial, tarikh } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
-import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
+import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Tag, inputKecil, GrupLajur } from "@/components/Senarai";
 import type { Database } from "@/lib/database.types";
 
 type Role = Database["public"]["Enums"]["app_role"];
@@ -73,9 +73,10 @@ function Pengguna() {
   }
 
   return (
-    <Screen lebar="sederhana">
+    <Screen lebar="lebar">
       <BackHeader title={tr("Pengguna & peranan")} href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
+        <GrupLajur>
         <div className="rounded-[14px] bg-[#E3F1EE] px-4 py-3 text-[13px] leading-normal text-primary">
           {tr("Semua pekerja {0} ialah pengguna biasa. Di sini anda boleh memberikan peranan tambahan. Peranan hanya boleh diberikan kepada pekerja syarikat ini.", emp.companyCode)}</div>
         {d.error && <ErrorBox message={d.error} />}
@@ -139,6 +140,7 @@ function Pengguna() {
         )}
         {ralat && <ErrorBox message={ralat} />}
         <span className="text-xs text-muted">{tr("Akses dari luar hanya melalui kelulusan Pentadbir Platform HRBoost. Anda akan dimaklumkan setiap kali terdapat permohonan.")}</span>
+        </GrupLajur>
       </main>
       {beri && d.data && (
         <BeriPeranan

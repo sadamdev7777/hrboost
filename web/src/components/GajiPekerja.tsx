@@ -6,7 +6,7 @@ import { todayISO } from "@/lib/format";
 import { pratontonGaji, setGajiPekerja, tambahKomponen, type Kiraan, type KomponenTetap } from "@/lib/gaji";
 import { ErrorBox } from "./ui";
 import { beritahu } from "./Dialog";
-import { ButangUtama, Lembaran, MedanBorang, inputKecil } from "./Senarai";
+import { ButangUtama, Lembaran, MedanBorang, Seksyen, inputKecil } from "./Senarai";
 
 /** Tarikh berkuat kuasa lalai: tarikh mula kerja jika gaji belum pernah ditetapkan, selainnya 1hb bulan ini. */
 export function mulaiLalai(adaGaji: boolean, tarikhMula: string): string {
@@ -53,6 +53,20 @@ export function UbahGaji({
     return o.BASIC ? o : null;
   })();
   const pr = usePratonton(employmentId, semua, mulai || undefined);
+  const pokok = komponen.find((c) => c.code === "BASIC");
+  const elaun = komponen.filter((c) => c.code !== "BASIC" && c.kind !== "deduction");
+  const potongan = komponen.filter((c) => c.kind === "deduction");
+  const medan = (c: KomponenTetap) => (
+    <MedanBorang key={c.code} label={tr("{0} (RM)", c.name)}>
+      <input
+        className={inputKecil}
+        inputMode="decimal"
+        placeholder="0.00"
+        value={nilai[c.code] ?? ""}
+        onChange={(e) => setNilai({ ...nilai, [c.code]: e.target.value.replace(/[^\d.,]/g, "") })}
+      />
+    </MedanBorang>
+  );
 
   async function simpan() {
     setRalat(null);
@@ -77,29 +91,41 @@ export function UbahGaji({
   }
 
   return (
-    <Lembaran title={tr("Gaji {0}", nama)} onClose={onClose}>
-      <div className="grid grid-cols-2 gap-2.5">
-        {komponen.map((c) => (
-          <MedanBorang key={c.code} label={tr("{0}{1} (RM)", c.name, c.kind === "deduction" ? " (potongan)" : "")}>
-            <input
-              className={inputKecil}
-              inputMode="decimal"
-              placeholder="0.00"
-              value={nilai[c.code] ?? ""}
-              onChange={(e) => setNilai({ ...nilai, [c.code]: e.target.value.replace(/[^\d.,]/g, "") })}
-            />
-          </MedanBorang>
-        ))}
-        <MedanBorang label={tr("Berkuat kuasa mulai")} nota={adaGaji ? tr("Gaji sebelum tarikh ini kekal") : tr("Lalai: tarikh mula bekerja")}>
-          <input className={inputKecil} type="date" min={tarikhMula} value={mulai} onChange={(e) => setMulai(e.target.value)} />
-        </MedanBorang>
+    <Lembaran title={tr("Gaji {0}", nama)} onClose={onClose} besar>
+      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[1fr_440px] lg:items-start lg:gap-6">
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+            {pokok && medan(pokok)}
+            <MedanBorang label={tr("Berkuat kuasa mulai")} nota={adaGaji ? tr("Gaji sebelum tarikh ini kekal") : tr("Lalai: tarikh mula bekerja")}>
+              <input className={inputKecil} type="date" min={tarikhMula} value={mulai} onChange={(e) => setMulai(e.target.value)} />
+            </MedanBorang>
+          </div>
+          {elaun.length > 0 && (
+            <section aria-label={tr("Elaun tetap")} className="flex flex-col gap-2">
+              <Seksyen>{tr("ELAUN TETAP SEBULAN")}</Seksyen>
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                {elaun.map(medan)}
+              </div>
+            </section>
+          )}
+          {potongan.length > 0 && (
+            <section aria-label={tr("Potongan tetap")} className="flex flex-col gap-2">
+              <Seksyen>{tr("POTONGAN TETAP SEBULAN")}</Seksyen>
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                {potongan.map(medan)}
+              </div>
+            </section>
+          )}
+          <span className="text-xs leading-normal text-muted">{tr("Kosongkan atau isi 0 untuk menghentikan elaun mulai tarikh tersebut.")}</span>
+        </div>
+        <div className="flex flex-col gap-3 lg:sticky lg:top-0">
+          <RingkasanKiraan k={semua ? pr.k : null} mengira={pr.mengira} padat />
+          {pr.ralat && <ErrorBox message={pr.ralat} />}
+          {ralat && <ErrorBox message={ralat} />}
+          <ButangUtama onClick={simpan} busy={busy}>
+            {tr("Simpan gaji")}</ButangUtama>
+        </div>
       </div>
-      <RingkasanKiraan k={semua ? pr.k : null} mengira={pr.mengira} padat />
-      {pr.ralat && <ErrorBox message={pr.ralat} />}
-      <span className="text-xs leading-normal text-muted">{tr("Kosongkan atau isi 0 untuk menghentikan elaun mulai tarikh tersebut.")}</span>
-      {ralat && <ErrorBox message={ralat} />}
-      <ButangUtama onClick={simpan} busy={busy}>
-        {tr("Simpan gaji")}</ButangUtama>
     </Lembaran>
   );
 }

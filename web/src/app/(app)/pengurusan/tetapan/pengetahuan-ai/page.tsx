@@ -7,7 +7,7 @@ import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { tarikh } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
-import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Suis, Tag, inputKecil } from "@/components/Senarai";
+import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Suis, Tag, inputKecil, GrupLajur } from "@/components/Senarai";
 
 // Rujukan reka bentuk: design/T_PengetahuanAI.dc.html
 export default function PengetahuanAiPage() {
@@ -40,9 +40,10 @@ function Pengetahuan() {
   }
 
   return (
-    <Screen lebar="sederhana">
+    <Screen lebar="lebar">
       <BackHeader title={tr("Pengetahuan AI")} href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
+        <GrupLajur>
         <div className="rounded-[14px] bg-[#F3F0FC] px-4 py-3 text-[13px] leading-normal text-[#4A3B8C]">
           {tr("Pembantu AI menjawab soalan pekerja berdasarkan dokumen di sini sahaja. Ia tidak meneka polisi.")}</div>
         {d.error && <ErrorBox message={d.error} />}
@@ -96,6 +97,7 @@ function Pengetahuan() {
           ))}
         </div>
         <span className="text-xs text-muted">{tr("Tambah jawapan dalam buku panduan supaya AI dapat menjawabnya pada masa hadapan.")}</span>
+        </GrupLajur>
       </main>
       {baru && (
         <DokumenBaru

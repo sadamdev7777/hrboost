@@ -7,7 +7,7 @@ import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { tarikh, todayISO } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
-import { HadPeranan, Seksyen, Tag } from "@/components/Senarai";
+import { HadPeranan, Seksyen, Tag, GrupLajur } from "@/components/Senarai";
 
 const JADUAL = [
   { code: "EPF", name: tr("KWSP"), sub: tr("Jadual Ketiga") },
@@ -54,9 +54,10 @@ function Kadar() {
   }
 
   return (
-    <Screen lebar="sederhana">
+    <Screen lebar="lebar">
       <BackHeader title={tr("Kadar berkanun")} href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
+        <GrupLajur>
         <div className="rounded-[14px] bg-[#E3F1EE] px-4 py-3 text-[13px] leading-normal text-primary">
           {tr("Jadual kadar dikemas kini oleh HRBoost untuk semua syarikat apabila kerajaan mengumumkan perubahan. Anda tidak perlu memasukkan kadar sendiri.")}</div>
         {d.error && <ErrorBox message={d.error} />}
@@ -113,6 +114,7 @@ function Kadar() {
         {ralat && <ErrorBox message={ralat} />}
         <span className="rounded-[14px] bg-warning-soft px-4 py-3 text-xs leading-normal text-warning">
           {tr("Sebelum gaji pertama, bandingkan kiraan sistem dengan kalkulator rasmi selama 2 bulan.")}</span>
+        </GrupLajur>
       </main>
     </Screen>
   );

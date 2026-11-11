@@ -7,7 +7,7 @@ import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { namaJenisTuntutan } from "@/lib/claims";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
-import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Suis, inputKecil, inputSempit } from "@/components/Senarai";
+import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Suis, inputKecil, inputSempit, GrupLajur } from "@/components/Senarai";
 
 type Jenis = { id: string; name: string; limit_per_item: number | null; requires_receipt: boolean; mileage_rate: number | null; active: boolean };
 const nombor = (s: string) => {
@@ -86,9 +86,10 @@ function JenisTuntutan() {
   }
 
   return (
-    <Screen lebar="sederhana">
+    <Screen lebar="lebar">
       <BackHeader title={tr("Jenis tuntutan & had")} href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-6">
+        <GrupLajur>
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         <Seksyen>{tr("JENIS TUNTUTAN")}</Seksyen>
@@ -171,6 +172,7 @@ function JenisTuntutan() {
         </div>
         {ralat && <ErrorBox message={ralat} />}
         {ok && !ralat && <span className="text-sm font-semibold text-success">{ok}</span>}
+        </GrupLajur>
       </main>
       {baru && (
         <JenisBaru

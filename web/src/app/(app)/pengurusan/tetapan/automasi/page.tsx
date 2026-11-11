@@ -6,7 +6,7 @@ import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
-import { ButangUtama, Cip, HadPeranan, Seksyen, Suis, Tag } from "@/components/Senarai";
+import { ButangUtama, Cip, HadPeranan, Seksyen, Suis, Tag, GrupLajur } from "@/components/Senarai";
 import type { Database } from "@/lib/database.types";
 
 type Target = Database["public"]["Enums"]["notify_target"];
@@ -90,9 +90,10 @@ function Automasi() {
   const vars = cur ? (PEMBOLEH[cur.event_type] ?? PEMBOLEH.default) : [];
 
   return (
-    <Screen lebar="sederhana">
+    <Screen lebar="lebar">
       <BackHeader title={tr("Automasi WhatsApp")} href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
+        <GrupLajur>
         <RingkasanHarian cid={cid} />
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
@@ -161,6 +162,7 @@ function Automasi() {
             </div>
           ))}
         </div>
+        </GrupLajur>
       </main>
     </Screen>
   );
