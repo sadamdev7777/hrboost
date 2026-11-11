@@ -14,7 +14,7 @@ const PILIHAN: { b: Bahasa; label: string; pendek: string }[] = [
  * Suis bahasa. `simpan` = simpan juga pada akaun (persons.language) supaya mengikut pengguna
  * di peranti lain dan untuk mesej WhatsApp. Label sengaja tidak diterjemah (nama bahasa).
  */
-export function PilihBahasa({ simpan = false, kecil = false }: { simpan?: boolean; kecil?: boolean }) {
+export function PilihBahasa({ simpan = false, kecil = false, bingkai = false }: { simpan?: boolean; kecil?: boolean; /** Bingkai jelas (untuk latar putih) */ bingkai?: boolean }) {
   const semasa = useSyncExternalStore(
     () => () => {},
     () => bahasa(),
@@ -26,7 +26,7 @@ export function PilihBahasa({ simpan = false, kecil = false }: { simpan?: boolea
     tetapkanBahasa(b);
   }
   return (
-    <div role="radiogroup" aria-label="Language / Bahasa" className={`flex shrink-0 rounded-full bg-page p-1 ${kecil ? "text-xs" : "text-[13px]"}`}>
+    <div role="radiogroup" aria-label="Language / Bahasa" className={`flex shrink-0 rounded-full p-1 ${bingkai ? "border border-line bg-surface p-0.5" : "bg-page"} ${kecil ? "text-xs" : "text-[13px]"}`}>
       {PILIHAN.map((p) => (
         <button
           key={p.b}
@@ -37,7 +37,7 @@ export function PilihBahasa({ simpan = false, kecil = false }: { simpan?: boolea
           aria-label={p.label}
           title={p.label}
           onClick={() => pilih(p.b)}
-          className={`flex items-center rounded-full font-bold ${kecil ? "h-9 px-3" : "h-10 px-3.5"} ${semasa === p.b ? "bg-primary text-white" : "text-[#4A5A57]"}`}
+          className={`flex items-center rounded-full font-bold ${bingkai ? "h-8 px-2.5" : kecil ? "h-9 px-3" : "h-10 px-3.5"} ${semasa === p.b ? "bg-primary text-white" : "text-[#4A5A57]"}`}
         >
           {kecil ? p.pendek : p.label}
         </button>

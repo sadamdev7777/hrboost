@@ -1,9 +1,10 @@
 "use client";
 
-import { bahasa, tr } from "@/lib/i18n";
+import { bahasa, tr, trKonteks } from "@/lib/i18n";
 import Image from "next/image";
 import Link from "next/link";
 import { PilihBahasa } from "@/components/PilihBahasa";
+import { useEffect, useState } from "react";
 
 
 // Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
@@ -62,24 +63,7 @@ const PATUH = () => [tr("Akta Kerja 1955"), tr("KWSP"), tr("PERKESO"), tr("SIP")
 export default function Kandungan() {
   return (
     <div className="min-h-dvh bg-page text-ink">
-      <nav className="mx-auto flex max-w-[1120px] items-center gap-4 px-4 py-4">
-        <Link href="/" className="flex items-center gap-2 text-ink!">
-          <span className="flex size-9 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold text-white">HR</span>
-          <b className="text-lg font-extrabold">HRBoost.io</b>
-        </Link>
-        <span className="grow" />
-        <a href="#ciri" className="hidden text-sm font-bold text-[#4A5A57]! sm:block">
-          {tr("Ciri")}</a>
-        <a href="#cara" className="hidden text-sm font-bold text-[#4A5A57]! sm:block">
-          {tr("Cara bermula")}</a>
-        <a href="#soalan" className="hidden text-sm font-bold text-[#4A5A57]! md:block">
-          {tr("Soalan lazim")}</a>
-        <PilihBahasa kecil />
-        <Link href="/masuk" className="flex min-h-11 items-center text-sm font-bold">
-          {tr("Log masuk")}</Link>
-        <Link href="/daftar" className="hidden h-11 items-center rounded-[12px] bg-primary px-4 text-sm font-extrabold text-white! sm:flex">
-          {tr("Daftar percuma")}</Link>
-      </nav>
+      <Pengepala />
 
       <section className="mx-auto grid max-w-[1120px] items-center gap-10 px-4 pt-4 pb-14 md:grid-cols-[1.1fr_0.9fr] md:pt-14">
         <div className="flex flex-col gap-5">
@@ -115,15 +99,16 @@ export default function Kandungan() {
         </div>
       </section>
 
-      <section className="border-y border-line-soft bg-surface">
-        <div className="mx-auto flex max-w-[1120px] flex-wrap justify-center gap-x-6 gap-y-2 px-4 py-5 text-sm font-bold text-[#4A5A57]">
+      <section className="border-y border-line-soft bg-surface" aria-label={tr("Patuh undang-undang Malaysia")}>
+        <div className="mx-auto flex max-w-[1120px] flex-wrap items-center justify-center gap-x-6 gap-y-2 px-4 py-5 text-sm font-bold text-[#4A5A57]">
+          <span className="w-full text-center text-[11px] font-extrabold tracking-[0.08em] text-primary md:w-auto">{tr("PATUH UNDANG-UNDANG MALAYSIA")}</span>
           {PATUH().map((p) => (
             <span key={p}>{p}</span>
           ))}
         </div>
       </section>
 
-      <section id="skrin" className="mx-auto max-w-[1120px] px-4 pt-14">
+      <section id="skrin" className="scroll-mt-20 mx-auto max-w-[1120px] px-4 pt-14">
         <h2 className="m-0 text-2xl leading-tight font-extrabold md:text-[34px]">{tr("Lihat sendiri.")}</h2>
         <p className="mt-3 mb-8 max-w-[680px] text-base text-[#4A5A57]">{tr("Skrin sebenar HRBoost di telefon — untuk pekerja, ketua dan HR. Contoh menggunakan data demo.")}</p>
         <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">
@@ -139,7 +124,7 @@ export default function Kandungan() {
         </div>
       </section>
 
-      <section id="ciri" className="mx-auto max-w-[1120px] px-4 py-14">
+      <section id="ciri" className="scroll-mt-16 mx-auto max-w-[1120px] px-4 py-14">
         <h2 className="m-0 max-w-[680px] text-2xl leading-tight font-extrabold md:text-[34px]">{tr("Semua modul HR yang diperlukan PKS, dalam satu sistem.")}</h2>
         <p className="mt-3 mb-8 max-w-[680px] text-base text-[#4A5A57]">{tr("Tanpa kertas, tanpa Excel berasingan, dan tanpa perlu mengejar sesiapa. Pekerja menggunakan telefon; HR menggunakan komputer.")}</p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -152,7 +137,7 @@ export default function Kandungan() {
         </div>
       </section>
 
-      <section id="banding" className="mx-auto max-w-[1120px] px-4 pb-14">
+      <section id="banding" className="scroll-mt-16 mx-auto max-w-[1120px] px-4 pb-14">
         <h2 className="m-0 mb-6 text-2xl leading-tight font-extrabold md:text-[34px]">{tr("Sebelum dan selepas HRBoost")}</h2>
         <div className="overflow-x-auto rounded-card bg-surface">
           <table className="w-full min-w-[620px] border-collapse text-left text-sm">
@@ -176,7 +161,7 @@ export default function Kandungan() {
         </div>
       </section>
 
-      <section id="cara" className="bg-surface">
+      <section id="cara" className="scroll-mt-16 bg-surface">
         <div className="mx-auto max-w-[1120px] px-4 py-14">
           <h2 className="m-0 mb-8 text-2xl font-extrabold md:text-[34px]">{tr("Mulakan dalam satu petang.")}</h2>
           <ol className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4 p-0">
@@ -193,7 +178,7 @@ export default function Kandungan() {
         </div>
       </section>
 
-      <section id="pekerja" className="mx-auto grid max-w-[1120px] gap-6 px-4 pt-14 md:grid-cols-2">
+      <section id="pekerja" className="scroll-mt-20 mx-auto grid max-w-[1120px] gap-6 px-4 pt-14 md:grid-cols-2">
         <div className="flex flex-col gap-3 rounded-card bg-surface p-6">
           <h2 className="m-0 text-xl font-extrabold">{tr("Untuk pekerja")}</h2>
           <ul className="m-0 flex list-disc flex-col gap-1.5 pl-5 text-sm leading-relaxed text-[#4A5A57]">
@@ -218,7 +203,7 @@ export default function Kandungan() {
         </div>
       </section>
 
-      <section id="soalan" className="mx-auto max-w-[1120px] px-4 pt-14">
+      <section id="soalan" className="scroll-mt-20 mx-auto max-w-[1120px] px-4 pt-14">
         <h2 className="m-0 mb-6 text-2xl font-extrabold md:text-[34px]">{tr("Soalan lazim")}</h2>
         <div className="flex flex-col rounded-card bg-surface px-5 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
           {SOALAN().map(([q, a]) => (
@@ -239,23 +224,173 @@ export default function Kandungan() {
         <div className="flex flex-col items-center gap-4 rounded-[24px] bg-primary px-6 py-10 text-center text-white">
           <h2 className="m-0 text-2xl font-extrabold">{tr("Sedia untuk mencuba?")}</h2>
           <p className="m-0 max-w-[560px] text-base opacity-90">{tr("Percuma. Tiada kad kredit. Daftar syarikat dan jemput pekerja pertama anda hari ini.")}</p>
-          <Link href="/daftar" className="flex h-12 items-center rounded-button bg-white px-8 text-base font-extrabold text-primary!">
-            {tr("Daftar syarikat")}</Link>
+          <div className="flex flex-col gap-2.5 sm:flex-row">
+            <Link href="/daftar" className="flex h-12 items-center justify-center rounded-button bg-white px-8 text-base font-extrabold text-primary!">
+              {tr("Daftar syarikat")}</Link>
+            <Link href="/masuk" className="flex h-12 items-center justify-center rounded-button border-2 border-white/70 px-8 text-base font-extrabold text-white!">
+              {tr("Saya pekerja — log masuk")}</Link>
+          </div>
+          <span className="text-[13px] opacity-80">{tr("Pekerja tidak perlu mendaftar syarikat — gunakan pautan jemputan daripada HR.")}</span>
         </div>
       </section>
 
-      <footer className="mx-auto flex max-w-[1120px] flex-wrap items-center gap-x-5 gap-y-0 px-4 pt-2 pb-10 text-sm text-muted [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center">
-        <span>{tr("© {0} HRBoost.io", "2026")}</span>
-        <span className="grow" />
-        <Link href="/privasi#privasi">{tr("Notis privasi (PDPA)")}</Link>
-        <Link href="/privasi#terma">{tr("Terma")}</Link>
-        <Link href="/privasi#hubungi">{tr("Hubungi kami")}</Link>
-        <span className="flex w-full flex-wrap gap-x-5 gap-y-1 text-[13px]">
-          <a href="mailto:hi@hrboost.io">{tr("hi@hrboost.io")}</a>
-          <a href="https://wa.me/60194442424">{tr("WhatsApp 019-444 2424")}</a>
-          <span>{tr("D-G-6 Putra Walk, Taman Pinggiran Putra, 43300 Seri Kembangan, Selangor")}</span>
-        </span>
-      </footer>
+      <Kaki />
     </div>
+  );
+}
+
+const PAUTAN = () => [
+  { id: "ciri", label: tr("Ciri") },
+  { id: "cara", label: tr("Cara mula") },
+  { id: "soalan", label: trKonteks("Soalan lazim", "FAQ") },
+];
+
+function Logo() {
+  return (
+    <Link href="/" className="flex shrink-0 items-center gap-2 text-ink!">
+      <span className="flex size-9 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold text-white">HR</span>
+      <b className="text-lg font-extrabold">HRBoost.io</b>
+    </Link>
+  );
+}
+
+/** Pengepala melekat: pautan seksyen (aktif ikut skrol), suis bahasa, Log masuk & Daftar; menu ☰ pada telefon. */
+function Pengepala() {
+  const [buka, setBuka] = useState(false);
+  const [aktif, setAktif] = useState<string | null>(null);
+  const [skrol, setSkrol] = useState(false);
+  useEffect(() => {
+    // Seksyen aktif = seksyen terakhir yang bahagian atasnya telah melepasi pengepala (dan masih kelihatan)
+    const onSkrol = () => {
+      setSkrol(window.scrollY > 8);
+      let semasa: string | null = null;
+      for (const x of PAUTAN()) {
+        const el = document.getElementById(x.id);
+        if (!el) continue;
+        const r = el.getBoundingClientRect();
+        if (r.top <= 120 && r.bottom > 120) semasa = x.id;
+      }
+      setAktif(semasa);
+    };
+    onSkrol();
+    window.addEventListener("scroll", onSkrol, { passive: true });
+    return () => window.removeEventListener("scroll", onSkrol);
+  }, []);
+  useEffect(() => {
+    if (!buka) return;
+    const k = (e: KeyboardEvent) => e.key === "Escape" && setBuka(false);
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [buka]);
+  return (
+    <header className={`sticky top-0 z-40 bg-surface/95 backdrop-blur transition-shadow ${skrol ? "border-b border-line-soft shadow-sm" : "border-b border-transparent"}`}>
+      <nav aria-label={tr("Menu utama")} className="mx-auto flex h-16 max-w-[1120px] items-center gap-3 px-4">
+        <Logo />
+        <div className="ml-6 hidden items-center gap-1 md:flex">
+          {PAUTAN().map((x) => (
+            <a
+              key={x.id}
+              href={`#${x.id}`}
+              aria-current={aktif === x.id ? "true" : undefined}
+              className={`relative flex h-16 items-center px-3 text-sm font-bold transition-colors ${aktif === x.id ? "text-primary!" : "text-[#4A5A57]! hover:text-ink!"}`}
+            >
+              {x.label}
+              <span className={`absolute inset-x-3 bottom-0 h-[3px] rounded-t-full bg-primary transition-opacity ${aktif === x.id ? "opacity-100" : "opacity-0"}`} />
+            </a>
+          ))}
+        </div>
+        <span className="grow" />
+        <div className="hidden items-center gap-3 md:flex">
+          <PilihBahasa kecil bingkai />
+          <Link href="/masuk" className="flex h-11 items-center px-2 text-sm font-bold">
+            {tr("Log masuk")}</Link>
+          <Link href="/daftar" className="flex h-11 items-center rounded-[12px] bg-primary px-4 text-sm font-extrabold text-white!">
+            {tr("Daftar percuma")}</Link>
+        </div>
+        <Link href="/masuk" className="flex h-11 items-center px-1 text-sm font-bold md:hidden">
+          {tr("Log masuk")}</Link>
+        <button
+          type="button"
+          aria-label={buka ? tr("Tutup menu") : tr("Buka menu")}
+          aria-expanded={buka}
+          aria-controls="menu-telefon"
+          onClick={() => setBuka(!buka)}
+          className="flex size-11 items-center justify-center rounded-[12px] border border-line text-ink md:hidden"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+            {buka ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
+          </svg>
+        </button>
+      </nav>
+      {buka && (
+        <div id="menu-telefon" className="border-t border-line-soft bg-surface px-4 pt-2 pb-5 shadow-md md:hidden">
+          <div className="flex flex-col">
+            {PAUTAN().map((x) => (
+              <a key={x.id} href={`#${x.id}`} onClick={() => setBuka(false)} className="flex min-h-12 items-center border-b border-[#EEF2F1] text-base font-bold text-ink!">
+                {x.label}
+              </a>
+            ))}
+          </div>
+          <div className="flex items-center justify-between gap-3 py-4">
+            <span className="text-sm font-bold text-[#4A5A57]">{tr("Bahasa")}</span>
+            <PilihBahasa kecil bingkai />
+          </div>
+          <div className="flex flex-col gap-2.5">
+            <Link href="/daftar" className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white!">
+              {tr("Daftar syarikat — percuma")}</Link>
+            <Link href="/masuk" className="flex h-12 items-center justify-center rounded-button border-2 border-primary text-base font-extrabold text-primary!">
+              {tr("Saya pekerja — log masuk")}</Link>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
+
+/** Footer 4 lajur (telefon: bertindan). */
+function Kaki() {
+  const tajuk = "m-0 mb-3 text-xs font-extrabold tracking-[0.08em] text-ink";
+  const senarai = "m-0 flex list-none flex-col gap-1 p-0 text-sm [&_a]:flex [&_a]:min-h-9 [&_a]:items-center [&_a]:text-[#4A5A57]! [&_a:hover]:text-primary!";
+  return (
+    <footer className="mt-4 border-t border-line-soft bg-surface">
+      <div className="mx-auto grid max-w-[1120px] gap-8 px-4 py-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1.2fr_1fr]">
+        <div className="flex flex-col gap-3">
+          <Logo />
+          <p className="m-0 max-w-[300px] text-sm leading-relaxed text-[#4A5A57]">{tr("Sistem HR percuma untuk PKS di Malaysia: cuti, tuntutan, kehadiran dan gaji, terus melalui WhatsApp.")}</p>
+        </div>
+        <nav aria-label={tr("Produk")}>
+          <h2 className={tajuk}>{tr("PRODUK")}</h2>
+          <ul className={senarai}>
+            <li><a href="#ciri">{tr("Ciri")}</a></li>
+            <li><a href="#cara">{tr("Cara mula")}</a></li>
+            <li><a href="#soalan">{tr("Soalan lazim")}</a></li>
+            <li><Link href="/masuk">{tr("Log masuk")}</Link></li>
+            <li><Link href="/daftar">{tr("Daftar syarikat")}</Link></li>
+          </ul>
+        </nav>
+        <div>
+          <h2 className={tajuk}>{tr("SOKONGAN")}</h2>
+          <ul className={senarai}>
+            <li><a href="https://wa.me/60194442424">{tr("WhatsApp 019-444 2424")}</a></li>
+            <li><a href="mailto:hi@hrboost.io">{tr("hi@hrboost.io")}</a></li>
+            <li className="pt-1 text-[13px] leading-relaxed text-[#4A5A57]">{tr("D-G-6 Putra Walk, Taman Pinggiran Putra, 43300 Seri Kembangan, Selangor")}</li>
+          </ul>
+        </div>
+        <nav aria-label={tr("Undang-undang")}>
+          <h2 className={tajuk}>{tr("UNDANG-UNDANG")}</h2>
+          <ul className={senarai}>
+            <li><Link href="/privasi#privasi">{tr("Notis privasi (PDPA)")}</Link></li>
+            <li><Link href="/privasi#terma">{tr("Terma")}</Link></li>
+            <li><Link href="/privasi#hubungi">{tr("Hubungi kami")}</Link></li>
+          </ul>
+        </nav>
+      </div>
+      <div className="border-t border-line-soft">
+        <div className="mx-auto flex max-w-[1120px] flex-col gap-3 px-4 py-5 text-[13px] text-muted sm:flex-row sm:items-center sm:justify-between">
+          <span>{tr("© {0} HRBoost.io · Dibina di Malaysia", "2026")}</span>
+          <PilihBahasa kecil bingkai />
+        </div>
+      </div>
+    </footer>
   );
 }
