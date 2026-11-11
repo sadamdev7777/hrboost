@@ -1,5 +1,6 @@
 "use client";
 
+import { Avatar } from "@/components/ui";
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,7 +9,7 @@ import { hasRole, useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { getBaki, type Baki } from "@/lib/data";
-import { hari, inisial, todayISO } from "@/lib/format";
+import { hari, todayISO } from "@/lib/format";
 import {
   IconBell,
   IconCake,
@@ -55,9 +56,7 @@ export default function SayaPage() {
     <Screen>
       <main className="flex grow flex-col gap-4 px-4 pt-4 pb-4">
         <Link href="/profil" className="flex items-center gap-3 text-ink!">
-          <span className="flex size-12 items-center justify-center rounded-full bg-primary text-lg font-extrabold text-white">
-            {inisial(me.name)}
-          </span>
+          <Avatar name={me.name} size={48} personId={me.personId} />
           <div className="flex grow flex-col gap-0.5">
             <h1 className="m-0 text-lg font-extrabold">{me.name}</h1>
             <span className="text-[13px] text-muted">

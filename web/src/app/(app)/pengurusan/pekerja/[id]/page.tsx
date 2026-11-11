@@ -124,6 +124,16 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
   // HR terus melihat maklumat peribadi; setiap paparan direkodkan dalam data_access_log (hr_view_sensitive).
   const sd = useData(() => (bolehUbah ? bukaMaklumatSensitif(p.id) : Promise.resolve(null as MaklumatSensitif | null)), [p.id, bolehUbah]);
   const sensitif = sd.data;
+  // Permohonan kemas kini profil oleh pekerja (bank, perkahwinan, KWSP …) yang menunggu HR
+  const kemasKini = useData(
+    async () =>
+      bolehUbah
+        ? (((
+            await getSupabase().from("profile_change_requests").select("changes").eq("employment_id", p.id).eq("status", "pending").maybeSingle()
+          ).data as { changes: { label: string }[] } | null) ?? null)
+        : null,
+    [p.id, bolehUbah],
+  );
   // IC & akaun bank bertopeng sehingga HR menekan "Tunjuk" (PDPA: kurangkan pendedahan di skrin).
   const [tunjuk, setTunjuk] = useState(false);
   const topeng = (v: string | null | undefined, depan: number, belakang: number) =>
@@ -324,6 +334,13 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
                 ))}
               </Kotak>
               <Keluarga employmentId={p.id} boleh={bolehUbah} />
+              {kemasKini.data && (
+                <Link href="/kelulusan" className="flex flex-col gap-1 rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] text-warning!">
+                  <b>{tr("Permohonan kemas kini profil menunggu")}</b>
+                  <span>{kemasKini.data.changes.map((c) => trRalat(c.label)).join(", ")}</span>
+                  <span className="font-bold">{tr("Semak dalam Kelulusan ›")}</span>
+                </Link>
+              )}
               {sensitif.bank_change && (
                 <div className="flex flex-col gap-2.5 rounded-[14px] bg-warning-soft px-4 py-3">
                   <span className="text-[13px] font-semibold text-warning">
@@ -444,7 +461,7 @@ function KepalaPekerja({ p }: { p: ButiranPekerja }) {
         : { label: tr("Aktif"), tone: "success" as const };
   return (
     <div className="flex items-center gap-3 px-4 pt-1 pb-3 lg:px-0">
-      <Avatar name={p.name} size={56} />
+      <Avatar name={p.name} size={56} personId={p.personId} />
       <div className="flex min-w-0 grow flex-col gap-0.5">
         <span className="flex flex-wrap items-center gap-2">
           <h1 className="m-0 text-xl font-extrabold lg:text-2xl">{p.name}</h1>

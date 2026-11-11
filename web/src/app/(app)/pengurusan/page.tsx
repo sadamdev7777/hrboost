@@ -25,7 +25,7 @@ import { getKalendarBerkanun, getTarikhTamat, tandaDihantar, type KewajipanBerka
 import { beritahu, mintaTeks } from "@/components/Dialog";
 
 const AV = ["bg-[#FDEBD7] text-warning", "bg-[#E3F1EE] text-primary", "bg-[#EDE9F8] text-ai"];
-const JENIS: Record<string, string> = { leave: tr("Cuti"), claim: tr("Tuntutan"), attendance_correction: tr("Pembetulan"), payroll_run: tr("Gaji"), overtime: tr("Lebih masa"), salary_advance: tr("Pendahuluan") };
+const JENIS: Record<string, string> = { leave: tr("Cuti"), claim: tr("Tuntutan"), attendance_correction: tr("Pembetulan"), payroll_run: tr("Gaji"), overtime: tr("Lebih masa"), salary_advance: tr("Pendahuluan"), profile_change: tr("Profil") };
 const PERHATIAN: Record<Dashboard["attention"][number]["kind"], { tag: string; tone: "danger" | "warning" | "ai" | "primary"; aksi: string }> = {
   sla: { tag: tr("Tertangguh"), tone: "danger", aksi: tr("Lihat") },
   probation: { tag: tr("Percubaan"), tone: "warning", aksi: tr("Sahkan") },

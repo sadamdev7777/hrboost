@@ -135,6 +135,7 @@ const AWALAN: [RegExp, string][] = [
   [/^Kerja lebih masa ([\d.,]+) jam/, "Overtime $1 hours"],
   [/^Pendahuluan gaji /, "Salary advance "],
   [/^Penilaian percubaan /, "Probation review "],
+  [/^Kemas kini profil: /, "Profile update: "],
 ];
 
 export function trTajuk(t: string): string {

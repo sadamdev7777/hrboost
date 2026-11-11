@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { IconBack } from "./icons";
+import { useMeContext } from "@/lib/me";
+import { useGambarProfil } from "@/lib/avatar";
 import { LABEL_STATUS, inisial, type StatusPermohonan } from "@/lib/format";
 
 const LEBAR = {
@@ -89,7 +91,17 @@ const AVATAR = [
   "bg-[#EAF0FB] text-[#2F5BA8]",
 ];
 
-export function Avatar({ name, size = 42, index = 0 }: { name: string; size?: number; index?: number }) {
+/**
+ * Avatar: gambar profil jika ada (personId + syarikat aktif), jika tidak huruf awal nama.
+ * `path` boleh diberi terus (cth. profil sendiri) untuk elak carian.
+ */
+export function Avatar({ name, size = 42, index = 0, personId, path }: { name: string; size?: number; index?: number; personId?: string | null; path?: string | null }) {
+  const { state } = useMeContext();
+  const cid = state.status === "ready" ? (state.me.active?.companyId ?? null) : null;
+  const src = useGambarProfil(personId ?? null, cid, path);
+  if (src)
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={src} alt={name} width={size} height={size} className="shrink-0 rounded-full bg-page object-cover" style={{ width: size, height: size }} />;
   return (
     <span
       className={`flex shrink-0 items-center justify-center rounded-full font-extrabold ${AVATAR[index % AVATAR.length]}`}

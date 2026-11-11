@@ -1,5 +1,6 @@
 "use client";
 
+import { KadProfil } from "@/components/KadProfil";
 import { tr, trRalat } from "@/lib/i18n";
 import Link from "next/link";
 import { useMe, type Me } from "@/lib/me";
@@ -49,6 +50,7 @@ function StaffUtama({ me }: { me: Me }) {
   return (
     <main className="flex grow flex-col gap-5 px-4 pt-4 pb-4">
       <Greeting me={me} />
+      <KadProfil />
       {emp && <OrientasiBanner employmentId={emp.id} />}
       {emp && <KadPengumuman companyId={emp.companyId} />}
 

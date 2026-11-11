@@ -1749,14 +1749,14 @@ isOneToOne: false
                   ]
                 },"persons": {
                   Row: {
-                    "address": string | null,"auth_user_id": string | null,"bank_account_no": string | null,"bank_name": string | null,"children_count": number,"created_at": string,"date_of_birth": string | null,"email": string | null,"full_name": string,"gender": string | null,"hide_birthday": boolean,"ic_no": string | null,"id": string,"is_active": boolean,"language": string,"marital_status": string | null,"nationality": string | null,"passport_expiry": string | null,"passport_no": string | null,"permit_expiry": string | null,"phone_whatsapp": string | null,"photo_path": string | null,"preferred_name": string | null,"spouse_working": boolean | null,"updated_at": string
+                    "address": string | null,"auth_user_id": string | null,"avatar_path": string | null,"bank_account_no": string | null,"bank_name": string | null,"children_count": number,"created_at": string,"date_of_birth": string | null,"email": string | null,"full_name": string,"gender": string | null,"hide_birthday": boolean,"ic_no": string | null,"id": string,"is_active": boolean,"language": string,"marital_status": string | null,"nationality": string | null,"passport_expiry": string | null,"passport_no": string | null,"permit_expiry": string | null,"phone_whatsapp": string | null,"photo_path": string | null,"preferred_name": string | null,"spouse_working": boolean | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "address"?: string | null,"auth_user_id"?: string | null,"bank_account_no"?: string | null,"bank_name"?: string | null,"children_count"?: number,"created_at"?: string,"date_of_birth"?: string | null,"email"?: string | null,"full_name": string,"gender"?: string | null,"hide_birthday"?: boolean,"ic_no"?: string | null,"id"?: string,"is_active"?: boolean,"language"?: string,"marital_status"?: string | null,"nationality"?: string | null,"passport_expiry"?: string | null,"passport_no"?: string | null,"permit_expiry"?: string | null,"phone_whatsapp"?: string | null,"photo_path"?: string | null,"preferred_name"?: string | null,"spouse_working"?: boolean | null,"updated_at"?: string
+                    "address"?: string | null,"auth_user_id"?: string | null,"avatar_path"?: string | null,"bank_account_no"?: string | null,"bank_name"?: string | null,"children_count"?: number,"created_at"?: string,"date_of_birth"?: string | null,"email"?: string | null,"full_name": string,"gender"?: string | null,"hide_birthday"?: boolean,"ic_no"?: string | null,"id"?: string,"is_active"?: boolean,"language"?: string,"marital_status"?: string | null,"nationality"?: string | null,"passport_expiry"?: string | null,"passport_no"?: string | null,"permit_expiry"?: string | null,"phone_whatsapp"?: string | null,"photo_path"?: string | null,"preferred_name"?: string | null,"spouse_working"?: boolean | null,"updated_at"?: string
                   }
                   Update: {
-                    "address"?: string | null,"auth_user_id"?: string | null,"bank_account_no"?: string | null,"bank_name"?: string | null,"children_count"?: number,"created_at"?: string,"date_of_birth"?: string | null,"email"?: string | null,"full_name"?: string,"gender"?: string | null,"hide_birthday"?: boolean,"ic_no"?: string | null,"id"?: string,"is_active"?: boolean,"language"?: string,"marital_status"?: string | null,"nationality"?: string | null,"passport_expiry"?: string | null,"passport_no"?: string | null,"permit_expiry"?: string | null,"phone_whatsapp"?: string | null,"photo_path"?: string | null,"preferred_name"?: string | null,"spouse_working"?: boolean | null,"updated_at"?: string
+                    "address"?: string | null,"auth_user_id"?: string | null,"avatar_path"?: string | null,"bank_account_no"?: string | null,"bank_name"?: string | null,"children_count"?: number,"created_at"?: string,"date_of_birth"?: string | null,"email"?: string | null,"full_name"?: string,"gender"?: string | null,"hide_birthday"?: boolean,"ic_no"?: string | null,"id"?: string,"is_active"?: boolean,"language"?: string,"marital_status"?: string | null,"nationality"?: string | null,"passport_expiry"?: string | null,"passport_no"?: string | null,"permit_expiry"?: string | null,"phone_whatsapp"?: string | null,"photo_path"?: string | null,"preferred_name"?: string | null,"spouse_working"?: boolean | null,"updated_at"?: string
                   }
                   Relationships: [
                     
@@ -1874,6 +1874,32 @@ isOneToOne: false
     },{
       foreignKeyName: "probation_reviews_reviewer_id_fkey"
       columns: ["reviewer_id"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"profile_change_requests": {
+                  Row: {
+                    "approval_request_id": string | null,"attachment_path": string | null,"changes": NonNullable<Json>,"created_at": string,"decided_at": string | null,"employment_id": string,"id": string,"person_id": string,"status": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "approval_request_id"?: string | null,"attachment_path"?: string | null,"changes": NonNullable<Json>,"created_at"?: string,"decided_at"?: string | null,"employment_id": string,"id"?: string,"person_id": string,"status"?: string
+                  }
+                  Update: {
+                    "approval_request_id"?: string | null,"attachment_path"?: string | null,"changes"?: NonNullable<Json>,"created_at"?: string,"decided_at"?: string | null,"employment_id"?: string,"id"?: string,"person_id"?: string,"status"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "profile_change_requests_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "profile_change_requests_person_id_fkey"
+      columns: ["person_id"]
 isOneToOne: false
       referencedRelation: "persons"
       referencedColumns: ["id"]
@@ -2054,7 +2080,7 @@ isOneToOne: false
           Views: {
             "v_my_approval_tasks": {
                   Row: {
-                    "ai_summary": string | null,"assigned_at": string,"company_code": string,"company_id": string,"context": NonNullable<Json>,"delegated_from": string | null,"department": string | null,"request_id": string,"request_type": Database["public"]['Enums']["request_type"],"requester_name": string | null,"requester_nickname": string | null,"requester_photo": string | null,"sla_breached": boolean,"sla_due_at": string | null,"step_name": string,"submitted_at": string,"task_id": string,"title": string
+                    "ai_summary": string | null,"assigned_at": string,"company_code": string,"company_id": string,"context": NonNullable<Json>,"delegated_from": string | null,"department": string | null,"request_id": string,"request_type": Database["public"]['Enums']["request_type"],"requester_name": string | null,"requester_nickname": string | null,"requester_person_id": string,"requester_photo": string | null,"sla_breached": boolean,"sla_due_at": string | null,"step_name": string,"submitted_at": string,"task_id": string,"title": string
                   }
                   ComputedFields: never
                   Relationships: [
@@ -2063,6 +2089,12 @@ isOneToOne: false
       columns: ["company_id"]
 isOneToOne: false
       referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "approval_requests_requester_person_id_fkey"
+      columns: ["requester_person_id"]
+isOneToOne: false
+      referencedRelation: "persons"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "approval_tasks_delegated_from_fkey"
@@ -2198,6 +2230,11 @@ isOneToOne: false
                            },
 "company_attendance_connected":
 { Args: { "p_company": string }; Returns: boolean
+                           },
+"company_avatars":
+{ Args: { "p_company": string }; Returns: {
+              "avatar_path": string,"person_id": string
+            }[]
                            },
 "company_external_access":
 { Args: { "p_company": string }; Returns: {
@@ -2863,6 +2900,9 @@ isOneToOne: false
               "active": boolean,"companies": string,"is_platform_admin": boolean,"last_sign_in": string,"name": string,"person_id": string,"whatsapp": string
             }[]
                            },
+"same_company_person":
+{ Args: { "p_person": string }; Returns: boolean
+                           },
 "save_onboarding_step":
 { Args: { "p_data"?: Json,"p_employment": string,"p_step": string }; Returns: number
                            },
@@ -3048,6 +3088,9 @@ isOneToOne: false
 "submit_probation_review":
 { Args: { "p_comments": string,"p_employment": string,"p_extend_months": number,"p_ratings": Json,"p_recommendation": string }; Returns: string
                            },
+"submit_profile_change":
+{ Args: { "p_attachment"?: string,"p_changes": Json,"p_employment": string,"p_on_behalf"?: string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: string
+                           },
 "submit_salary_advance":
 { Args: { "p_amount": number,"p_employment": string,"p_on_behalf"?: string,"p_reason": string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: {
               "amount": number,
@@ -3095,7 +3138,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "accounting_system": "quickbooks"|"niagawan"|"csv"|"none","action_channel": "web"|"whatsapp"|"ai_agent"|"system","app_role": "staff"|"dept_head"|"hr"|"finance"|"ceo"|"admin","approver_type": "dept_head"|"direct_manager"|"specific_person"|"role","employment_status": "probation"|"active"|"resigned"|"terminated"|"retired","employment_type": "permanent"|"contract"|"part_time"|"intern","leave_half": "full"|"am"|"pm","notify_status": "pending"|"sent"|"failed"|"skipped","notify_target": "subject"|"subject_manager"|"subject_dept_head"|"role_hr"|"role_ceo"|"specific_person"|"cover_person"|"dept_peers","payroll_status": "draft"|"calculated"|"pending"|"approved"|"paid"|"locked"|"returned"|"rejected"|"cancelled","request_status": "draft"|"pending"|"approved"|"rejected"|"returned"|"cancelled","request_type": "leave"|"claim"|"attendance_correction"|"payroll_run"|"overtime"|"salary_advance","sla_mode": "none"|"same_day"|"hours","step_mode": "any"|"all","sync_status": "pending"|"success"|"failed"|"skipped","task_status": "pending"|"approved"|"rejected"|"returned"|"superseded"
+            "accounting_system": "quickbooks"|"niagawan"|"csv"|"none","action_channel": "web"|"whatsapp"|"ai_agent"|"system","app_role": "staff"|"dept_head"|"hr"|"finance"|"ceo"|"admin","approver_type": "dept_head"|"direct_manager"|"specific_person"|"role","employment_status": "probation"|"active"|"resigned"|"terminated"|"retired","employment_type": "permanent"|"contract"|"part_time"|"intern","leave_half": "full"|"am"|"pm","notify_status": "pending"|"sent"|"failed"|"skipped","notify_target": "subject"|"subject_manager"|"subject_dept_head"|"role_hr"|"role_ceo"|"specific_person"|"cover_person"|"dept_peers","payroll_status": "draft"|"calculated"|"pending"|"approved"|"paid"|"locked"|"returned"|"rejected"|"cancelled","request_status": "draft"|"pending"|"approved"|"rejected"|"returned"|"cancelled","request_type": "leave"|"claim"|"attendance_correction"|"payroll_run"|"overtime"|"salary_advance"|"profile_change","sla_mode": "none"|"same_day"|"hours","step_mode": "any"|"all","sync_status": "pending"|"success"|"failed"|"skipped","task_status": "pending"|"approved"|"rejected"|"returned"|"superseded"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -3215,7 +3258,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "accounting_system": ["quickbooks", "niagawan", "csv", "none"],"action_channel": ["web", "whatsapp", "ai_agent", "system"],"app_role": ["staff", "dept_head", "hr", "finance", "ceo", "admin"],"approver_type": ["dept_head", "direct_manager", "specific_person", "role"],"employment_status": ["probation", "active", "resigned", "terminated", "retired"],"employment_type": ["permanent", "contract", "part_time", "intern"],"leave_half": ["full", "am", "pm"],"notify_status": ["pending", "sent", "failed", "skipped"],"notify_target": ["subject", "subject_manager", "subject_dept_head", "role_hr", "role_ceo", "specific_person", "cover_person", "dept_peers"],"payroll_status": ["draft", "calculated", "pending", "approved", "paid", "locked", "returned", "rejected", "cancelled"],"request_status": ["draft", "pending", "approved", "rejected", "returned", "cancelled"],"request_type": ["leave", "claim", "attendance_correction", "payroll_run", "overtime", "salary_advance"],"sla_mode": ["none", "same_day", "hours"],"step_mode": ["any", "all"],"sync_status": ["pending", "success", "failed", "skipped"],"task_status": ["pending", "approved", "rejected", "returned", "superseded"]
+            "accounting_system": ["quickbooks", "niagawan", "csv", "none"],"action_channel": ["web", "whatsapp", "ai_agent", "system"],"app_role": ["staff", "dept_head", "hr", "finance", "ceo", "admin"],"approver_type": ["dept_head", "direct_manager", "specific_person", "role"],"employment_status": ["probation", "active", "resigned", "terminated", "retired"],"employment_type": ["permanent", "contract", "part_time", "intern"],"leave_half": ["full", "am", "pm"],"notify_status": ["pending", "sent", "failed", "skipped"],"notify_target": ["subject", "subject_manager", "subject_dept_head", "role_hr", "role_ceo", "specific_person", "cover_person", "dept_peers"],"payroll_status": ["draft", "calculated", "pending", "approved", "paid", "locked", "returned", "rejected", "cancelled"],"request_status": ["draft", "pending", "approved", "rejected", "returned", "cancelled"],"request_type": ["leave", "claim", "attendance_correction", "payroll_run", "overtime", "salary_advance", "profile_change"],"sla_mode": ["none", "same_day", "hours"],"step_mode": ["any", "all"],"sync_status": ["pending", "success", "failed", "skipped"],"task_status": ["pending", "approved", "rejected", "returned", "superseded"]
           }
         }
 } as const

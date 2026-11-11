@@ -11,7 +11,7 @@ import { useData } from "@/lib/useData";
 import { useMeContext } from "@/lib/me";
 import { MENU_PEKERJA, NAV_TETAPAN, itemAktif, lamanUtama, menuHrUntuk, navUntuk, semuaItemHr, useMod, type IkonNav, type ItemNav, type Mod } from "@/lib/mod";
 import { getSupabase } from "@/lib/supabase";
-import { BackHeader } from "./ui";
+import { Avatar, BackHeader } from "./ui";
 import { useSkrinLebar } from "@/lib/skrin";
 import { bukaCari } from "./CariPantas";
 
@@ -191,16 +191,14 @@ export function MenuSisi() {
         {hr && pautan(NAV_TETAPAN)}
         {(
           <Link
-            href="/saya"
+            href={hr ? "/saya" : "/profil"}
             aria-current={sayaAktif ? "page" : undefined}
             className={`flex min-h-11 items-center gap-2.5 rounded-[12px] px-2 hover:bg-[#EEF2F1] ${sayaAktif ? "bg-[#E3F1EE]" : ""}`}
           >
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-soft text-xs font-extrabold text-primary">
-              {me.name.slice(0, 2).toUpperCase()}
-            </span>
+            <Avatar name={me.name} size={32} personId={me.personId} />
             <span className="flex min-w-0 flex-col leading-tight">
               <b className="truncate text-[13px] text-ink">{me.name}</b>
-              <span className="truncate text-xs text-muted">{hr ? tr("Profil & urusan saya") : tr("Profil, bahasa & tetapan")}</span>
+              <span className="truncate text-xs text-muted">{hr ? tr("Profil & urusan saya") : tr("Profil Saya")}</span>
             </span>
           </Link>
         )}

@@ -19,7 +19,7 @@ import { RequestDetail } from "@/components/RequestDetail";
 import { useSkrinLebar } from "@/lib/skrin";
 
 // Rujukan reka bentuk: design/Kelulusan.dc.html
-type Filter = "all" | "leave" | "claim" | "attendance_correction" | "payroll_run" | "overtime" | "salary_advance";
+type Filter = "all" | "leave" | "claim" | "attendance_correction" | "payroll_run" | "overtime" | "salary_advance" | "profile_change";
 const FILTER_LABEL: Record<Exclude<Filter, "all">, string> = {
   leave: tr("Cuti"),
   claim: tr("Tuntutan"),
@@ -27,6 +27,7 @@ const FILTER_LABEL: Record<Exclude<Filter, "all">, string> = {
   payroll_run: tr("Gaji"),
   overtime: tr("Lebih masa"),
   salary_advance: tr("Pendahuluan"),
+  profile_change: tr("Profil"),
 };
 const ROLE_LABEL: Record<string, string> = { hr: "HR", ceo: "CEO", finance: tr("Kewangan"), admin: tr("Pentadbir") };
 
@@ -256,7 +257,7 @@ function Kelulusan({ tabAwal }: { tabAwal: "pending" | "syarikat" }) {
                         ) : (
                           <span className="w-[18px] shrink-0" />
                         )}
-                        <Avatar name={t.name} index={i} size={36} />
+                        <Avatar name={t.name} index={i} size={36} personId={t.personId} />
                         <div className="flex min-w-0 grow flex-col gap-0.5">
                           <div className="flex justify-between gap-2">
                             <span className="truncate text-sm font-extrabold">{t.name}</span>
@@ -282,7 +283,7 @@ function Kelulusan({ tabAwal }: { tabAwal: "pending" | "syarikat" }) {
               {shown.map((t, i) => (
                 <div key={t.taskId} className="flex flex-col gap-2.5 rounded-[18px] bg-surface px-4 py-3">
                   <Link href={`/kelulusan/${t.taskId}`} className="flex gap-3 text-ink!">
-                    <Avatar name={t.name} index={i} />
+                    <Avatar name={t.name} index={i} personId={t.personId} />
                     <div className="flex grow flex-col gap-[3px]">
                       <div className="flex justify-between gap-2">
                         <span className="text-sm font-extrabold">{t.name}</span>
@@ -415,6 +416,7 @@ function SlaBanner({ tasks }: { tasks: Tugasan[] }) {
 }
 
 type Tugasan = {
+  personId: string | null;
   taskId: string;
   type: Exclude<Filter, "all">;
   name: string;
@@ -441,6 +443,7 @@ async function loadPending(): Promise<Tugasan[]> {
       taskId: r.task_id!,
       type: r.request_type as Tugasan["type"],
       name: r.requester_nickname || r.requester_name || tr("Pemohon"),
+      personId: r.requester_person_id,
       title,
       ai: r.ai_summary,
       assignedAt: r.assigned_at!,

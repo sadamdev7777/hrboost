@@ -1,5 +1,6 @@
 "use client";
 
+import { KadProfil } from "@/components/KadProfil";
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useMe } from "@/lib/me";
@@ -45,6 +46,7 @@ export function KetuaUtama() {
   return (
     <main className="flex grow flex-col gap-3 px-4 pt-4 pb-4">
       <Greeting me={me} />
+      <KadProfil />
       <OrientasiBanner employmentId={emp.id} />
       <KadPengumuman companyId={emp.companyId} />
 

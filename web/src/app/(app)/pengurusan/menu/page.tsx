@@ -18,7 +18,7 @@ export default function MenuHrPage() {
       <PengepalaAkar title={tr("Lagi")} />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         <Link href="/saya" className="flex items-center gap-3 rounded-card bg-surface px-4 py-3 text-ink!">
-          <Avatar name={me.name} size={44} />
+          <Avatar name={me.name} size={44} personId={me.personId} />
           <span className="flex min-w-0 grow flex-col">
             <b className="truncate">{me.name}</b>
             <span className="truncate text-xs text-muted">{tr("Profil & urusan saya")}</span>

@@ -109,7 +109,7 @@ function Orang({ p, i, peranan, serlah = false }: { p: PekerjaRingkas; i: number
       href={`/pengurusan/pekerja/${p.id}`}
       className={`flex min-h-12 items-center gap-2.5 rounded-[12px] px-2 py-1.5 text-ink! hover:bg-[#F2F5F4] ${serlah ? "bg-[#F2F7F6]" : ""}`}
     >
-      <Avatar name={p.name} size={34} index={i} />
+      <Avatar name={p.name} size={34} index={i} personId={p.personId} />
       <span className="flex min-w-0 flex-col leading-tight">
         <b className="truncate text-[13px]">{p.name}</b>
         <span className="truncate text-xs text-muted">{peranan ?? p.position ?? "–"}</span>

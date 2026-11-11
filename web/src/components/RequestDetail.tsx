@@ -22,6 +22,7 @@ const TAJUK: Record<string, string> = {
   payroll_run: tr("Kelulusan Gaji"),
   overtime: tr("Kerja Lebih Masa"),
   salary_advance: tr("Pendahuluan Gaji"),
+  profile_change: tr("Kemas Kini Profil"),
 };
 
 type Mode = { kind: "approver"; taskId: string } | { kind: "requester"; requestId: string };
@@ -107,7 +108,7 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
       <Isi className={`flex grow flex-col gap-3 ${tertanam ? "" : "px-4 pt-1 pb-4"}`}>
         <section className="flex flex-col gap-3 rounded-[18px] bg-surface p-4">
           <div className="flex items-center gap-3">
-            <Avatar name={x.requesterName} size={48} />
+            <Avatar name={x.requesterName} size={48} personId={x.req.requester_person_id} />
             <div className="flex grow flex-col gap-0.5">
               <span className="text-base font-extrabold">{x.requesterName}</span>
               <span className="text-[13px] text-muted">
@@ -182,7 +183,20 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
               ))}
             </div>
           )}
-          {!x.leave && !x.claim && <Field label={tr("Permohonan")} value={trTajuk(x.req.title)} />}
+          {x.profil && (
+            <div className="flex flex-col gap-2">
+              {x.profil.changes.map((c) => (
+                <div key={c.field} className="flex flex-col gap-0.5 border-t border-[#EEF2F1] pt-2 text-sm first:border-t-0 first:pt-0">
+                  <span className="text-xs text-muted">{trRalat(c.label)}</span>
+                  <span>
+                    <span className="text-muted line-through">{nilaiProfil(c.field, c.old)}</span> → <b>{nilaiProfil(c.field, c.new)}</b>
+                  </span>
+                </div>
+              ))}
+              {x.profil.attachment && <LihatFail path={x.profil.attachment} label={tr("Lihat gambar kad pengenalan")} />}
+            </div>
+          )}
+          {!x.leave && !x.claim && !x.profil && <Field label={tr("Permohonan")} value={trTajuk(x.req.title)} />}
         </section>
 
         {x.req.ai_summary && (
@@ -537,7 +551,11 @@ async function loadDetail(mode: Mode) {
     }
   }
 
+  const ctxProfil = req.request_type === "profile_change" ? (req.context as { changes?: { field: string; label: string; old: string | null; new: string | null }[]; attachment?: string | null } | null) : null;
+  const profil = ctxProfil?.changes ? { changes: ctxProfil.changes, attachment: ctxProfil.attachment ?? null } : null;
+
   return {
+    profil,
     req,
     requesterName,
     department: e?.departments?.name ?? null,
@@ -551,4 +569,13 @@ async function loadDetail(mode: Mode) {
     gaji,
     isToday: tarikhTempatan(req.submitted_at) === todayISO(),
   };
+}
+
+const KAHWIN: Record<string, string> = { bujang: tr("Bujang"), berkahwin: tr("Berkahwin"), duda_janda: tr("Duda / Janda") };
+/** Nilai perubahan profil untuk paparan pelulus (HR melihat nilai penuh untuk disemak). */
+function nilaiProfil(field: string, v: string | null): string {
+  if (v === null || v === "") return "-";
+  if (field === "marital_status") return KAHWIN[v] ?? v;
+  if (field === "spouse_working") return v === "true" ? tr("Ya") : tr("Tidak");
+  return v;
 }

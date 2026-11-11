@@ -27,6 +27,7 @@ const JENIS: { id: ReqType; label: string }[] = [
   { id: "payroll_run", label: tr("Gaji") },
   { id: "salary_advance", label: tr("Pendahuluan gaji") },
   { id: "overtime", label: tr("Lebih masa") },
+  { id: "profile_change", label: tr("Profil") },
 ];
 const PERANAN: Record<string, string> = { hr: "HR", finance: tr("Kewangan"), ceo: "CEO", admin: tr("Pentadbir") };
 

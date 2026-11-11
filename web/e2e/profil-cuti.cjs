@@ -47,23 +47,30 @@ async function login(browser, phone) {
   const teks = await p.innerText('main');
   expect(teks.includes('••••••-••-1234') && !teks.includes('951109'), 'no. kad pengenalan disorok');
   await p.screenshot({ path: `${shots}/d2-profil.png` });
-  await p.click('a:has-text("Ubah")');
-  await p.waitForURL('**/profil/ubah');
-  await p.waitForSelector('text=BOLEH DIUBAH SENDIRI');
-  await p.fill('label:has-text("Nama panggilan") input', 'Amin Z');
-  await p.fill('label:has-text("Waris") input', 'Ibu Amin');
-  await p.selectOption('label:has-text("Hubungan") select', 'Ibu');
-  await p.fill('label:has-text("Telefon waris") input', '0123456789');
-  await p.click('button[role=switch]');
-  await p.selectOption('select[aria-label="Bank baharu"]', 'Maybank');
-  await p.fill('input[aria-label="No. akaun baharu"]', '1234 5678 9012');
+  const dlg = p.locator('[role=dialog] >> visible=true');
+  // Ubah terus: nama panggilan & sembunyi hari jadi
+  await p.click('section[aria-label="PERIBADI"] button:has-text("Ubah") >> visible=true');
+  await dlg.locator('label:has-text("Nama panggilan") input').fill('Amin Z');
+  await dlg.locator('input[type=checkbox]').check();
+  await dlg.locator('button:has-text("Simpan")').click();
+  await p.waitForSelector('text=Amin Z >> visible=true');
+  // Ubah terus: waris
+  await p.click('section[aria-label="WARIS KECEMASAN"] button:has-text("Ubah") >> visible=true');
+  await dlg.locator('label:has-text("Nama waris") input').fill('Ibu Amin');
+  await dlg.locator('label:has-text("Hubungan") select').selectOption('Ibu');
+  await dlg.locator('label:has-text("Telefon waris") input').fill('0123456789');
+  await dlg.locator('button:has-text("Simpan")').click();
+  await p.waitForSelector('text=Ibu Amin >> visible=true');
+  // Perlu HR: tukar bank
+  await p.click('button:has-text("Mohon kemas kini") >> visible=true');
+  await dlg.locator('label:has-text("Bank") select').selectOption('Maybank');
+  await dlg.locator('label:has-text("No. akaun bank") input').fill('1234 5678 9012');
   await p.screenshot({ path: `${shots}/d2-ubah.png` });
-  await p.click('button:has-text("Simpan")');
-  await p.waitForURL('**/profil');
-  await p.waitForSelector('text=menunggu pengesahan HR');
+  await dlg.locator('button:has-text("Hantar")').click();
+  await p.waitForSelector('text=Menunggu pengesahan HR');
   const selepas = await p.innerText('main');
   expect(selepas.includes('Amin Z') && selepas.includes('Ibu Amin'), 'nama panggilan & waris dikemas kini');
-  expect(selepas.includes('Maybank •••• •••• 9012'), 'tukar bank menunggu pengesahan HR (akaun lama kekal)');
+  expect(/9012/.test(selepas) && selepas.includes('Menunggu pengesahan HR'), 'tukar bank menunggu pengesahan HR (akaun lama kekal)');
   await ctx.close();
 
   log('3. Zulfa: Hari Jadi');

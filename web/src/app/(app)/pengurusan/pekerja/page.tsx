@@ -1,5 +1,6 @@
 "use client";
 
+import { Avatar } from "@/components/ui";
 import { tr } from "@/lib/i18n";
 import { TabModul } from "@/components/TabModul";
 import Link from "next/link";
@@ -234,11 +235,7 @@ function Senarai() {
                     href={`/pengurusan/pekerja/${p.id}`}
                     className="flex min-h-12 items-center gap-3 py-2 text-ink!"
                   >
-                    <span
-                      className={`flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-extrabold ${AV[i % 3]}`}
-                    >
-                      {inisial(p.name)}
-                    </span>
+                    <Avatar name={p.name} size={40} index={i} personId={p.personId} />
                     <span className="flex grow flex-col gap-0.5">
                       <b className="text-sm font-bold">{p.name}</b>
                       <span className="text-xs text-muted">

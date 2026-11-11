@@ -35,12 +35,13 @@ async function login(browser, phone) {
 
   log('1. Amin: mohon tukar akaun bank');
   let { ctx, p } = await login(browser, '100000004');
-  await p.goto(BASE + '/profil/ubah');
-  await p.waitForSelector('text=PERLU DISAHKAN HR');
-  await p.selectOption('select[aria-label="Bank baharu"]', 'CIMB Bank');
-  await p.fill('input[aria-label="No. akaun baharu"]', '8000123456');
-  await p.click('button:has-text("Simpan")');
-  await p.waitForSelector('text=menunggu pengesahan HR');
+  await p.goto(BASE + '/profil');
+  await p.click('button:has-text("Mohon kemas kini") >> visible=true');
+  const dlg = p.locator('[role=dialog] >> visible=true');
+  await dlg.locator('label:has-text("Bank") select').selectOption('CIMB Bank');
+  await dlg.locator('label:has-text("No. akaun bank") input').fill('8000123456');
+  await dlg.locator('button:has-text("Hantar")').click();
+  await p.waitForSelector('text=Menunggu pengesahan HR');
   expect(true, 'permohonan tukar bank dihantar');
   const amin = { ctx, p }; // dikekalkan untuk langkah 5 (elak had kekerapan OTP)
 
@@ -49,8 +50,8 @@ async function login(browser, phone) {
   await p.goto(BASE + '/saya');
   await p.click('a:has-text("Papan Pemuka Syarikat")');
   await p.waitForSelector('text=PERLU TINDAKAN ANDA');
-  await p.waitForSelector('text=Pertukaran akaun bank Amin menunggu pengesahan');
-  expect(true, 'papan pemuka menunjukkan pertukaran bank menunggu');
+  await p.waitForSelector('text=Kemas kini profil: bank');
+  expect(true, 'papan pemuka menunjukkan permohonan tukar bank menunggu (Kelulusan)');
   await p.screenshot({ path: `${shots}/d3-dashboard.png` });
   await p.goto(BASE + '/pengurusan/pekerja');
   await p.waitForSelector('text=Amin');
@@ -85,9 +86,18 @@ async function login(browser, phone) {
   await p.click('button:has-text("Tunjuk") >> visible=true');
   await p.waitForSelector('text=951109-14-1234');
   expect(true, 'HR terus melihat kad pengenalan & bank (tanpa butang Papar)');
-  await p.click('button:has-text("Sahkan akaun")');
-  await p.waitForSelector('text=Mohon tukar akaun bank', { state: 'detached' });
-  expect((await p.innerText('main')).includes('CIMB Bank · 8000123456'), 'akaun bank Amin disahkan');
+  await p.waitForSelector('text=Permohonan kemas kini profil menunggu');
+  expect(true, 'profil HR menunjukkan permohonan kemas kini profil yang menunggu');
+  const profilUrl = p.url();
+  await p.goto(BASE + '/kelulusan');
+  await p.click('main a[href^="/kelulusan/"]:has-text("Kemas kini profil")');
+  await p.waitForSelector('text=8000123456');
+  await p.click('button:text-is("Lulus")');
+  await p.waitForURL('**/kelulusan');
+  await p.goto(profilUrl);
+  await p.click('button:has-text("Tunjuk") >> visible=true');
+  await p.waitForSelector('text=CIMB Bank · 8000123456');
+  expect(true, 'akaun bank Amin disahkan melalui Kelulusan');
   await p.click('button:has-text("Ubah gaji & jawatan")');
   await p.fill('label:has-text("Gaji pokok baharu") input', '3200');
   await p.click('[role=dialog] button:has-text("Simpan")');
@@ -106,7 +116,7 @@ async function login(browser, phone) {
   log('5. Amin: akaun bank baharu dipaparkan; tiada akses pengurusan');
   ({ ctx, p } = amin);
   await p.goto(BASE + '/profil');
-  await p.waitForSelector('text=No. akaun');
+  await p.waitForSelector('text=PERLU DISAHKAN HR');
   const prof = await p.innerText('main');
   expect(prof.includes('CIMB Bank') && prof.includes('•••• •••• 3456'), 'profil Amin menunjukkan CIMB •••• 3456');
   await p.goto(BASE + '/pengurusan/pekerja');
