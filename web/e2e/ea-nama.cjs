@@ -33,7 +33,7 @@ async function masuk(b, email, vp = { width: 1440, height: 900 }) {
   // Data ujian: gaji 12 bulan tahun lepas (RM3,500 sebulan) untuk semua pekerja DEMO
   const C = '00000000-0000-0000-0000-0000000000c1';
   sql(`update companies set lhdn_employer_no = 'E 9876543210' where id = '${C}'`);
-  sql(`insert into payroll_runs(company_id, period_year, period_month, status) select '${C}', ${TAHUN}, m, 'paid' from generate_series(1, 12) m`);
+  sql(`insert into payroll_runs(company_id, period_year, period_month, status, payslip_release_at) select '${C}', ${TAHUN}, m, 'paid', now() from generate_series(1, 12) m`);
   sql(`insert into payslips(payroll_run_id, employment_id, gross, total_deduction, net, epf_employee, epf_employer, socso_employee, socso_employer, eis_employee, eis_employer, pcb, hrdf)
        select r.id, e.id, 3500, 0, 0, 385, 455, 17.25, 60.35, 6.90, 6.90, 0, 0 from payroll_runs r join employments e on e.company_id = r.company_id where r.period_year = ${TAHUN}`);
   sql(`insert into payslip_lines(payslip_id, component_code, description, kind, amount)

@@ -134,7 +134,7 @@ do $$ begin
   assert (select l.amount from payslip_lines l join payslips s on s.id = l.payslip_id
            where s.employment_id = '00000000-0000-0000-0000-0000000000e4' and l.component_code = 'ARREARS'
              and s.payroll_run_id = (select id from payroll_runs where period_month = 2)) = 300, 'tunggakan Jan RM300';
-  assert exists (select 1 from payslip_lines l join payslips s on s.id = l.payslip_id where l.description = 'Elaun luar kawasan Johor'), 'item sekali dengan nota';
+  assert exists (select 1 from payslip_lines l join payslips s on s.id = l.payslip_id where l.description like '%: Elaun luar kawasan Johor'), 'item sekali dengan nota';
 end $$;
 select name, prev_gross, gross, status, note from payroll_variance(:'feb') order by name;
 
