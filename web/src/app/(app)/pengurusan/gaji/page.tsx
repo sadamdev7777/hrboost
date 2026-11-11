@@ -109,7 +109,7 @@ function ProsesGaji() {
   };
 
   const status = d.data?.run.status;
-  const langkah = !status ? 0 : status === "draft" ? 1 : status === "calculated" || status === "returned" ? 2 : status === "pending" ? 3 : 4;
+  const langkah = !status ? 0 : status === "draft" ? 1 : status === "calculated" || status === "returned" ? 2 : status === "pending" || status === "rejected" ? 3 : 4;
 
   return (
     <Screen>
@@ -177,9 +177,15 @@ function ProsesGaji() {
       {d.data && (status === "calculated" || status === "returned") && <Langkah2 data={d.data} reload={muatSemula} />}
       {d.data && status === "pending" && <Langkah3 data={d.data} reload={muatSemula} />}
       {d.data && (status === "approved" || status === "paid" || status === "locked") && <Langkah4 data={d.data} reload={muatSemula} />}
-      {d.data && status === "rejected" && (
-        <main className="px-4 pt-4">
-          <ErrorBox message={tr("Gaji bulan ini telah ditolak. Hubungi Kewangan / CEO.")} />
+      {d.data && (status === "rejected" || status === "cancelled") && (
+        <main className="flex flex-col gap-3 px-4 pt-4 lg:px-0">
+          <ErrorBox message={status === "rejected" ? tr("Gaji bulan ini telah ditolak oleh pelulus. Semak komen pelulus, betulkan dan hantar semula.") : tr("Permohonan kelulusan gaji ini telah dibatalkan.")} />
+          {d.data.run.approval_request_id && (
+            <Link href={`/permohonan/${d.data.run.approval_request_id}`} className="flex h-12 items-center justify-center rounded-[14px] border border-line bg-surface text-sm font-bold">
+              {tr("Lihat komen pelulus")}
+            </Link>
+          )}
+          <ButangUtama onClick={() => bukaSemulaGaji(d.data!.run.id, muatSemula)}>{tr("Betulkan & sediakan semula")}</ButangUtama>
         </main>
       )}
       <TabNav />

@@ -170,6 +170,11 @@ begin
   values (p_company, p_year, p_month, current_person_id())
   on conflict (company_id, period_year, period_month, cycle_no) do nothing;
   select * into r from payroll_runs where company_id = p_company and period_year = p_year and period_month = p_month and cycle_no = 1;
+  -- Gaji yang dibatalkan (permohonan kelulusan ditarik balik) kembali ke draf supaya boleh disediakan semula
+  if r.status = 'cancelled' then
+    update payroll_runs set status = 'draft', approval_request_id = null, totals = null where id = r.id returning * into r;
+    insert into payroll_run_events(run_id, action, note, actor) values (r.id, 'restarted', 'cancelled', current_person_id());
+  end if;
 
   select jsonb_build_object(
     'employees', count(*),
@@ -251,7 +256,7 @@ declare r payroll_runs;
 begin
   select * into r from payroll_runs where id = p_run for update;
   if r.id is null or not has_role(r.company_id, '{hr,finance,admin}') then raise exception 'Hanya HR/Kewangan'; end if;
-  if r.status not in ('approved','paid','pending') then raise exception 'Gaji ini belum dihantar atau diluluskan'; end if;
+  if r.status not in ('approved','paid','pending','rejected','cancelled') then raise exception 'Gaji ini belum dihantar atau diluluskan'; end if;
   if r.status = 'locked' then raise exception 'Gaji ini telah dikunci'; end if;
   if coalesce(trim(p_reason), '') = '' then raise exception 'Sila nyatakan sebab buka semula'; end if;
   if exists (select 1 from payroll_runs x where x.company_id = r.company_id and x.status in ('approved','paid','locked','pending')

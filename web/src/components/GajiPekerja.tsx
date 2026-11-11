@@ -202,7 +202,10 @@ export function RingkasanKiraan({ k, mengira, padat }: { k: Kiraan | null; mengi
         <Baris l={tr("KWSP pekerja")} v={k.epf_employee} tolak />
         <Baris l={tr("PERKESO pekerja")} v={k.socso_employee} tolak />
         <Baris l={tr("SIP pekerja")} v={k.eis_employee} tolak />
+        {!!k.skbbk_employee && <Baris l={tr("Lindung 24 Jam (SKBBK)")} v={k.skbbk_employee} tolak />}
         <Baris l={tr("PCB (anggaran)")} v={k.pcb} tolak />
+        {!!k.zakat && <Baris l={tr("Zakat")} v={k.zakat} tolak />}
+        {!!k.cp38 && <Baris l={tr("CP38 (arahan LHDN)")} v={k.cp38} tolak />}
         {k.fixed_deduction > 0 && <Baris l={tr("Potongan tetap")} v={k.fixed_deduction} tolak />}
         <div className="mt-1 border-t border-line pt-1.5">
           <Baris l={tr("Gaji bersih")} v={k.net} tebal />

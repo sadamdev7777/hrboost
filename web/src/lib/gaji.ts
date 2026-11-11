@@ -250,6 +250,9 @@ export type Kiraan = {
   socso_employer: number;
   eis_employee: number;
   eis_employer: number;
+  skbbk_employee?: number;
+  zakat?: number;
+  cp38?: number;
   pcb: number;
   hrdf: number;
   hrdf_registered: boolean;
