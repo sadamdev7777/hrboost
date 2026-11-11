@@ -21,6 +21,7 @@ import {
   JENIS_PEKERJAAN,
   kemasKiniPekerjaan,
   kemasKiniPeribadi,
+  tukarTarikhMula,
   labelJenis,
   putuskanBank,
   simpanDokumen,
@@ -377,6 +378,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
         <UbahPeribadi
           employmentId={p.id}
           s={sensitif}
+          tarikhMula={p.joinDate}
           onClose={() => setLembaran(null)}
           onDone={() => {
             setLembaran(null);
@@ -1033,7 +1035,8 @@ function Label({ t, children }: { t: string; children: React.ReactNode }) {
 }
 
 /** HR mengemas kini maklumat peribadi pekerja. Hanya medan yang berubah dihantar. */
-function UbahPeribadi({ employmentId, s, onClose, onDone }: { employmentId: string; s: MaklumatSensitif; onClose: () => void; onDone: () => void }) {
+function UbahPeribadi({ employmentId, s, tarikhMula, onClose, onDone }: { employmentId: string; s: MaklumatSensitif; tarikhMula: string; onClose: () => void; onDone: () => void }) {
+  const [mula, setMula] = useState(tarikhMula);
   const asal = {
     full_name: s.full_name ?? "",
     ic_no: s.ic_no ?? "",
@@ -1057,11 +1060,13 @@ function UbahPeribadi({ employmentId, s, onClose, onDone }: { employmentId: stri
   const ubah = (Object.keys(asal) as (keyof typeof asal)[]).filter((k) => f[k].trim() !== asal[k].trim());
 
   async function simpan() {
-    if (!ubah.length) return onClose();
+    const mulaBerubah = mula && mula !== tarikhMula;
+    if (!ubah.length && !mulaBerubah) return onClose();
     setBusy(true);
     setRalat(null);
     try {
-      await kemasKiniPeribadi(employmentId, Object.fromEntries(ubah.map((k) => [k, k === "children_count" ? Number(f[k]) || 0 : f[k].trim() || null])));
+      if (mulaBerubah) await tukarTarikhMula(employmentId, mula);
+      if (ubah.length) await kemasKiniPeribadi(employmentId, Object.fromEntries(ubah.map((k) => [k, k === "children_count" ? Number(f[k]) || 0 : f[k].trim() || null])));
       onDone();
     } catch (e) {
       setRalat(e instanceof Error ? trRalat(e.message) : tr("Ralat"));
@@ -1074,6 +1079,9 @@ function UbahPeribadi({ employmentId, s, onClose, onDone }: { employmentId: stri
       <span className="text-xs leading-normal text-muted">{tr("Nama penuh dan no. kad pengenalan mesti sama seperti kad pengenalan (untuk slip gaji, KWSP dan Borang EA). Pekerja akan dimaklumkan tentang perubahan.")}</span>
       <Label t={tr("Nama penuh (ikut kad pengenalan)")}>
         <input value={f.full_name} onChange={set("full_name")} className={kotak} />
+      </Label>
+      <Label t={tr("Tarikh mula bekerja")}>
+        <input type="date" value={mula} onChange={(e) => setMula(e.target.value)} className={kotak} />
       </Label>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Label t={tr("No. kad pengenalan")}>

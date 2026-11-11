@@ -247,6 +247,11 @@ export async function kemasKiniPeribadi(employmentId: string, data: Record<strin
   must(await getSupabase().rpc("hr_update_person", { p_employment: employmentId, p_data: data as never, p_via: "web" }));
 }
 
+/** HR menukar tarikh mula pekerja (gaji tetap yang bermula pada tarikh lama turut dianjak). */
+export async function tukarTarikhMula(employmentId: string, tarikh: string) {
+  must(await getSupabase().rpc("hr_set_join_date", { p_employment: employmentId, p_date: tarikh }));
+}
+
 export async function putuskanBank(requestId: string, lulus: boolean, nota?: string) {
   must(await getSupabase().rpc("decide_bank_change", { p_request: requestId, p_approve: lulus, p_note: nota ?? "", p_via: "web" }));
 }

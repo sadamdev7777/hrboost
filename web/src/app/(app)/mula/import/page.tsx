@@ -39,7 +39,8 @@ function Import() {
     setRalat(null);
     setGagal([]);
     try {
-      const r = await bacaFailPekerja(f);
+      const sedia = (must(await getSupabase().from("employments").select("persons!employments_person_id_fkey(full_name, preferred_name)").eq("company_id", cid).in("status", ["probation", "active"])) ?? []).flatMap((e) => [e.persons?.full_name ?? "", e.persons?.preferred_name ?? ""]).filter(Boolean);
+      const r = await bacaFailPekerja(f, sedia);
       setRows(r.rows);
       setNamaFail(f.name);
     } catch (e) {
@@ -65,7 +66,7 @@ function Import() {
       const r = must(
         await getSupabase().rpc("import_employees", {
           p_company: cid,
-          p_rows: rows.map(({ issues, head_name, ...x }) => (void issues, void head_name, x)) as never,
+          p_rows: rows.map(({ issues, ...x }) => (void issues, x)) as never,
         }),
       ) as unknown as { created: number; failed: { row: number; name: string; error: string }[] };
       if (r.failed.length) {

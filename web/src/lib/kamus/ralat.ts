@@ -384,4 +384,5 @@ export const RALAT: Record<string, string> = {
  "Levi HRD Corp": "HRD Corp levy",
  "Potongan pembaikan": "Repair deduction",
  "Elaun KPI latihan industri": "Internship KPI allowance",
+ "Gaji telah dibayar sebelum tarikh ini. Tarikh mula tidak boleh selepas gaji pertama.": "Salary has been paid before this date. The start date cannot be after the first payroll.",
 };

@@ -212,10 +212,12 @@ function SemakanGaji({ checks }: { checks: string[] }) {
         </div>
       )}
       {terkumpul.length > 0 && (
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-card bg-warning-soft px-4 py-3 text-[13px] text-warning">
-          <span className="grow">
-            <b>{tr("Amaran:")}</b> {" "}{tr("{0} pekerja tiada data gaji terkumpul tahun ini — PCB mungkin kurang tepat ({1}).", terkumpul.length, nama(terkumpul))}</span>
-          <Link href="/pengurusan/gaji/data-terkumpul" className="flex min-h-11 items-center font-bold text-warning!">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-card bg-danger-soft px-4 py-3 text-[13px] text-danger">
+          <span className="flex grow basis-72 flex-col gap-0.5">
+            <b>{tr("Penting untuk PCB: {0} pekerja tiada data gaji terkumpul tahun ini ({1}).", terkumpul.length, nama(terkumpul))}</b>
+            <span>{tr("Tanpa gaji, KWSP dan PCB yang telah dibayar sejak Januari, PCB bulan ini akan dikira terlalu rendah (selalunya RM0). Isi daripada sistem gaji lama anda sebelum mengira.")}</span>
+          </span>
+          <Link href="/pengurusan/gaji/data-terkumpul" className="flex min-h-11 items-center font-bold text-danger!">
             {tr("Isi atau import Excel ›")}</Link>
         </div>
       )}

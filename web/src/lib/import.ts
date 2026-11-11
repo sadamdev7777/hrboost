@@ -110,7 +110,7 @@ export async function bacaJadual(file: File): Promise<unknown[][]> {
 export { teks as teksSel, tarikhISO };
 
 /** Baca fail Excel (.xlsx) atau CSV dan padankan lajur. */
-export async function bacaFailPekerja(file: File): Promise<{ rows: BarisImport[]; mapped: string[] }> {
+export async function bacaFailPekerja(file: File, sedia: string[] = []): Promise<{ rows: BarisImport[]; mapped: string[] }> {
   const data = await bacaJadual(file);
   // baris tajuk = baris pertama yang mempunyai lajur nama
   let h = data.findIndex((r) => padanLajur(r.map(teks)).includes("full_name"));
@@ -148,6 +148,9 @@ export async function bacaFailPekerja(file: File): Promise<{ rows: BarisImport[]
     }
   }
   const adaKetua = new Set(out.filter((b) => b.is_head && b.department).map((b) => b.department.toLowerCase()));
+  // Ketua yang sudah menjadi pekerja syarikat (cth. pengasas / Pentadbir) tidak perlu ada dalam fail
+  const namaSedia = new Set(sedia.map((n) => n.toLowerCase()));
+  for (const b of out) if (b.department && b.head_name && namaSedia.has(b.head_name.toLowerCase())) adaKetua.add(b.department.toLowerCase());
   for (const b of out) {
     if (!b.phone) b.issues.push("Tiada no. WhatsApp");
     if (b.department && !adaKetua.has(b.department.toLowerCase())) b.issues.push("Tiada ketua");

@@ -64,13 +64,13 @@ function Kandungan() {
                     <button
                       type="button"
                       onClick={async () => {
-                        if (!(await sahkan({ tajuk: `Tandakan ${ringgit(Number(a.amount))} telah dibayar kepada ${a.name}?`, ok: "Tandakan dibayar" }))) return;
+                        if (!(await sahkan({ tajuk: tr("Tandakan {0} telah dibayar kepada {1}?", ringgit(Number(a.amount)), a.name), ok: tr("Tandakan dibayar") }))) return;
                         try {
                           await tandaPendahuluanDibayar(a.id);
-                          beritahu("Ditandakan dibayar; pekerja dimaklumkan.");
+                          beritahu(tr("Ditandakan dibayar; pekerja dimaklumkan."));
                           d.reload();
                         } catch (e) {
-                          beritahu(e instanceof Error ? e.message : "Ralat", "ralat");
+                          beritahu(e instanceof Error ? e.message : tr("Ralat"), "ralat");
                         }
                       }}
                       className="flex h-9 items-center rounded-full bg-primary px-4 text-xs font-bold text-white"
