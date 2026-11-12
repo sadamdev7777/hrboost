@@ -59,3 +59,27 @@ do $$ begin
   assert (select status from payroll_runs where id = (select id from _r)) = 'approved', 'CEO meluluskan peringkat Kewangan';
   assert not exists (select 1 from approval_tasks where request_id = (select approval_request_id from payroll_runs where id = (select id from _r)) and status = 'pending'), 'tugasan Nadia ditutup';
 end $$;
+
+\echo '=== X4: CEO menghantar gaji sendiri → CEO masih boleh meluluskan peringkat Kewangan ==='
+reset test.uid; reset test.role;
+delete from approval_workflow_steps where workflow_id in (select id from approval_workflows where company_id = '00000000-0000-0000-0000-0000000000c1' and request_type = 'payroll_run');
+insert into approval_workflow_steps(workflow_id, step_order, name, approver, approver_role)
+select id, 1, 'CEO', 'role', 'ceo' from approval_workflows where company_id = '00000000-0000-0000-0000-0000000000c1' and request_type = 'payroll_run';
+insert into approval_workflow_steps(workflow_id, step_order, name, approver, approver_role)
+select id, 2, 'Kewangan', 'role', 'finance' from approval_workflows where company_id = '00000000-0000-0000-0000-0000000000c1' and request_type = 'payroll_run';
+do $$ begin
+  assert (select skip_if_requester from approval_workflow_steps s join approval_workflows w on w.id = s.workflow_id
+           where w.company_id = '00000000-0000-0000-0000-0000000000c1' and w.request_type = 'payroll_run' and s.approver_role = 'finance') = false, 'lalai: CEO pemohon boleh lulus';
+end $$;
+insert into user_roles(person_id, company_id, role) values ('00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-0000000000c1','hr') on conflict do nothing;
+set test.role='authenticated'; set test.uid='00000000-0000-0000-0000-00000000a001';
+create temp table _r2 as select (payroll_prepare('00000000-0000-0000-0000-0000000000c1', 2026, 11)->>'run_id')::uuid as id;
+grant select on _r2 to public;
+select payroll_calculate((select id from _r2)) is not null as dikira;
+select (submit_payroll_run((select id from _r2))).status;
+select (approval_act((select id from approval_tasks where approver_person_id = '00000000-0000-0000-0000-000000000001' and status = 'pending'
+         and request_id = (select approval_request_id from payroll_runs where id = (select id from _r2))), 'approve', null, 'web')).status;
+reset test.uid; reset test.role;
+do $$ begin
+  assert (select status from payroll_runs where id = (select id from _r2)) = 'approved', 'CEO (pemohon) meluluskan; peringkat CEO dilangkau';
+end $$;

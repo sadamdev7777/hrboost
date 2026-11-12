@@ -528,7 +528,7 @@ function SenaraiSyarikat({ companyId }: { companyId: string }) {
         const baruDiingat = r.last_reminded_at && kini - new Date(r.last_reminded_at).getTime() < 2 * 3600e3;
         return (
           <div key={r.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-card bg-surface px-4 py-3">
-            <Link href={`/kelulusan/${r.id}`} className="flex min-w-0 grow basis-60 flex-col gap-0.5 text-ink!">
+            <Link href={`/permohonan/${r.id}`} className="flex min-w-0 grow basis-60 flex-col gap-0.5 text-ink!">
               <b className="text-sm">{r.title}</b>
               <span className="text-xs text-muted">
                 {tr("{0} · dihantar {1}", r.requester, `${hariTarikh(tarikhTempatan(r.submitted_at))}, ${masa(r.submitted_at)}`)}</span>
