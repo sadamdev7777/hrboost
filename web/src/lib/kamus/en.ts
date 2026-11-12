@@ -1,6 +1,7 @@
 // Kamus English: kunci = teks sumber Bahasa Melayu dalam kod (tr("…")).
 // Dijana daripada scripts/i18n-codemod.cjs --keys; tambah entri baharu apabila teks baharu ditambah.
 export const EN: Record<string, string> = {
+ " (anda)": " (you)",
  " (dalam larian gaji)": " (in payroll run)",
  " (dikongsi 50%)": " (shared 50%)",
  " (jabatan lain)": " (other department)",
@@ -1302,6 +1303,7 @@ export const EN: Record<string, string> = {
  "Kepada sesiapa yang berkenaan,": "To whom it may concern,",
  "Kepada:": "To:",
  "Keputusan HR: {0}": "HR decision: {0}",
+ "Keputusan anda": "Your decision",
  "Keputusan dibuat": "Decision made",
  "Keputusan dihantar kepada {0} melalui WhatsApp.": "Decision sent to {0} via WhatsApp.",
  "Keputusan: {0}": "Decision: {0}",

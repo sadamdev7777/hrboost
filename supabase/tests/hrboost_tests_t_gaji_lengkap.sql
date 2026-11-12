@@ -170,3 +170,20 @@ select payroll_add_cycle('00000000-0000-0000-0000-0000000000c1', 2027, 3, 'X');
 select payroll_reopen(:'jan', 'cuba');
 select hr_set_payroll_settings('00000000-0000-0000-0000-0000000000c1', '{"payday":1}'::jsonb);
 \set ON_ERROR_STOP 1
+
+\echo '=== Buka semula gaji yang sedang menunggu kelulusan (tarik balik) ==='
+reset test.uid; reset test.role;
+do $$ declare r uuid; req uuid; begin
+  select id into r from payroll_runs where status = 'calculated' order by created_at desc limit 1;
+  if r is null then raise notice 'tiada gaji dikira — langkau'; return; end if;
+  perform set_config('test.uid', (select p.auth_user_id::text from persons p join user_roles ur on ur.person_id = p.id
+                                    where ur.role = 'hr' and p.auth_user_id is not null limit 1), true);
+  perform set_config('test.role', 'authenticated', true);
+  perform submit_payroll_run(r);
+  select approval_request_id into req from payroll_runs where id = r;
+  assert (select status from payroll_runs where id = r) = 'pending', 'menunggu kelulusan';
+  perform payroll_reopen(r, 'Silap jumlah');
+  assert (select status from payroll_runs where id = r) = 'calculated', 'kembali ke langkah 2';
+  assert (select status from approval_requests where id = req) = 'cancelled', 'permohonan dibatalkan';
+  assert not exists (select 1 from approval_tasks where request_id = req and status = 'pending'), 'tiada tugasan pelulus tertinggal';
+end $$;

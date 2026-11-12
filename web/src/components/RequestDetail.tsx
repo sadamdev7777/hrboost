@@ -31,7 +31,7 @@ type Mode = { kind: "approver"; taskId: string } | { kind: "requester"; requestI
 // Rujukan reka bentuk: design/Butiran.dc.html
 /** Bingkai: skrin penuh, atau panel dalam halaman Kelulusan (desktop) apabila `tertanam`. */
 function Bingkai({ tertanam, children }: { tertanam: boolean; children: React.ReactNode }) {
-  return tertanam ? <div className="flex flex-col">{children}</div> : <Screen lebar="sederhana">{children}</Screen>;
+  return tertanam ? <div className="flex flex-col">{children}</div> : <Screen lebar="lebar">{children}</Screen>;
 }
 
 export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onSelesai: () => void } }) {
@@ -107,7 +107,8 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
       ) : (
         <BackHeader title={TAJUK[x.req.request_type] ?? tr("Permohonan")} href={back} />
       )}
-      <Isi className={`flex grow flex-col gap-3 ${tertanam ? "" : "px-4 pt-1 pb-4"}`}>
+      <Isi className={`flex grow flex-col gap-3 ${tertanam ? "" : "px-4 pt-1 pb-4 lg:grid lg:grid-cols-[minmax(0,1.6fr)_minmax(320px,1fr)] lg:items-start lg:gap-5 lg:px-0"}`}>
+        <div className="flex flex-col gap-3">
         <section className="flex flex-col gap-3 rounded-[18px] bg-surface p-4">
           <div className="flex items-center gap-3">
             <Avatar name={x.requesterName} size={48} personId={x.req.requester_person_id} />
@@ -210,6 +211,9 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
             <p className="m-0 text-sm whitespace-pre-line text-[#2E2650]">{x.req.ai_summary}</p>
           </section>
         )}
+        </div>
+
+        <div className={`flex flex-col gap-3 ${tertanam ? "" : "lg:sticky lg:top-4"}`}>
 
         <section className="flex flex-col gap-3 rounded-[18px] bg-surface p-4">
           <span className="text-sm font-extrabold">{tr("Aliran kelulusan")}</span>
@@ -234,7 +238,7 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
                   className={`grow text-sm ${s.state === "current" ? "font-extrabold" : s.state === "future" || s.state === "skipped" ? "text-muted" : ""}`}
                 >
                   {s.order} · {trRalat(s.name)}
-                  {s.mine ? " (anda)" : ""}
+                  {s.mine ? tr(" (anda)") : ""}
                 </span>
                 <span
                   className={`text-xs ${
@@ -248,11 +252,39 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
             </div>
           ))}
         </section>
+        {/* Desktop: tindakan dalam panel kanan (bukan bar bawah gaya telefon) */}
+        {!tertanam && canAct && (
+          <section aria-label={tr("Keputusan anda")} className="hidden flex-col gap-2.5 rounded-[18px] bg-surface p-4 lg:flex">
+            <span className="text-sm font-extrabold">{tr("Keputusan anda")}</span>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => act("approve")}
+              className="h-12 rounded-button bg-primary text-base font-extrabold text-white hover:bg-primary-hover disabled:opacity-60"
+            >
+              {busy ? tr("Memproses…") : tr("Lulus")}
+            </button>
+            <div className="grid grid-cols-2 gap-2">
+              <button type="button" disabled={busy} onClick={() => setSheet("return")} className="h-11 rounded-button border border-line text-sm font-bold text-primary disabled:opacity-60">
+                {tr("Kembalikan")}
+              </button>
+              <button type="button" disabled={busy} onClick={() => setSheet("reject")} className="h-11 rounded-button border border-line text-sm font-bold text-danger disabled:opacity-60">
+                {tr("Tolak")}
+              </button>
+            </div>
+          </section>
+        )}
+        {!tertanam && canCancel && (
+          <button type="button" disabled={busy} onClick={batal} className="hidden h-12 w-full rounded-[14px] border border-line bg-surface text-sm font-bold text-danger disabled:opacity-60 lg:block">
+            {tr("Batalkan permohonan")}
+          </button>
+        )}
         {error && <ErrorBox message={error} />}
+        </div>
       </Isi>
 
       {canAct && (
-        <div className="bar-bawah sticky bottom-0 flex flex-col gap-2 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <div className={`bar-bawah sticky bottom-0 flex flex-col gap-2 border-t border-line-soft bg-surface px-4 pt-3 pb-5 ${tertanam ? "" : "bar-telefon"}`}>
           <div className="grid grid-cols-2 gap-2.5">
             <button
               type="button"
@@ -281,7 +313,7 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
       )}
 
       {canCancel && (
-        <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <div className={`bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5 ${tertanam ? "" : "bar-telefon"}`}>
           <button
             type="button"
             disabled={busy}
