@@ -2,6 +2,7 @@
 
 import { tr, trRalat } from "@/lib/i18n";
 import { FailBank } from "@/components/FailBank";
+import { useBilSkbbk } from "@/components/PilihSkbbk";
 import Link from "next/link";
 import { Suspense, useState } from "react";
 import { useMe } from "@/lib/me";
@@ -326,6 +327,7 @@ function Langkah1({ data, reload }: { data: Data; reload: () => void }) {
   const [ralat, setRalat] = useState<string | null>(null);
   const [import_, setImport] = useState(false);
   const adj = useData(() => getPelarasan(data.run.id), [data.run.id]);
+  const skbbk = useBilSkbbk(data.run.company_id);
 
   async function kira() {
     setBusy(true);
@@ -363,6 +365,11 @@ function Langkah1({ data, reload }: { data: Data; reload: () => void }) {
               <span>
                 <b>{s.unpaid_leave_people}</b> {tr("orang cuti tanpa gaji")}
               </span>
+              {skbbk.data != null && (
+                <Link href="/pengurusan/gaji/tetapan" className="text-ink!">
+                  <b>{skbbk.data}</b> {tr("menyertai Lindung 24 Jam ›")}
+                </Link>
+              )}
             </div>
             <SemakanGaji checks={data.prep.checks} companyId={data.run.company_id} statutoryReady={data.prep.statutory_ready} />
             <SenaraiPelarasan runId={data.run.id} companyId={data.run.company_id} onTambah={() => setImport(true)} data={adj.data ?? []} reload={adj.reload} />

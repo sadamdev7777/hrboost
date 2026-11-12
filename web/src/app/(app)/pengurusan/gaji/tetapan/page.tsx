@@ -11,6 +11,8 @@ import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { TabGaji } from "@/components/TabGaji";
 import { ButangUtama, Cip, HadPeranan, MedanBorang, Seksyen, Suis, inputKecil } from "@/components/Senarai";
 import { beritahu } from "@/components/Dialog";
+import { PilihSkbbk } from "@/components/PilihSkbbk";
+import { hasRole } from "@/lib/me";
 
 /** Tetapan Gaji: nombor majikan, penandatangan, bank syarikat, asas kiraan, hari gaji, slip & peta akaun GL. */
 export default function TetapanGajiPage() {
@@ -42,6 +44,7 @@ function Kandungan() {
 }
 
 function Borang({ cid, awal, item, reload }: { cid: string; awal: TetapanGaji; item: Awaited<ReturnType<typeof getKatalog>>; reload: () => void }) {
+  const bolehUbah = hasRole(useMe(), ["hr", "admin"]);
   const [f, setF] = useState<TetapanGaji | null>(awal);
   const [busy, setBusy] = useState(false);
   const [ralat, setRalat] = useState<string | null>(null);
@@ -166,10 +169,11 @@ function Borang({ cid, awal, item, reload }: { cid: string; awal: TetapanGaji; i
               </Grid>
               <BarisSuis
                 label={tr("Pekerja tempatan menyertai Lindung 24 Jam (SKBBK) secara lalai")}
-                nota={tr("Pekerja boleh memilih untuk tidak menyertai; tetapkan dalam profil pekerja → Gaji. Wajib bagi pekerja asing.")}
+                nota={tr("Lalai bagi pekerja tempatan. Pilih pekerja yang menyertai di bawah. Wajib bagi pekerja asing.")}
                 on={f.skbbk_default}
                 onChange={(v) => set("skbbk_default", v)}
               />
+              <PilihSkbbk companyId={cid} boleh={bolehUbah} lalaiBerubah={f.skbbk_default !== awal.skbbk_default} />
             </Kad>
 
             <Kad tajuk={tr("SLIP GAJI")}>

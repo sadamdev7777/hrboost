@@ -2859,6 +2859,14 @@ isOneToOne: false
 "hr_set_preferred_names":
 { Args: { "p_company": string,"p_items": Json }; Returns: number
                            },
+"hr_set_skbbk":
+{ Args: { "p_company": string,"p_joined": (string)[] }; Returns: number
+                           },
+"hr_skbbk_list":
+{ Args: { "p_company": string }; Returns: {
+              "department": string,"employee_no": string,"employment_id": string,"foreign_worker": boolean,"joined": boolean,"name": string,"setting": string
+            }[]
+                           },
 "hr_todo":
 { Args: { "p_company": string }; Returns: Json
                            },

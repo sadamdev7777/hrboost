@@ -352,3 +352,13 @@ export function senaraiFail(kitaranTambahan: boolean): { jenis: JenisFail; t: st
   ];
   return kitaranTambahan ? semua.filter((f) => f.jenis !== "socso_txt" && f.jenis !== "socso") : semua;
 }
+
+// ---------------------------------------------------------------- Lindung 24 Jam (SKBBK): pilih pekerja
+export type PekerjaSkbbk = { employment_id: string; employee_no: string; name: string; department: string | null; foreign_worker: boolean; setting: "auto" | "yes" | "no"; joined: boolean };
+export async function getSkbbk(companyId: string): Promise<PekerjaSkbbk[]> {
+  return (must(await getSupabase().rpc("hr_skbbk_list", { p_company: companyId })) ?? []) as unknown as PekerjaSkbbk[];
+}
+/** Simpan senarai pekerja tempatan yang menyertai; pekerja asing sentiasa menyertai. Memulangkan bilangan yang berubah. */
+export async function setSkbbk(companyId: string, menyertai: string[]): Promise<number> {
+  return Number(must(await getSupabase().rpc("hr_set_skbbk", { p_company: companyId, p_joined: menyertai })));
+}

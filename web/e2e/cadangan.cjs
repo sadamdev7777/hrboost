@@ -169,6 +169,18 @@ const sahkanDialog = async (p, ok) => {
   expect((await p.getAttribute(V('[role=radiogroup][aria-label="Bahasa"] button:has-text("English")'), 'aria-checked')) === 'true', 'Tambah pekerja: English dipilih secara lalai');
   await ctx.close();
 
+  log('8. Lindung 24 Jam: pilih pekerja');
+  ({ ctx, p } = await masuk(b, 'lily@demo.hrboost.io'));
+  sql(`update companies set skbbk_default = true where id = '${C}'`);
+  await p.goto(BASE + '/pengurusan/gaji/tetapan');
+  await p.click(V('button:has-text("Pilih pekerja")'));
+  await p.locator(V('[role=dialog] label:has-text("Amin") input[type=checkbox]')).uncheck();
+  await p.click(V('[role=dialog] button:has-text("Simpan ·")'));
+  await p.waitForSelector(V('text=Lindung 24 Jam dikemas kini bagi 1 pekerja.'), { timeout: 20000 });
+  expect(sql(`select skbbk from employment_statutory s join employments e on e.id = s.employment_id where e.employee_no = 'DEMO004'`) === 'no', 'Amin tidak menyertai SKBBK');
+  expect(sql(`select (employment_stat_effective(id, current_date)).skbbk from employments where employee_no = 'DEMO003'`) === 't', 'pekerja lain masih menyertai');
+  await ctx.close();
+
   await b.close();
   log('LULUS: cadangan 5–17');
 })().catch((e) => {
