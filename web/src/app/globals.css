@@ -99,10 +99,6 @@ a:hover {
     padding-left: 24px;
     padding-right: 24px;
   }
-  /* Bar tindakan untuk telefon sahaja: pada desktop tindakan berada dalam panel kanan */
-  .bar-bawah.bar-telefon {
-    display: none !important;
-  }
   /* Butang terus selepas kandungan, bukan di bucu bawah skrin */
   main:has(+ .bar-bawah),
   main:has(+ div + .bar-bawah) {

@@ -5,6 +5,7 @@ import { tr, trRalat, trKonteks, trTajuk } from "@/lib/i18n";
 import { beritahu, sahkan } from "@/components/Dialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useSkrinLebar } from "@/lib/skrin";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { mesejRalat, must, useData } from "@/lib/useData";
@@ -42,6 +43,7 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const back = mode.kind === "approver" ? "/kelulusan" : "/permohonan";
+  const lebar = useSkrinLebar();
 
   if (d.loading && !d.data) {
     return (
@@ -67,6 +69,8 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
   const Isi = tertanam ? "div" : "main";
   const myTask = x.tasks.find((t) => t.approver_person_id === me.personId && t.status === "pending");
   const canAct = mode.kind === "approver" && !!myTask && x.req.status === "pending";
+  // Desktop (halaman penuh): tindakan dalam panel kanan; telefon / panel tertanam: bar bawah. Hanya satu set butang dalam DOM.
+  const panelKanan = lebar && !tertanam;
   const canCancel = mode.kind === "requester" && x.req.requester_person_id === me.personId && x.req.status === "pending";
 
   async function act(action: "approve" | "reject" | "return", comment?: string) {
@@ -253,8 +257,8 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
           ))}
         </section>
         {/* Desktop: tindakan dalam panel kanan (bukan bar bawah gaya telefon) */}
-        {!tertanam && canAct && (
-          <section aria-label={tr("Keputusan anda")} className="hidden flex-col gap-2.5 rounded-[18px] bg-surface p-4 lg:flex">
+        {panelKanan && canAct && (
+          <section aria-label={tr("Keputusan anda")} className="flex flex-col gap-2.5 rounded-[18px] bg-surface p-4">
             <span className="text-sm font-extrabold">{tr("Keputusan anda")}</span>
             <button
               type="button"
@@ -274,8 +278,8 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
             </div>
           </section>
         )}
-        {!tertanam && canCancel && (
-          <button type="button" disabled={busy} onClick={batal} className="hidden h-12 w-full rounded-[14px] border border-line bg-surface text-sm font-bold text-danger disabled:opacity-60 lg:block">
+        {panelKanan && canCancel && (
+          <button type="button" disabled={busy} onClick={batal} className="h-12 w-full rounded-[14px] border border-line bg-surface text-sm font-bold text-danger disabled:opacity-60">
             {tr("Batalkan permohonan")}
           </button>
         )}
@@ -283,8 +287,8 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
         </div>
       </Isi>
 
-      {canAct && (
-        <div className={`bar-bawah sticky bottom-0 flex flex-col gap-2 border-t border-line-soft bg-surface px-4 pt-3 pb-5 ${tertanam ? "" : "bar-telefon"}`}>
+      {!panelKanan && canAct && (
+        <div className="bar-bawah sticky bottom-0 flex flex-col gap-2 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <div className="grid grid-cols-2 gap-2.5">
             <button
               type="button"
@@ -312,8 +316,8 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
         </div>
       )}
 
-      {canCancel && (
-        <div className={`bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5 ${tertanam ? "" : "bar-telefon"}`}>
+      {!panelKanan && canCancel && (
+        <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
           <button
             type="button"
             disabled={busy}
