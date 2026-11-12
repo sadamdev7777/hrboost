@@ -67,6 +67,12 @@ async function login(browser, phone) {
     await a.p.waitForSelector('text=Jumlah bersih');
     if (who === 'Farah') await a.p.screenshot({ path: `${shots}/f-lulus.png` });
     await a.p.click('button:has-text("Lulus")');
+    if (who === 'Sadam') {
+      // CEO juga boleh meluluskan peringkat Kewangan: tawaran "Lulus juga" dipaparkan — tolak supaya Kewangan meluluskan
+      await a.p.waitForSelector('[role=alertdialog] >> text=Anda juga pelulus peringkat', { timeout: 15000 });
+      expect(true, 'CEO ditawarkan meluluskan peringkat Kewangan juga');
+      await a.p.click('[role=alertdialog] button:has-text("Batal")');
+    }
     await a.p.waitForURL('**/kelulusan');
     expect(true, `${who} meluluskan gaji`);
     await a.ctx.close();
