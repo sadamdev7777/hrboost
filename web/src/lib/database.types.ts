@@ -465,14 +465,14 @@ isOneToOne: false
                   ]
                 },"approval_workflow_steps": {
                   Row: {
-                    "approver": Database["public"]['Enums']["approver_type"],"approver_person_id": string | null,"approver_role": Database["public"]['Enums']["app_role"] | null,"condition": NonNullable<Json>,"id": string,"mode": Database["public"]['Enums']["step_mode"],"name": string,"skip_if_requester": boolean,"step_order": number,"workflow_id": string
+                    "approver": Database["public"]['Enums']["approver_type"],"approver_person_id": string | null,"approver_role": Database["public"]['Enums']["app_role"] | null,"condition": NonNullable<Json>,"extra_roles": (Database["public"]['Enums']["app_role"])[] | null,"id": string,"mode": Database["public"]['Enums']["step_mode"],"name": string,"skip_if_requester": boolean,"step_order": number,"workflow_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "approver": Database["public"]['Enums']["approver_type"],"approver_person_id"?: string | null,"approver_role"?: Database["public"]['Enums']["app_role"] | null,"condition"?: NonNullable<Json>,"id"?: string,"mode"?: Database["public"]['Enums']["step_mode"],"name": string,"skip_if_requester"?: boolean,"step_order": number,"workflow_id": string
+                    "approver": Database["public"]['Enums']["approver_type"],"approver_person_id"?: string | null,"approver_role"?: Database["public"]['Enums']["app_role"] | null,"condition"?: NonNullable<Json>,"extra_roles"?: (Database["public"]['Enums']["app_role"])[] | null,"id"?: string,"mode"?: Database["public"]['Enums']["step_mode"],"name": string,"skip_if_requester"?: boolean,"step_order": number,"workflow_id": string
                   }
                   Update: {
-                    "approver"?: Database["public"]['Enums']["approver_type"],"approver_person_id"?: string | null,"approver_role"?: Database["public"]['Enums']["app_role"] | null,"condition"?: NonNullable<Json>,"id"?: string,"mode"?: Database["public"]['Enums']["step_mode"],"name"?: string,"skip_if_requester"?: boolean,"step_order"?: number,"workflow_id"?: string
+                    "approver"?: Database["public"]['Enums']["approver_type"],"approver_person_id"?: string | null,"approver_role"?: Database["public"]['Enums']["app_role"] | null,"condition"?: NonNullable<Json>,"extra_roles"?: (Database["public"]['Enums']["app_role"])[] | null,"id"?: string,"mode"?: Database["public"]['Enums']["step_mode"],"name"?: string,"skip_if_requester"?: boolean,"step_order"?: number,"workflow_id"?: string
                   }
                   Relationships: [
                     {

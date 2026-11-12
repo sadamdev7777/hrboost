@@ -76,9 +76,9 @@ end $$;
 set test.uid='00000000-0000-0000-0000-00000000a002';
 select (submit_payroll_run(:'jan')).status;
 set test.uid='00000000-0000-0000-0000-00000000a001';
-select (approval_act((select t.id from approval_tasks t join payroll_runs r on r.approval_request_id = t.request_id where r.id = :'jan' and t.status = 'pending'), 'approve', null)).status as ceo;
+select (approval_act((select t.id from approval_tasks t join payroll_runs r on r.approval_request_id = t.request_id where r.id = :'jan' and t.status = 'pending' and t.approver_person_id = (select id from persons where auth_user_id = current_setting('test.uid')::uuid)), 'approve', null)).status as ceo;
 set test.uid='00000000-0000-0000-0000-00000000a003';
-select (approval_act((select t.id from approval_tasks t join payroll_runs r on r.approval_request_id = t.request_id where r.id = :'jan' and t.status = 'pending'), 'approve', null)).status as kewangan;
+select (approval_act((select t.id from approval_tasks t join payroll_runs r on r.approval_request_id = t.request_id where r.id = :'jan' and t.status = 'pending' and t.approver_person_id = (select id from persons where auth_user_id = current_setting('test.uid')::uuid)), 'approve', null)).status as kewangan;
 select status, payslip_release_at is null as slip_belum_dilepas from payroll_runs where id = :'jan';
 
 \echo '=== T4: fail berkanun ==='
@@ -113,9 +113,9 @@ select status from payroll_runs where id = :'jan';
 select payroll_calculate(:'jan') is not null as dikira_semula;
 select (submit_payroll_run(:'jan')).status;
 set test.uid='00000000-0000-0000-0000-00000000a001';
-select (approval_act((select t.id from approval_tasks t join payroll_runs r on r.approval_request_id = t.request_id where r.id = :'jan' and t.status = 'pending'), 'approve', null)).status as ceo;
+select (approval_act((select t.id from approval_tasks t join payroll_runs r on r.approval_request_id = t.request_id where r.id = :'jan' and t.status = 'pending' and t.approver_person_id = (select id from persons where auth_user_id = current_setting('test.uid')::uuid)), 'approve', null)).status as ceo;
 set test.uid='00000000-0000-0000-0000-00000000a003';
-select (approval_act((select t.id from approval_tasks t join payroll_runs r on r.approval_request_id = t.request_id where r.id = :'jan' and t.status = 'pending'), 'approve', null)).status as kewangan;
+select (approval_act((select t.id from approval_tasks t join payroll_runs r on r.approval_request_id = t.request_id where r.id = :'jan' and t.status = 'pending' and t.approver_person_id = (select id from persons where auth_user_id = current_setting('test.uid')::uuid)), 'approve', null)).status as kewangan;
 select array_agg(action order by at) as sejarah from payroll_run_events where run_id = :'jan';
 
 \echo '=== T6: Februari — tunggakan gaji (kenaikan berkuat kuasa 1 Jan) & varians ==='

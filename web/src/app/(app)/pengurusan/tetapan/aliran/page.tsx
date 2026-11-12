@@ -15,6 +15,8 @@ type Peringkat = {
   name: string;
   approver: "dept_head" | "direct_manager" | "role" | "specific_person";
   approver_role: string | null;
+  /** Peranan lain yang juga boleh meluluskan peringkat ini (seorang sudah memadai) */
+  extra_roles?: string[] | null;
   approver_person_id: string | null;
   condition: { field?: string; op?: string; value?: number };
   skip_if_requester: boolean;
@@ -38,7 +40,7 @@ function keterangan(s: Peringkat, nama: Record<string, string>, jenis: ReqType):
       : s.approver === "direct_manager"
         ? tr("Pengurus terus pemohon")
         : s.approver === "role"
-          ? tr("Peranan {0} · kelulusan seorang sudah memadai", PERANAN[s.approver_role ?? ""] ?? s.approver_role)
+          ? tr("Peranan {0} · kelulusan seorang sudah memadai", [s.approver_role ?? "", ...(s.extra_roles ?? [])].map((r) => PERANAN[r] ?? r).join(tr(" atau ")))
           : tr("Ditetapkan: {0}", nama[s.approver_person_id ?? ""] ?? "pekerja");
   const langkau = s.skip_if_requester ? tr(" · dilangkau jika pelulus sendiri yang memohon") : "";
   const syarat =
@@ -70,7 +72,7 @@ function Aliran() {
     const [wf, ppl, lt] = await Promise.all([
       sb
         .from("approval_workflows")
-        .select("id, cutoff_time, reminder_every_hours, sla, approval_workflow_steps(step_order, name, approver, approver_role, approver_person_id, condition, skip_if_requester)")
+        .select("id, cutoff_time, reminder_every_hours, sla, approval_workflow_steps(step_order, name, approver, approver_role, extra_roles, approver_person_id, condition, skip_if_requester)")
         .eq("company_id", cid)
         .eq("request_type", jenis)
         .maybeSingle(),
@@ -258,7 +260,7 @@ function UbahPeringkat({
           value={pilihan}
           onChange={(e) => {
             const v = e.target.value;
-            if (v.startsWith("role:")) setF({ ...f, approver: "role", approver_role: v.slice(5), approver_person_id: null });
+            if (v.startsWith("role:")) setF({ ...f, approver: "role", approver_role: v.slice(5), extra_roles: (f.extra_roles ?? []).filter((x) => x !== v.slice(5)), approver_person_id: null });
             else setF({ ...f, approver: v as Peringkat["approver"], approver_role: null, approver_person_id: v === "specific_person" ? (ppl[0]?.person_id ?? null) : null });
           }}
         >
@@ -270,6 +272,30 @@ function UbahPeringkat({
           <option value="specific_person">{tr("Pekerja tertentu")}</option>
         </select>
       </MedanBorang>
+      {f.approver === "role" && (
+        <MedanBorang label={tr("Juga boleh diluluskan oleh")} nota={tr("Seorang sahaja daripada peranan yang dipilih perlu meluluskan peringkat ini.")}>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(PERANAN)
+              .filter(([k]) => k !== f.approver_role)
+              .map(([k, l]) => {
+                const on = (f.extra_roles ?? []).includes(k);
+                return (
+                  <button
+                    key={k}
+                    type="button"
+                    role="checkbox"
+                    aria-checked={on}
+                    onClick={() => setF({ ...f, extra_roles: on ? (f.extra_roles ?? []).filter((x) => x !== k) : [...(f.extra_roles ?? []), k] })}
+                    className={`flex h-10 items-center gap-2 rounded-full px-3.5 text-[13px] font-bold ${on ? "border-[1.5px] border-primary bg-[#E3F1EE] text-primary" : "border border-[#D5DEDC] bg-surface"}`}
+                  >
+                    <span aria-hidden className={`flex size-4 items-center justify-center rounded-[5px] border-[1.5px] text-[10px] ${on ? "border-primary bg-primary text-white" : "border-[#B9C6C3]"}`}>{on ? "✓" : ""}</span>
+                    {l}
+                  </button>
+                );
+              })}
+          </div>
+        </MedanBorang>
+      )}
       {f.approver === "specific_person" && (
         <MedanBorang label={tr("Pekerja")}>
           <select className={inputKecil} value={f.approver_person_id ?? ""} onChange={(e) => setF({ ...f, approver_person_id: e.target.value })}>
