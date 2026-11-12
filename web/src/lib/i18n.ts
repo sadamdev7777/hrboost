@@ -72,7 +72,7 @@ const TUNGGAL: Record<string, string> = {
   times: "time", rules: "rule", types: "type", steps: "step", levels: "level", approvers: "approver", "clock-ins": "clock-in", names: "name",
 };
 function tunggal(s: string): string {
-  return s.replace(/(^|[^\d.,])1 (days|employees|requests|claims|months|years|minutes|hours|items|people|departments|weeks|times|rules|types|steps|levels|approvers|clock-ins|names)\b/g, (_m, a: string, w: string) => `${a}1 ${TUNGGAL[w]}`);
+  return s.replace(/(^|[^\d.,])1 ((?:working |calendar |business |active |new )?)(days|employees|requests|claims|months|years|minutes|hours|items|people|departments|weeks|times|rules|types|steps|levels|approvers|clock-ins|names)\b/g, (_m, a: string, k: string, w: string) => `${a}1 ${k}${TUNGGAL[w]}`);
 }
 export const t = tr;
 

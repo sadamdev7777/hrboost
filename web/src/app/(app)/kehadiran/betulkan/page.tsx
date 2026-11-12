@@ -12,7 +12,6 @@ import { addDays, hariTarikh, jam, todayISO } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
 import { ButangUtama, Seksyen } from "@/components/Senarai";
 
-const HARI_PENUH: Record<string, string> = { Isn: "ISNIN", Sel: "SELASA", Rab: "RABU", Kha: "KHAMIS", Jum: "JUMAAT", Sab: "SABTU", Ahd: "AHAD" };
 
 // Rujukan reka bentuk: design/PembetulanMasa.dc.html
 export default function BetulkanMasaPage() {
@@ -94,7 +93,7 @@ function Betulkan() {
           />
         </label>
         <Seksyen>
-          {tr("REKOD MESIN · {0}, {1}", HARI_PENUH[hd.slice(0, 3)] ?? "", hd.slice(5).toUpperCase())}</Seksyen>
+          {tr("REKOD MESIN · {0}", hd.toUpperCase())}</Seksyen>
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data ? (
           <Loading />

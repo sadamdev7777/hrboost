@@ -17,7 +17,7 @@ import { muatNaikPeribadi } from "@/lib/upload";
 const JENIS = ["AL", "MC", "EL", "UL"] as const;
 const SUB: Record<string, string> = {
   MC: tr("Perlu sijil cuti sakit"),
-  EL: tr("Boleh mohon selepas"),
+  EL: tr("Boleh mohon selepas kejadian"),
   UL: tr("Gaji dipotong"),
 };
 const NAMA_PENDEK: Record<string, string> = { AL: tr("Tahunan"), MC: tr("Sakit (MC)"), EL: tr("Kecemasan"), UL: tr("Tanpa Gaji") };

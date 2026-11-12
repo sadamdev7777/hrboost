@@ -3,6 +3,7 @@
 import { KadProfil } from "@/components/KadProfil";
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
+import { IconCheck } from "@/components/icons";
 import { useMe } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
@@ -50,14 +51,26 @@ export function KetuaUtama() {
       <OrientasiBanner employmentId={emp.id} />
       <KadPengumuman companyId={emp.companyId} />
 
-      <Link href="/kelulusan" className="flex items-center gap-3 rounded-[20px] bg-primary px-4 py-[18px] text-white!">
-        <span className="flex grow flex-col gap-1">
-          <span className="text-[13px] opacity-92">{tr("Menunggu kelulusan anda")}</span>
-          <b className="text-[34px] leading-none font-extrabold">{pending.data ?? "–"}</b>
-          <span className="text-[13px] opacity-92">{tr("Selesaikan sebelum {0}", masaTeks(emp.workEnd))}</span>
-        </span>
-        <span className="flex h-11 items-center rounded-[14px] bg-white px-4 text-sm font-extrabold text-primary">{tr("Semak")}</span>
-      </Link>
+      {pending.data === 0 ? (
+        <Link href="/kelulusan" className="flex min-h-14 items-center gap-3 rounded-card bg-surface px-4 py-3 text-ink!">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary">
+            <IconCheck className="size-5" />
+          </span>
+          <span className="flex grow flex-col">
+            <b className="text-sm">{tr("Tiada permohonan menunggu kelulusan anda")}</b>
+            <span className="text-xs text-subtle">{tr("Anda akan dimaklumkan melalui WhatsApp apabila ada permohonan baharu.")}</span>
+          </span>
+        </Link>
+      ) : (
+        <Link href="/kelulusan" className="flex items-center gap-3 rounded-[20px] bg-primary px-4 py-[18px] text-white!">
+          <span className="flex grow flex-col gap-1">
+            <span className="text-[13px] opacity-92">{tr("Menunggu kelulusan anda")}</span>
+            <b className="text-[34px] leading-none font-extrabold">{pending.data ?? "–"}</b>
+            <span className="text-[13px] opacity-92">{tr("Selesaikan sebelum {0}", masaTeks(emp.workEnd))}</span>
+          </span>
+          <span className="flex h-11 items-center rounded-[14px] bg-white px-4 text-sm font-extrabold text-primary">{tr("Semak")}</span>
+        </Link>
+      )}
 
       <KadPenilaianKetua companyId={emp.companyId} />
       <TugasSemakKetua companyId={emp.companyId} />
