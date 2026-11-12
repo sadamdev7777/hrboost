@@ -166,7 +166,7 @@ function Bahagian({ tajuk, jenis, onUbah, children }: { tajuk: string; jenis: "t
           {jenis === "hr" && <Tag tone="warning">{tr("Disahkan HR")}</Tag>}
         </span>
         {label && onUbah && (
-          <button type="button" onClick={onUbah} className="flex h-10 items-center rounded-full border border-primary bg-surface px-4 text-[13px] font-bold text-primary">
+          <button type="button" onClick={onUbah} className="flex h-11 shrink-0 items-center rounded-full border border-primary bg-surface px-4 text-[13px] font-bold whitespace-nowrap text-primary">
             {label}
           </button>
         )}

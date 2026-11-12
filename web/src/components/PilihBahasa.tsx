@@ -37,7 +37,7 @@ export function PilihBahasa({ simpan = false, kecil = false, bingkai = false }: 
           aria-label={p.label}
           title={p.label}
           onClick={() => pilih(p.b)}
-          className={`flex items-center rounded-full font-bold ${bingkai ? "h-8 px-2.5" : kecil ? "h-9 px-3" : "h-10 px-3.5"} ${semasa === p.b ? "bg-primary text-white" : "text-[#4A5A57]"}`}
+          className={`flex items-center rounded-full font-bold ${bingkai ? "h-11 px-3" : kecil ? "h-11 px-3" : "h-11 px-3.5"} ${semasa === p.b ? "bg-primary text-white" : "text-[#4A5A57]"}`}
         >
           {kecil ? p.pendek : p.label}
         </button>

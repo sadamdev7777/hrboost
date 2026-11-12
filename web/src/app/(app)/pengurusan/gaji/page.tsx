@@ -366,7 +366,7 @@ function Langkah1({ data, reload }: { data: Data; reload: () => void }) {
                 <b>{s.unpaid_leave_people}</b> {tr("orang cuti tanpa gaji")}
               </span>
               {skbbk.data != null && (
-                <Link href="/pengurusan/gaji/tetapan" className="text-ink!">
+                <Link href="/pengurusan/gaji/tetapan" className="inline-flex min-h-11 items-center gap-1 text-ink!">
                   <b>{skbbk.data}</b> {tr("menyertai Lindung 24 Jam ›")}
                 </Link>
               )}
