@@ -84,3 +84,15 @@ select sa_dashboard();
 select sa_users('');
 select sa_audit_log('all', 10);
 \set ON_ERROR_STOP 1
+
+\echo '=== Langkah Pentadbir dikira siap bagi syarikat yang dicipta tanpa /daftar (import/seed) ==='
+reset test.uid; reset test.role;
+do $$ declare c uuid := gen_random_uuid(); p uuid; begin
+  insert into companies(id, code, name) values (c, 'IMPT', 'SYARIKAT IMPORT SDN BHD');
+  select id into p from persons where auth_user_id is not null limit 1;
+  insert into employments(person_id, company_id, employee_no, status, join_date) values (p, c, 'IMP001', 'active', '2020-01-01');
+  insert into user_roles(person_id, company_id, role) values (p, c, 'admin');
+  perform set_config('test.uid', (select auth_user_id::text from persons where id = p), true);
+  perform set_config('test.role', 'authenticated', true);
+  assert company_onboarding_state(c)->'steps' ? 'admin', 'langkah admin siap';
+end $$;
