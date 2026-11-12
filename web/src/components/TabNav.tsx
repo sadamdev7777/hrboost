@@ -1,5 +1,6 @@
 "use client";
 
+import { PilihBahasa } from "./PilihBahasa";
 import { LogoSyarikat } from "./Logo";
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
@@ -204,7 +205,9 @@ export function MenuSisi() {
           </Link>
         )}
         <TukarMod />
-        <div className="flex items-center justify-end gap-2 px-2">
+        <div className="flex items-center justify-between gap-2 px-2">
+          {/* Bahasa sentiasa kelihatan (disimpan pada akaun: skrin, WhatsApp & slip gaji) */}
+          <PilihBahasa simpan kecil bingkai />
           <button type="button" onClick={() => void getSupabase().auth.signOut()} className="flex min-h-10 shrink-0 items-center text-[13px] font-bold whitespace-nowrap text-danger">
             {tr("Log keluar")}</button>
         </div>
