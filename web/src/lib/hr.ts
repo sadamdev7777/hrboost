@@ -115,6 +115,8 @@ export type BorangPekerja = {
   type: EmpType;
   probationMonths: number;
   basic: string;
+  /** Bahasa WhatsApp & aplikasi (lalai English) */
+  language?: "en" | "ms";
 };
 
 export async function tambahPekerja(companyId: string, f: BorangPekerja): Promise<string> {
@@ -166,6 +168,8 @@ export type ButiranPekerja = {
   contractEnd: string | null;
   passportExpiry: string | null;
   permitExpiry: string | null;
+  /** Bahasa WhatsApp & aplikasi pekerja (lalai English) */
+  language: "en" | "ms";
 };
 
 export async function getButiranPekerja(employmentId: string): Promise<ButiranPekerja> {
@@ -174,7 +178,7 @@ export async function getButiranPekerja(employmentId: string): Promise<ButiranPe
     await sb
       .from("employments")
       .select(
-        "id, person_id, company_id, employee_no, status, employment_type, join_date, probation_end_date, end_date, end_status, contract_end_date, department_id, work_start, departments(name, head_person_id), positions(title), companies(name, work_start), persons!employments_person_id_fkey(preferred_name, full_name, auth_user_id, passport_expiry, permit_expiry)",
+        "id, person_id, company_id, employee_no, status, employment_type, join_date, probation_end_date, end_date, end_status, contract_end_date, department_id, work_start, departments(name, head_person_id), positions(title), companies(name, work_start), persons!employments_person_id_fkey(preferred_name, full_name, auth_user_id, passport_expiry, permit_expiry, language)",
       )
       .eq("id", employmentId)
       .maybeSingle(),
@@ -213,6 +217,7 @@ export async function getButiranPekerja(employmentId: string): Promise<ButiranPe
     contractEnd: e.contract_end_date,
     passportExpiry: e.persons?.passport_expiry ?? null,
     permitExpiry: e.persons?.permit_expiry ?? null,
+    language: e.persons?.language === "ms" ? "ms" : "en",
   };
 }
 
@@ -346,4 +351,9 @@ export async function getTugasSaya(companyId: string): Promise<TugasSaya[]> {
       .eq("company_id", companyId)
       .order("submitted_at"),
   ) ?? []) as TugasSaya[];
+}
+
+/** Bahasa pekerja untuk WhatsApp, aplikasi & Pembantu AI (HR). Pekerja boleh menukar sendiri di Saya → Bahasa. */
+export async function setBahasaPekerja(employmentId: string, bahasa: "en" | "ms") {
+  must(await getSupabase().rpc("hr_set_person_language", { p_employment: employmentId, p_lang: bahasa }));
 }

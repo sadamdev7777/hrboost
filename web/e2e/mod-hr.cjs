@@ -91,8 +91,7 @@ const navMobile = async (p) => (await p.locator('nav.sticky >> visible=true').lo
   await p.waitForSelector('text=Semak data');
   await p.click('button:has-text("Kira Gaji")');
   await p.waitForSelector('text=Jumlah kasar', { timeout: 30000 });
-  await p.click('button:has-text("Lihat semua")');
-  await p.click('a:has-text("Amin · DEMO004")');
+  await p.click('section[aria-label="Slip pekerja"] a:has-text("Amin")');
   await p.waitForSelector('text=SLIP GAJI');
   await p.waitForTimeout(1000);
   const slip = await p.innerText('article');

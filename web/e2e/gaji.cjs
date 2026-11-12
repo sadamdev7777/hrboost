@@ -46,11 +46,10 @@ async function login(browser, phone) {
   await p.waitForSelector('[role=dialog]', { state: 'detached' });
   await p.click('button:has-text("Kira Gaji")');
   await p.waitForSelector('text=Jumlah kasar');
-  const semak = await p.innerText('main');
+  const semak = await p.innerText('body');
   expect(/RM [\d,]+\.\d\d/.test(semak) && semak.includes('CEO → Kewangan'), 'gaji dikira; aliran CEO → Kewangan');
   await p.screenshot({ path: `${shots}/f-semak.png` });
-  await p.click('button:has-text("Lihat semua")');
-  await p.click('a:has-text("Amin · DEMO004")');
+  await p.click('section[aria-label="Slip pekerja"] a:has-text("Amin")');
   await p.waitForSelector('text=SLIP GAJI');
   await p.waitForTimeout(1500); const slipHr = await p.innerText("article"); if (!slipHr.includes("3,700.00")) console.log(slipHr.slice(0,800));
   expect(slipHr.includes('Komisen') && slipHr.includes('3,700.00'), 'pratonton slip Amin: komisen RM500, jumlah pendapatan RM3,700');
@@ -75,9 +74,9 @@ async function login(browser, phone) {
 
   log('3. Lily: muat turun fail & tanda dibayar');
   await p.reload();
-  await p.waitForSelector('text=MUAT TURUN');
+  await p.waitForSelector('text=Bayar gaji melalui bank');
   // Fail bayaran bank kini dibuka dalam dialog format bank (FailBank)
-  await p.click('text=Fail bayaran bank >> xpath=../.. >> button');
+  await p.click('button:has-text("Fail bayaran bank")');
   await p.waitForSelector('[role=dialog] >> text=Fail bayaran bank >> visible=true');
   const [dl] = await Promise.all([p.waitForEvent('download'), p.click('[role=dialog] button:has-text("Muat turun fail") >> visible=true')]);
   await p.keyboard.press('Escape');

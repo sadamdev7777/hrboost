@@ -2853,6 +2853,9 @@ isOneToOne: false
 "hr_set_payroll_settings":
 { Args: { "p_company": string,"p_data": Json }; Returns: undefined
                            },
+"hr_set_person_language":
+{ Args: { "p_employment": string,"p_lang": string }; Returns: undefined
+                           },
 "hr_set_preferred_names":
 { Args: { "p_company": string,"p_items": Json }; Returns: number
                            },

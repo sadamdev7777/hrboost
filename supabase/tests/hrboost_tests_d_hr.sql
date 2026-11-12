@@ -98,3 +98,17 @@ do $$ begin
   assert (select count(*) from user_roles where person_id = '00000000-0000-0000-0000-000000000003') = 0;
   assert (select head_person_id from departments where id = '00000000-0000-0000-0000-0000000000d1') is null;
 end $$;
+
+\echo '=== Bahasa pekerja ditetapkan oleh HR (lalai English) ==='
+reset test.uid; reset test.role;
+do $$ declare e uuid; hr_uid text; luar_uid text; begin
+  select em.id into e from employments em where em.person_id not in (select person_id from user_roles) limit 1;
+  assert (select p.language from persons p join employments em on em.person_id = p.id where em.id = e) = 'en', 'lalai English';
+  select p.auth_user_id::text into hr_uid from persons p join user_roles r on r.person_id = p.id
+   where r.role = 'hr' and r.company_id = (select company_id from employments where id = e) and p.auth_user_id is not null limit 1;
+  perform set_config('test.uid', hr_uid, true); perform set_config('test.role', 'authenticated', true);
+  perform hr_set_person_language(e, 'ms');
+  assert (select p.language from persons p join employments em on em.person_id = p.id where em.id = e) = 'ms', 'ditukar ke BM';
+  begin perform hr_set_person_language(e, 'fr'); assert false, 'bahasa tidak sah ditolak';
+  exception when assert_failure then raise; when others then null; end;
+end $$;

@@ -92,6 +92,7 @@ async function masuk(b, email) {
   const run = sql(`select id from payroll_runs where company_id = '${C}' and cycle_no = 1 order by created_at desc limit 1`);
   const garis = sql(`select string_agg(l.component_code || '=' || l.amount, ',' order by l.component_code) from payslip_lines l join payslips s on s.id = l.payslip_id where s.payroll_run_id = '${run}' and s.employment_id = '${AMIN}'`);
   expect(garis.includes('BONUS=1000') && garis.includes('ZAKAT=50') && garis.includes('SKBBK=') && /PCB=\d/.test(garis), 'slip Amin: bonus, zakat, SKBBK & PCB: ' + garis);
+  await p.click(V('button:has-text("Pilihan lanjut")'));
   await p.click(V('button:has-text("Laporan varians")'));
   await p.waitForSelector(V('section[aria-label="Laporan varians"] table'));
   const [csv] = await Promise.all([p.waitForEvent('download'), p.click(V('button:has-text("Muat turun laporan varians (CSV)")'))]);
@@ -100,10 +101,11 @@ async function masuk(b, email) {
   log('5. Diluluskan → fail CP39, lepas slip, buka semula');
   sql(`update payroll_runs set status = 'approved' where id = '${run}'`);
   await p.reload();
-  await p.waitForSelector(V('text=MUAT TURUN'));
-  const [cp39] = await Promise.all([p.waitForEvent('download'), p.click(V('text=PCB CP39 (fail teks e-Data PCB) >> xpath=../.. >> button'))]);
+  await p.waitForSelector(V('text=Hantar caruman berkanun'));
+  const [cp39] = await Promise.all([p.waitForEvent('download'), p.click(V('section[aria-label="Hantar caruman berkanun"] b:has-text("PCB (CP39)") >> xpath=../.. >> button'))]);
   const teks = fs.readFileSync(await cp39.path(), 'utf8').split('\r\n');
   expect(teks[0].length === 57 && teks.length >= 2 && teks.slice(1).every((x) => x.length === 136), `CP39: rekod H 57 aksara, ${teks.length - 1} rekod D 136 aksara`);
+  await p.click(V('button:has-text("Pilihan lanjut")'));
   await p.waitForSelector(V('text=Slip belum dilepaskan'));
   await p.click(V('button:has-text("Lepaskan sekarang")'));
   await p.waitForSelector(V('text=Slip telah dilepaskan kepada pekerja'));
@@ -118,7 +120,7 @@ async function masuk(b, email) {
   expect(sql(`select status || '|' || (payslip_release_at is null) from payroll_runs where id = '${run}'`) === 'calculated|true', 'dibuka semula: kembali ke Langkah 2, slip ditarik balik');
 
   log('6. Kitaran tambahan (bonus)');
-  await p.click(V('button:has-text("+ Kitaran tambahan (bonus)")'));
+  await p.click(V('button:has-text("Bayar bonus atau insentif berasingan")'));
   await p.fill('[role=alertdialog] textarea', 'Bonus Tahunan');
   await p.click('[role=alertdialog] button:has-text("Cipta")');
   await p.waitForSelector(V('button[aria-pressed=true]:has-text("Bonus Tahunan")'));

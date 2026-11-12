@@ -33,6 +33,8 @@ async function masuk(b, email, vp) {
   let { ctx, p } = await masuk(b, 'lily@demo.hrboost.io', DESKTOP);
   await p.goto(BASE + '/pengurusan/gaji');
   await p.click(V('button:has-text("Kira Gaji")'));
+  await p.waitForSelector(V('button:has-text("Hantar untuk kelulusan")'), { timeout: 30000 });
+  await p.click(V('button:has-text("Pilihan lanjut")'));
   await p.waitForSelector(V('[role=switch][aria-label="Pekerja boleh pratonton slip"]'), { timeout: 30000 });
   expect((await p.getAttribute(V('[role=switch][aria-label="Pekerja boleh pratonton slip"]'), 'aria-checked')) === 'true', 'pratonton slip dihidupkan secara lalai');
   await ctx.close();

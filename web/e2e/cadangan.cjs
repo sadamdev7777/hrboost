@@ -157,6 +157,18 @@ const sahkanDialog = async (p, ok) => {
   expect(true, 'butang Sambung QuickBooks dipaparkan kepada Kewangan');
   await ctx.close();
 
+  log('7. Bahasa pekerja (lalai English, HR boleh tukar)');
+  ({ ctx, p } = await masuk(b, 'lily@demo.hrboost.io'));
+  const amin = sql(`select id from employments where employee_no = 'DEMO004'`);
+  expect(sql(`select language from persons p join employments e on e.person_id = p.id where e.id = '${amin}'`) === 'en', 'lalai English');
+  await p.goto(BASE + `/pengurusan/pekerja/${amin}`);
+  await p.selectOption(V('select[aria-label="Bahasa Amin"]'), 'ms');
+  await p.waitForSelector(V('text=Bahasa Amin dikemas kini.'), { timeout: 20000 });
+  expect(sql(`select language from persons p join employments e on e.person_id = p.id where e.id = '${amin}'`) === 'ms', 'HR menukar bahasa Amin ke BM');
+  await p.goto(BASE + '/pengurusan/pekerja/baru');
+  expect((await p.getAttribute(V('[role=radiogroup][aria-label="Bahasa"] button:has-text("English")'), 'aria-checked')) === 'true', 'Tambah pekerja: English dipilih secara lalai');
+  await ctx.close();
+
   await b.close();
   log('LULUS: cadangan 5–17');
 })().catch((e) => {

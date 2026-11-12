@@ -132,27 +132,7 @@ function ProsesGaji() {
       <div className="px-4 pt-3 empty:hidden lg:px-0">
         <KadPanduan id="gaji" />
       </div>
-      <PilihKitaran
-        senarai={senaraiKitaran.data ?? []}
-        pilih={kitaran}
-        onPilih={setKitaran}
-        onTambah={async () => {
-          const label = await mintaTeks({
-            tajuk: tr("Kitaran gaji tambahan"),
-            mesej: tr("Untuk bonus, insentif atau bayaran lain di luar gaji bulanan. PCB dikira mengikut kaedah saraan tambahan; tiada PERKESO/SIP."),
-            label: tr("Nama kitaran (cth. Bonus Disember)"),
-            ok: tr("Cipta"),
-          });
-          if (!label) return;
-          try {
-            const id = await tambahKitaran(emp.companyId, tempoh.y, tempoh.m, label);
-            senaraiKitaran.reload();
-            setKitaran(id);
-          } catch (e) {
-            beritahu(e instanceof Error ? e.message : tr("Ralat"), "ralat");
-          }
-        }}
-      />
+      <PilihKitaran senarai={senaraiKitaran.data ?? []} pilih={kitaran} onPilih={setKitaran} />
       <ol className="mx-5 mt-4 grid grid-cols-4 gap-1.5 lg:mx-0" aria-label={tr("Langkah proses gaji")}>
         {LANGKAH.map((l, i) => {
           const siap = langkah > i + 1 || status === "paid";
@@ -188,58 +168,143 @@ function ProsesGaji() {
           <ButangUtama onClick={() => bukaSemulaGaji(d.data!.run.id, muatSemula)}>{tr("Betulkan & sediakan semula")}</ButangUtama>
         </main>
       )}
+      {d.data && (
+        <div className="flex justify-center px-4 pt-2 pb-6">
+          <button
+            type="button"
+            onClick={async () => {
+              const label = await mintaTeks({
+                tajuk: tr("Kitaran gaji tambahan"),
+                mesej: tr("Untuk bonus, insentif atau bayaran lain di luar gaji bulanan. PCB dikira mengikut kaedah saraan tambahan; tiada PERKESO/SIP."),
+                label: tr("Nama kitaran (cth. Bonus Disember)"),
+                ok: tr("Cipta"),
+              });
+              if (!label) return;
+              try {
+                const id = await tambahKitaran(emp.companyId, tempoh.y, tempoh.m, label);
+                senaraiKitaran.reload();
+                setKitaran(id);
+              } catch (e) {
+                beritahu(e instanceof Error ? e.message : tr("Ralat"), "ralat");
+              }
+            }}
+            className="flex min-h-11 items-center text-[13px] font-bold text-primary"
+          >
+            {tr("+ Bayar bonus atau insentif berasingan (kitaran tambahan)")}
+          </button>
+        </div>
+      )}
       <TabNav />
     </Screen>
   );
 }
 
-/** Semakan sebelum kira, dikumpulkan: "Mesti dibaiki" (merah) dan "Amaran" (kuning), dengan pautan terus. */
-function SemakanGaji({ checks }: { checks: string[] }) {
+/**
+ * Satu senarai "Sebelum mengira": perkara yang mesti dibaiki (merah) dan perlu disemak (kuning), setiap satu dengan pautan terus.
+ * Menggantikan kotak berasingan untuk gaji pokok, data terkumpul, maklumat tidak lengkap dan amaran lain.
+ */
+function SemakanGaji({ checks, companyId, statutoryReady }: { checks: string[]; companyId: string; statutoryReady: boolean }) {
+  const k = useData(() => getKesediaan(companyId), [companyId]);
+  const ppl = useData(() => getSenaraiPekerja(companyId), [companyId]);
+  const [buka, setBuka] = useState<string | null>(null);
   const tiadaGaji = checks.filter((c) => c.includes("gaji pokok belum ditetapkan"));
   const terkumpul = checks.filter((c) => c.includes("tiada data terkumpul"));
   const lain = checks.filter((c) => !tiadaGaji.includes(c) && !terkumpul.includes(c));
   const nama = (xs: string[]) => xs.map((c) => c.split(":")[0]).join(", ");
-  if (!checks.length)
-    return <div className="rounded-card bg-success-soft px-4 py-3 text-[13px] font-semibold text-success">{tr("Semakan sebelum kira: tiada isu ditemui.")}</div>;
+  const tidakLengkap = k.data ?? [];
+  const namaPekerja = (id: string) => ppl.data?.find((p) => p.id === id)?.name ?? "…";
+
+  type Baris = { id: string; merah: boolean; tajuk: string; nota?: string; href?: string; pautan?: string; butiran?: React.ReactNode };
+  const baris: Baris[] = [];
+  if (!statutoryReady) baris.push({ id: "kadar", merah: true, tajuk: tr("Jadual kadar berkanun belum dimuatkan untuk bulan ini."), nota: tr("Hubungi Pentadbir Platform.") });
+  if (tiadaGaji.length)
+    baris.push({ id: "gaji", merah: true, tajuk: tr("{0} pekerja belum mempunyai gaji pokok", tiadaGaji.length), nota: nama(tiadaGaji), href: "/pengurusan/gaji/pekerja", pautan: tr("Tetapkan gaji") });
+  if (terkumpul.length)
+    baris.push({
+      id: "ytd",
+      merah: true,
+      tajuk: tr("{0} pekerja tiada data gaji terkumpul tahun ini", terkumpul.length),
+      nota: tr("Tanpa data ini PCB dikira terlalu rendah (selalunya RM0). Isi daripada sistem gaji lama: {0}.", nama(terkumpul)),
+      href: "/pengurusan/gaji/data-terkumpul",
+      pautan: tr("Isi atau import"),
+    });
+  if (tidakLengkap.length)
+    baris.push({
+      id: "lengkap",
+      merah: false,
+      tajuk: tr("{0} pekerja: maklumat gaji tidak lengkap", tidakLengkap.length),
+      nota: tr("Contohnya no. KWSP, akaun bank atau status perkahwinan."),
+      butiran: (
+        <ul className="m-0 flex list-none flex-col gap-1 p-0 text-[13px]">
+          {tidakLengkap.map((x) => (
+            <li key={x.employment_id}>
+              <Link href={`/pengurusan/pekerja/${x.employment_id}`} className="font-bold">
+                {namaPekerja(x.employment_id)}
+              </Link>
+              <span className="text-muted">: {x.missing.map((m) => trRalat(m)).join(", ")}</span>
+            </li>
+          ))}
+        </ul>
+      ),
+    });
+  if (lain.length)
+    baris.push({
+      id: "lain",
+      merah: false,
+      tajuk: tr("{0} perkara lain untuk disemak", lain.length),
+      butiran: (
+        <ul className="m-0 flex list-disc flex-col gap-0.5 pl-5 text-[13px] text-muted">
+          {lain.map((c, i) => (
+            <li key={i}>{trRalat(c)}</li>
+          ))}
+        </ul>
+      ),
+    });
+
   return (
-    <div className="flex flex-col gap-2">
-      {tiadaGaji.length > 0 && (
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-card bg-danger-soft px-4 py-3 text-[13px] text-danger">
-          <b className="grow">
-            {tr("Mesti dibaiki: {0} pekerja belum mempunyai gaji pokok ({1})", tiadaGaji.length, nama(tiadaGaji))}</b>
-          <Link href="/pengurusan/gaji/pekerja" className="font-bold text-danger!">
-            {tr("Tetapkan gaji ›")}</Link>
+    <section aria-label={tr("Sebelum mengira")} className="flex flex-col gap-2">
+      <Seksyen className="pt-1">{tr("SEBELUM MENGIRA")}</Seksyen>
+      {baris.length === 0 ? (
+        <div className="rounded-card bg-success-soft px-4 py-3 text-[13px] font-semibold text-success">{tr("Semua sedia. Tekan Kira Gaji.")}</div>
+      ) : (
+        <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
+          {baris.map((b) => (
+            <div key={b.id} className="flex flex-col gap-1.5 py-3">
+              <div className="flex items-start gap-3">
+                <span aria-hidden className={`mt-1.5 size-2.5 shrink-0 rounded-full ${b.merah ? "bg-danger" : "bg-warning"}`} />
+                <span className="flex min-w-0 grow flex-col gap-0.5">
+                  <b className={`text-sm ${b.merah ? "text-danger" : "text-ink"}`}>{b.tajuk}</b>
+                  {b.nota && <span className="text-[13px] leading-snug text-muted">{b.nota}</span>}
+                </span>
+                {b.href ? (
+                  <Link href={b.href} className="flex min-h-9 shrink-0 items-center text-[13px] font-bold">
+                    {b.pautan} ›
+                  </Link>
+                ) : (
+                  b.butiran && (
+                    <button type="button" aria-expanded={buka === b.id} onClick={() => setBuka(buka === b.id ? null : b.id)} className="flex min-h-9 shrink-0 items-center text-[13px] font-bold text-primary">
+                      {buka === b.id ? tr("Tutup") : tr("Lihat")}
+                    </button>
+                  )
+                )}
+              </div>
+              {buka === b.id && <div className="pl-5.5">{b.butiran}</div>}
+            </div>
+          ))}
         </div>
       )}
-      {terkumpul.length > 0 && (
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-card bg-danger-soft px-4 py-3 text-[13px] text-danger">
-          <span className="flex grow basis-72 flex-col gap-0.5">
-            <b>{tr("Penting untuk PCB: {0} pekerja tiada data gaji terkumpul tahun ini ({1}).", terkumpul.length, nama(terkumpul))}</b>
-            <span>{tr("Tanpa gaji, KWSP dan PCB yang telah dibayar sejak Januari, PCB bulan ini akan dikira terlalu rendah (selalunya RM0). Isi daripada sistem gaji lama anda sebelum mengira.")}</span>
-          </span>
-          <Link href="/pengurusan/gaji/data-terkumpul" className="flex min-h-11 items-center font-bold text-danger!">
-            {tr("Isi atau import Excel ›")}</Link>
-        </div>
-      )}
-      {lain.length > 0 && (
-        <div className="flex flex-col gap-1 rounded-card bg-warning-soft px-4 py-3 text-[13px] text-warning">
-          <b>{tr("Amaran ({0})", lain.length)}</b>
-          <ul className="m-0 flex list-disc flex-col gap-0.5 pl-5">
-            {lain.map((c, i) => (
-              <li key={i}>{trRalat(c)}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
+      {baris.some((b) => b.merah) && <span className="text-xs text-muted">{tr("Perkara merah perlu dibaiki dahulu supaya gaji dikira dengan betul. Perkara kuning boleh disemak kemudian.")}</span>}
+    </section>
   );
 }
 
 type Data = { prep: Awaited<ReturnType<typeof sediakanGaji>>; run: Awaited<ReturnType<typeof getLarian>>; aliran: string[]; tambahan: boolean };
 
 /** Kitaran gaji bulan ini: gaji bulanan + kitaran tambahan (bonus dll.). */
-function PilihKitaran({ senarai, pilih, onPilih, onTambah }: { senarai: Awaited<ReturnType<typeof getKitaran>>; pilih: string | null; onPilih: (id: string | null) => void; onTambah: () => void }) {
+function PilihKitaran({ senarai, pilih, onPilih }: { senarai: Awaited<ReturnType<typeof getKitaran>>; pilih: string | null; onPilih: (id: string | null) => void }) {
   const tambahan = senarai.filter((k) => k.kind === "additional");
+  // Kebanyakan bulan hanya ada gaji bulanan: pilihan kitaran dipaparkan hanya apabila ada bonus/insentif berasingan.
+  if (!tambahan.length) return null;
   return (
     <div className="mx-4 mt-3 flex flex-wrap items-center gap-2 lg:mx-0" role="group" aria-label={tr("Kitaran gaji")}>
       <Cip on={!pilih} onClick={() => onPilih(null)}>
@@ -250,39 +315,6 @@ function PilihKitaran({ senarai, pilih, onPilih, onTambah }: { senarai: Awaited<
           {k.label ?? tr("Kitaran {0}", k.cycle_no)}
         </Cip>
       ))}
-      <button type="button" onClick={onTambah} className="flex h-10 items-center rounded-full border border-dashed border-primary px-3.5 text-[13px] font-bold text-primary">
-        {tr("+ Kitaran tambahan (bonus)")}
-      </button>
-    </div>
-  );
-}
-
-/** Pekerja yang maklumat gajinya belum lengkap (no. KWSP, akaun bank, status perkahwinan…). */
-function PanelKesediaan({ companyId }: { companyId: string }) {
-  const k = useData(() => getKesediaan(companyId), [companyId]);
-  const ppl = useData(() => getSenaraiPekerja(companyId), [companyId]);
-  const xs = k.data ?? [];
-  const [buka, setBuka] = useState(false);
-  if (!xs.length) return null;
-  const nama = (id: string) => ppl.data?.find((p) => p.id === id)?.name ?? "…";
-  return (
-    <div className="flex flex-col gap-1 rounded-card bg-warning-soft px-4 py-3 text-[13px] text-warning">
-      <button type="button" onClick={() => setBuka(!buka)} className="flex min-h-9 items-center justify-between gap-2 text-left font-bold text-warning">
-        <span>{tr("Maklumat gaji tidak lengkap: {0} pekerja", xs.length)}</span>
-        <span aria-hidden>{buka ? "−" : "+"}</span>
-      </button>
-      {buka && (
-        <ul className="m-0 flex list-none flex-col gap-1 p-0">
-          {xs.map((x) => (
-            <li key={x.employment_id}>
-              <Link href={`/pengurusan/pekerja/${x.employment_id}`} className="font-bold text-inherit! underline-offset-2 hover:underline">
-                {nama(x.employment_id)}
-              </Link>
-              : {x.missing.map((m) => trRalat(m)).join(", ")}
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }
@@ -320,19 +352,20 @@ function Langkah1({ data, reload }: { data: Data; reload: () => void }) {
           </>
         ) : (
           <>
-        <Seksyen>{tr("DATA BULAN INI (AUTOMATIK)")}</Seksyen>
-        <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-          <Baris k={tr("Pekerja aktif")} v={s.employees} />
-          <Baris k={tr("Tuntutan yang diluluskan untuk dibayar")} v={`${s.claims} (${rm(s.claims_amount)})`} />
-          <Baris k={tr("Cuti tanpa gaji")} v={tr("{0} orang", s.unpaid_leave_people)} />
-        </div>
-        <SenaraiPelarasan runId={data.run.id} companyId={data.run.company_id} onTambah={() => setImport(true)} data={adj.data ?? []} reload={adj.reload} />
-        <PanelKesediaan companyId={data.run.company_id} />
-
-        {!data.prep.statutory_ready && <ErrorBox message={tr("Jadual kadar berkanun belum dimuatkan untuk bulan ini. Hubungi Pentadbir Platform.")} />}
-        <SemakanGaji checks={data.prep.checks} />
-        <Seksyen className="pt-1">{tr("SELEPAS DILULUSKAN, SISTEM AKAN MENYEDIAKAN")}</Seksyen>
-        <span className="text-[13px] leading-normal text-[#4A5A57]">{tr("Slip gaji (WhatsApp ke pekerja) · Fail bank pukal · KWSP · PERKESO/SIP · PCB (CP39) · Jurnal ke sistem perakaunan")}</span>
+            <Seksyen>{tr("DATA BULAN INI (AUTOMATIK)")}</Seksyen>
+            <div className="flex flex-wrap gap-x-5 gap-y-1 rounded-card bg-surface px-4 py-3 text-sm">
+              <span>
+                <b>{s.employees}</b> {tr("pekerja aktif")}
+              </span>
+              <span>
+                <b>{s.claims}</b> {tr("tuntutan untuk dibayar")} ({rm(s.claims_amount)})
+              </span>
+              <span>
+                <b>{s.unpaid_leave_people}</b> {tr("orang cuti tanpa gaji")}
+              </span>
+            </div>
+            <SemakanGaji checks={data.prep.checks} companyId={data.run.company_id} statutoryReady={data.prep.statutory_ready} />
+            <SenaraiPelarasan runId={data.run.id} companyId={data.run.company_id} onTambah={() => setImport(true)} data={adj.data ?? []} reload={adj.reload} />
           </>
         )}
         {ralat && <ErrorBox message={ralat} />}
@@ -367,7 +400,7 @@ function SenaraiPelarasan({
   return (
     <section aria-label={tr("Item bulan ini")} className="flex flex-col gap-2">
       <div className="flex items-center gap-2 pt-1">
-        <Seksyen className="grow">{tr("ITEM BULAN INI SAHAJA ({0})", data.length)}</Seksyen>
+        <Seksyen className="grow">{tr("KOMISEN, BONUS & POTONGAN BULAN INI ({0})", data.length)}</Seksyen>
         <button type="button" onClick={onTambah} className="flex h-10 items-center rounded-full border border-primary px-3.5 text-[13px] font-bold text-primary">
           {tr("+ Tambah item")}
         </button>
@@ -501,14 +534,17 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
       must(
         await getSupabase()
           .from("payslips")
-          .select("id, net, employments(employee_no, persons!employments_person_id_fkey(preferred_name, full_name))")
+          .select("id, gross, net, employment_id, employments(employee_no, persons!employments_person_id_fkey(preferred_name, full_name))")
           .eq("payroll_run_id", data.run.id),
       ) ?? [],
     [data.run.id],
   );
-  const [lihat, setLihat] = useState(false);
+  const [semua, setSemua] = useState(false);
   const [busy, setBusy] = useState<null | "kira" | "hantar">(null);
   const [ralat, setRalat] = useState<string | null>(null);
+  const catatan = (id: string) => (diff.data ?? []).find((x) => x.employment_id === id)?.note ?? null;
+  const senarai = [...(slip.data ?? [])].sort((a, b) => Number(!!catatan(b.employment_id)) - Number(!!catatan(a.employment_id)));
+  const tunjuk = semua ? senarai : senarai.slice(0, 8);
 
   async function buat(k: "kira" | "hantar") {
     setBusy(k);
@@ -527,53 +563,86 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
     <>
       <main className="flex grow flex-col gap-3 px-4 pt-4 pb-4">
         {data.run.status === "returned" && <span className="rounded-[14px] bg-warning-soft px-4 py-3 text-[13px] text-warning">{tr("Gaji dikembalikan oleh pelulus. Semak, kira semula dan hantar sekali lagi.")}</span>}
-        <div className="grid grid-cols-2 gap-2">
-          <Angka k={tr("Jumlah kasar")} v={rm(j.gross)} />
-          <Angka k={tr("Jumlah bersih")} v={rm(j.net)} />
-          <Angka k={tr("Caruman majikan")} v={rm(j.employer)} />
-          <Angka k="PCB" v={rm(j.pcb)} />
+        <div className="flex flex-col gap-3 rounded-card bg-surface px-4 py-4">
+          <span className="flex flex-col">
+            <span className="text-xs font-bold tracking-[0.04em] text-muted">{tr("GAJI BERSIH DIBAYAR KEPADA {0} PEKERJA", j.headcount)}</span>
+            <b className="text-[26px] font-extrabold">{rm(j.net)}</b>
+          </span>
+          <div className="grid grid-cols-3 gap-2 border-t border-[#EEF2F1] pt-3 text-[13px]">
+            <span className="flex flex-col">
+              <span className="text-muted">{tr("Jumlah kasar")}</span>
+              <b>{rm(j.gross)}</b>
+            </span>
+            <span className="flex flex-col">
+              <span className="text-muted">{tr("Caruman majikan")}</span>
+              <b>{rm(j.employer)}</b>
+            </span>
+            <span className="flex flex-col">
+              <span className="text-muted">PCB</span>
+              <b>{rm(j.pcb)}</b>
+            </span>
+          </div>
         </div>
         <PanelBendera runId={data.run.id} />
         <PanelLaporanPekerja runId={data.run.id} />
-        <Seksyen className="pt-1">{j.previous_run ? tr("BERBEZA DARIPADA BULAN LALU") : "PERUBAHAN"}</Seksyen>
-        <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-          {(diff.data ?? []).length === 0 && <span className="py-3 text-muted">{tr("Tiada perubahan berbanding bulan lalu.")}</span>}
-          {(diff.data ?? []).slice(0, 8).map((x) => (
-            <div key={x.employment_id} className="flex min-h-12 items-center justify-between gap-3 py-2">
-              <b>{x.name}</b>
-              <span className="text-right text-[13px] text-muted">{x.note}</span>
-            </div>
-          ))}
-        </div>
-        <PanelVarians runId={data.run.id} ym={`${data.run.period_year}${String(data.run.period_month).padStart(2, "0")}`} />
-        <button type="button" onClick={() => setLihat(!lihat)} className="self-start py-2 text-sm font-bold text-primary">
-          {lihat ? tr("Sembunyikan slip") : tr("Lihat semua {0} slip (pratonton)", j.headcount)}
-        </button>
-        {lihat && (
+        <section aria-label={tr("Slip pekerja")} className="flex flex-col gap-2">
+          <Seksyen className="pt-1">{tr("SLIP PEKERJA ({0})", senarai.length)}</Seksyen>
           <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-            {(slip.data ?? []).map((s) => (
-              <Link key={s.id} href={`/pengurusan/gaji/slip/${s.id}`} className="flex min-h-12 items-center justify-between text-ink!">
-                <span>
-                  {s.employments?.persons?.preferred_name || s.employments?.persons?.full_name} · {s.employments?.employee_no}
-                </span>
-                <b>{rm(s.net)}</b>
-              </Link>
-            ))}
+            {tunjuk.map((x) => {
+              const c = catatan(x.employment_id);
+              return (
+                <Link key={x.id} href={`/pengurusan/gaji/slip/${x.id}`} className="flex min-h-12 items-center gap-3 py-2 text-ink!">
+                  <span className="flex min-w-0 grow flex-col">
+                    <b>{x.employments?.persons?.preferred_name || x.employments?.persons?.full_name}</b>
+                    {c && <span className="text-xs text-muted">{c}</span>}
+                  </span>
+                  <span className="text-right text-[13px] text-muted">{rm(x.gross)}</span>
+                  <b className="w-28 text-right">{rm(x.net)}</b>
+                </Link>
+              );
+            })}
           </div>
-        )}
-        <SuisPratonton companyId={data.run.company_id} />
-        <span className="rounded-[14px] bg-[#E3F1EE] px-4 py-3 text-[13px] leading-normal text-primary">
-          <b>{tr("Aliran kelulusan gaji: {0}", data.aliran.join(" → ") || tr("CEO → Kewangan"))}</b>{tr(". Pelulus akan menerima WhatsApp bersama ringkasan di atas.")}</span>
+          {senarai.length > 8 && (
+            <button type="button" onClick={() => setSemua(!semua)} className="self-start py-1 text-sm font-bold text-primary">
+              {semua ? tr("Tunjuk sebahagian") : tr("Lihat semua {0} slip", senarai.length)}
+            </button>
+          )}
+          <span className="text-xs text-muted">{tr("Kasar · bersih. Tekan nama untuk melihat slip penuh.")}</span>
+        </section>
+        <Lanjut>
+          <PanelVarians runId={data.run.id} ym={`${data.run.period_year}${String(data.run.period_month).padStart(2, "0")}`} />
+          <SuisPratonton companyId={data.run.company_id} />
+        </Lanjut>
         {ralat && <ErrorBox message={ralat} />}
       </main>
-      <div className="bar-bawah sticky bottom-0 grid grid-cols-[auto_1fr] gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
-        <button type="button" disabled={!!busy} onClick={() => buat("kira")} className="h-12 rounded-button border-2 border-primary px-4 text-sm font-extrabold text-primary disabled:opacity-60">
-          {busy === "kira" ? tr("Mengira…") : tr("Kira semula")}
-        </button>
-        <ButangUtama onClick={() => buat("hantar")} busy={busy === "hantar"}>
-          {tr("Hantar untuk kelulusan")}</ButangUtama>
+      <div className="bar-bawah sticky bottom-0 flex flex-col gap-2 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <div className="grid grid-cols-[auto_1fr] gap-2.5">
+          <button type="button" disabled={!!busy} onClick={() => buat("kira")} className="h-12 rounded-button border-2 border-primary px-4 text-sm font-extrabold text-primary disabled:opacity-60">
+            {busy === "kira" ? tr("Mengira…") : tr("Kira semula")}
+          </button>
+          <ButangUtama onClick={() => buat("hantar")} busy={busy === "hantar"}>
+            {tr("Hantar untuk kelulusan")}
+          </ButangUtama>
+        </div>
+        <span className="text-center text-xs text-muted">{tr("Pelulus: {0}. Mereka menerima WhatsApp bersama ringkasan ini.", data.aliran.join(" → ") || tr("CEO → Kewangan"))}</span>
       </div>
     </>
+  );
+}
+
+/** Bahagian "Pilihan lanjut": alat yang jarang digunakan disorok supaya langkah utama jelas. */
+function Lanjut({ children }: { children: React.ReactNode }) {
+  const [buka, setBuka] = useState(false);
+  return (
+    <section className="flex flex-col gap-3">
+      <button type="button" aria-expanded={buka} onClick={() => setBuka(!buka)} className="flex min-h-11 items-center gap-2 self-start text-sm font-bold text-[#4A5A57]">
+        <span aria-hidden className="text-primary">
+          {buka ? "−" : "+"}
+        </span>
+        {tr("Pilihan lanjut")}
+      </button>
+      {buka && children}
+    </section>
   );
 }
 
@@ -592,7 +661,7 @@ function PanelBendera({ runId }: { runId: string }) {
     return <div className="rounded-card bg-success-soft px-4 py-3 text-[13px] font-semibold text-success">{tr("Semakan pintar: tiada perkara luar biasa ditemui.")}</div>;
   return (
     <section aria-label={tr("Semakan pintar")} className="flex flex-col gap-2">
-      <Seksyen className="pt-1">{tr("SEMAKAN PINTAR ({0})", senarai.length)}</Seksyen>
+      <Seksyen className="pt-1">{tr("PERLU DISEMAK ({0})", senarai.length)}</Seksyen>
       {(["ralat", "amaran", "maklumat"] as const).map((lv) => {
         const xs = senarai.filter((b) => b.level === lv);
         if (!xs.length) return null;
@@ -832,51 +901,77 @@ function Langkah4({ data, reload }: { data: Data; reload: () => void }) {
     }
   }
 
+  const failUtama = senaraiFail(data.tambahan).filter((f) => ["epf", "socso_txt", "pcb_txt"].includes(f.jenis));
+  const failLain = senaraiFail(data.tambahan).filter((f) => !failUtama.includes(f));
+  const NAMA_UTAMA: Record<string, string> = { epf: "KWSP", socso_txt: tr("PERKESO, SIP & SKBBK"), pcb_txt: tr("PCB (CP39)") };
+
   return (
     <>
       <main className="flex grow flex-col gap-3 px-4 pt-4 pb-4">
         <span className="rounded-[14px] bg-success-soft px-4 py-3 text-[13px] font-semibold text-success">
           {dibayar
             ? tr("Telah dibayar{0}. Slip gaji telah dihantar kepada {1} pekerja.", data.run.pay_date ? tr(" pada {0}", data.run.pay_date.split("-").reverse().join("/")) : "", j.headcount)
-            : tr("Diluluskan oleh {0}.", data.aliran.join(" dan "))}
+            : tr("Diluluskan oleh {0}. Ikut 3 langkah di bawah.", data.aliran.join(" dan "))}
         </span>
-        <Seksyen>{tr("MUAT TURUN")}</Seksyen>
-        <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-          <Fail t={tr("Fail bayaran bank")} s={tr("Format Maybank2u Biz, CIMB BizChannel atau bank lain")} onClick={() => setFailBank(true)} />
-          {senaraiFail(data.tambahan).map((f) => (
-            <Fail key={f.jenis} t={f.t} s={f.s} onClick={() => turun(f.jenis, f.fail(ymFail))} />
-          ))}
-        </div>
-        <span className="text-xs text-muted">{tr("Fail teks CP39 dan PERKESO gabungan mengikut susun atur yang diterbitkan; sahkan dengan spesifikasi rasmi terkini dan muat naik ujian sebelum gaji sebenar pertama. Setiap muat turun direkodkan.")}</span>
-        <PanelLepasSlip run={data.run} reload={reload} />
-        <ResitPcb runId={data.run.id} awal={data.run.pcb_receipt_no} />
-        {!dibayar && (
-          <>
-            <Seksyen className="pt-1">{tr("AUTOMATIK APABILA ANDA MENANDAKAN \"TELAH DIBAYAR\"")}</Seksyen>
-            <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-              <Baris k={tr("Slip gaji ke WhatsApp {0} pekerja", j.headcount)} v={tr("Tanpa jumlah dalam mesej")} />
-              <Baris k={tr("Tuntutan ditanda dibayar")} v={rm(j.claims)} />
-              <Baris k={tr("Jurnal gaji ke sistem perakaunan")} v={tr("Mengikut Tetapan")} />
+
+        <Tugasan n={1} siap={dibayar} tajuk={tr("Bayar gaji melalui bank")} nota={tr("Muat turun fail bayaran pukal ({0}) dan muat naik ke perbankan internet syarikat.", rm(j.net))}>
+          <button type="button" onClick={() => setFailBank(true)} className="h-11 self-start rounded-[12px] border-[1.5px] border-primary px-4 text-sm font-bold text-primary">
+            {tr("Fail bayaran bank")}
+          </button>
+        </Tugasan>
+
+        <Tugasan
+          n={2}
+          siap={dibayar}
+          tajuk={tr("Tandakan telah dibayar")}
+          nota={dibayar ? tr("Slip gaji telah dihantar dan tuntutan ditanda dibayar.") : tr("Slip gaji dihantar ke WhatsApp {0} pekerja (tanpa jumlah dalam mesej) dan tuntutan {1} ditanda dibayar.", j.headcount, rm(j.claims))}
+        >
+          {!dibayar && (
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="flex items-center gap-2 text-sm">
+                <span className="font-bold text-[#4A5A57]">{tr("Tarikh bayaran")}</span>
+                <input type="date" value={tarikhBayar} onChange={(e) => setTarikhBayar(e.target.value)} className="h-11 rounded-[10px] border border-[#D5DEDC] bg-surface px-2.5 font-semibold" />
+              </label>
+              <button type="button" disabled={busy} onClick={bayar} className="h-11 rounded-[12px] bg-primary px-4 text-sm font-extrabold text-white disabled:opacity-60">
+                {busy ? tr("Menyimpan…") : tr("Tandakan telah dibayar & hantar slip")}
+              </button>
             </div>
-            <label className="flex items-center gap-2 text-sm">
-              <span className="font-bold text-[#4A5A57]">{tr("Tarikh bayaran")}</span>
-              <input type="date" value={tarikhBayar} onChange={(e) => setTarikhBayar(e.target.value)} className="h-10 rounded-[10px] border border-[#D5DEDC] bg-surface px-2.5 font-semibold" />
-            </label>
-          </>
-        )}
+          )}
+        </Tugasan>
+
+        <Tugasan n={3} tajuk={tr("Hantar caruman berkanun")} nota={tr("Muat naik fail ke portal masing-masing sebelum 15hb bulan berikutnya.")}>
+          <div className="flex flex-col [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
+            {failUtama.map((f) => (
+              <div key={f.jenis} className="flex min-h-12 items-center gap-2 py-1.5 text-sm">
+                <span className="flex grow flex-col">
+                  <b>{NAMA_UTAMA[f.jenis]}</b>
+                  <span className="text-xs text-muted">{f.s}</span>
+                </span>
+                <button type="button" onClick={() => turun(f.jenis, f.fail(ymFail))} className="h-10 rounded-[10px] border border-primary px-3 text-[13px] font-bold text-primary">
+                  {tr("Muat turun")}
+                </button>
+              </div>
+            ))}
+          </div>
+          {dibayar && <ResitPcb runId={data.run.id} awal={data.run.pcb_receipt_no} />}
+        </Tugasan>
         {ralat && <ErrorBox message={ralat} />}
+
+        <Lanjut>
+          <Seksyen>{tr("FAIL LAIN")}</Seksyen>
+          <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
+            {failLain.map((f) => (
+              <Fail key={f.jenis} t={f.t} s={f.s} onClick={() => turun(f.jenis, f.fail(ymFail))} />
+            ))}
+          </div>
+          <span className="text-xs text-muted">{tr("Fail teks CP39 dan PERKESO gabungan mengikut susun atur yang diterbitkan; sahkan dengan spesifikasi rasmi terkini dan muat naik ujian sebelum gaji sebenar pertama. Setiap muat turun direkodkan.")}</span>
+          <PanelLepasSlip run={data.run} reload={reload} />
+          {!dibayar && <ResitPcb runId={data.run.id} awal={data.run.pcb_receipt_no} />}
+          <button type="button" onClick={() => bukaSemulaGaji(data.run.id, reload)} className="flex min-h-11 items-center self-start text-sm font-bold text-danger">
+            {tr("Buka semula gaji ini")}
+          </button>
+        </Lanjut>
       </main>
-      <div className="flex justify-center px-4 pb-4">
-        <button type="button" onClick={() => bukaSemulaGaji(data.run.id, reload)} className="flex min-h-11 items-center px-3 text-sm font-bold text-danger">
-          {tr("Buka semula gaji ini")}
-        </button>
-      </div>
-      {!dibayar && (
-        <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
-          <ButangUtama onClick={bayar} busy={busy}>
-            {tr("Tandakan telah dibayar & hantar slip")}</ButangUtama>
-        </div>
-      )}
       {failBank && (
         <FailBank runId={data.run.id} companyId={data.run.company_id} companyCode={me.active?.companyCode ?? ""} tarikhAwal={data.run.pay_date ?? tarikhBayar} onClose={() => setFailBank(false)} />
       )}
@@ -884,21 +979,19 @@ function Langkah4({ data, reload }: { data: Data; reload: () => void }) {
   );
 }
 
-function Baris({ k, v }: { k: string; v: React.ReactNode }) {
+/** Satu langkah bernombor selepas gaji diluluskan. */
+function Tugasan({ n, tajuk, nota, siap, children }: { n: number; tajuk: string; nota: string; siap?: boolean; children?: React.ReactNode }) {
   return (
-    <div className="flex min-h-12 items-center justify-between gap-2">
-      <span className="text-muted">{k}</span>
-      <b className="text-right">{v}</b>
-    </div>
-  );
-}
-
-function Angka({ k, v }: { k: string; v: string }) {
-  return (
-    <div className="flex flex-col gap-0.5 rounded-[14px] bg-surface px-3.5 py-3">
-      <span className="text-xs text-muted">{k}</span>
-      <b className="text-lg font-extrabold">{v}</b>
-    </div>
+    <section aria-label={tajuk} className="flex gap-3 rounded-card bg-surface px-4 py-3.5">
+      <span className={`flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-extrabold ${siap ? "bg-primary text-white" : "border-2 border-primary text-primary"}`}>{siap ? "✓" : n}</span>
+      <div className="flex min-w-0 grow flex-col gap-2">
+        <span className="flex flex-col gap-0.5">
+          <b className="text-[15px] font-extrabold">{tajuk}</b>
+          <span className="text-[13px] leading-snug text-muted">{nota}</span>
+        </span>
+        {children}
+      </div>
+    </section>
   );
 }
 

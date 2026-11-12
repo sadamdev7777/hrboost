@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
-import { getJabatan, jemputPekerja, JENIS_PEKERJAAN, tambahPekerja, type BorangPekerja } from "@/lib/hr";
+import { PilihBahasaPekerja } from "@/components/PilihBahasaPekerja";
+import { getJabatan, jemputPekerja, JENIS_PEKERJAAN, setBahasaPekerja, tambahPekerja, type BorangPekerja } from "@/lib/hr";
 import { addDays, telefonPenuh, todayISO } from "@/lib/format";
 import { BackHeader, ErrorBox, Screen } from "@/components/ui";
 import { HadPeranan, MedanBorang, Seksyen, inputKecil } from "@/components/Senarai";
@@ -36,6 +37,7 @@ function Borang() {
     type: "permanent",
     probationMonths: 3,
     basic: "",
+    language: "en",
   });
   const [jemput, setJemput] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -58,6 +60,8 @@ function Borang() {
     try {
       const ic = f.ic.replace(/\D/g, "").replace(/^(\d{6})(\d{2})(\d{4})$/, "$1-$2-$3");
       const id = await tambahPekerja(emp.companyId, { ...f, phone, ic, departmentId: deptId });
+      // Lalai pangkalan data ialah English; tetapkan hanya jika HR memilih Bahasa Melayu (sebelum jemputan dihantar)
+      if (f.language === "ms") await setBahasaPekerja(id, "ms");
       if (jemput) {
         const tok = await jemputPekerja(id);
         try {
@@ -97,6 +101,9 @@ function Borang() {
             <input className={inputKecil} value={f.ic} onChange={(e) => set("ic", e.target.value)} inputMode="numeric" placeholder="981128-14-5521" />
           </MedanBorang>
         </div>
+        <MedanBorang label={tr("Bahasa")} nota={tr("Untuk WhatsApp, aplikasi dan Pembantu AI. Pekerja boleh menukarnya sendiri kemudian.")}>
+          <PilihBahasaPekerja nilai={f.language ?? "en"} onChange={(v) => set("language", v)} />
+        </MedanBorang>
 
         <Seksyen className="pt-1">{tr("PEKERJAAN DI {0}", emp.companyCode)}</Seksyen>
         <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 [&_input]:min-w-0 [&_select]:min-w-0">

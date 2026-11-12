@@ -92,7 +92,7 @@ async function mohonCuti(b, email, hariDepan) {
   log('3. Gaji: data terkumpul');
   await p.click(V('a:has-text("Bulan ini")'));
   await p.waitForSelector(V('text=tiada data gaji terkumpul'));
-  await p.click(V('a:has-text("Isi atau import Excel")'));
+  await p.click(V('a:has-text("Isi atau import")'));
   await p.waitForURL('**/pengurusan/gaji/data-terkumpul');
   for (const nama of ['Sadam', 'Lily', 'Zuerin', 'Amin', 'Farah', 'Zulfa']) {
     await p.fill(`input[aria-label="gross ${nama}"]`, '30000');

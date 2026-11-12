@@ -26,6 +26,7 @@ import {
   putuskanBank,
   simpanDokumen,
   tamatkanPekerjaan,
+  setBahasaPekerja,
   type ButiranPekerja,
   type MaklumatSensitif,
 } from "@/lib/hr";
@@ -204,6 +205,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
           <Butir label={tr("Mula")}>{tarikhPenuh(p.joinDate)}</Butir>
           <Butir label={tr("Jenis")}>{labelJenis(p.type)}</Butir>
           <Butir label={tr("Masuk kerja")}>{(p.workStart ?? p.companyWorkStart).slice(0, 5)}</Butir>
+          <Butir label={tr("Bahasa")}>{bolehUbah && !tamat ? <BahasaPekerja p={p} reload={reload} /> : p.language === "ms" ? "Bahasa Melayu" : "English"}</Butir>
           {p.position && <Butir label={tr("Jawatan")}>{p.position}</Butir>}
           {p.status === "probation" && p.probationEnd && <Butir label={tr("Tamat percubaan")}>{tarikhPenuh(p.probationEnd)}</Butir>}
           {tamat && p.endDate && <Butir label={tr("Tarikh akhir")}>{tarikhPenuh(p.endDate)}</Butir>}
@@ -475,6 +477,33 @@ function KepalaPekerja({ p }: { p: ButiranPekerja }) {
         </span>
       </div>
     </div>
+  );
+}
+
+/** Bahasa WhatsApp & aplikasi pekerja — HR boleh menukarnya terus di profil. */
+function BahasaPekerja({ p, reload }: { p: ButiranPekerja; reload: () => void }) {
+  const [busy, setBusy] = useState(false);
+  return (
+    <select
+      aria-label={tr("Bahasa {0}", p.name)}
+      value={p.language}
+      disabled={busy}
+      onChange={async (e) => {
+        setBusy(true);
+        try {
+          await setBahasaPekerja(p.id, e.target.value as "en" | "ms");
+          beritahu(tr("Bahasa {0} dikemas kini.", p.name));
+          reload();
+        } catch (err) {
+          beritahu(err instanceof Error ? trRalat(err.message) : tr("Ralat"), "ralat");
+        }
+        setBusy(false);
+      }}
+      className="-ml-1 h-9 rounded-[10px] border border-[#D5DEDC] bg-surface px-1.5 text-sm font-bold"
+    >
+      <option value="en">English</option>
+      <option value="ms">Bahasa Melayu</option>
+    </select>
   );
 }
 

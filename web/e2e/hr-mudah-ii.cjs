@@ -107,9 +107,8 @@ async function masuk(b, email, vp) {
   const bulan = kelmarin.slice(0, 7);
   await p.goto(BASE + `/pengurusan/gaji?y=${bulan.slice(0, 4)}&m=${Number(bulan.slice(5, 7))}`);
   await p.click(V('button:has-text("Kira Gaji")'));
-  await p.waitForSelector(V('text=Lihat semua'), { timeout: 30000 });
-  await p.click(V('button:has-text("Lihat semua")'));
-  await p.click(V('a:has-text("Amin")'));
+  await p.waitForSelector(V('section[aria-label="Slip pekerja"]'), { timeout: 30000 });
+  await p.click(V('section[aria-label="Slip pekerja"] a:has-text("Amin")'));
   await p.waitForSelector(V('text=Kerja Lebih Masa (diluluskan)'), { timeout: 15000 });
   expect(true, 'slip Amin: Kerja Lebih Masa (diluluskan)');
   await ctx.close();
