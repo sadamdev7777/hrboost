@@ -40,6 +40,7 @@ const SEMUA_TETAPAN: { label: string; href: string; kata: string; roles?: ("hr" 
   { label: tr("Profil Syarikat"), href: "/pengurusan/tetapan/syarikat", kata: tr("syarikat ssm alamat no majikan kwsp perkeso lhdn hrdf logo") },
   { label: tr("Waktu Kerja"), href: "/pengurusan/tetapan/syarikat#waktu", kata: tr("waktu kerja masuk keluar lewat kelonggaran hujung minggu") },
   { label: tr("Jabatan & Ketua"), href: "/pengurusan/tetapan/jabatan", kata: tr("jabatan ketua department"), roles: ["hr", "admin"] },
+  { label: tr("Akses syarikat lain"), href: "/pengurusan/akses", kata: tr("akses syarikat lain mohon kumpulan") },
   { label: tr("Pengguna & Peranan"), href: "/pengurusan/tetapan/pengguna", kata: tr("pengguna peranan hr kewangan ceo pentadbir akses"), roles: ["hr", "admin"] },
   { label: tr("Aliran Kelulusan"), href: "/pengurusan/tetapan/aliran", kata: tr("aliran kelulusan peringkat pelulus ketua"), roles: ["hr", "admin"] },
   { label: tr("Wakil Kelulusan"), href: "/pengurusan/tetapan/wakil", kata: tr("wakil delegasi bercuti pelulus"), roles: ["hr", "admin"] },

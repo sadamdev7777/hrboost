@@ -33,14 +33,15 @@ async function masuk(b, email, vp) {
   log('1. Papan Pemuka — tarikh akhir berkanun');
   await p.goto(BASE + '/pengurusan');
   await p.waitForSelector(V('text=TARIKH AKHIR BERKANUN'));
-  const sebelum = await p.locator(V('button:has-text("Tanda dihantar")')).count();
+  const CIP = 'button[aria-label^="Tanda "][aria-label$="telah dihantar"]';
+  const sebelum = await p.locator(V(CIP)).count();
   expect(sebelum >= 3, `${sebelum} kewajipan berkanun dipaparkan`);
-  expect(await p.locator(V('text=Caruman KWSP')).count() > 0, 'KWSP disenaraikan');
-  await p.locator(V('button:has-text("Tanda dihantar")')).first().click();
+  expect(await p.locator(V(`${CIP}:has-text("KWSP")`)).count() > 0, 'KWSP disenaraikan');
+  await p.locator(V(CIP)).first().click();
   await p.fill('[role=alertdialog] textarea', 'RUJ-001');
   await p.locator('[role=dialog] button:has-text("Tanda dihantar"), [role=alertdialog] button:has-text("Tanda dihantar")').last().click();
   await p.waitForSelector(V('text=ditanda telah dihantar'));
-  await p.waitForFunction((n) => document.querySelectorAll('button').length && [...document.querySelectorAll('button')].filter((x) => x.textContent === 'Tanda dihantar' && x.offsetParent).length === n - 1, sebelum, { timeout: 10000 });
+  await p.waitForFunction(([n, sel]) => [...document.querySelectorAll(sel)].filter((x) => x.offsetParent).length === n - 1, [sebelum, CIP], { timeout: 10000 });
   expect(true, 'tanda dihantar → kewajipan hilang dari senarai');
   await p.screenshot({ path: path.join(shots, 'hrmudah-papan.png') });
 
