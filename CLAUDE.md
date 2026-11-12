@@ -141,7 +141,7 @@ Menu "Pengurusan" dalam `Saya` hanya dipaparkan jika `has_role(company, '{hr,fin
 
 - **Kunci CrossChex** yang pernah ditampal dalam chat perlu dijana semula sebelum digunakan.
 - Nilai sebenar: had WhatsApp/AI default, tempoh hantar claim, cuti haji, kadar caruman majikan, nombor majikan, nombor SSM — semua bertanda `[ ]` dalam reka bentuk.
-- Tarikh cuti umum ikut warta setiap tahun (terutama cuti berasaskan kalendar Hijri / lunar) — import dari sumber rasmi, jangan teka. 2026 & 2027 sudah dimuatkan daripada jadual rasmi JPM (kabinet.gov.my) dalam `supabase/data/cuti_umum_2026_2027.sql` (dijalankan pada staging/produksi sahaja, bukan dalam ujian). Kemas kini apabila tarikh bertanda * dipinda; cuti ganti belum dijana automatik.
+- Tarikh cuti umum ikut warta setiap tahun (terutama cuti berasaskan kalendar Hijri / lunar) — import dari sumber rasmi, jangan teka. 2026 & 2027 sudah dimuatkan daripada jadual rasmi JPM (kabinet.gov.my) dalam `supabase/data/cuti_umum_2026_2027.sql` (dijalankan pada staging/produksi sahaja, bukan dalam ujian). Kemas kini apabila tarikh bertanda * dipinda. Cuti ganti (s.60D) dikira automatik oleh `company_holidays_effective` — jangan masukkan cuti ganti sebagai data.
 - Enjin PCB mesti disahkan dengan kalkulator LHDN sebelum gaji pertama.
 - Semakan undang-undang untuk Notis Privasi & Terma.
 
