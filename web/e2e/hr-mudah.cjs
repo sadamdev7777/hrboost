@@ -80,9 +80,9 @@ async function masuk(b, email, vp) {
   await p.goto(BASE + '/pengurusan/gaji');
   await p.waitForSelector(V('button:has-text("Kira Gaji")'));
   await p.click(V('button:has-text("Kira Gaji")'));
-  await p.waitForSelector(V(':text("SEMAKAN PINTAR"), :text("Semakan pintar: tiada perkara luar biasa")'), { timeout: 30000 });
+  await p.waitForSelector(V(':text("PERLU DISEMAK"), :text("Semakan pintar: tiada perkara luar biasa")'), { timeout: 30000 });
   const teks = await p.locator(V('main')).innerText();
-  expect(/SEMAKAN PINTAR|Semakan pintar/.test(teks), 'semakan pintar dipaparkan');
+  expect(/PERLU DISEMAK|Semakan pintar/.test(teks), 'semakan pintar dipaparkan');
   await p.screenshot({ path: path.join(shots, 'hrmudah-gaji.png') });
   await ctx.close();
 
