@@ -407,4 +407,8 @@ export const RALAT: Record<string, string> = {
  "Menunggu penilaian kendiri pekerja": "Waiting for the employee's self-assessment",
  "Penilaian belum sedia untuk dimuktamadkan": "The review is not ready to be finalised",
  "Markah akhir mesti antara 1 dan 5": "The final rating must be between 1 and 5",
+ "Jadual kerja tidak sah": "Invalid work schedule",
+ "Waktu kerja tidak sah": "Invalid working hours",
+ "Waktu keluar mesti selepas waktu masuk": "End time must be after start time",
+ "Sekurang-kurangnya satu hari bekerja diperlukan": "At least one working day is required",
 };

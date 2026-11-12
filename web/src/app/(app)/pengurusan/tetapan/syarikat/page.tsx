@@ -24,6 +24,7 @@ type Syarikat = {
   work_start: string;
   work_end: string;
   late_grace_minutes: number;
+  work_schedule: Record<string, { start: string; end: string; half?: boolean }> | null;
   epf_employer_no: string | null;
   socso_employer_no: string | null;
   lhdn_employer_no: string | null;
@@ -52,7 +53,7 @@ function ProfilSyarikat() {
       must(
         await getSupabase()
           .from("companies")
-          .select("name, code, reg_no, address, state, weekend_days, work_start, work_end, late_grace_minutes, epf_employer_no, socso_employer_no, lhdn_employer_no, hrdf_registered, logo_path")
+          .select("name, code, reg_no, address, state, weekend_days, work_start, work_end, work_schedule, late_grace_minutes, epf_employer_no, socso_employer_no, lhdn_employer_no, hrdf_registered, logo_path")
           .eq("id", cid)
           .single(),
       ) as Syarikat,
@@ -84,6 +85,9 @@ function ProfilSyarikat() {
   );
 }
 
+type Hari = { d: number; on: boolean; start: string; end: string; half: boolean };
+const NAMA_HARI: Record<number, string> = { 0: tr("Ahad"), 1: tr("Isnin"), 2: tr("Selasa"), 3: tr("Rabu"), 4: tr("Khamis"), 5: tr("Jumaat"), 6: tr("Sabtu") };
+
 function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: string; onSaved: () => void }) {
   const [f, setF] = useState({
     ...s,
@@ -102,12 +106,25 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
     setOk(false);
     setF({ ...f, [k]: v });
   };
-  const hujung = f.weekend_days.includes(5) ? "5,6" : f.weekend_days.length === 1 ? "0" : "0,6";
+  // Jadual mingguan: 0 = Ahad … 6 = Sabtu. Daripada work_schedule, atau hujung minggu + satu waktu (mod lama).
+  const [jadual, setJadual] = useState<Hari[]>(() =>
+    [1, 2, 3, 4, 5, 6, 0].map((d) => {
+      const h = s.work_schedule?.[String(d)];
+      if (s.work_schedule) return { d, on: !!h, start: h?.start ?? "08:00", end: h?.end ?? "17:00", half: !!h?.half };
+      return { d, on: !s.weekend_days.includes(d), start: s.work_start.slice(0, 5), end: s.work_end.slice(0, 5), half: false };
+    }),
+  );
+  const ubahHari = (d: number, p: Partial<Hari>) => {
+    setOk(false);
+    setJadual(jadual.map((h) => (h.d === d ? { ...h, ...p } : h)));
+  };
 
   async function simpan() {
     setRalat(null);
     if (!f.name.trim()) return setRalat(tr("Sila isi nama syarikat."));
-    if (f.work_end <= f.work_start) return setRalat(tr("Waktu keluar mesti selepas waktu masuk."));
+    if (!jadual.some((h) => h.on)) return setRalat(tr("Sekurang-kurangnya satu hari bekerja diperlukan."));
+    const salah = jadual.find((h) => h.on && h.end <= h.start);
+    if (salah) return setRalat(tr("{0}: waktu keluar mesti selepas waktu masuk.", NAMA_HARI[salah.d]));
     setBusy(true);
     try {
       must(
@@ -118,9 +135,6 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
             reg_no: f.reg_no.trim() || null,
             address: f.address.trim() || null,
             state: f.state,
-            weekend_days: f.weekend_days,
-            work_start: f.work_start,
-            work_end: f.work_end,
             late_grace_minutes: Number(f.late_grace_minutes) || 0,
             epf_employer_no: f.epf_employer_no.trim() || null,
             socso_employer_no: f.socso_employer_no.trim() || null,
@@ -128,6 +142,12 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
             hrdf_registered: f.hrdf_registered,
           })
           .eq("id", cid),
+      );
+      must(
+        await getSupabase().rpc("set_company_schedule", {
+          p_company: cid,
+          p_schedule: Object.fromEntries(jadual.filter((h) => h.on).map((h) => [String(h.d), { start: h.start, end: h.end, half: h.half }])),
+        }),
       );
       setOk(true);
       onSaved();
@@ -168,18 +188,48 @@ function Borang({ s, admin, cid, onSaved }: { s: Syarikat; admin: boolean; cid: 
         <Seksyen className="pt-1" >
           <span id="waktu">{tr("WAKTU KERJA")}</span>
         </Seksyen>
+        <div className="flex flex-col rounded-card bg-surface px-4 py-1 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
+          {jadual.map((h) => (
+            <div key={h.d} className="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-2 py-2 text-sm">
+              <label className="order-1 flex w-28 shrink-0 items-center gap-2 font-bold">
+                <input type="checkbox" className="size-5 accent-primary" disabled={!admin} checked={h.on} onChange={(e) => ubahHari(h.d, { on: e.target.checked })} />
+                {NAMA_HARI[h.d]}
+              </label>
+              {h.on ? (
+                <>
+                  <div className="order-3 flex basis-full items-center gap-2 sm:order-2 sm:basis-auto">
+                    <input type="time" className={`${cls} w-32 grow-0`} disabled={!admin} value={h.start} onChange={(e) => ubahHari(h.d, { start: e.target.value })} aria-label={tr("Waktu masuk {0}", NAMA_HARI[h.d])} />
+                    <span className="text-muted">–</span>
+                    <input type="time" className={`${cls} w-32 grow-0`} disabled={!admin} value={h.end} onChange={(e) => ubahHari(h.d, { end: e.target.value })} aria-label={tr("Waktu keluar {0}", NAMA_HARI[h.d])} />
+                  </div>
+                  <label className="order-2 ml-auto flex items-center gap-2 text-[13px] text-subtle sm:order-3 sm:ml-0">
+                    <input type="checkbox" className="size-4 accent-primary" disabled={!admin} checked={h.half} onChange={(e) => ubahHari(h.d, { half: e.target.checked })} />
+                    {tr("Separuh hari")}
+                  </label>
+                </>
+              ) : (
+                <span className="order-2 ml-auto text-muted">{tr("Hari rehat")}</span>
+              )}
+            </div>
+          ))}
+        </div>
+        {admin && (
+          <button
+            type="button"
+            onClick={() => {
+              const isnin = jadual.find((h) => h.d === 1)!;
+              setOk(false);
+              setJadual(jadual.map((h) => (h.on && !h.half ? { ...h, start: isnin.start, end: isnin.end } : h)));
+            }}
+            className="flex min-h-10 items-center self-start text-[13px] font-bold text-primary"
+          >
+            {tr("Salin waktu Isnin ke hari bekerja penuh yang lain")}
+          </button>
+        )}
+        <span className="text-xs leading-snug text-muted">
+          {tr("Separuh hari dikira 0.5 hari untuk cuti dan kadar gaji harian. Lewat masuk dikira mengikut waktu masuk hari itu.")}
+        </span>
         <Kotak>
-          <Baris label={tr("Hujung minggu")}>
-            <select className={cls} disabled={!admin} value={hujung} onChange={(e) => set("weekend_days", e.target.value.split(",").map(Number))}>
-              <option value="0,6">{tr("Sabtu & Ahad")}</option>
-              <option value="5,6">{tr("Jumaat & Sabtu")}</option>
-              <option value="0">{tr("Ahad sahaja")}</option>
-            </select>
-          </Baris>
-          <Baris label={tr("Masuk / keluar")}>
-            <input type="time" className={cls} disabled={!admin} value={f.work_start} onChange={(e) => set("work_start", e.target.value)} aria-label={tr("Waktu masuk")} />
-            <input type="time" className={cls} disabled={!admin} value={f.work_end} onChange={(e) => set("work_end", e.target.value)} aria-label={tr("Waktu keluar")} />
-          </Baris>
           <Baris label={tr("Dikira lewat selepas")}>
             <input className={cls} disabled={!admin} inputMode="numeric" value={f.late_grace_minutes} onChange={(e) => set("late_grace_minutes", e.target.value.replace(/\D/g, ""))} />
             <span className="text-sm text-muted">minit</span>

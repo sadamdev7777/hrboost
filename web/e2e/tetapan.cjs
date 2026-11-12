@@ -84,10 +84,26 @@ async function login(browser, phone) {
   await p.goto(BASE + '/pengurusan/tetapan/syarikat');
   await p.waitForSelector('text=Dikira lewat selepas');
   await p.fill('label:has-text("Dikira lewat selepas") input', '15');
+  // Jadual kerja: Isnin–Jumaat 8:00–4:30, Sabtu 8:00–12:30 separuh hari
+  await p.fill('input[aria-label="Waktu masuk Isnin"]', '08:00');
+  await p.fill('input[aria-label="Waktu keluar Isnin"]', '16:30');
+  await p.click('button:has-text("Salin waktu Isnin")');
+  const sabtu = p.locator('label:has-text("Sabtu") input[type=checkbox]');
+  if (!(await sabtu.isChecked())) await sabtu.check();
+  await p.fill('input[aria-label="Waktu masuk Sabtu"]', '08:00');
+  await p.fill('input[aria-label="Waktu keluar Sabtu"]', '12:30');
+  await p.locator('div:has(> label:has-text("Sabtu")) label:has-text("Separuh hari") input').check();
+  expect(await p.inputValue('input[aria-label="Waktu keluar Jumaat"]') === '16:30', 'waktu Isnin disalin ke Jumaat');
+  await p.screenshot({ path: `${shots}/t-jadual-kerja.png`, fullPage: true });
   await p.click('button:has-text("Simpan")');
   await p.waitForSelector('text=Profil syarikat disimpan.');
+  await p.reload();
+  await p.waitForSelector('input[aria-label="Waktu keluar Sabtu"]');
+  expect(await p.inputValue('input[aria-label="Waktu keluar Sabtu"]') === '12:30'
+    && await p.locator('div:has(> label:has-text("Sabtu")) label:has-text("Separuh hari") input').isChecked(),
+    'jadual Sabtu separuh hari disimpan');
   await p.goto(BASE + '/pengurusan/tetapan');
-  await p.waitForSelector('text=9:00 · 15 min');
+  await p.waitForSelector('text=8:00 · 15 min');
   expect(true, 'tempoh lewat dikemas kini kepada 15 minit');
   await p.goto(BASE + '/pengurusan/tetapan/pengguna');
   await p.click('button:has-text("+ Berikan peranan")');

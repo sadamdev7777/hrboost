@@ -64,6 +64,7 @@ Konsep utama:
 | `sa_company_overview()`, `sa_set_company_status()`, `sa_set_person_active()`, `sa_set_company_limits()` | superadmin | Agregat & kawalan |
 | `match_attendance_workno(employment, workno)` | HR | Padan workno CrossChex |
 | `my_context(company?)` | semua | Konteks pengguna (orang, pekerjaan, peranan, ketua, status log masuk) dalam satu panggilan — dimuatkan sekali setiap halaman |
+| `set_company_schedule(company, jadual)` | HR / Pentadbir | Jadual kerja ikut hari (`companies.work_schedule`: cth. Isnin–Jumaat 8:00–4:30, Sabtu 8:00–12:30 separuh hari). Separuh hari = 0.5 hari untuk cuti & asas gaji harian; lewat masuk & SLA ikut waktu hari itu. NULL = mod lama (`weekend_days` + `work_start/end`) |
 | `company_holidays(company, dari, hingga)` | ahli syarikat | Cuti umum + **cuti ganti automatik** (Akta Kerja s.60D: cuti pada hari rehat → hari bekerja berikutnya); `is_working_day` turut mengambil kiranya |
 | `hr_appraisal_cycle_save/open/close`, `hr_appraisal_cycles`, `hr_appraisal_list`, `my_appraisals`, `appraisal_detail`, `appraisal_set_items`, `appraisal_self_save`, `appraisal_manager_save`, `hr_appraisal_finalise` | HR / pekerja / ketua | Penilaian prestasi & KPI (skala 1–5, pemberat): kendiri → pelulus (pengurus/ketua) → HR muktamad. Markah pelulus disorok daripada pekerja sehingga muktamad |
 | `ceo_monthly_report_preview(company)`, `set_ceo_monthly_report(company, on)` | CEO / HR / Pentadbir | Laporan bulanan WhatsApp kepada CEO (agregat sahaja; pg_cron 1hb 9:07 pagi MYT) |
