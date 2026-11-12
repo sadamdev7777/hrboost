@@ -112,13 +112,13 @@ function Betulkan() {
 
         <Seksyen className="pt-1">{tr("MASA SEBENAR")}</Seksyen>
         <div className="grid grid-cols-2 gap-2">
-          <label className="flex flex-col gap-1 rounded-[14px] bg-surface px-3.5 py-2.5">
+          <label className="flex flex-col rounded-[14px] bg-surface px-3.5 pt-2.5 pb-1">
             <span className="text-xs text-muted">{tr("Masuk")}</span>
-            <input value={vMasuk} onChange={(e) => setMasuk({ t: tarikh, v: e.target.value })} inputMode="numeric" placeholder="8:55" className="h-9 text-lg font-extrabold outline-none" />
+            <input value={vMasuk} onChange={(e) => setMasuk({ t: tarikh, v: e.target.value })} inputMode="numeric" placeholder="8:55" className="h-11 text-lg font-extrabold outline-none" />
           </label>
-          <label className="flex flex-col gap-1 rounded-[14px] bg-surface px-3.5 py-2.5">
+          <label className="flex flex-col rounded-[14px] bg-surface px-3.5 pt-2.5 pb-1">
             <span className="text-xs text-muted">{tr("Keluar")}</span>
-            <input value={vKeluar} onChange={(e) => setKeluar({ t: tarikh, v: e.target.value })} inputMode="numeric" placeholder="18:05" className="h-9 text-lg font-extrabold outline-none" />
+            <input value={vKeluar} onChange={(e) => setKeluar({ t: tarikh, v: e.target.value })} inputMode="numeric" placeholder="18:05" className="h-11 text-lg font-extrabold outline-none" />
           </label>
         </div>
 

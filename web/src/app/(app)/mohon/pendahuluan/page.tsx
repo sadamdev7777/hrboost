@@ -24,6 +24,8 @@ export default function PendahuluanPage() {
   const [busy, setBusy] = useState(false);
   const [ralat, setRalat] = useState<string | null>(null);
   const senarai = (d.data ?? []).filter((x) => x.id);
+  // Hanya satu pendahuluan yang belum selesai pada satu masa (dikuatkuasakan juga oleh submit_salary_advance)
+  const belumSelesai = senarai.find((x) => x.status === "pending" || (x.status === "approved" && !x.deducted));
 
   async function hantar() {
     const n = Number(jumlah);
@@ -51,15 +53,28 @@ export default function PendahuluanPage() {
         {d.data && (
           <>
             <span className="text-sm leading-snug text-subtle">{tr("Masukkan jumlah yang diperlukan. Permohonan diluluskan oleh CEO, dan jumlahnya ditolak sepenuhnya daripada gaji bulan berikutnya.")}</span>
-            <MedanBorang label={tr("Jumlah (RM)")}>
-              <input className={inputKecil} inputMode="decimal" value={jumlah} onChange={(e) => setJumlah(e.target.value.replace(/[^\d.]/g, ""))} aria-label={tr("Jumlah")} />
-            </MedanBorang>
-            <MedanBorang label={tr("Sebab")}>
-              <input className={inputKecil} value={sebab} onChange={(e) => setSebab(e.target.value)} placeholder={tr("Contoh: Kecemasan keluarga")} />
-            </MedanBorang>
-            {ralat && <ErrorBox message={ralat} />}
-            <ButangUtama onClick={hantar} busy={busy}>
-              {tr("Hantar permohonan")}</ButangUtama>
+            {belumSelesai ? (
+              <div className="flex flex-col gap-1 rounded-card bg-warning-soft px-4 py-3 text-sm text-warning">
+                <b>{tr("Anda masih mempunyai pendahuluan {0} yang belum selesai.", ringgit(Number(belumSelesai.amount)))}</b>
+                <span className="text-[13px] leading-snug">
+                  {belumSelesai.status === "pending"
+                    ? tr("Permohonan itu sedang menunggu kelulusan. Permohonan baharu boleh dibuat selepas ia diputuskan dan ditolak daripada gaji.")
+                    : tr("Permohonan baharu boleh dibuat selepas jumlah itu ditolak daripada gaji {0}.", belumSelesai.deduct_month ? `${BULAN_PENUH[belumSelesai.deduct_month - 1]} ${belumSelesai.deduct_year}` : tr("bulan berikutnya"))}
+                </span>
+              </div>
+            ) : (
+              <>
+              <MedanBorang label={tr("Jumlah (RM)")}>
+                <input className={inputKecil} inputMode="decimal" value={jumlah} onChange={(e) => setJumlah(e.target.value.replace(/[^\d.]/g, ""))} aria-label={tr("Jumlah")} />
+              </MedanBorang>
+              <MedanBorang label={tr("Sebab")}>
+                <input className={inputKecil} value={sebab} onChange={(e) => setSebab(e.target.value)} placeholder={tr("Contoh: Kecemasan keluarga")} />
+              </MedanBorang>
+              {ralat && <ErrorBox message={ralat} />}
+              <ButangUtama onClick={hantar} busy={busy}>
+                {tr("Hantar permohonan")}</ButangUtama>
+              </>
+            )}
           </>
         )}
         {senarai.length > 0 && (

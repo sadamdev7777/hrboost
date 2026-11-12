@@ -15,6 +15,7 @@ import { hari, hariTarikh, masa, masaPanjang, ringgit, tarikhTempatan, todayISO,
 import { IconClock } from "@/components/icons";
 import { Avatar, Empty, ErrorBox, Loading, Screen, StatusPill } from "@/components/ui";
 import { TabNav } from "@/components/TabNav";
+import { SenaraiPermohonanSaya } from "@/components/PermohonanSaya";
 import { ReasonSheet } from "@/components/ReasonSheet";
 import { RequestDetail } from "@/components/RequestDetail";
 import { useSkrinLebar } from "@/lib/skrin";
@@ -48,13 +49,16 @@ function DenganParam() {
 
 function Kelulusan({ tabAwal }: { tabAwal: "pending" | "syarikat" }) {
   const me = useMe();
-  const [tab, setTab] = useState<"pending" | "history" | "syarikat">(tabAwal);
+  const [tabPilih, setTab] = useState<"pending" | "saya" | "history" | "syarikat" | null>(tabAwal === "syarikat" ? "syarikat" : null);
   const pantau = !!me.active && hasRole(me, ["hr", "ceo", "admin"]);
   const [filter, setFilter] = useState<Filter>("all");
   const [rejecting, setRejecting] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const tasks = useData(loadPending, []);
+  // Pekerja yang bukan pelulus (bukan ketua, tiada peranan) dan tiada tugasan: buka terus pada "Permohonan Saya"
+  const bukanPelulus = !me.isHead && me.roles.length === 0;
+  const tab = tabPilih ?? (bukanPelulus && tasks.data && tasks.data.length === 0 ? "saya" : "pending");
   const lebar = useSkrinLebar();
   const [pilih, setPilih] = useState<string | null>(null);
   const [tanda, setTanda] = useState<Set<string>>(new Set());
@@ -159,8 +163,13 @@ function Kelulusan({ tabAwal }: { tabAwal: "pending" | "syarikat" }) {
             className={`h-10 rounded-[10px] text-[13px] ${tab === "pending" ? "bg-surface font-extrabold text-ink" : "font-semibold text-subtle"}`}
           >
             {tr("Menunggu · {0}", list.length)}</button>
-          <Link href="/permohonan" className="flex h-10 items-center justify-center rounded-[10px] text-[13px] font-semibold whitespace-nowrap text-subtle!">
-            {tr("Permohonan Saya")}</Link>
+          <button
+            role="tab"
+            aria-selected={tab === "saya"}
+            onClick={() => setTab("saya")}
+            className={`h-10 rounded-[10px] text-[13px] whitespace-nowrap ${tab === "saya" ? "bg-surface font-extrabold text-ink" : "font-semibold text-subtle"}`}
+          >
+            {tr("Permohonan Saya")}</button>
           <button
             role="tab"
             aria-selected={tab === "history"}
@@ -180,6 +189,8 @@ function Kelulusan({ tabAwal }: { tabAwal: "pending" | "syarikat" }) {
         </div>
 
         {error && <ErrorBox message={error} />}
+
+        {tab === "saya" && <SenaraiPermohonanSaya />}
 
         {tab === "pending" && (
           <>
