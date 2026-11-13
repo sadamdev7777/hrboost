@@ -281,14 +281,14 @@ isOneToOne: false
                   ]
                 },"appraisals": {
                   Row: {
-                    "cycle_id": string,"employment_id": string,"final_rating": number | null,"finalised_at": string | null,"hr_note": string | null,"id": string,"manager_comment": string | null,"manager_rating": number | null,"manager_submitted_at": string | null,"reviewer_person_id": string | null,"self_comment": string | null,"self_submitted_at": string | null,"status": string,"appraisal_role": string | null
+                    "cycle_id": string,"employment_id": string,"final_rating": number | null,"finalised_at": string | null,"hr_note": string | null,"id": string,"manager_comment": string | null,"manager_rating": number | null,"manager_submitted_at": string | null,"reviewer_person_id": string | null,"reviewer_skip": boolean,"self_comment": string | null,"self_submitted_at": string | null,"status": string,"appraisal_role": string | null
                   }
                   ComputedFields: "appraisal_role"
                   Insert: {
-                    "cycle_id": string,"employment_id": string,"final_rating"?: number | null,"finalised_at"?: string | null,"hr_note"?: string | null,"id"?: string,"manager_comment"?: string | null,"manager_rating"?: number | null,"manager_submitted_at"?: string | null,"reviewer_person_id"?: string | null,"self_comment"?: string | null,"self_submitted_at"?: string | null,"status"?: string
+                    "cycle_id": string,"employment_id": string,"final_rating"?: number | null,"finalised_at"?: string | null,"hr_note"?: string | null,"id"?: string,"manager_comment"?: string | null,"manager_rating"?: number | null,"manager_submitted_at"?: string | null,"reviewer_person_id"?: string | null,"reviewer_skip"?: boolean,"self_comment"?: string | null,"self_submitted_at"?: string | null,"status"?: string
                   }
                   Update: {
-                    "cycle_id"?: string,"employment_id"?: string,"final_rating"?: number | null,"finalised_at"?: string | null,"hr_note"?: string | null,"id"?: string,"manager_comment"?: string | null,"manager_rating"?: number | null,"manager_submitted_at"?: string | null,"reviewer_person_id"?: string | null,"self_comment"?: string | null,"self_submitted_at"?: string | null,"status"?: string
+                    "cycle_id"?: string,"employment_id"?: string,"final_rating"?: number | null,"finalised_at"?: string | null,"hr_note"?: string | null,"id"?: string,"manager_comment"?: string | null,"manager_rating"?: number | null,"manager_submitted_at"?: string | null,"reviewer_person_id"?: string | null,"reviewer_skip"?: boolean,"self_comment"?: string | null,"self_submitted_at"?: string | null,"status"?: string
                   }
                   Relationships: [
                     {
@@ -2420,6 +2420,9 @@ isOneToOne: false
 "appraisal_manager_save":
 { Args: { "p_comment": string,"p_id": string,"p_scores": Json,"p_submit"?: boolean }; Returns: undefined
                            },
+"appraisal_reviewer_for":
+{ Args: { "p_employment": string }; Returns: Record<string, unknown>
+                           },
 "appraisal_role":
 { Args: { "a": Omit<Database["public"]['Tables']["appraisals"]['Row'], Database["public"]['Tables']["appraisals"]['ComputedFields']> }; Returns: string
                            },
@@ -2750,8 +2753,11 @@ isOneToOne: false
                            },
 "hr_appraisal_list":
 { Args: { "p_cycle": string }; Returns: {
-              "department": string,"employee_no": string,"employment_id": string,"final_rating": number,"id": string,"manager_rating": number,"manager_submitted_at": string,"name": string,"reviewer": string,"self_submitted_at": string,"status": string
+              "department": string,"employee_no": string,"employment_id": string,"final_rating": number,"id": string,"manager_rating": number,"manager_submitted_at": string,"name": string,"needs_reviewer": boolean,"reviewer": string,"reviewer_skip": boolean,"self_submitted_at": string,"status": string
             }[]
+                           },
+"hr_appraisal_set_reviewer":
+{ Args: { "p_id": string,"p_person": string }; Returns: undefined
                            },
 "hr_attendance_day":
 { Args: { "p_company": string,"p_date"?: string }; Returns: Json

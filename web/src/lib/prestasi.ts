@@ -32,6 +32,10 @@ export type Penilaian = {
   cycle: { id: string; name: string; period_start: string; period_end: string; self_due: string | null; manager_due: string | null; status: string };
   employee: { name: string; employee_no: string; position: string | null; department: string | null };
   reviewer: string | null;
+  reviewer_person_id: string | null;
+  reviewer_skip: boolean;
+  needs_reviewer: boolean;
+  can_finalise: boolean;
   self_comment: string | null;
   manager_comment: string | null;
   manager_rating: number | null;
@@ -105,6 +109,36 @@ export async function getSenaraiKitaran(id: string) {
     status: StatusPenilaian;
     manager_rating: number | null;
     final_rating: number | null;
+    reviewer_skip: boolean;
+    needs_reviewer: boolean;
   }[];
 }
+export async function tetapkanPelulus(id: string, personId: string) {
+  must(await getSupabase().rpc("hr_appraisal_set_reviewer", { p_id: id, p_person: personId }));
+}
+
+// ---------------------------------------------------------------- Pemberat KPI
+// Pemberat disimpan sebagai integer relatif. Semua sama = tiada pemberat (purata biasa);
+// jika berbeza, UI menggunakan peratus yang berjumlah 100.
+export const beratSama = (items: { weight: number }[]) => items.every((x) => Number(x.weight) === Number(items[0]?.weight));
+/** Tukar pemberat relatif (cth. 3:2:1:1) kepada peratus berjumlah 100 (baki terbesar). */
+export function kePeratus<T extends { weight: number }>(items: T[]): T[] {
+  const jumlah = items.reduce((a, x) => a + (Number(x.weight) || 0), 0);
+  if (!items.length || !jumlah) return items;
+  const mentah = items.map((x) => ((Number(x.weight) || 0) * 100) / jumlah);
+  const bawah = mentah.map(Math.floor);
+  let baki = 100 - bawah.reduce((a, n) => a + n, 0);
+  const urutan = mentah.map((n, i) => [n - Math.floor(n), i] as const).sort((a, b) => b[0] - a[0]);
+  for (const [, i] of urutan) {
+    if (baki <= 0) break;
+    bawah[i] += 1;
+    baki -= 1;
+  }
+  return items.map((x, i) => ({ ...x, weight: Math.max(1, bawah[i]) }));
+}
+/** Peratus pemberat satu KPI (untuk paparan). */
+export const peratusBerat = (w: number, items: { weight: number }[]) => {
+  const j = items.reduce((a, x) => a + (Number(x.weight) || 0), 0);
+  return j ? Math.round((Number(w) * 100) / j) : 0;
+};
 export const markahTeks = (n: number | null | undefined) => (n == null ? "-" : Number(n).toFixed(2));

@@ -72,12 +72,19 @@ const sahkanDialog = async (p, ok) => {
   await p.goto(BASE + '/pengurusan/prestasi');
   await p.click(V('button:has-text("+ Kitaran baharu")'));
   await p.fill(V('[role=dialog] label:has-text("Nama kitaran") input'), 'Penilaian E2E');
+  expect(await p.locator('[role=dialog] input[aria-label^="Pemberat KPI"]').count() === 0, 'pemberat disorok secara lalai (semua KPI sama)');
+  await p.click(V('[role=dialog] label:has-text("Beri pemberat berbeza") input'));
+  await p.waitForSelector(V('[role=dialog] >> text=Jumlah: 100%'));
+  const berat = ['40', '30', '20', '10'];
+  for (let i = 0; i < berat.length; i++) await p.fill(`[role=dialog] input[aria-label="Pemberat KPI ${i + 1}"]`, berat[i]);
+  expect(await p.locator(V('[role=dialog] >> text=Jumlah: 100%')).count() > 0, 'pemberat 40/30/20/10 = 100%');
   await p.click(V('[role=dialog] button:has-text("Simpan")'));
   await p.waitForSelector(V('button:has-text("Buka kepada pekerja")'), { timeout: 20000 });
   await p.click(V('button:has-text("Buka kepada pekerja")'));
   await sahkanDialog(p, 'Buka');
   await p.waitForSelector(V('text=Amin'), { timeout: 20000 });
   expect(await p.locator(V('text=Pelulus: Zuerin')).count() > 0, 'pelulus Amin = Zuerin');
+  expect(await p.locator(V('text=Pelulus: Sadam')).count() > 0, 'ketua jabatan dinilai oleh CEO (Sadam)');
   await ctx.close();
 
   ({ ctx, p } = await masuk(b, 'amin@demo.hrboost.io', { width: 390, height: 844 }));
@@ -85,6 +92,8 @@ const sahkanDialog = async (p, ok) => {
   await p.click(V('a:has-text("Penilaian prestasi")'));
   await p.click(V('a:has-text("Penilaian E2E")'));
   await p.waitForSelector(V('text=KPI & MATLAMAT'), { timeout: 20000 });
+  expect(await p.locator(V('text=Pemberat 40%')).count() > 0, 'pekerja nampak pemberat dalam peratus');
+  expect(await p.locator(V('button:has-text("Tambah")')).count() === 0 && await p.locator('input[aria-label^="Pemberat"]').count() === 0, 'pekerja tidak boleh mengubah KPI');
   const kumpulan = p.locator('[role=radiogroup][aria-label^="Markah kendiri"]');
   const n = await kumpulan.count();
   for (let i = 0; i < n; i++) await kumpulan.nth(i).locator('[role=radio]').nth(3).click();
@@ -110,7 +119,7 @@ const sahkanDialog = async (p, ok) => {
   ({ ctx, p } = await masuk(b, 'lily@demo.hrboost.io'));
   await p.goto(BASE + '/pengurusan/prestasi');
   await p.click(V('a:has-text("Amin")'));
-  await p.waitForSelector(V('text=MUKTAMADKAN (HR)'), { timeout: 20000 });
+  await p.waitForSelector(V('text=MUKTAMADKAN'), { timeout: 20000 });
   await p.click(V('button:has-text("Muktamadkan")'));
   await p.waitForURL('**/pengurusan/prestasi', { timeout: 20000 });
   await ctx.close();

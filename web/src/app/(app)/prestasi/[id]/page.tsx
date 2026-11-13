@@ -5,8 +5,15 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useData } from "@/lib/useData";
 import { tarikh } from "@/lib/format";
+import { InputPeratus, SuisPemberat, pemberatSah } from "@/components/PemberatKpi";
+import { useMe } from "@/lib/me";
+import { getSenaraiPekerja } from "@/lib/hr";
 import {
+  beratSama,
   getPenilaian,
+  kePeratus,
+  peratusBerat,
+  tetapkanPelulus,
   LABEL_STATUS_PENILAIAN,
   markahTeks,
   muktamadkan,
@@ -27,7 +34,7 @@ export default function PenilaianPrestasiPage() {
   const d = useData(() => getPenilaian(id), [id]);
   return (
     <Screen lebar="sederhana">
-      <BackHeader title={tr("Penilaian prestasi")} href={d.data && d.data.role === "hr" ? "/pengurusan/prestasi" : "/prestasi"} />
+      <BackHeader title={tr("Penilaian prestasi")} href={d.data && (d.data.role === "hr" || d.data.role === "ceo") ? "/pengurusan/prestasi" : "/prestasi"} />
       {d.error && (
         <div className="px-4">
           <ErrorBox message={trRalat(d.error)} />
@@ -69,9 +76,11 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
   const router = useRouter();
   const isiKendiri = p.role === "self" && p.status === "self" && p.cycle.status === "open";
   const isiPelulus = (p.role === "reviewer" && p.status === "manager") || (p.role === "hr" && p.status === "manager");
-  const ubahKpi = isiKendiri || (p.role === "reviewer" && (p.status === "self" || p.status === "manager")) || (p.role === "hr" && p.status !== "final");
-  const muktamad = p.role === "hr" && p.status === "hr";
-  const [items, setItems] = useState<ItemKpi[]>(p.items);
+  // KPI hanya ditetapkan oleh HR (bukan pekerja, bukan pelulus)
+  const ubahKpi = p.role === "hr" && p.status !== "final";
+  const muktamad = p.can_finalise && p.status === "hr";
+  const [berbeza, setBerbeza] = useState(!beratSama(p.items));
+  const [items, setItems] = useState<ItemKpi[]>(ubahKpi && !beratSama(p.items) ? kePeratus(p.items) : p.items);
   const [ulasan, setUlasan] = useState((isiPelulus ? p.manager_comment : p.self_comment) ?? "");
   const [akhir, setAkhir] = useState(p.manager_rating != null ? String(p.manager_rating) : "");
   const [nota, setNota] = useState("");
@@ -81,7 +90,7 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
   const kunciMarkah = isiKendiri ? "self" : "manager";
 
   const set = (i: number, patch: Partial<ItemKpi>) => setItems(items.map((x, j) => (j === i ? { ...x, ...patch } : x)));
-  const jumlahBerat = items.reduce((a, x) => a + (Number(x.weight) || 0), 0);
+  const samaBerat = beratSama(items);
   const purata = (k: "self_score" | "manager_score") => {
     const ada = items.filter((x) => x[k] != null);
     const b = ada.reduce((a, x) => a + x.weight, 0);
@@ -105,7 +114,8 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
   async function simpanSemua(hantar: boolean) {
     let sebenar = items;
     if (ubahKpi) {
-      await simpanKpi(p.id, items);
+      if (berbeza && !pemberatSah(items)) throw new Error(tr("Jumlah pemberat mesti tepat 100%."));
+      await simpanKpi(p.id, items.map((x) => ({ ...x, weight: berbeza ? x.weight : 1 })));
       sebenar = (await getPenilaian(p.id)).items;
     }
     const m = sebenar.map((x, i) => ({
@@ -127,7 +137,7 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
             <span className="text-[13px] text-muted">{[p.employee.position, p.employee.department].filter(Boolean).join(" · ") || p.employee.employee_no}</span>
             <span className="text-xs text-muted">
               {p.cycle.name} · {tarikh(p.cycle.period_start)} – {tarikh(p.cycle.period_end)}
-              {p.reviewer ? " · " + tr("Pelulus: {0}", p.reviewer) : ""}
+              {p.reviewer ? " · " + tr("Pelulus: {0}", p.reviewer) : p.reviewer_skip ? " · " + tr("Tiada pelulus (CEO)") : ""}
             </span>
           </span>
           <Tag tone={st.tone}>{st.l}</Tag>
@@ -139,28 +149,43 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
             <b className="text-2xl font-extrabold">{tr("{0} / 5", markahTeks(p.final_rating))}</b>
           </div>
         )}
+        {p.role === "hr" && (p.status === "self" || p.status === "manager") && !p.reviewer_skip && (
+          <PilihPelulus p={p} reload={reload} />
+        )}
         {isiKendiri && (
           <span className="text-xs leading-snug text-muted">
-            {tr("Nilai diri anda bagi setiap KPI (1 = Lemah, 5 = Cemerlang). Anda boleh menambah KPI. Markah pelulus dipaparkan selepas HR memuktamadkan penilaian.")}
+            {tr("Nilai diri anda bagi setiap KPI (1 = Lemah, 5 = Cemerlang). KPI ditetapkan oleh HR. Markah pelulus dipaparkan selepas HR memuktamadkan penilaian.")}
           </span>
         )}
 
         <Seksyen>{tr("KPI & MATLAMAT")}</Seksyen>
+        {ubahKpi && (
+          <SuisPemberat
+            berbeza={berbeza}
+            items={items}
+            onUbah={(v) => {
+              setBerbeza(v);
+              setItems(v ? kePeratus(items.map((x) => ({ ...x, weight: 1 }))) : items.map((x) => ({ ...x, weight: 1 })));
+            }}
+          />
+        )}
         {items.length === 0 && <span className="rounded-card bg-surface px-4 py-3 text-sm text-muted">{tr("Belum ada KPI.")}</span>}
         {items.map((x, i) => (
           <div key={x.id ?? `baru-${i}`} className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3">
             {ubahKpi ? (
-              <div className="grid grid-cols-[1fr_88px_auto] items-end gap-2">
+              <div className={`grid ${berbeza ? "grid-cols-[1fr_96px_auto]" : "grid-cols-[1fr_auto]"} items-end gap-2`}>
                 <MedanBorang label={tr("KPI {0}", i + 1)}>
                   <input className={inputKecil} value={x.title} onChange={(e) => set(i, { title: e.target.value })} />
                 </MedanBorang>
-                <MedanBorang label={tr("Pemberat")}>
-                  <input className={inputKecil} inputMode="numeric" value={x.weight} onChange={(e) => set(i, { weight: Number(e.target.value.replace(/\D/g, "")) || 1 })} />
-                </MedanBorang>
-                <button type="button" aria-label={tr("Buang KPI {0}", x.title)} onClick={() => setItems(items.filter((_, j) => j !== i))} className="flex size-11 items-center justify-center text-lg text-danger">
+                {berbeza && (
+                  <MedanBorang label={tr("Pemberat")}>
+                    <InputPeratus nilai={x.weight} label={tr("Pemberat KPI {0}", i + 1)} onUbah={(n) => set(i, { weight: n })} />
+                  </MedanBorang>
+                )}
+                <button type="button" disabled={items.length <= 1} aria-label={tr("Buang KPI {0}", x.title)} onClick={() => setItems(items.filter((_, j) => j !== i))} className="flex size-11 items-center justify-center text-lg text-danger disabled:opacity-40">
                   ×
                 </button>
-                <div className="col-span-3">
+                <div className={berbeza ? "col-span-3" : "col-span-2"}>
                   <input className={inputKecil + " w-full"} placeholder={tr("Sasaran (cth. RM500k jualan)")} value={x.target ?? ""} onChange={(e) => set(i, { target: e.target.value })} />
                 </div>
               </div>
@@ -168,8 +193,7 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
               <span className="flex flex-col gap-0.5">
                 <b className="text-sm font-bold">{x.title}</b>
                 <span className="text-xs text-muted">
-                  {x.target ? tr("Sasaran: {0}", x.target) + " · " : ""}
-                  {tr("Pemberat {0}", x.weight)}
+                  {[x.target ? tr("Sasaran: {0}", x.target) : null, samaBerat ? null : tr("Pemberat {0}%", peratusBerat(x.weight, items))].filter(Boolean).join(" · ")}
                 </span>
               </span>
             )}
@@ -202,7 +226,7 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
               type="button"
               disabled={!kpiBaru.trim() || items.length >= 20}
               onClick={() => {
-                setItems([...items, { title: kpiBaru.trim(), description: null, target: null, weight: 1 }]);
+                setItems([...items, { title: kpiBaru.trim(), description: null, target: null, weight: berbeza ? 0 : 1 }]);
                 setKpiBaru("");
               }}
               className="h-11 shrink-0 rounded-[12px] border border-primary px-4 text-sm font-bold text-primary disabled:opacity-50"
@@ -211,7 +235,6 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
             </button>
           </div>
         )}
-        {ubahKpi && jumlahBerat > 0 && <span className="text-xs text-muted">{tr("Jumlah pemberat {0}. Markah keseluruhan = purata berwajaran.", jumlahBerat)}</span>}
 
         <div className="grid grid-cols-2 gap-2 text-center">
           <span className="flex flex-col rounded-card bg-surface py-2.5">
@@ -249,7 +272,7 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
         )}
         {muktamad && (
           <>
-            <Seksyen className="pt-1">{tr("MUKTAMADKAN (HR)")}</Seksyen>
+            <Seksyen className="pt-1">{tr("MUKTAMADKAN")}</Seksyen>
             <MedanBorang label={tr("Markah akhir (1–5)")} nota={tr("Lalai: markah pelulus")}>
               <input className={inputKecil} inputMode="decimal" value={akhir} onChange={(e) => setAkhir(e.target.value.replace(/[^\d.]/g, ""))} />
             </MedanBorang>
@@ -294,5 +317,49 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
         </div>
       )}
     </>
+  );
+}
+
+/** HR: tetapkan / tukar pelulus (cth. jabatan tiada ketua). */
+function PilihPelulus({ p, reload }: { p: Penilaian; reload: () => void }) {
+  const me = useMe();
+  const senarai = useData(() => getSenaraiPekerja(me.active!.companyId), [me.active!.companyId]);
+  const [pilih, setPilih] = useState(p.reviewer_person_id ?? "");
+  const [busy, setBusy] = useState(false);
+  const [ralat, setRalat] = useState<string | null>(null);
+  const calon = (senarai.data ?? []).filter((x) => x.name !== p.employee.name || x.employeeNo !== p.employee.employee_no);
+  async function simpan() {
+    if (!pilih) return;
+    setBusy(true);
+    setRalat(null);
+    try {
+      await tetapkanPelulus(p.id, pilih);
+      beritahu(tr("Pelulus ditetapkan."));
+      reload();
+    } catch (e) {
+      setRalat(e instanceof Error ? trRalat(e.message) : tr("Ralat"));
+    }
+    setBusy(false);
+  }
+  return (
+    <div className={`flex flex-col gap-2 rounded-card px-4 py-3 ${p.needs_reviewer ? "bg-warning-soft" : "bg-surface"}`}>
+      <b className={`text-sm ${p.needs_reviewer ? "text-warning" : ""}`}>{p.needs_reviewer ? tr("Penilaian ini belum ada pelulus") : tr("Pelulus")}</b>
+      {p.needs_reviewer && <span className="text-xs leading-snug text-warning">{tr("Jabatan pekerja ini tiada ketua. Pilih siapa yang akan menilai pekerja ini.")}</span>}
+      <div className="flex gap-2">
+        <select className={inputKecil + " min-w-0 grow"} aria-label={tr("Pilih pelulus")} value={pilih} onChange={(e) => setPilih(e.target.value)}>
+          <option value="">{tr("Pilih pekerja…")}</option>
+          {calon.map((x) => (
+            <option key={x.personId} value={x.personId}>
+              {x.name}
+              {x.department ? ` · ${x.department}` : ""}
+            </option>
+          ))}
+        </select>
+        <button type="button" disabled={busy || !pilih || pilih === p.reviewer_person_id} onClick={simpan} className="h-11 shrink-0 rounded-[12px] bg-primary px-4 text-sm font-bold text-white disabled:opacity-50">
+          {tr("Tetapkan")}
+        </button>
+      </div>
+      {ralat && <ErrorBox message={ralat} />}
+    </div>
   );
 }

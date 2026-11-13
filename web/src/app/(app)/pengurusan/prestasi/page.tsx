@@ -6,10 +6,13 @@ import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { tarikh, todayISO } from "@/lib/format";
+import { InputPeratus, SuisPemberat, pemberatSah } from "@/components/PemberatKpi";
 import {
+  beratSama,
   bukaKitaran,
   getKitaran,
   getSenaraiKitaran,
+  kePeratus,
   LABEL_STATUS_PENILAIAN,
   markahTeks,
   simpanKitaran,
@@ -66,7 +69,7 @@ function PrestasiHr() {
           <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-5 text-sm">
             <b className="font-extrabold">{tr("Belum ada kitaran penilaian")}</b>
             <span className="text-muted">
-              {tr("Cipta kitaran (cth. Penilaian Tahunan 2026) dengan KPI lalai. Apabila dibuka, setiap pekerja menilai diri sendiri, kemudian ketua jabatan menilai, dan HR memuktamadkan markah.")}
+              {tr("Cipta kitaran (cth. Penilaian Tahunan 2026) dan senarai KPI. Apabila dibuka, setiap pekerja menilai diri sendiri, kemudian pelulus menilai (ketua jabatan bagi pekerja, CEO bagi ketua jabatan), dan HR memuktamadkan markah.")}
             </span>
           </div>
         )}
@@ -149,7 +152,7 @@ function ButiranKitaran({ k, hr, reload, ubah }: { k: Kitaran; hr: boolean; relo
           </div>
         )}
         {k.status === "draft" && (
-          <span className="text-[13px] text-muted">{tr("{0} KPI lalai: {1}", k.template.length, k.template.map((t) => t.title).join(", ") || "-")}</span>
+          <span className="text-[13px] text-muted">{tr("{0} KPI: {1}", k.template.length, k.template.map((t) => t.title).join(", ") || "-")}</span>
         )}
         {k.avg_rating != null && <span className="text-[13px] text-muted">{tr("Purata markah akhir: {0} / 5", markahTeks(k.avg_rating))}</span>}
         {hr && (
@@ -165,7 +168,7 @@ function ButiranKitaran({ k, hr, reload, ubah }: { k: Kitaran; hr: boolean; relo
                 disabled={busy}
                 onClick={() =>
                   buat(async () => {
-                    if (!(await sahkan({ tajuk: k.status === "draft" ? tr("Buka kitaran penilaian?") : tr("Tambah pekerja baharu?"), mesej: tr("Setiap pekerja aktif menerima penilaian dengan KPI lalai dan dimaklumkan melalui WhatsApp."), ok: tr("Buka") }))) return;
+                    if (!(await sahkan({ tajuk: k.status === "draft" ? tr("Buka kitaran penilaian?") : tr("Tambah pekerja baharu?"), mesej: tr("Setiap pekerja aktif menerima penilaian dengan KPI kitaran ini dan dimaklumkan melalui WhatsApp. HR boleh mengubah KPI bagi setiap pekerja selepas itu."), ok: tr("Buka") }))) return;
                     const n = await bukaKitaran(k.id);
                     beritahu(tr("{0} pekerja dimaklumkan.", n));
                   })
@@ -207,7 +210,10 @@ function ButiranKitaran({ k, hr, reload, ubah }: { k: Kitaran; hr: boolean; relo
                   <Link key={r.id} href={`/prestasi/${r.id}`} className="flex min-h-[56px] items-center gap-3 py-2 text-ink!">
                     <span className="flex grow flex-col gap-0.5">
                       <b className="text-sm font-bold">{r.name}</b>
-                      <span className="text-xs text-muted">{[r.department, r.reviewer ? tr("Pelulus: {0}", r.reviewer) : tr("Tiada pelulus — HR menilai")].filter(Boolean).join(" · ")}</span>
+                      <span className="text-xs text-muted">
+                        {[r.department, r.reviewer ? tr("Pelulus: {0}", r.reviewer) : r.reviewer_skip ? tr("Tiada pelulus (CEO) — terus kepada HR") : null].filter(Boolean).join(" · ")}
+                        {r.needs_reviewer && <b className="text-warning">{(r.department ? " · " : "") + tr("Perlu tetapkan pelulus")}</b>}
+                      </span>
                     </span>
                     <span className="w-14 text-right text-sm font-extrabold tabular-nums">{markahTeks(r.final_rating ?? r.manager_rating)}</span>
                     <Tag tone={r.status === "hr" && hr ? "warning" : t.tone}>{r.status === "hr" && hr ? tr("Perlu dimuktamadkan") : t.l}</Tag>
@@ -231,26 +237,32 @@ function BorangKitaran({ cid, k, tutup, selesai }: { cid: string; k: Kitaran | n
     self_due: k?.self_due ?? "",
     manager_due: k?.manager_due ?? "",
   });
-  const [kpi, setKpi] = useState<ItemKpi[]>(
-    k?.template?.length
-      ? k.template
-      : [
-          { title: tr("Pencapaian sasaran kerja"), description: null, target: null, weight: 3 },
-          { title: tr("Kualiti kerja"), description: null, target: null, weight: 2 },
-          { title: tr("Kerjasama & komunikasi"), description: null, target: null, weight: 1 },
-          { title: tr("Disiplin & kehadiran"), description: null, target: null, weight: 1 },
-        ],
-  );
+  const asal: ItemKpi[] = k?.template?.length
+    ? k.template
+    : [
+        { title: tr("Pencapaian sasaran kerja"), description: null, target: null, weight: 1 },
+        { title: tr("Kualiti kerja"), description: null, target: null, weight: 1 },
+        { title: tr("Kerjasama & komunikasi"), description: null, target: null, weight: 1 },
+        { title: tr("Disiplin & kehadiran"), description: null, target: null, weight: 1 },
+      ];
+  const [berbeza, setBerbeza] = useState(!beratSama(asal));
+  const [kpi, setKpi] = useState<ItemKpi[]>(beratSama(asal) ? asal : kePeratus(asal));
   const [busy, setBusy] = useState(false);
   const [ralat, setRalat] = useState<string | null>(null);
   const draf = !k || k.status === "draft";
   const set = (n: keyof typeof f) => (e: { target: { value: string } }) => setF({ ...f, [n]: e.target.value });
 
+  function tukarBerbeza(v: boolean) {
+    setBerbeza(v);
+    setKpi(v ? kePeratus(kpi.map((x) => ({ ...x, weight: 1 }))) : kpi.map((x) => ({ ...x, weight: 1 })));
+  }
   async function simpan() {
+    const isi = kpi.filter((x) => x.title.trim());
+    if (berbeza && !pemberatSah(isi)) return setRalat(tr("Jumlah pemberat mesti tepat 100%."));
     setBusy(true);
     setRalat(null);
     try {
-      const id = await simpanKitaran(cid, k?.id ?? null, { ...f, template: kpi });
+      const id = await simpanKitaran(cid, k?.id ?? null, { ...f, template: isi.map((x) => ({ ...x, weight: berbeza ? x.weight : 1 })) });
       beritahu(tr("Kitaran disimpan."));
       selesai(id);
     } catch (e) {
@@ -278,30 +290,30 @@ function BorangKitaran({ cid, k, tutup, selesai }: { cid: string; k: Kitaran | n
             <input type="date" className={inputKecil} value={f.manager_due} onChange={set("manager_due")} />
           </MedanBorang>
         </div>
-        <Seksyen className="pt-1">{tr("KPI LALAI")}</Seksyen>
-        {!draf && <span className="text-xs text-muted">{tr("KPI lalai tidak boleh diubah selepas kitaran dibuka. Ubah KPI dalam penilaian setiap pekerja.")}</span>}
+        <Seksyen className="pt-1">{tr("KPI UNTUK SEMUA PEKERJA")}</Seksyen>
+        <span className="text-xs leading-snug text-muted">
+          {draf
+            ? tr("KPI ini disalin kepada setiap pekerja apabila kitaran dibuka. Selepas itu, HR boleh mengubah KPI bagi setiap pekerja dalam penilaian masing-masing.")
+            : tr("KPI kitaran tidak boleh diubah selepas kitaran dibuka. Ubah KPI dalam penilaian setiap pekerja.")}
+        </span>
+        <SuisPemberat berbeza={berbeza} onUbah={tukarBerbeza} items={kpi} disabled={!draf} />
         {kpi.map((x, i) => (
-          <div key={i} className="grid grid-cols-[1fr_80px_auto] items-center gap-2">
-            <input className={inputKecil} disabled={!draf} value={x.title} aria-label={tr("KPI {0}", i + 1)} onChange={(e) => setKpi(kpi.map((y, j) => (j === i ? { ...y, title: e.target.value } : y)))} />
-            <input
-              className={inputKecil}
-              disabled={!draf}
-              inputMode="numeric"
-              aria-label={tr("Pemberat KPI {0}", i + 1)}
-              value={x.weight}
-              onChange={(e) => setKpi(kpi.map((y, j) => (j === i ? { ...y, weight: Number(e.target.value.replace(/\D/g, "")) || 1 } : y)))}
-            />
-            <button type="button" disabled={!draf} aria-label={tr("Buang KPI {0}", x.title)} onClick={() => setKpi(kpi.filter((_, j) => j !== i))} className="flex size-11 items-center justify-center text-lg text-danger disabled:opacity-40">
+          <div key={i} className={`grid ${berbeza ? "grid-cols-[1fr_96px_auto]" : "grid-cols-[1fr_auto]"} items-center gap-2`}>
+            <input className={inputKecil} disabled={!draf} value={x.title} placeholder={tr("Nama KPI")} aria-label={tr("KPI {0}", i + 1)} onChange={(e) => setKpi(kpi.map((y, j) => (j === i ? { ...y, title: e.target.value } : y)))} />
+            {berbeza && <InputPeratus nilai={x.weight} disabled={!draf} label={tr("Pemberat KPI {0}", i + 1)} onUbah={(n) => setKpi(kpi.map((y, j) => (j === i ? { ...y, weight: n } : y)))} />}
+            <button type="button" disabled={!draf || kpi.length <= 1} aria-label={tr("Buang KPI {0}", x.title)} onClick={() => setKpi(kpi.filter((_, j) => j !== i))} className="flex size-11 items-center justify-center text-lg text-danger disabled:opacity-40">
               ×
             </button>
           </div>
         ))}
         {draf && kpi.length < 20 && (
-          <button type="button" onClick={() => setKpi([...kpi, { title: "", description: null, target: null, weight: 1 }])} className="flex min-h-11 items-center self-start text-sm font-bold text-primary">
+          <button type="button" onClick={() => setKpi([...kpi, { title: "", description: null, target: null, weight: berbeza ? 0 : 1 }])} className="flex min-h-11 items-center self-start text-sm font-bold text-primary">
             {tr("+ Tambah KPI")}
           </button>
         )}
-        <span className="text-xs text-muted">{tr("Skala 1–5. Markah keseluruhan = purata berwajaran (pemberat). Ketua jabatan menjadi pelulus secara automatik.")}</span>
+        <span className="text-xs leading-snug text-muted">
+          {tr("Setiap KPI dinilai pada skala 1–5 (1 = Lemah, 5 = Cemerlang). Pelulus: ketua jabatan menilai pekerja, CEO menilai ketua jabatan. Jika jabatan tiada ketua, HR menetapkan pelulus.")}
+        </span>
         {ralat && <ErrorBox message={ralat} />}
         <ButangUtama onClick={simpan} busy={busy}>
           {tr("Simpan")}

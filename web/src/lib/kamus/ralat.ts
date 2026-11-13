@@ -411,4 +411,8 @@ export const RALAT: Record<string, string> = {
  "Waktu kerja tidak sah": "Invalid working hours",
  "Waktu keluar mesti selepas waktu masuk": "End time must be after start time",
  "Sekurang-kurangnya satu hari bekerja diperlukan": "At least one working day is required",
+ "Hanya HR boleh mengubah KPI": "Only HR can change KPIs",
+ "Anda tidak boleh memuktamadkan penilaian anda sendiri": "You cannot finalise your own review",
+ "Pelulus tidak sah": "Invalid reviewer",
+ "Sekurang-kurangnya satu KPI diperlukan": "At least one KPI is required",
 };
