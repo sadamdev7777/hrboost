@@ -44,7 +44,7 @@ const SEMUA_TETAPAN: { label: string; href: string; kata: string; roles?: ("hr" 
   { label: tr("Pengguna & Peranan"), href: "/pengurusan/tetapan/pengguna", kata: tr("pengguna peranan hr kewangan ceo pentadbir akses"), roles: ["hr", "admin"] },
   { label: tr("Aliran Kelulusan"), href: "/pengurusan/tetapan/aliran", kata: tr("aliran kelulusan peringkat pelulus ketua"), roles: ["hr", "admin"] },
   { label: tr("Wakil Kelulusan"), href: "/pengurusan/tetapan/wakil", kata: tr("wakil delegasi bercuti pelulus"), roles: ["hr", "admin"] },
-  { label: tr("Automasi WhatsApp"), href: "/pengurusan/tetapan/automasi", kata: tr("automasi whatsapp mesej notifikasi peringatan"), roles: ["hr", "admin"] },
+  { label: tr("Notifikasi & automasi"), href: "/pengurusan/tetapan/automasi", kata: tr("automasi whatsapp e-mel saluran mesej notifikasi peringatan"), roles: ["hr", "admin"] },
   { label: tr("Jenis & Kelayakan Cuti"), href: "/pengurusan/tetapan/cuti", kata: tr("cuti tahunan sakit mc kelayakan bawa ke hadapan"), roles: ["hr", "admin"] },
   { label: tr("Cuti Umum"), href: "/pengurusan/tetapan/cuti-umum", kata: tr("cuti umum public holiday negeri"), roles: ["hr", "admin"] },
   { label: tr("Jenis Tuntutan & Had"), href: "/pengurusan/tetapan/tuntutan", kata: tr("tuntutan claim had perbatuan makan resit"), roles: ["hr", "finance", "admin"] },
@@ -119,7 +119,7 @@ function Menu() {
           <BarisPautan href="/pengurusan/tetapan/wakil" roles={["hr","admin"]} kanan={em(x && tr("{0} aktif", x.delegations_active))}>
             {tr("Wakil Kelulusan")}</BarisPautan>
           <BarisPautan href="/pengurusan/tetapan/automasi" roles={["hr","admin"]} kanan={em(x && tr("{0} peraturan", x.automations))}>
-            {tr("Automasi WhatsApp")}</BarisPautan>
+            {tr("Notifikasi & automasi")}</BarisPautan>
         </Kotak>
 </div>
 

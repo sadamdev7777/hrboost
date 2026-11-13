@@ -50,7 +50,7 @@ export default function Kandungan() {
 
         <H2>{tr("3. Tujuan")}</H2>
         <P>
-          {tr("Data digunakan untuk urusan pekerjaan sahaja: memproses cuti, tuntutan, kehadiran dan gaji, menghantar pemberitahuan melalui WhatsApp, dan memenuhi kewajipan undang-undang majikan anda.")}</P>
+          {tr("Data digunakan untuk urusan pekerjaan sahaja: memproses cuti, tuntutan, kehadiran dan gaji, menghantar pemberitahuan (dalam aplikasi, e-mel atau WhatsApp), dan memenuhi kewajipan undang-undang majikan anda.")}</P>
 
         <H2>{tr("4. Siapa boleh lihat data anda")}</H2>
         <Ul>

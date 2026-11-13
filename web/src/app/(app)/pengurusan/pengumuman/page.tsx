@@ -33,7 +33,7 @@ function Kandungan() {
   async function siar() {
     if (tajuk.trim().length < 3) return setRalat(tr("Sila isi tajuk."));
     if (isi.trim().length < 3) return setRalat(tr("Sila isi kandungan pengumuman."));
-    if (wa && !(await sahkan({ tajuk: tr("Hantar kepada semua pekerja?"), mesej: tr("Pengumuman akan dihantar melalui WhatsApp kepada setiap pekerja aktif dan dipaparkan di skrin Utama."), ok: tr("Siarkan") }))) return;
+    if (wa && !(await sahkan({ tajuk: tr("Hantar kepada semua pekerja?"), mesej: tr("Pengumuman dipaparkan di skrin Utama dan dihantar sebagai notifikasi kepada setiap pekerja aktif."), ok: tr("Siarkan") }))) return;
     setBusy(true);
     setRalat(null);
     try {

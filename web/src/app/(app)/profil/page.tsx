@@ -388,7 +388,7 @@ function MohonHr({ p, employmentId, onClose, onDone }: { p: ProfilSaya; employme
 
   return (
     <Lembaran title={tr("Mohon kemas kini maklumat")} onClose={onClose}>
-      <span className="text-xs leading-normal text-muted">{tr("Perubahan ini dihantar kepada HR untuk disahkan dan dikemas kini secara automatik selepas diluluskan. Anda akan dimaklumkan melalui WhatsApp.")}</span>
+      <span className="text-xs leading-normal text-muted">{tr("Perubahan ini dihantar kepada HR untuk disahkan dan dikemas kini secara automatik selepas diluluskan. Anda akan dimaklumkan.")}</span>
       <MedanBorang label={tr("Nama penuh (ikut kad pengenalan)")}>
         <input className={inputKecil} value={f.full_name} onChange={set("full_name")} />
       </MedanBorang>

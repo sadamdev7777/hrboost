@@ -21,7 +21,7 @@ Pemilik produk: Sadam. Reka bentuk skrin: kanvas Design "HRBoost.io — Skrin" (
 |---|---|
 | Frontend | Next.js (App Router) + Tailwind, PWA (installable), BM sebagai bahasa utama |
 | Backend | Supabase: Postgres + RLS, Auth (e-mel + kata laluan, pautan pengesahan e-mel), Storage, Edge Functions, pg_cron |
-| WhatsApp | Murpati (satu nombor platform HRBoost secara default) |
+| WhatsApp | Murpati (satu nombor platform HRBoost secara default) — **pilihan**. Tanpa Murpati: loceng dalam aplikasi + e-mel (Resend), dan butang `wa.me` (teks siap diisi, `web/src/lib/saluran.ts`) untuk jemputan & ingatkan pelulus |
 | Kehadiran | CrossChex Cloud (server EU) — tarik setiap 5 minit |
 | Akaun | QuickBooks Online (MTB); syarikat lain eksport CSV |
 | AI | Model bahasa untuk baca resit & IC, ringkasan kelulusan, jawab soalan polisi (RAG dari `ai_knowledge_chunks`) |
@@ -69,6 +69,7 @@ Konsep utama:
 | `hr_appraisal_cycle_save/open/close`, `hr_appraisal_cycles`, `hr_appraisal_set_reviewer`, `hr_appraisal_list`, `my_appraisals`, `appraisal_detail`, `appraisal_set_items`, `appraisal_self_save`, `appraisal_manager_save`, `hr_appraisal_finalise` | HR / pekerja / ketua | Penilaian prestasi & KPI (skala 1–5, pemberat % atau sama rata): kendiri → pelulus → HR muktamad. Pelulus: pekerja → ketua jabatan (jika tiada: pengurus dalam profil, atau HR tetapkan dengan `hr_appraisal_set_reviewer`); ketua jabatan → CEO; CEO → terus ke HR. KPI hanya diubah oleh HR. Muktamad oleh HR/Pentadbir/CEO, bukan diri sendiri. Markah pelulus disorok daripada pekerja sehingga muktamad |
 | `ceo_monthly_report_preview(company)`, `set_ceo_monthly_report(company, on)` | CEO / HR / Pentadbir | Laporan bulanan WhatsApp kepada CEO (agregat sahaja; pg_cron 1hb 9:07 pagi MYT) |
 | `qbo_connect_start`, `qbo_status`, `qbo_disconnect`, `accounting_retry` | Kewangan / Pentadbir | Sambungan QuickBooks Online (Tetapan → Integrasi Akaun) |
+| `notify_channels(company)`, `set_notify_channels(company, wa, emel)`, `approval_current_approvers(request)` | ahli syarikat / HR / pemohon | Saluran notifikasi aktif (Tetapan → Notifikasi & automasi); pelulus semasa untuk butang WhatsApp "Ingatkan pelulus" |
 | `log_client_error(...)` → `sa_client_errors(hari)` | semua → superadmin | Pemantauan ralat pelayar (tanpa perkhidmatan luar); `/admin/ralat` |
 
 ### Fungsi untuk Edge Function sahaja (service role)
@@ -79,7 +80,7 @@ Konsep utama:
 | Fungsi | Jadual | Kerja |
 |---|---|---|
 | `events-worker` | setiap minit | `select process_hr_events()` |
-| `notify-sender` | setiap minit | Baca `notifications` status `pending` → `bump_usage(company,'wa')` → hantar melalui Murpati → `sent`/`failed`. Jika had habis: `skipped` + maklum Admin sekali sahaja |
+| `notify-sender` | setiap minit | `notify_set_channels` (lapor saluran yang dikonfigurasi) → `notify_next2(had, wa, emel)` memilih saluran bagi setiap notifikasi: **WhatsApp** (Murpati, jika dikonfigurasi & `companies.notify_whatsapp`; `bump_usage(company,'wa')`) → **e-mel** (Resend `RESEND_API_KEY`/`EMAIL_FROM`, jika `companies.notify_email`) → **dalam aplikasi sahaja** (`skipped`). Notifikasi > 3 hari tidak dihantar. Loceng dalam aplikasi sentiasa memaparkan semua notifikasi |
 | `sla-tick` | setiap 15 minit | `select approval_sla_tick()` |
 | `crosschex-sync` | setiap 5 minit | Untuk setiap syarikat dengan CrossChex: token (cache sehingga `expires`, ralat `TOKEN_EXPIRES` → minta baru), `getrecord` dari `last_synced_at − 10 min` hingga kini, 100 rekod/halaman, panggil `ingest_punch` (uuid, `checktime` UTC, `workno`, peranti). Simpan `integration_sync_state` |
 | `whatsapp-inbound` | webhook Murpati | Balasan staff: "LULUS" / "TOLAK sebab" → `approval_act` dengan `p_on_behalf`; teks bebas → agent AI |

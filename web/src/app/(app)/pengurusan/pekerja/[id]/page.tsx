@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { Suspense, useRef, useState, useSyncExternalStore } from "react";
 import { useMe } from "@/lib/me";
+import { bukaWa, teksJemputan, useSaluran } from "@/lib/saluran";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import {
@@ -150,6 +151,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
     () => null,
   );
   const pautan = pautanBaru ?? simpanan;
+  const saluran = useSaluran(useMe().active?.companyId);
   const tamat = !["probation", "active"].includes(p.status);
   const status = tamat
     ? { label: { resigned: tr("Letak jawatan"), terminated: tr("Ditamatkan"), retired: tr("Bersara") }[p.status as string] ?? tr("Tamat"), tone: "neutral" as const }
@@ -192,7 +194,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
   return (
     <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-5">
       <div className="flex flex-col gap-3">
-      {baru && <div className="rounded-[14px] bg-success-soft px-4 py-3 text-[13px] font-semibold text-success">{tr("Pekerja ditambah. Jemputan WhatsApp telah dimasukkan ke barisan penghantaran.")}</div>}
+      {baru && <div className="rounded-[14px] bg-success-soft px-4 py-3 text-[13px] font-semibold text-success">{saluran.whatsapp ? tr("Pekerja ditambah. Jemputan WhatsApp telah dimasukkan ke barisan penghantaran.") : tr("Pekerja ditambah. Hantar pautan jemputan di bawah melalui WhatsApp anda sendiri atau salin pautan.")}</div>}
       <div className="flex flex-col gap-2.5 rounded-card bg-surface px-4 py-3">
         <div className="flex items-center justify-between gap-2">
           <b className="text-sm font-extrabold uppercase">{p.companyName}</b>
@@ -248,8 +250,11 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
           {pautan && (
             <>
               <span className="font-mono text-xs break-all text-ink">{pautan}</span>
+              <span className="text-xs">{tr("Hantar pautan ini kepada pekerja. Pekerja membukanya dan mengesahkan 4 digit akhir kad pengenalan untuk mengaktifkan akaun.")}</span>
               <div className="flex gap-2">
-                <button type="button" onClick={() => navigator.clipboard?.writeText(pautan)} className="h-10 grow rounded-[12px] border border-line text-[13px] font-bold">
+                <button type="button" onClick={() => bukaWa(null, teksJemputan(p.name, p.companyName, pautan, p.language))} className="h-11 grow rounded-[12px] bg-primary text-[13px] font-bold text-white">
+                  {tr("Hantar melalui WhatsApp")}</button>
+                <button type="button" onClick={() => { navigator.clipboard?.writeText(pautan); beritahu(tr("Pautan disalin.")); }} className="h-11 grow rounded-[12px] border border-line text-[13px] font-bold">
                   {tr("Salin pautan")}</button>
               </div>
             </>
@@ -280,7 +285,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
             <Tindakan onClick={keDokumen} tajuk={tr("Dokumen")} keterangan={tr("Kontrak, surat tawaran, sijil")} />
             <Tindakan href={`/pembantu-ai?pekerja=${p.id}&surat=1`} ai tajuk={tr("Draf surat (AI)")} keterangan={tr("Pengesahan, amaran, tawaran, pelepasan")} />
             <Tindakan onClick={() => setLembaran("tarikh")} tajuk={tr("Tarikh tamat kontrak, permit & pasport")} keterangan={tr("Peringatan sebelum tamat")} />
-            {!p.activated && <Tindakan onClick={jemputSemula} disabled={busy} tajuk={busy ? tr("Menghantar…") : tr("Hantar semula jemputan")} keterangan={tr("Pautan pengaktifan baharu melalui WhatsApp")} />}
+            {!p.activated && <Tindakan onClick={jemputSemula} disabled={busy} tajuk={busy ? tr("Menghantar…") : tr("Hantar semula jemputan")} keterangan={saluran.whatsapp ? tr("Pautan pengaktifan baharu melalui WhatsApp") : tr("Jana pautan pengaktifan baharu untuk dihantar kepada pekerja")} />}
           </div>
           <button
             type="button"
@@ -386,7 +391,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
             setLembaran(null);
             sd.reload();
             reload();
-            beritahu(tr("Maklumat peribadi dikemas kini. Pekerja dimaklumkan melalui WhatsApp."));
+            beritahu(tr("Maklumat peribadi dikemas kini. Pekerja dimaklumkan."));
           }}
         />
       )}

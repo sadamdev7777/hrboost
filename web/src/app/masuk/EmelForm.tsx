@@ -85,7 +85,7 @@ export function EmelForm() {
         {busy ? tr("Log masuk…") : tr("Log masuk")}
       </button>
       <div className="flex flex-col items-center gap-1 rounded-[14px] bg-surface px-4 py-3 text-center text-[13px] leading-normal text-muted">
-        <span>{tr("Pekerja baharu? Buka pautan jemputan yang dihantar oleh HR melalui WhatsApp untuk mengaktifkan akaun.")}</span>
+        <span>{tr("Pekerja baharu? Buka pautan jemputan yang dihantar oleh HR untuk mengaktifkan akaun.")}</span>
         <span>
           {tr("Syarikat baharu?")}{" "}
           <Link href="/daftar" className="font-bold">

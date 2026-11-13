@@ -39,7 +39,7 @@ export function PanelPercubaan({ employmentId, onTamatkan, onUbah }: { employmen
     const ok = await sahkan(
       k === "confirmed"
         ? { tajuk: tr("Sahkan jawatan?"), mesej: tr("Tempoh percubaan tamat dan jawatan disahkan mulai hari ini."), ok: tr("Sahkan jawatan") }
-        : { tajuk: tr("Lanjutkan tempoh percubaan {0} bulan?", bulan), mesej: tr("Pekerja dimaklumkan melalui WhatsApp."), ok: tr("Lanjutkan") },
+        : { tajuk: tr("Lanjutkan tempoh percubaan {0} bulan?", bulan), mesej: tr("Pekerja dimaklumkan."), ok: tr("Lanjutkan") },
     );
     if (!ok) return;
     try {

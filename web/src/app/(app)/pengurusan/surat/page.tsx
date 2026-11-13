@@ -36,7 +36,7 @@ function Kandungan() {
   const menunggu = semua.filter((s) => s.status === "pending").length;
 
   async function keluar(id: string, nama: string, jenis: string) {
-    if (!(await sahkan({ tajuk: tr("Keluarkan {0} untuk {1}?", jenis.toLowerCase(), nama), mesej: tr("Surat dijana dengan nama anda sebagai penandatangan. Pekerja dimaklumkan melalui WhatsApp."), ok: tr("Keluarkan surat") }))) return;
+    if (!(await sahkan({ tajuk: tr("Keluarkan {0} untuk {1}?", jenis.toLowerCase(), nama), mesej: tr("Surat dijana dengan nama anda sebagai penandatangan. Pekerja dimaklumkan."), ok: tr("Keluarkan surat") }))) return;
     setSibuk(id);
     setRalat(null);
     try {

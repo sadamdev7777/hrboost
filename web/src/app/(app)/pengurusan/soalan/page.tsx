@@ -100,7 +100,7 @@ function Soalan({ q, onDone }: { q: SoalanHr; onDone: () => void }) {
     setRalat(null);
     try {
       await jawabSoalan(q.id, jawapan.trim());
-      beritahu(tr("Jawapan dihantar kepada {0} melalui WhatsApp.", q.name));
+      beritahu(tr("Jawapan dihantar kepada {0}.", q.name));
       onDone();
     } catch (e) {
       setRalat(e instanceof Error ? e.message : tr("Ralat"));

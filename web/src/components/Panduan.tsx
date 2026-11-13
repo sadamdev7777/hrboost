@@ -31,7 +31,7 @@ export const PANDUAN: Record<string, { tajuk: string; langkah: string[] }> = {
     langkah: [
       tr("Semak data: pastikan setiap pekerja ada gaji pokok. Komisen dan elaun bulan ini ditambah di sini."),
       tr("Kira: semak SEMAKAN PINTAR, iaitu perkara luar biasa seperti perubahan gaji lebih 10% atau akaun bank tiada."),
-      tr("Kelulusan: hantar kepada Kewangan dan CEO. Mereka menerima WhatsApp."),
+      tr("Kelulusan: hantar kepada Kewangan dan CEO. Mereka akan dimaklumkan."),
       tr("Bayar: muat turun fail bank, KWSP, PERKESO dan PCB, kemudian tandakan dibayar. Slip dihantar kepada pekerja."),
     ],
   },

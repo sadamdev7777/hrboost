@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
+import { useSaluran } from "@/lib/saluran";
 import { useData } from "@/lib/useData";
 import { PilihBahasaPekerja } from "@/components/PilihBahasaPekerja";
 import { getJabatan, jemputPekerja, JENIS_PEKERJAAN, setBahasaPekerja, tambahPekerja, type BorangPekerja } from "@/lib/hr";
@@ -40,6 +41,7 @@ function Borang() {
     language: "en",
   });
   const [jemput, setJemput] = useState(true);
+  const saluran = useSaluran(emp.companyId);
   const [busy, setBusy] = useState(false);
   const [ralat, setRalat] = useState<string | null>(null);
   const set = <K extends keyof BorangPekerja>(k: K, v: BorangPekerja[K]) => setF({ ...f, [k]: v });
@@ -147,7 +149,7 @@ function Borang() {
           <b className="text-ink">{tr("Ketua: {0}", ketua?.headName ?? tr("Belum ditetapkan"))}</b> {" "}{tr("(ketua jabatan {0}) · boleh ditukar kemudian", ketua?.name ?? "-")}</div>
         <label className="flex min-h-11 items-center gap-3 text-sm font-semibold">
           <input type="checkbox" checked={jemput} onChange={(e) => setJemput(e.target.checked)} className="size-5 accent-primary" />
-          {tr("Hantar jemputan WhatsApp sekarang")}</label>
+          {saluran.whatsapp ? tr("Hantar jemputan WhatsApp sekarang") : tr("Sediakan pautan jemputan sekarang")}</label>
         {ralat && <ErrorBox message={ralat} />}
       </main>
       <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">

@@ -65,7 +65,7 @@ export default function AksesSyarikatPage() {
             </span>
             <b className="text-lg font-extrabold">{tr("Menunggu kelulusan")}</b>
             <span className="text-sm leading-normal text-[#4A5A57]">
-              {tr("Akses {0} ke {1} selama {2} hari. Anda akan dimaklumkan melalui WhatsApp apabila Pentadbir Platform membuat keputusan.", PERANAN.find((p) => p.id === peranan)?.label, dihantar, hari)}</span>
+              {tr("Akses {0} ke {1} selama {2} hari. Anda akan dimaklumkan apabila Pentadbir Platform membuat keputusan.", PERANAN.find((p) => p.id === peranan)?.label, dihantar, hari)}</span>
             <Link href="/pengurusan" className="pt-2 text-sm font-bold">
               {tr("Kembali ke Papan Pemuka")}</Link>
           </div>

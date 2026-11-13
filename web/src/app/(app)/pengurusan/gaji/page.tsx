@@ -631,7 +631,7 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
             {tr("Hantar untuk kelulusan")}
           </ButangUtama>
         </div>
-        <span className="text-center text-xs text-muted">{tr("Pelulus: {0}. Mereka menerima WhatsApp bersama ringkasan ini.", data.aliran.join(" → ") || tr("CEO → Kewangan"))}</span>
+        <span className="text-center text-xs text-muted">{tr("Pelulus: {0}. Mereka dimaklumkan bersama ringkasan ini.", data.aliran.join(" → ") || tr("CEO → Kewangan"))}</span>
       </div>
     </>
   );
@@ -705,7 +705,7 @@ function PanelLaporanPekerja({ runId }: { runId: string }) {
     if (n === null) return;
     try {
       await selesaikanLaporan(id, n);
-      beritahu(tr("{0} dimaklumkan melalui WhatsApp.", nama));
+      beritahu(tr("{0} dimaklumkan.", nama));
       d.reload();
     } catch (e) {
       beritahu(e instanceof Error ? e.message : tr("Ralat"), "ralat");
@@ -931,7 +931,7 @@ function Langkah4({ data, reload }: { data: Data; reload: () => void }) {
           n={2}
           siap={dibayar}
           tajuk={tr("Tandakan telah dibayar")}
-          nota={dibayar ? tr("Slip gaji telah dihantar dan tuntutan ditanda dibayar.") : tr("Slip gaji dihantar ke WhatsApp {0} pekerja (tanpa jumlah dalam mesej) dan tuntutan {1} ditanda dibayar.", j.headcount, rm(j.claims))}
+          nota={dibayar ? tr("Slip gaji telah dihantar dan tuntutan ditanda dibayar.") : tr("{0} pekerja dimaklumkan tentang slip gaji (tanpa jumlah dalam mesej) dan tuntutan {1} ditanda dibayar.", j.headcount, rm(j.claims))}
         >
           {!dibayar && (
             <div className="flex flex-wrap items-center gap-2">
@@ -1061,7 +1061,7 @@ function PanelLepasSlip({ run, reload }: { run: Data["run"]; reload: () => void 
             </button>
           )}
         </div>
-        <span className="text-xs text-muted">{tr("Pekerja dimaklumkan melalui WhatsApp apabila slip dilepaskan (tanpa jumlah dalam mesej).")}</span>
+        <span className="text-xs text-muted">{tr("Pekerja dimaklumkan apabila slip dilepaskan (tanpa jumlah dalam mesej).")}</span>
       </div>
     </section>
   );

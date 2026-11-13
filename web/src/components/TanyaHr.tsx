@@ -66,7 +66,7 @@ export function TanyaHr() {
     try {
       await tanyaHr(emp.id, m.soalan, m.role === "assistant" ? m.text : null, true);
       setMesej((x) => x.map((y, j) => (j === i ? { ...y, dihantar: true } : y)));
-      beritahu(tr("Soalan dihantar kepada HR. Jawapan akan dihantar melalui WhatsApp."));
+      beritahu(tr("Soalan dihantar kepada HR. Anda akan dimaklumkan apabila HR menjawab."));
       sejarah.reload();
     } catch (e) {
       setRalat(e instanceof Error ? e.message : tr("Ralat"));
@@ -85,7 +85,7 @@ export function TanyaHr() {
             <div className="flex flex-col gap-1.5 rounded-card bg-[#F3F0FC] px-4 py-4">
               <b className="text-lg font-extrabold text-[#4A3B8C]">{tr("Tanya apa sahaja tentang HR")}</b>
               <span className="text-[13px] leading-normal text-[#4A3B8C]">
-                {tr("Pembantu AI menjawab serta-merta daripada data anda dan buku panduan syarikat. Jika belum jelas, tekan “Hantar kepada HR” — HR akan membalas melalui WhatsApp.")}
+                {tr("Pembantu AI menjawab serta-merta daripada data anda dan buku panduan syarikat. Jika belum jelas, tekan “Hantar kepada HR” — anda akan dimaklumkan apabila HR membalas.")}
               </span>
             </div>
             <Seksyen>{tr("CUBA TANYA")}</Seksyen>
@@ -126,7 +126,7 @@ export function TanyaHr() {
             <div key={i} className="flex max-w-[88%] flex-col gap-2 self-start">
               <div className="rounded-[16px] rounded-tl-sm bg-surface px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap">{m.text}</div>
               {m.dihantar ? (
-                <span className="px-1 text-xs font-bold text-success">{tr("✓ Dihantar kepada HR. Jawapan akan dihantar melalui WhatsApp.")}</span>
+                <span className="px-1 text-xs font-bold text-success">{tr("✓ Dihantar kepada HR. Anda akan dimaklumkan apabila HR menjawab.")}</span>
               ) : (
                 <button
                   type="button"

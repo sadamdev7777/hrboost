@@ -40,7 +40,7 @@ function Kandungan() {
     if (nota === null) return;
     try {
       await putuskanFleksibel(id, lulus, nota);
-      beritahu(tr("Keputusan dihantar kepada {0} melalui WhatsApp.", nama));
+      beritahu(tr("Keputusan dihantar kepada {0}.", nama));
       d.reload();
     } catch (e) {
       setRalat(e instanceof Error ? e.message : tr("Ralat"));

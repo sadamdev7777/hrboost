@@ -101,14 +101,16 @@ const expect = (ok, msg) => { if (!ok) throw new Error('SEMAKAN GAGAL: ' + msg);
   await p.click('button:has-text("Simpan & seterusnya")');
   await p.waitForURL('**/mula/jemput');
 
-  log('6. Langkah 6: jemput');
-  await p.waitForSelector('text=Aisyah — tiada WhatsApp');
+  log('6. Langkah 6: jemput (tanpa WhatsApp automatik: HR hantar pautan sendiri)');
+  await p.waitForSelector('text=Pautan untuk dihantar');
   await p.screenshot({ path: `${shots}/g-jemput.png` });
-  await p.click('button:has-text("Hantar 3 jemputan sekarang")');
+  await p.click('button:has-text("Sediakan 4 pautan jemputan")');
   await p.waitForURL('**/mula/selesai');
   await p.waitForSelector('text=sudah sedia!');
   const t6 = await p.innerText('main');
-  expect(t6.includes('3 jemputan dihantar') && t6.includes('Salin pautan'), '3 jemputan WhatsApp + pautan disalin untuk Aisyah');
+  const nWa = await p.locator('main button:text-is("WhatsApp")').count();
+  const nSalin = await p.locator('main button:has-text("Salin pautan")').count();
+  expect(t6.includes('Hantar pautan jemputan kepada pekerja') && nWa === 4 && nSalin === 4, `4 pautan jemputan dengan butang WhatsApp & salin (${nWa}/${nSalin})`);
   await p.screenshot({ path: `${shots}/g-selesai.png` });
   await ctx.close();
 

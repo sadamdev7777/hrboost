@@ -512,7 +512,7 @@ function SenaraiSyarikat({ companyId }: { companyId: string }) {
     setRalat(null);
     try {
       const n = await ingatkanPelulus(id);
-      beritahu(tr("Peringatan WhatsApp dihantar kepada {0}.", pelulus ?? tr("{0} pelulus", n)));
+      beritahu(tr("Peringatan dihantar kepada {0}.", pelulus ?? tr("{0} pelulus", n)));
       d.reload();
     } catch (e) {
       setRalat(e instanceof Error ? e.message : tr("Ralat"));

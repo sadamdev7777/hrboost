@@ -3,6 +3,7 @@
 import { tr, trRalat } from "@/lib/i18n";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
+import { setSaluran, useSaluran } from "@/lib/saluran";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
@@ -91,9 +92,10 @@ function Automasi() {
 
   return (
     <Screen lebar="lebar">
-      <BackHeader title={tr("Automasi WhatsApp")} href="/pengurusan/tetapan" />
+      <BackHeader title={tr("Notifikasi & automasi")} href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6">
         <GrupLajur>
+        <SaluranNotifikasi cid={cid} />
         <RingkasanHarian cid={cid} />
         <LaporanBulanan cid={cid} />
         {d.error && <ErrorBox message={d.error} />}
@@ -170,6 +172,42 @@ function Automasi() {
 }
 
 /** Ringkasan harian WhatsApp kepada HR (5:00 petang, hari bekerja). */
+/** Saluran notifikasi syarikat: loceng (sentiasa), WhatsApp (Murpati, pilihan), e-mel (pilihan). */
+function SaluranNotifikasi({ cid }: { cid: string }) {
+  const s = useSaluran(cid);
+  const [ralat, setRalat] = useState<string | null>(null);
+  async function tukar(wa: boolean, emel: boolean) {
+    setRalat(null);
+    try {
+      await setSaluran(cid, wa, emel);
+      s.reload();
+    } catch (e) {
+      setRalat(e instanceof Error ? trRalat(e.message) : tr("Ralat"));
+    }
+  }
+  if (s.muat) return null;
+  const baris: [string, string, boolean, boolean, (v: boolean) => void][] = [
+    [tr("WhatsApp"), s.whatsapp_ready ? tr("Mesej automatik kepada pekerja yang mempunyai no. WhatsApp.") : tr("Belum disambung. Jemputan dan peringatan masih boleh dihantar dari WhatsApp anda sendiri."), s.whatsapp_ready, s.company_whatsapp, (v) => tukar(v, s.company_email)],
+    [tr("E-mel"), s.email_ready ? tr("Dihantar jika WhatsApp tidak aktif atau pekerja tiada no. WhatsApp.") : tr("Belum disambung oleh Pentadbir Platform."), s.email_ready, s.company_email, (v) => tukar(s.company_whatsapp, v)],
+  ];
+  return (
+    <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3">
+      <b className="text-sm font-extrabold">{tr("Saluran notifikasi")}</b>
+      <span className="text-xs leading-snug text-muted">{tr("Semua notifikasi sentiasa dipaparkan pada loceng dalam aplikasi. WhatsApp dan e-mel ialah saluran tambahan.")}</span>
+      {baris.map(([nama, nota, sedia, hidup, ubah]) => (
+        <div key={nama} className="flex min-h-12 items-center gap-3 border-t border-[#EEF2F1] pt-2">
+          <span className="flex grow flex-col gap-0.5">
+            <b className="text-sm">{nama}</b>
+            <span className="text-xs leading-snug text-muted">{nota}</span>
+          </span>
+          {sedia ? <Suis on={hidup} label={nama} onChange={ubah} /> : <span className="text-xs font-bold text-muted">{tr("Tidak aktif")}</span>}
+        </div>
+      ))}
+      {ralat && <ErrorBox message={ralat} />}
+    </div>
+  );
+}
+
 function RingkasanHarian({ cid }: { cid: string }) {
   const d = useData(async () => {
     const sb = getSupabase();
@@ -187,7 +225,7 @@ function RingkasanHarian({ cid }: { cid: string }) {
       <div className="flex items-center gap-3">
         <span className="flex grow flex-col gap-0.5">
           <b className="text-sm font-extrabold">{tr("Ringkasan harian kepada HR")}</b>
-          <span className="text-xs leading-snug text-muted">{tr("WhatsApp setiap hari bekerja jam 5:00 petang: kelulusan tertangguh, siapa tiada, pekerja baharu esok, tarikh akhir berkanun. Tidak dihantar jika tiada apa-apa.")}</span>
+          <span className="text-xs leading-snug text-muted">{tr("Dihantar setiap hari bekerja jam 5:00 petang: kelulusan tertangguh, siapa tiada, pekerja baharu esok, tarikh akhir berkanun. Tidak dihantar jika tiada apa-apa.")}</span>
         </span>
         <Suis
           on={d.data.on}
@@ -235,7 +273,7 @@ function LaporanBulanan({ cid }: { cid: string }) {
         <span className="flex grow flex-col gap-0.5">
           <b className="text-sm font-extrabold">{tr("Laporan bulanan kepada CEO")}</b>
           <span className="text-xs leading-snug text-muted">
-            {tr("WhatsApp pada 1 haribulan jam 9:00 pagi: bilangan pekerja, kos gaji berbanding bulan lepas, cuti, MC, tuntutan dan kelulusan. Angka keseluruhan sahaja, tiada maklumat individu.")}
+            {tr("Dihantar pada 1 haribulan jam 9:00 pagi: bilangan pekerja, kos gaji berbanding bulan lepas, cuti, MC, tuntutan dan kelulusan. Angka keseluruhan sahaja, tiada maklumat individu.")}
           </span>
         </span>
         <Suis

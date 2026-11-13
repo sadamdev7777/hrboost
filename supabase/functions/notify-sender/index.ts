@@ -1,11 +1,13 @@
 // =====================================================================
-//  notify-sender — hantar notifikasi WhatsApp yang beratur (CLAUDE.md §4)
+//  notify-sender — hantar notifikasi yang beratur (CLAUDE.md §4)
 //  Jadual: setiap minit (pg_cron + pg_net, lihat README).
-//  Aliran: notify_next() [semak had, tanda skipped jika habis] → Murpati → notify_mark().
-//  Jika Murpati belum dikonfigurasi, tiada apa-apa diambil: notifikasi kekal 'pending'.
+//  Saluran: WhatsApp (Murpati, jika dikonfigurasi & syarikat membenarkan) → e-mel (Resend) →
+//  dalam aplikasi sahaja. Notifikasi sentiasa dipaparkan pada loceng dalam aplikasi; saluran luar
+//  hanyalah tambahan. notify_next2() memilih saluran bagi setiap notifikasi.
 // =====================================================================
 import { createClient } from "npm:@supabase/supabase-js@2.105.0";
 import { hantarWhatsApp, murpatiTersedia } from "../_shared/murpati.ts";
+import { emelTersedia, hantarEmelNotifikasi } from "../_shared/emel.ts";
 
 Deno.serve(async (req) => {
   // Dipanggil oleh pg_cron dengan kunci service role sahaja.
@@ -13,26 +15,28 @@ Deno.serve(async (req) => {
   if (req.headers.get("Authorization") !== `Bearer ${service}`) {
     return new Response("Tidak dibenarkan", { status: 401 });
   }
-  if (!murpatiTersedia()) {
-    return Response.json({ dihantar: 0, nota: "Murpati belum dikonfigurasi; notifikasi kekal dalam giliran." });
-  }
-
+  const wa = murpatiTersedia();
+  const emel = emelTersedia();
   const sb = createClient(Deno.env.get("SUPABASE_URL")!, service, { auth: { persistSession: false } });
-  const { data, error } = await sb.rpc("notify_next", { p_limit: 50 });
+
+  // Laporkan saluran yang tersedia supaya aplikasi memaparkan teks yang betul
+  await sb.rpc("notify_set_channels", { p_wa: wa, p_email: emel });
+
+  const { data, error } = await sb.rpc("notify_next2", { p_limit: 50, p_wa: wa, p_email: emel });
   if (error) return Response.json({ error: error.message }, { status: 500 });
 
-  let ok = 0;
-  let gagal = 0;
+  const kira = { whatsapp: 0, email: 0, gagal: 0 };
   for (const n of data ?? []) {
-    const r = await hantarWhatsApp(n.to_address, n.message);
+    const r = n.channel === "email" ? await hantarEmelNotifikasi(n.to_address, n.message, n.language) : await hantarWhatsApp(n.to_address, n.message);
     await sb.rpc("notify_mark", {
       p_id: n.id,
       p_ok: r.ok,
       p_provider_ref: r.ok ? r.ref : null,
       p_error: r.ok ? null : r.error,
     });
-    if (r.ok) ok++;
-    else gagal++;
+    if (!r.ok) kira.gagal++;
+    else if (n.channel === "email") kira.email++;
+    else kira.whatsapp++;
   }
-  return Response.json({ dihantar: ok, gagal });
+  return Response.json({ saluran: { whatsapp: wa, email: emel }, ...kira });
 });

@@ -57,7 +57,7 @@ export default function GajiPage() {
           <div className="flex flex-col gap-1.5 rounded-card bg-surface px-4 py-4">
             <b className="text-sm">{tr("Belum ada slip gaji")}</b>
             <span className="text-[13px] leading-normal text-subtle">
-              {tr("Slip gaji anda akan muncul di sini — dan dihantar ke WhatsApp — sebaik sahaja gaji bulanan {0} diluluskan dan dibayar oleh HR.", emp.companyCode)}</span>
+              {tr("Slip gaji anda akan muncul di sini, dan anda akan dimaklumkan, sebaik sahaja gaji bulanan {0} diluluskan dan dibayar oleh HR.", emp.companyCode)}</span>
           </div>
         )}
         {list.length > 0 && (
@@ -87,7 +87,7 @@ export default function GajiPage() {
           <div className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3 text-sm">
             <b className="text-sm font-extrabold">{tr("Borang EA")}</b>
             <span className="text-muted">
-              {tr("Borang EA ialah penyata saraan tahunan untuk cukai pendapatan anda (e-Filing). HR mengeluarkannya sebelum 28 Februari setiap tahun; anda akan menerima WhatsApp apabila ia tersedia.")}</span>
+              {tr("Borang EA ialah penyata saraan tahunan untuk cukai pendapatan anda (e-Filing). HR mengeluarkannya sebelum 28 Februari setiap tahun; anda akan dimaklumkan apabila ia tersedia.")}</span>
             <div className="flex flex-wrap gap-2 pt-1">
               {[new Date().getFullYear() - 1, new Date().getFullYear() - 2].map((y) => (
                 <Link key={y} href={`/gaji/ea?tahun=${y}`} className="flex h-10 items-center rounded-full border border-primary px-4 text-[13px] font-bold text-primary!">

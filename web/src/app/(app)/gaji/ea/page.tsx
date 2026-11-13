@@ -35,7 +35,7 @@ function Kandungan() {
       {d.loading && !x && <Loading />}
       {x && (!x.released || !x.row) && (
         <div className="mx-4 rounded-card bg-surface px-4 py-3 text-sm text-muted">
-          {tr("Borang EA {0} belum dikeluarkan oleh HR. Anda akan menerima WhatsApp apabila ia tersedia (sebelum 28 Februari).", tahun)}</div>
+          {tr("Borang EA {0} belum dikeluarkan oleh HR. Anda akan dimaklumkan apabila ia tersedia (sebelum 28 Februari).", tahun)}</div>
       )}
       {x?.released && x.row && x.company && (
         <>

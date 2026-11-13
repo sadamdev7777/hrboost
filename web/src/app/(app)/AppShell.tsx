@@ -60,7 +60,7 @@ function Guard({ children }: { children: ReactNode }) {
         <div className="flex grow flex-col justify-center gap-4 p-6">
           <h1 className="m-0 text-2xl font-extrabold">{tr("Akaun belum diaktifkan")}</h1>
           <p className="m-0 text-sm leading-normal text-subtle">
-            {tr("Nombor {0} belum dipautkan kepada mana-mana pekerja. Semak WhatsApp anda untuk pautan jemputan daripada HR, atau hubungi HR syarikat anda.", state.phone ? paparTelefon(state.phone) : "ini")}</p>
+            {tr("Nombor {0} belum dipautkan kepada mana-mana pekerja. Buka pautan jemputan daripada HR, atau hubungi HR syarikat anda.", state.phone ? paparTelefon(state.phone) : "ini")}</p>
           <button
             type="button"
             onClick={() => void getSupabase().auth.signOut()}

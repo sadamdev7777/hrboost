@@ -40,7 +40,7 @@ export default function PrestasiPage() {
         {d.error && <ErrorBox message={d.error} />}
         {!d.data && !d.error && <Loading />}
         {d.data && d.data.length === 0 && (
-          <div className="rounded-card bg-surface px-4 py-6 text-sm text-muted">{tr("Tiada penilaian prestasi buat masa ini. HR akan memaklumkan anda melalui WhatsApp apabila kitaran penilaian dibuka.")}</div>
+          <div className="rounded-card bg-surface px-4 py-6 text-sm text-muted">{tr("Tiada penilaian prestasi buat masa ini. Anda akan dimaklumkan apabila kitaran penilaian dibuka.")}</div>
         )}
         {nilai.length > 0 && (
           <>

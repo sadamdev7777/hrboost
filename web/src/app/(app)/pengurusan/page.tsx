@@ -582,7 +582,7 @@ function PanelBerkanun({ senarai, boleh, onTanda }: { senarai: KewajipanBerkanun
           </div>
         );
       })}
-      <span className="py-2 text-[11px] leading-snug text-muted">{tr("Tekan setiap item selepas dihantar. Peringatan WhatsApp kepada HR dan Kewangan 5 hari dan 1 hari sebelum tarikh akhir.")}</span>
+      <span className="py-2 text-[11px] leading-snug text-muted">{tr("Tekan setiap item selepas dihantar. Peringatan kepada HR dan Kewangan 5 hari dan 1 hari sebelum tarikh akhir.")}</span>
     </Panel>
   );
 }

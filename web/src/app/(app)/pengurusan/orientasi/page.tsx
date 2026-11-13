@@ -3,7 +3,9 @@
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { hasRole, useMe } from "@/lib/me";
+import { useSaluran } from "@/lib/saluran";
 import { useData } from "@/lib/useData";
 import { addDays, tarikh, tarikhTempatan, todayISO } from "@/lib/format";
 import { jemputPekerja } from "@/lib/hr";
@@ -29,6 +31,7 @@ export default function OrientasiHrPage() {
 function Kandungan() {
   const me = useMe();
   const emp = me.active!;
+  const router = useRouter();
   const d = useData(() => getOrientasiHr(emp.companyId), [emp.companyId]);
   const [tapis, setTapis] = useState<Tapis>("semua");
   const [sibuk, setSibuk] = useState<string | null>(null);
@@ -41,14 +44,23 @@ function Kandungan() {
   const tamatHampir = percubaan.filter((p) => p.probation_end_date && p.probation_end_date <= addDays(hari, 30));
   const papar = tapis === "belum_aktif" ? belumAktif : tapis === "orientasi" ? orientasi : tapis === "percubaan" ? percubaan : semua;
   const bolehJemput = hasRole(me, ["hr", "admin"]);
+  const saluran = useSaluran(me.active?.companyId);
 
   async function jemput(p: PekerjaBaharu) {
     setSibuk(p.employment_id);
     setRalat(null);
     try {
-      await jemputPekerja(p.employment_id);
-      beritahu(tr("Jemputan dihantar kepada {0} melalui WhatsApp.", p.name));
-      d.reload();
+      const tok = await jemputPekerja(p.employment_id);
+      if (saluran.whatsapp) {
+        beritahu(tr("Jemputan dihantar kepada {0} melalui WhatsApp.", p.name));
+        d.reload();
+      } else {
+        // Tiada WhatsApp automatik: buka profil pekerja yang memaparkan pautan + butang WhatsApp / salin
+        try {
+          sessionStorage.setItem(`hrb_pautan_jemputan:${p.employment_id}`, `${window.location.origin}/jemputan/${tok}`);
+        } catch {}
+        router.push(`/pengurusan/pekerja/${p.employment_id}`);
+      }
     } catch (e) {
       setRalat(e instanceof Error ? e.message : tr("Ralat"));
     } finally {

@@ -44,7 +44,7 @@ function Kandungan() {
   async function keluar() {
     if (!(await sahkan({
       tajuk: tr("Keluarkan Borang EA {0}?", tahun),
-      mesej: tr("{0} pekerja akan menerima WhatsApp dan boleh melihat serta memuat turun Borang EA di Saya → Slip Gaji. Pastikan angka telah disemak.", rows.length),
+      mesej: tr("{0} pekerja akan dimaklumkan dan boleh melihat serta memuat turun Borang EA di Saya → Slip Gaji. Pastikan angka telah disemak.", rows.length),
       ok: tr("Keluarkan"),
     }))) return;
     setBusy(true);

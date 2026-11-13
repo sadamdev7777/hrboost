@@ -52,7 +52,7 @@ export function KerangkaMasuk({ children }: { children: ReactNode }) {
         </header>
         {children}
         <div className="flex flex-col items-center gap-1.5 px-6 pb-8 text-center text-[13px] leading-normal text-muted">
-          <span>{tr("Pekerja baharu? Semak WhatsApp anda untuk pautan jemputan daripada HR.")}</span>
+          <span>{tr("Pekerja baharu? Buka pautan jemputan yang dihantar oleh HR.")}</span>
           <Link href="/jemputan" className="flex min-h-11 items-center font-bold">
             {tr("Saya mempunyai pautan jemputan")}</Link>
         </div>

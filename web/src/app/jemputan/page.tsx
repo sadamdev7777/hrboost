@@ -21,7 +21,7 @@ export default function JemputanPage() {
           e.preventDefault();
           const t = tokenDaripada(link);
           if (!t) {
-            setError(tr("Pautan tidak sah. Salin pautan penuh daripada mesej WhatsApp HR."));
+            setError(tr("Pautan tidak sah. Salin pautan penuh daripada mesej HR."));
             return;
           }
           router.push(`/jemputan/${t}`);
@@ -29,7 +29,7 @@ export default function JemputanPage() {
       >
         <h1 className="m-0 text-[22px] font-extrabold">{tr("Pautan jemputan")}</h1>
         <p className="m-0 text-sm leading-normal text-subtle">
-          {tr("HR telah menghantar pautan jemputan ke WhatsApp anda. Tekan pautan itu, atau salin dan tampal di sini.")}</p>
+          {tr("Buka pautan jemputan yang dihantar oleh HR, atau salin dan tampal di sini.")}</p>
         <label className="flex flex-col gap-1.5 text-sm font-bold">
           {tr("Pautan jemputan")}<input
             type="url"

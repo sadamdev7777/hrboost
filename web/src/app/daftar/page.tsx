@@ -112,7 +112,7 @@ export default function DaftarSyarikatPage() {
             {tr("No. WhatsApp")} <span className="font-normal text-muted">{tr("(pilihan)")}</span>
           </span>
           <input className={input} type="tel" value={f.phone} onChange={set("phone")} aria-invalid={salah === "phone" || undefined} placeholder={tr("+60 1x-xxx xxxx")} autoComplete="tel" />
-          <span className="text-xs font-normal text-muted">{tr("Untuk menerima notifikasi kelulusan melalui WhatsApp. Boleh diisi kemudian.")}</span>
+          <span className="text-xs font-normal text-muted">{tr("Untuk menerima notifikasi melalui WhatsApp dan butang hubungi. Boleh diisi kemudian.")}</span>
         </label>
         <label className="flex min-h-11 items-start gap-3 text-sm leading-normal">
           <input type="checkbox" checked={setuju} onChange={(e) => setSetuju(e.target.checked)} className="mt-0.5 size-5 shrink-0 accent-primary" />

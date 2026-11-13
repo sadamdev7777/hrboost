@@ -58,7 +58,7 @@ export function KetuaUtama() {
           </span>
           <span className="flex grow flex-col">
             <b className="text-sm">{tr("Tiada permohonan menunggu kelulusan anda")}</b>
-            <span className="text-xs text-subtle">{tr("Anda akan dimaklumkan melalui WhatsApp apabila ada permohonan baharu.")}</span>
+            <span className="text-xs text-subtle">{tr("Anda akan dimaklumkan apabila ada permohonan baharu.")}</span>
           </span>
         </Link>
       ) : (

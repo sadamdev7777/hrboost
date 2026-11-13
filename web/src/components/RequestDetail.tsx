@@ -14,6 +14,7 @@ import { IconCheck, IconSparkle } from "./icons";
 import { Avatar, BackHeader, ErrorBox, Loading, Screen, StatusPill } from "./ui";
 import { ReasonSheet } from "./ReasonSheet";
 import { urlSementara } from "@/lib/upload";
+import { bukaWa } from "@/lib/saluran";
 import { namaJenisTuntutan } from "@/lib/claims";
 
 const VIA: Record<string, string> = { web: tr("aplikasi"), whatsapp: tr("WhatsApp"), ai_agent: tr("pembantu AI"), system: tr("sistem") };
@@ -95,6 +96,23 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
     else router.push("/kelulusan");
   }
 
+  /** Pemohon: ingatkan pelulus semasa melalui WhatsApp sendiri (teks siap diisi, tanpa Murpati). */
+  async function ingatkan() {
+    setError(null);
+    const { data, error: err } = await getSupabase().rpc("approval_current_approvers", { p_request: x!.req.id });
+    if (err) return setError(mesejRalat(err.message, err.code));
+    const senarai = (data ?? []) as { name: string; phone: string | null; language: string }[];
+    const p = senarai.find((a) => a.phone) ?? senarai[0];
+    if (!p) return setError(tr("Tiada pelulus yang sedang menunggu."));
+    const tajuk = trTajuk(x!.req.title);
+    const url = `${window.location.origin}/kelulusan`;
+    bukaWa(
+      p.phone,
+      p.language === "ms"
+        ? `Assalamualaikum ${p.name}, permohonan saya (${tajuk}) sedang menunggu kelulusan anda di HRBoost: ${url}`
+        : `Hi ${p.name}, my request (${tajuk}) is waiting for your approval in HRBoost: ${url}`,
+    );
+  }
   async function batal() {
     if (!(await sahkan({ tajuk: tr("Batalkan permohonan ini?"), mesej: tr("Pelulus akan dimaklumkan. Anda boleh memohon semula kemudian."), ok: tr("Batalkan"), bahaya: true }))) return;
     setBusy(true);
@@ -279,9 +297,14 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
           </section>
         )}
         {panelKanan && canCancel && (
-          <button type="button" disabled={busy} onClick={batal} className="h-12 w-full rounded-[14px] border border-line bg-surface text-sm font-bold text-danger disabled:opacity-60">
-            {tr("Batalkan permohonan")}
-          </button>
+          <>
+            <button type="button" onClick={ingatkan} className="h-12 w-full rounded-[14px] border border-primary bg-surface text-sm font-bold text-primary">
+              {tr("Ingatkan pelulus melalui WhatsApp")}
+            </button>
+            <button type="button" disabled={busy} onClick={batal} className="h-12 w-full rounded-[14px] border border-line bg-surface text-sm font-bold text-danger disabled:opacity-60">
+              {tr("Batalkan permohonan")}
+            </button>
+          </>
         )}
         {error && <ErrorBox message={error} />}
         </div>
@@ -317,7 +340,9 @@ export function RequestDetail({ mode, tertanam }: { mode: Mode; tertanam?: { onS
       )}
 
       {!panelKanan && canCancel && (
-        <div className="bar-bawah sticky bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+        <div className="bar-bawah sticky bottom-0 grid grid-cols-2 gap-2.5 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
+          <button type="button" onClick={ingatkan} className="h-12 w-full rounded-[14px] border border-primary bg-surface text-sm font-bold text-primary">
+            {tr("Ingatkan pelulus")}</button>
           <button
             type="button"
             disabled={busy}

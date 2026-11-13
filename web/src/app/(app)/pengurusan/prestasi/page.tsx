@@ -168,7 +168,7 @@ function ButiranKitaran({ k, hr, reload, ubah }: { k: Kitaran; hr: boolean; relo
                 disabled={busy}
                 onClick={() =>
                   buat(async () => {
-                    if (!(await sahkan({ tajuk: k.status === "draft" ? tr("Buka kitaran penilaian?") : tr("Tambah pekerja baharu?"), mesej: tr("Setiap pekerja aktif menerima penilaian dengan KPI kitaran ini dan dimaklumkan melalui WhatsApp. HR boleh mengubah KPI bagi setiap pekerja selepas itu."), ok: tr("Buka") }))) return;
+                    if (!(await sahkan({ tajuk: k.status === "draft" ? tr("Buka kitaran penilaian?") : tr("Tambah pekerja baharu?"), mesej: tr("Setiap pekerja aktif menerima penilaian dengan KPI kitaran ini dan dimaklumkan. HR boleh mengubah KPI bagi setiap pekerja selepas itu."), ok: tr("Buka") }))) return;
                     const n = await bukaKitaran(k.id);
                     beritahu(tr("{0} pekerja dimaklumkan.", n));
                   })
