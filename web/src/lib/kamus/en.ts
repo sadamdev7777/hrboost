@@ -2768,6 +2768,7 @@ export const EN: Record<string, string> = {
  "Skrin sebenar HRBoost — di telefon untuk pekerja, di komputer untuk HR. Contoh menggunakan data demo.": "Real HRBoost screens — on the phone for employees, on the computer for HR. Examples use demo data.",
  "Skrin utama pekerja: baki cuti, permohonan dan kehadiran": "Employee home screen: leave balance, requests and attendance",
  "Skrin, mesej WhatsApp dan slip gaji": "Screens, WhatsApp messages and payslips",
+ "Skrin, notifikasi dan slip gaji": "Screens, notifications and payslips",
  "Slip Gaji": "Payslip",
  "Slip akan dilepaskan pada {0}.": "Payslips will be released on {0}.",
  "Slip belum dilepaskan. Pekerja belum boleh melihat slip ini.": "Payslips not released yet. Employees cannot see them.",

@@ -156,7 +156,7 @@ export function ClaimForm({ claimId, initial }: { claimId?: string; initial?: It
           </div>
           {error && <ErrorBox message={error} />}
           {perbatuan && (
-            <button type="button" onClick={() => setTanpaResit(true)} className="mt-auto min-h-11 text-center text-[13px] font-bold text-primary">
+            <button type="button" onClick={() => setTanpaResit(true)} className="mt-auto min-h-11 text-center text-[13px] font-bold text-primary lg:mt-1 lg:self-start lg:text-left">
               {tr("Tuntutan perbatuan? Isi tanpa resit")}</button>
           )}
         </main>

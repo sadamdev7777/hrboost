@@ -11,7 +11,7 @@ import { LABEL_STATUS, inisial, type StatusPermohonan } from "@/lib/format";
 
 const LEBAR = {
   sempit: "lg:max-w-[560px]",
-  sederhana: "lg:max-w-[760px] 2xl:max-w-[840px]",
+  sederhana: "lg:max-w-[880px] 2xl:max-w-[960px]",
   lebar: "lg:max-w-[1240px] 2xl:max-w-[1560px]",
 } as const;
 
@@ -23,7 +23,8 @@ const LEBAR = {
  */
 export function Screen({ children, lebar = "lebar" }: { children: ReactNode; lebar?: keyof typeof LEBAR }) {
   // "sempit" = halaman awam / di luar aplikasi (tanpa menu sisi): kekal di tengah.
-  const kiri = lebar === "sempit" ? "" : "lg:mx-0 lg:px-8 2xl:mx-auto 2xl:px-10";
+  // "sederhana" (borang, butiran) = lajur sederhana di tengah ruang kandungan, bukan terhimpit di kiri seperti telefon.
+  const kiri = lebar === "sempit" ? "" : lebar === "sederhana" ? "lg:px-8 2xl:px-10" : "lg:mx-0 lg:px-8 2xl:mx-auto 2xl:px-10";
   return <div className={`mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-page text-ink ${kiri} ${LEBAR[lebar]}`}>{children}</div>;
 }
 

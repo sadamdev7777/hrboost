@@ -68,7 +68,7 @@ export default function SayaPage() {
         </Link>
         {!lebar && <TukarMod />}
 
-        <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
+        <div className={`flex flex-col gap-4 lg:items-start lg:gap-6 ${pengurusan ? "lg:grid lg:grid-cols-2" : "lg:grid lg:grid-cols-1"}`}>
         <Kumpulan tajuk={tr("MENU SAYA")}>
           <Baris href="/cuti" icon={<IconCalendar size={18} />} label={tr("Cuti")}>
             {baki.data?.AL && <span className="text-[13px] text-muted">{tr("Baki {0}", hari(baki.data.AL.available))}</span>}
@@ -111,10 +111,11 @@ export default function SayaPage() {
         )}
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-surface px-4 py-3 lg:max-w-[480px]">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-surface px-4 py-3 lg:grow">
           <span className="flex flex-col">
             <b className="text-sm font-bold">{tr("Bahasa")}</b>
-            <span className="text-xs text-muted">{tr("Skrin, mesej WhatsApp dan slip gaji")}</span>
+            <span className="text-xs text-muted">{tr("Skrin, notifikasi dan slip gaji")}</span>
           </span>
           <PilihBahasa simpan />
         </div>
@@ -122,9 +123,10 @@ export default function SayaPage() {
         <button
           type="button"
           onClick={logKeluar}
-          className="h-12 rounded-[14px] border lg:w-60 border-line bg-surface text-sm font-bold text-danger"
+          className="h-12 rounded-[14px] border border-line bg-surface text-sm font-bold text-danger lg:h-[72px] lg:w-60 lg:shrink-0"
         >
           {tr("Log keluar")}</button>
+        </div>
       </main>
       <TabNav />
     </Screen>
