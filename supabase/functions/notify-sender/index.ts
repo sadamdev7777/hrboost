@@ -10,14 +10,18 @@ import { hantarWhatsApp, murpatiTersedia } from "../_shared/murpati.ts";
 import { emelTersedia, hantarEmelNotifikasi } from "../_shared/emel.ts";
 
 Deno.serve(async (req) => {
-  // Dipanggil oleh pg_cron dengan kunci service role sahaja.
+  // Dipanggil oleh pg_cron: sama ada kunci service role, atau rahsia jadual (x-cron-secret) yang
+  // disimpan dalam Vault ('notify_cron_secret') dan disemak melalui notify_cron_check().
   const service = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  if (req.headers.get("Authorization") !== `Bearer ${service}`) {
-    return new Response("Tidak dibenarkan", { status: 401 });
+  const sb = createClient(Deno.env.get("SUPABASE_URL")!, service, { auth: { persistSession: false } });
+  let dibenarkan = req.headers.get("Authorization") === `Bearer ${service}`;
+  if (!dibenarkan) {
+    const rahsia = req.headers.get("x-cron-secret");
+    if (rahsia) dibenarkan = (await sb.rpc("notify_cron_check", { p_secret: rahsia })).data === true;
   }
+  if (!dibenarkan) return new Response("Tidak dibenarkan", { status: 401 });
   const wa = murpatiTersedia();
   const emel = emelTersedia();
-  const sb = createClient(Deno.env.get("SUPABASE_URL")!, service, { auth: { persistSession: false } });
 
   // Laporkan saluran yang tersedia supaya aplikasi memaparkan teks yang betul
   await sb.rpc("notify_set_channels", { p_wa: wa, p_email: emel });

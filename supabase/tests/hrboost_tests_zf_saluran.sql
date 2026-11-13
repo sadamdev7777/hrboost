@@ -80,6 +80,22 @@ do $$ begin
   assert (select channel from _r4 where id = (select id from _n where nama = 'g')) = 'email', 'WhatsApp dimatikan syarikat → e-mel';
 end $$;
 
+\echo '=== S4b: senarai e-mel dibenarkan (staging) ==='
+reset test.role;
+insert into platform_settings(key, value) values ('email_allowlist', '["LILY@contoh.my"]');
+select pg_temp.baru('h', '1'); select pg_temp.baru('i', '3');
+set test.role = 'service_role';
+create temp table _r5 as select * from notify_next2(50, false, true);
+grant select on _r5 to public;
+do $$ begin
+  assert (select channel from _r5 where id = (select id from _n where nama = 'h')) = 'email', 'Lily dalam senarai → e-mel';
+  assert (select status from notifications where id = (select id from _n where nama = 'i')) = 'skipped', 'Zul bukan dalam senarai → dalam aplikasi';
+  assert (select error from notifications where id = (select id from _n where nama = 'i')) like 'Bukan dalam senarai%', 'sebab dicatat';
+  assert notify_cron_check('x') = false, 'rahsia jadual pendek ditolak';
+end $$;
+reset test.role;
+delete from platform_settings where key = 'email_allowlist';
+
 \echo '=== S5: notify_channels untuk ahli syarikat ==='
 reset test.role;
 set test.role='authenticated'; set test.uid='00000000-0000-0000-0000-00000000a002';
