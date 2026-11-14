@@ -6,7 +6,7 @@
 //  POST { action: "reset", token, ic4, password }
 //       → sahkan token + 4 digit akhir kad pengenalan (5 cubaan), tukar kata laluan,
 //         tamatkan semua sesi lama.
-//  Rahsia: RESEND_API_KEY (Supabase secrets sahaja). Pilihan: EMAIL_FROM, APP_URL, RESEND_API_URL.
+//  Rahsia: RESEND_API_KEY (Supabase secrets) atau kunci Resend dalam Vault (diisi di /admin/tetapan). Pilihan: EMAIL_FROM, APP_URL, RESEND_API_URL.
 //  Pautan dibina daripada Origin permintaan jika ia dalam senarai alamat aplikasi yang dibenarkan.
 // =====================================================================
 import { createClient } from "npm:@supabase/supabase-js@2.105.0";
@@ -30,10 +30,10 @@ function esc(s: string) {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 }
 
-async function hantarEmel(ke: string, nama: string, pautan: string) {
+async function hantarEmel(ke: string, nama: string, pautan: string, kunci: string) {
   const res = await fetch(Deno.env.get("RESEND_API_URL") ?? "https://api.resend.com/emails", {
     method: "POST",
-    headers: { Authorization: `Bearer ${Deno.env.get("RESEND_API_KEY")}`, "Content-Type": "application/json" },
+    headers: { Authorization: `Bearer ${kunci}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       from: Deno.env.get("EMAIL_FROM") ?? "HRBoost <no-reply@hrboost.io>",
       to: [ke],
@@ -64,8 +64,10 @@ Deno.serve(async (req) => {
     if (body.action === "request") {
       const email = String(body.email ?? "").trim();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error: "Sila masukkan alamat e-mel yang sah." }, 400);
-      if (!Deno.env.get("RESEND_API_KEY")) {
-        return json({ code: "tiada_emel", error: "Penghantaran e-mel belum diaktifkan. Sila log masuk dengan kod WhatsApp." }, 503);
+      // Kunci: Supabase secrets, atau yang diisi oleh Pentadbir Platform di /admin/tetapan (Vault)
+      const kunci = Deno.env.get("RESEND_API_KEY") ?? ((await db.rpc("platform_secret_get", { p_name: "resend_api_key" })).data as string | null);
+      if (!kunci) {
+        return json({ code: "tiada_emel", error: "Penghantaran e-mel belum diaktifkan. Sila hubungi HR syarikat anda." }, 503);
       }
       const { data, error } = await db.rpc("password_reset_create", { p_email: email });
       if (error) throw error;
@@ -77,7 +79,7 @@ Deno.serve(async (req) => {
           .map((x) => x.replace(/\/$/, ""));
         const origin = (req.headers.get("origin") ?? "").replace(/\/$/, "");
         const asas = dibenar.includes(origin) ? origin : dibenar[0];
-        await hantarEmel(r.email, r.name, `${asas}/masuk/set-semula?t=${r.token}`);
+        await hantarEmel(r.email, r.name, `${asas}/masuk/set-semula?t=${r.token}`, kunci);
       }
       return json({ ok: true });
     }

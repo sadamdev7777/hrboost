@@ -415,4 +415,7 @@ export const RALAT: Record<string, string> = {
  "Anda tidak boleh memuktamadkan penilaian anda sendiri": "You cannot finalise your own review",
  "Pelulus tidak sah": "Invalid reviewer",
  "Sekurang-kurangnya satu KPI diperlukan": "At least one KPI is required",
+ "Kunci Resend tidak sah (mesti bermula dengan re_)": "Invalid Resend key (must start with re_)",
+ "Akaun anda tiada alamat e-mel": "Your account has no email address",
+ "Rahsia tidak dikenali": "Unknown secret",
 };

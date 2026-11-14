@@ -14,6 +14,18 @@ export function emelTersedia(): boolean {
   return !!Deno.env.get("RESEND_API_KEY");
 }
 
+/**
+ * Kunci Resend: pembolehubah persekitaran (Supabase secrets) diutamakan; jika tiada, kunci yang
+ * diisi oleh Pentadbir Platform di /admin/tetapan (Vault, melalui platform_secret_get).
+ */
+// deno-lint-ignore no-explicit-any
+export async function kunciResend(sb: any): Promise<string | null> {
+  const env = Deno.env.get("RESEND_API_KEY");
+  if (env) return env;
+  const { data } = await sb.rpc("platform_secret_get", { p_name: "resend_api_key" });
+  return typeof data === "string" && data ? data : null;
+}
+
 function esc(s: string) {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 }
@@ -24,8 +36,8 @@ function pautkan(html: string) {
 }
 
 /** Hantar notifikasi teks sebagai e-mel ringkas. `bahasa`: 'ms' | 'en'. */
-export async function hantarEmelNotifikasi(ke: string, mesej: string, bahasa: string): Promise<HasilEmel> {
-  const key = Deno.env.get("RESEND_API_KEY");
+export async function hantarEmelNotifikasi(ke: string, mesej: string, bahasa: string, kunci?: string | null): Promise<HasilEmel> {
+  const key = kunci ?? Deno.env.get("RESEND_API_KEY");
   if (!key) return { ok: false, error: "Resend belum dikonfigurasi" };
   const ms = bahasa === "ms";
   const app = (Deno.env.get("APP_URL") ?? "https://hrboost.io").replace(/\/$/, "");

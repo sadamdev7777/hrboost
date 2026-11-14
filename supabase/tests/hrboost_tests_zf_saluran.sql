@@ -111,3 +111,25 @@ do $$ begin assert notify_channels('00000000-0000-0000-0000-0000000000c1') is nu
 select notify_next2(1, true, true);   -- bukan service role
 \set ON_ERROR_STOP 1
 reset test.uid; reset test.role;
+
+\echo '=== S6: rahsia platform (kunci Resend) — superadmin sahaja, nilai tidak dipulangkan ==='
+insert into platform_admins(person_id) values ('00000000-0000-0000-0000-000000000004');
+set test.role='authenticated'; set test.uid='00000000-0000-0000-0000-00000000a001';   -- HR biasa
+\set ON_ERROR_STOP 0
+select sa_platform_secret_set('resend_api_key', 're_1234567890abcdefghij');
+\set ON_ERROR_STOP 1
+set test.uid='00000000-0000-0000-0000-00000000a004';   -- superadmin
+\set ON_ERROR_STOP 0
+select sa_platform_secret_set('resend_api_key', 'bukan-kunci');
+\set ON_ERROR_STOP 1
+select sa_platform_secret_set('resend_api_key', 're_1234567890abcdefghijWXYZ');
+select * from sa_platform_secrets();
+do $$ begin
+  assert (select is_set and hint = 'WXYZ' from sa_platform_secrets() where name = 'resend_api_key'), 'status & 4 aksara akhir';
+end $$;
+\set ON_ERROR_STOP 0
+select platform_secret_get('resend_api_key');   -- bukan service role
+\set ON_ERROR_STOP 1
+reset test.uid; set test.role = 'service_role';
+do $$ begin assert platform_secret_get('resend_api_key') = 're_1234567890abcdefghijWXYZ', 'Edge Function membaca kunci'; end $$;
+reset test.role;
