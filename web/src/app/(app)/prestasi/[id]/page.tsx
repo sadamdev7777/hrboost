@@ -25,6 +25,7 @@ import {
   type Penilaian,
 } from "@/lib/prestasi";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
+import { PenilaianWizard } from "@/components/PenilaianWizard";
 import { ButangUtama, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
 import { beritahu, sahkan } from "@/components/Dialog";
 
@@ -32,6 +33,7 @@ import { beritahu, sahkan } from "@/components/Dialog";
 export default function PenilaianPrestasiPage() {
   const { id } = useParams<{ id: string }>();
   const d = useData(() => getPenilaian(id), [id]);
+  const router = useRouter();
   return (
     <Screen lebar="sederhana">
       <BackHeader title={tr("Penilaian prestasi")} href={d.data && (d.data.role === "hr" || d.data.role === "ceo") ? "/pengurusan/prestasi" : "/prestasi"} />
@@ -41,7 +43,19 @@ export default function PenilaianPrestasiPage() {
         </div>
       )}
       {!d.data && !d.error && <Loading />}
-      {d.data && <Borang key={JSON.stringify(d.data.items.map((i) => i.id)) + d.data.status} p={d.data} reload={d.reload} />}
+      {d.data && d.data.role === "self" && d.data.status === "self" && d.data.cycle.status === "open" ? (
+        <PenilaianWizard
+          id={d.data.id}
+          kitaran={d.data.cycle.name}
+          tarikhAkhir={d.data.cycle.self_due}
+          pelulus={d.data.reviewer}
+          items={d.data.items}
+          ulasanAwal={d.data.self_comment}
+          onSelesai={() => router.push("/prestasi")}
+        />
+      ) : (
+        d.data && <Borang key={JSON.stringify(d.data.items.map((i) => i.id)) + d.data.status} p={d.data} reload={d.reload} />
+      )}
     </Screen>
   );
 }

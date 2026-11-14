@@ -6,6 +6,14 @@ import { must } from "./useData";
 
 // Penilaian prestasi & KPI (migrasi 20261214000600_prestasi_kpi.sql)
 export const SKALA_PRESTASI = [tr("Lemah"), tr("Kurang memuaskan"), tr("Memuaskan"), tr("Baik"), tr("Cemerlang")];
+/** Maksud setiap markah, dipaparkan kepada pekerja semasa penilaian kendiri. */
+export const HURAIAN_SKALA = [
+  tr("Jauh di bawah jangkaan"),
+  tr("Sebahagian sasaran dicapai"),
+  tr("Memenuhi jangkaan"),
+  tr("Melebihi jangkaan"),
+  tr("Jauh melebihi jangkaan"),
+];
 export type StatusPenilaian = "self" | "manager" | "hr" | "final";
 export const LABEL_STATUS_PENILAIAN: Record<StatusPenilaian, { l: string; tone: "warning" | "neutral" | "success" }> = {
   self: { l: tr("Penilaian kendiri"), tone: "warning" },

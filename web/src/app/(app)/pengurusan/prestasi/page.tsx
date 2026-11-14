@@ -155,6 +155,9 @@ function ButiranKitaran({ k, hr, reload, ubah }: { k: Kitaran; hr: boolean; relo
           <span className="text-[13px] text-muted">{tr("{0} KPI: {1}", k.template.length, k.template.map((t) => t.title).join(", ") || "-")}</span>
         )}
         {k.avg_rating != null && <span className="text-[13px] text-muted">{tr("Purata markah akhir: {0} / 5", markahTeks(k.avg_rating))}</span>}
+        <Link href={`/pengurusan/prestasi/pratonton?k=${k.id}`} className="flex min-h-11 items-center self-start text-[13px] font-bold text-primary">
+          {tr("Pratonton seperti pekerja")}
+        </Link>
         {hr && (
           <div className="flex flex-wrap gap-2 pt-1">
             {k.status !== "closed" && (
