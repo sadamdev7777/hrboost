@@ -73,12 +73,13 @@ const sahkanDialog = async (p, ok) => {
   await p.goto(BASE + '/pengurusan/prestasi');
   await p.click(V('button:has-text("+ Kitaran baharu")'));
   await p.fill(V('[role=dialog] label:has-text("Nama kitaran") input'), 'Penilaian E2E');
-  expect(await p.locator('[role=dialog] input[aria-label^="Pemberat KPI"]').count() === 0, 'pemberat disorok secara lalai (semua KPI sama)');
-  await p.click(V('[role=dialog] label:has-text("Beri pemberat berbeza") input'));
-  await p.waitForSelector(V('[role=dialog] >> text=Jumlah: 100%'));
-  const berat = ['40', '30', '20', '10'];
-  for (let i = 0; i < berat.length; i++) await p.fill(`[role=dialog] input[aria-label="Pemberat KPI ${i + 1}"]`, berat[i]);
-  expect(await p.locator(V('[role=dialog] >> text=Jumlah: 100%')).count() > 0, 'pemberat 40/30/20/10 = 100%');
+  expect(await p.locator(V('[role=dialog] >> text=Semua KPI sama penting.')).count() > 0, 'lalai: semua KPI sama penting');
+  expect(await p.locator('[role=dialog] input[aria-label*="Pemberat"]').count() === 0, 'tiada medan peratus untuk diisi');
+  await p.click(V('[role=dialog] [aria-label="Kepentingan KPI 1"] >> button:has-text("Sangat penting")'));
+  await p.click(V('[role=dialog] [aria-label="Kepentingan KPI 2"] >> button:text-is("Penting")'));
+  const ringkas = await p.innerText(V('[role=dialog] >> text=Sumbangan kepada markah akhir:'));
+  log('    ' + ringkas);
+  expect(/Pencapaian sasaran kerja 43%/.test(await p.innerText('[role=dialog]')), 'sumbangan dikira automatik: 43/29/14/14');
   await p.click(V('[role=dialog] button:has-text("Simpan")'));
   await p.waitForSelector(V('button:has-text("Buka kepada pekerja")'), { timeout: 20000 });
   await p.click(V('button:has-text("Buka kepada pekerja")'));
@@ -101,9 +102,9 @@ const sahkanDialog = async (p, ok) => {
   expect(await p.locator(V('text=4 KPI')).count() > 0, 'skrin pengenalan: 4 KPI');
   await p.click(V('button:has-text("Mula")'));
   await p.waitForSelector(V('text=KPI 1 DARIPADA 4'));
-  expect(await p.locator(V('text=Pemberat 40%')).count() > 0, 'pekerja nampak pemberat dalam peratus');
+  expect(await p.locator(V('text=Kepentingan: Sangat penting (43%)')).count() > 0, 'pekerja nampak tahap kepentingan');
   expect(await p.locator(V('text=Memenuhi jangkaan')).count() > 0, 'setiap markah ada huraian');
-  expect(await p.locator('input[aria-label^="Pemberat"]').count() === 0, 'pekerja tidak boleh mengubah KPI');
+  expect(await p.locator('[aria-label^="Kepentingan KPI"]').count() === 0, 'pekerja tidak boleh mengubah KPI');
   await p.screenshot({ path: `${shots}/prestasi-kpi.png` });
   const pilih4 = async () => {
     await p.locator('[role=radiogroup][aria-label^="Markah kendiri"] [role=radio]').nth(3).click();

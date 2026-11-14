@@ -150,3 +150,12 @@ export const peratusBerat = (w: number, items: { weight: number }[]) => {
   return j ? Math.round((Number(w) * 100) / j) : 0;
 };
 export const markahTeks = (n: number | null | undefined) => (n == null ? "-" : Number(n).toFixed(2));
+
+/** Tahap kepentingan KPI (disimpan sebagai pemberat relatif 1/2/3). */
+export const TAHAP_KEPENTINGAN = [
+  { w: 1, l: "Biasa" },
+  { w: 2, l: "Penting" },
+  { w: 3, l: "Sangat penting" },
+] as const;
+/** Label tahap kepentingan (belum diterjemah); null jika pemberat tersuai (cth. 40). */
+export const labelKepentingan = (w: number) => TAHAP_KEPENTINGAN.find((t) => t.w === Number(w))?.l ?? null;

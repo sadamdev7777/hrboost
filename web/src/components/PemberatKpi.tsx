@@ -1,48 +1,51 @@
 "use client";
 
 import { tr } from "@/lib/i18n";
-import { inputKecil } from "@/components/Senarai";
+import { beratSama, labelKepentingan, peratusBerat, TAHAP_KEPENTINGAN } from "@/lib/prestasi";
 
-/** Jumlah peratus pemberat sah? (setiap KPI ≥ 1% dan jumlah tepat 100%) */
-export const pemberatSah = (items: { weight: number }[]) =>
-  items.every((x) => Number(x.weight) >= 1) && items.reduce((a, x) => a + (Number(x.weight) || 0), 0) === 100;
-
-/** Suis "Beri pemberat berbeza" + jumlah semasa. Mati = semua KPI sama berat. */
-export function SuisPemberat({ berbeza, onUbah, items, disabled }: { berbeza: boolean; onUbah: (v: boolean) => void; items: { weight: number }[]; disabled?: boolean }) {
-  const jumlah = items.reduce((a, x) => a + (Number(x.weight) || 0), 0);
+/** Pilih kepentingan satu KPI: Biasa / Penting / Sangat penting (pemberat relatif 1/2/3). */
+export function PilihKepentingan({ nilai, onUbah, label, disabled }: { nilai: number; onUbah: (n: number) => void; label: string; disabled?: boolean }) {
+  const tersuai = !TAHAP_KEPENTINGAN.some((t) => t.w === Number(nilai));
   return (
     <div className="flex flex-col gap-1">
-      <label className="flex min-h-11 items-center gap-3 text-sm">
-        <input type="checkbox" className="size-5 accent-primary" disabled={disabled} checked={berbeza} onChange={(e) => onUbah(e.target.checked)} />
-        <span className="flex flex-col">
-          <b className="font-bold">{tr("Beri pemberat berbeza")}</b>
-          <span className="text-xs text-muted">
-            {berbeza ? tr("Tetapkan peratus bagi setiap KPI. Jumlah mesti 100%.") : tr("Semua KPI sama penting. Hidupkan jika sesetengah KPI lebih penting.")}
-          </span>
-        </span>
-      </label>
-      {berbeza && (
-        <span className={`text-[13px] font-bold ${jumlah === 100 ? "text-primary" : "text-warning"}`}>
-          {jumlah === 100 ? tr("Jumlah: 100%") : tr("Jumlah: {0}% — perlu tepat 100%", jumlah)}
-        </span>
-      )}
+      <div role="radiogroup" aria-label={label} className="grid grid-cols-3 gap-1 rounded-[12px] bg-page p-1">
+        {TAHAP_KEPENTINGAN.map((t) => {
+          const on = Number(nilai) === t.w;
+          return (
+            <button
+              key={t.w}
+              type="button"
+              role="radio"
+              aria-checked={on}
+              disabled={disabled}
+              onClick={() => onUbah(t.w)}
+              className={`min-h-11 rounded-[10px] px-2 text-[13px] font-bold leading-tight disabled:opacity-60 ${on ? "bg-primary text-white" : "text-muted"}`}
+            >
+              {tr(t.l)}
+            </button>
+          );
+        })}
+      </div>
+      {tersuai && <span className="text-xs text-muted">{tr("Pemberat tersuai: {0}. Pilih satu tahap untuk menukar.", nilai)}</span>}
     </div>
   );
 }
 
-/** Medan peratus pemberat satu KPI. */
-export function InputPeratus({ nilai, onUbah, label, disabled }: { nilai: number; onUbah: (n: number) => void; label: string; disabled?: boolean }) {
+/** Ringkasan automatik: sumbangan setiap KPI kepada markah akhir. */
+export function RingkasanSumbangan({ items }: { items: { title: string; weight: number }[] }) {
+  const isi = items.filter((x) => x.title.trim());
+  if (!isi.length) return null;
+  if (beratSama(isi)) return <span className="text-xs leading-snug text-muted">{tr("Semua KPI sama penting.")}</span>;
   return (
-    <span className="relative flex items-center">
-      <input
-        className={`${inputKecil} w-full pr-7`}
-        inputMode="numeric"
-        disabled={disabled}
-        aria-label={label}
-        value={nilai ? String(nilai) : ""}
-        onChange={(e) => onUbah(Math.min(100, Number(e.target.value.replace(/\D/g, "")) || 0))}
-      />
-      <span className="pointer-events-none absolute right-3 text-sm text-muted">%</span>
+    <span className="rounded-[12px] bg-[#E3F1EE] px-3 py-2 text-xs leading-snug text-primary">
+      <b className="font-bold">{tr("Sumbangan kepada markah akhir:")}</b> {isi.map((x) => `${x.title} ${peratusBerat(x.weight, isi)}%`).join(" · ")}
     </span>
   );
+}
+
+/** Teks kepentingan untuk paparan baca sahaja, cth. "Kepentingan: Sangat penting (43%)". */
+export function teksKepentingan(w: number, items: { weight: number }[]) {
+  const l = labelKepentingan(w);
+  const pct = peratusBerat(w, items);
+  return l ? tr("Kepentingan: {0} ({1}%)", tr(l), pct) : tr("Kepentingan: {0}%", pct);
 }

@@ -6,13 +6,11 @@ import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { tarikh, todayISO } from "@/lib/format";
-import { InputPeratus, SuisPemberat, pemberatSah } from "@/components/PemberatKpi";
+import { PilihKepentingan, RingkasanSumbangan } from "@/components/PemberatKpi";
 import {
-  beratSama,
   bukaKitaran,
   getKitaran,
   getSenaraiKitaran,
-  kePeratus,
   LABEL_STATUS_PENILAIAN,
   markahTeks,
   simpanKitaran,
@@ -248,24 +246,18 @@ function BorangKitaran({ cid, k, tutup, selesai }: { cid: string; k: Kitaran | n
         { title: tr("Kerjasama & komunikasi"), description: null, target: null, weight: 1 },
         { title: tr("Disiplin & kehadiran"), description: null, target: null, weight: 1 },
       ];
-  const [berbeza, setBerbeza] = useState(!beratSama(asal));
-  const [kpi, setKpi] = useState<ItemKpi[]>(beratSama(asal) ? asal : kePeratus(asal));
+  const [kpi, setKpi] = useState<ItemKpi[]>(asal);
   const [busy, setBusy] = useState(false);
   const [ralat, setRalat] = useState<string | null>(null);
   const draf = !k || k.status === "draft";
   const set = (n: keyof typeof f) => (e: { target: { value: string } }) => setF({ ...f, [n]: e.target.value });
 
-  function tukarBerbeza(v: boolean) {
-    setBerbeza(v);
-    setKpi(v ? kePeratus(kpi.map((x) => ({ ...x, weight: 1 }))) : kpi.map((x) => ({ ...x, weight: 1 })));
-  }
   async function simpan() {
     const isi = kpi.filter((x) => x.title.trim());
-    if (berbeza && !pemberatSah(isi)) return setRalat(tr("Jumlah pemberat mesti tepat 100%."));
     setBusy(true);
     setRalat(null);
     try {
-      const id = await simpanKitaran(cid, k?.id ?? null, { ...f, template: isi.map((x) => ({ ...x, weight: berbeza ? x.weight : 1 })) });
+      const id = await simpanKitaran(cid, k?.id ?? null, { ...f, template: isi });
       beritahu(tr("Kitaran disimpan."));
       selesai(id);
     } catch (e) {
@@ -299,21 +291,23 @@ function BorangKitaran({ cid, k, tutup, selesai }: { cid: string; k: Kitaran | n
             ? tr("KPI ini disalin kepada setiap pekerja apabila kitaran dibuka. Selepas itu, HR boleh mengubah KPI bagi setiap pekerja dalam penilaian masing-masing.")
             : tr("KPI kitaran tidak boleh diubah selepas kitaran dibuka. Ubah KPI dalam penilaian setiap pekerja.")}
         </span>
-        <SuisPemberat berbeza={berbeza} onUbah={tukarBerbeza} items={kpi} disabled={!draf} />
         {kpi.map((x, i) => (
-          <div key={i} className={`grid ${berbeza ? "grid-cols-[1fr_96px_auto]" : "grid-cols-[1fr_auto]"} items-center gap-2`}>
-            <input className={inputKecil} disabled={!draf} value={x.title} placeholder={tr("Nama KPI")} aria-label={tr("KPI {0}", i + 1)} onChange={(e) => setKpi(kpi.map((y, j) => (j === i ? { ...y, title: e.target.value } : y)))} />
-            {berbeza && <InputPeratus nilai={x.weight} disabled={!draf} label={tr("Pemberat KPI {0}", i + 1)} onUbah={(n) => setKpi(kpi.map((y, j) => (j === i ? { ...y, weight: n } : y)))} />}
-            <button type="button" disabled={!draf || kpi.length <= 1} aria-label={tr("Buang KPI {0}", x.title)} onClick={() => setKpi(kpi.filter((_, j) => j !== i))} className="flex size-11 items-center justify-center text-lg text-danger disabled:opacity-40">
-              ×
-            </button>
+          <div key={i} className="flex flex-col gap-1.5 rounded-[14px] border border-line p-2.5">
+            <div className="grid grid-cols-[1fr_auto] items-center gap-2">
+              <input className={inputKecil} disabled={!draf} value={x.title} placeholder={tr("Nama KPI")} aria-label={tr("KPI {0}", i + 1)} onChange={(e) => setKpi(kpi.map((y, j) => (j === i ? { ...y, title: e.target.value } : y)))} />
+              <button type="button" disabled={!draf || kpi.length <= 1} aria-label={tr("Buang KPI {0}", x.title)} onClick={() => setKpi(kpi.filter((_, j) => j !== i))} className="flex size-11 items-center justify-center text-lg text-danger disabled:opacity-40">
+                ×
+              </button>
+            </div>
+            <PilihKepentingan nilai={x.weight} disabled={!draf} label={tr("Kepentingan KPI {0}", i + 1)} onUbah={(n) => setKpi(kpi.map((y, j) => (j === i ? { ...y, weight: n } : y)))} />
           </div>
         ))}
         {draf && kpi.length < 20 && (
-          <button type="button" onClick={() => setKpi([...kpi, { title: "", description: null, target: null, weight: berbeza ? 0 : 1 }])} className="flex min-h-11 items-center self-start text-sm font-bold text-primary">
+          <button type="button" onClick={() => setKpi([...kpi, { title: "", description: null, target: null, weight: 1 }])} className="flex min-h-11 items-center self-start text-sm font-bold text-primary">
             {tr("+ Tambah KPI")}
           </button>
         )}
+        <RingkasanSumbangan items={kpi} />
         <span className="text-xs leading-snug text-muted">
           {tr("Setiap KPI dinilai pada skala 1–5 (1 = Lemah, 5 = Cemerlang). Pelulus: ketua jabatan menilai pekerja, CEO menilai ketua jabatan. Jika jabatan tiada ketua, HR menetapkan pelulus.")}
         </span>

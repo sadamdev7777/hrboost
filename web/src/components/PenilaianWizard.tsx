@@ -1,9 +1,10 @@
 "use client";
 
+import { teksKepentingan } from "@/components/PemberatKpi";
 import { tr, trRalat } from "@/lib/i18n";
 import { useState } from "react";
 import { tarikh } from "@/lib/format";
-import { beratSama, HURAIAN_SKALA, markahTeks, peratusBerat, SKALA_PRESTASI, simpanKendiri, type ItemKpi } from "@/lib/prestasi";
+import { beratSama, HURAIAN_SKALA, markahTeks, SKALA_PRESTASI, simpanKendiri, type ItemKpi } from "@/lib/prestasi";
 import { beritahu, sahkan } from "./Dialog";
 import { ErrorBox } from "./ui";
 import { ButangUtama } from "./Senarai";
@@ -183,7 +184,7 @@ export function PenilaianWizard({ id, kitaran, tarikhAkhir, pelulus, items: awal
         <b className="text-lg leading-snug font-extrabold">{x.title}</b>
         {(x.target || !samaBerat) && (
           <span className="text-[13px] text-subtle">
-            {[x.target ? tr("Sasaran: {0}", x.target) : null, samaBerat ? null : tr("Pemberat {0}%", peratusBerat(x.weight, items))].filter(Boolean).join(" · ")}
+            {[x.target ? tr("Sasaran: {0}", x.target) : null, samaBerat ? null : teksKepentingan(x.weight, items)].filter(Boolean).join(" · ")}
           </span>
         )}
       </div>

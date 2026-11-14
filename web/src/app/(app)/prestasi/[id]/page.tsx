@@ -5,14 +5,12 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useData } from "@/lib/useData";
 import { tarikh } from "@/lib/format";
-import { InputPeratus, SuisPemberat, pemberatSah } from "@/components/PemberatKpi";
+import { PilihKepentingan, RingkasanSumbangan, teksKepentingan } from "@/components/PemberatKpi";
 import { useMe } from "@/lib/me";
 import { getSenaraiPekerja } from "@/lib/hr";
 import {
   beratSama,
   getPenilaian,
-  kePeratus,
-  peratusBerat,
   tetapkanPelulus,
   LABEL_STATUS_PENILAIAN,
   markahTeks,
@@ -93,8 +91,7 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
   // KPI hanya ditetapkan oleh HR (bukan pekerja, bukan pelulus)
   const ubahKpi = p.role === "hr" && p.status !== "final";
   const muktamad = p.can_finalise && p.status === "hr";
-  const [berbeza, setBerbeza] = useState(!beratSama(p.items));
-  const [items, setItems] = useState<ItemKpi[]>(ubahKpi && !beratSama(p.items) ? kePeratus(p.items) : p.items);
+  const [items, setItems] = useState<ItemKpi[]>(p.items);
   const [ulasan, setUlasan] = useState((isiPelulus ? p.manager_comment : p.self_comment) ?? "");
   const [akhir, setAkhir] = useState(p.manager_rating != null ? String(p.manager_rating) : "");
   const [nota, setNota] = useState("");
@@ -128,8 +125,7 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
   async function simpanSemua(hantar: boolean) {
     let sebenar = items;
     if (ubahKpi) {
-      if (berbeza && !pemberatSah(items)) throw new Error(tr("Jumlah pemberat mesti tepat 100%."));
-      await simpanKpi(p.id, items.map((x) => ({ ...x, weight: berbeza ? x.weight : 1 })));
+      await simpanKpi(p.id, items);
       sebenar = (await getPenilaian(p.id)).items;
     }
     const m = sebenar.map((x, i) => ({
@@ -173,41 +169,28 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
         )}
 
         <Seksyen>{tr("KPI & MATLAMAT")}</Seksyen>
-        {ubahKpi && (
-          <SuisPemberat
-            berbeza={berbeza}
-            items={items}
-            onUbah={(v) => {
-              setBerbeza(v);
-              setItems(v ? kePeratus(items.map((x) => ({ ...x, weight: 1 }))) : items.map((x) => ({ ...x, weight: 1 })));
-            }}
-          />
-        )}
+        {ubahKpi && <RingkasanSumbangan items={items} />}
         {items.length === 0 && <span className="rounded-card bg-surface px-4 py-3 text-sm text-muted">{tr("Belum ada KPI.")}</span>}
         {items.map((x, i) => (
           <div key={x.id ?? `baru-${i}`} className="flex flex-col gap-2 rounded-card bg-surface px-4 py-3">
             {ubahKpi ? (
-              <div className={`grid ${berbeza ? "grid-cols-[1fr_96px_auto]" : "grid-cols-[1fr_auto]"} items-end gap-2`}>
+              <div className="grid grid-cols-[1fr_auto] items-end gap-2">
                 <MedanBorang label={tr("KPI {0}", i + 1)}>
                   <input className={inputKecil} value={x.title} onChange={(e) => set(i, { title: e.target.value })} />
                 </MedanBorang>
-                {berbeza && (
-                  <MedanBorang label={tr("Pemberat")}>
-                    <InputPeratus nilai={x.weight} label={tr("Pemberat KPI {0}", i + 1)} onUbah={(n) => set(i, { weight: n })} />
-                  </MedanBorang>
-                )}
                 <button type="button" disabled={items.length <= 1} aria-label={tr("Buang KPI {0}", x.title)} onClick={() => setItems(items.filter((_, j) => j !== i))} className="flex size-11 items-center justify-center text-lg text-danger disabled:opacity-40">
                   ×
                 </button>
-                <div className={berbeza ? "col-span-3" : "col-span-2"}>
+                <div className="col-span-2 flex flex-col gap-2">
                   <input className={inputKecil + " w-full"} placeholder={tr("Sasaran (cth. RM500k jualan)")} value={x.target ?? ""} onChange={(e) => set(i, { target: e.target.value })} />
+                  <PilihKepentingan nilai={x.weight} label={tr("Kepentingan KPI {0}", i + 1)} onUbah={(n) => set(i, { weight: n })} />
                 </div>
               </div>
             ) : (
               <span className="flex flex-col gap-0.5">
                 <b className="text-sm font-bold">{x.title}</b>
                 <span className="text-xs text-muted">
-                  {[x.target ? tr("Sasaran: {0}", x.target) : null, samaBerat ? null : tr("Pemberat {0}%", peratusBerat(x.weight, items))].filter(Boolean).join(" · ")}
+                  {[x.target ? tr("Sasaran: {0}", x.target) : null, samaBerat ? null : teksKepentingan(x.weight, items)].filter(Boolean).join(" · ")}
                 </span>
               </span>
             )}
@@ -240,7 +223,7 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
               type="button"
               disabled={!kpiBaru.trim() || items.length >= 20}
               onClick={() => {
-                setItems([...items, { title: kpiBaru.trim(), description: null, target: null, weight: berbeza ? 0 : 1 }]);
+                setItems([...items, { title: kpiBaru.trim(), description: null, target: null, weight: 1 }]);
                 setKpiBaru("");
               }}
               className="h-11 shrink-0 rounded-[12px] border border-primary px-4 text-sm font-bold text-primary disabled:opacity-50"
