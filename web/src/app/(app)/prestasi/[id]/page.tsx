@@ -183,6 +183,7 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
                   ×
                 </button>
                 <div className="col-span-2 flex flex-col gap-2">
+                  <textarea className={`${inputKecil} min-h-16 w-full py-2 text-[13px] leading-snug`} rows={2} placeholder={tr("Huraian (apa yang dinilai)")} aria-label={tr("Huraian KPI {0}", i + 1)} value={x.description ?? ""} onChange={(e) => set(i, { description: e.target.value })} />
                   <input className={inputKecil + " w-full"} placeholder={tr("Sasaran (cth. RM500k jualan)")} value={x.target ?? ""} onChange={(e) => set(i, { target: e.target.value })} />
                   <PilihKepentingan nilai={x.weight} label={tr("Kepentingan KPI {0}", i + 1)} onUbah={(n) => set(i, { weight: n })} />
                 </div>
@@ -190,6 +191,7 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
             ) : (
               <span className="flex flex-col gap-0.5">
                 <b className="text-sm font-bold">{x.title}</b>
+                {x.description && <span className="text-[13px] leading-snug text-subtle">{x.description}</span>}
                 <span className="text-xs text-muted">
                   {[x.target ? tr("Sasaran: {0}", x.target) : null, samaBerat ? null : teksKepentingan(x.weight, items)].filter(Boolean).join(" · ")}
                 </span>

@@ -74,6 +74,7 @@ const sahkanDialog = async (p, ok) => {
   await p.click(V('button:has-text("+ Kitaran baharu")'));
   await p.fill(V('[role=dialog] label:has-text("Nama kitaran") input'), 'Penilaian E2E');
   expect(await p.locator(V('[role=dialog] >> text=Semua KPI sama penting.')).count() > 0, 'lalai: semua KPI sama penting');
+  expect((await p.inputValue('[role=dialog] textarea[aria-label="Huraian KPI 2"]')).startsWith('Ketepatan, kekemasan'), 'huraian lalai Kualiti kerja diisi');
   expect(await p.locator('[role=dialog] input[aria-label*="Pemberat"]').count() === 0, 'tiada medan peratus untuk diisi');
   for (const [i, n] of [[1, '5'], [2, '3'], [3, '1'], [4, '1']]) await p.click(V(`[role=dialog] [aria-label="Kepentingan KPI ${i}"] >> button:text-is("${n}")`));
   const ringkas = await p.innerText(V('[role=dialog] >> text=Sumbangan kepada markah akhir:'));
@@ -102,6 +103,7 @@ const sahkanDialog = async (p, ok) => {
   await p.click(V('button:has-text("Mula")'));
   await p.waitForSelector(V('text=KPI 1 DARIPADA 4'));
   expect(await p.locator(V('text=Kepentingan 5/5 (50%)')).count() > 0, 'pekerja nampak tahap kepentingan');
+  expect(await p.locator(V('text=Sejauh mana sasaran dan tugasan utama')).count() > 0, 'pekerja nampak huraian KPI');
   expect(await p.locator(V('text=Memenuhi jangkaan')).count() > 0, 'setiap markah ada huraian');
   expect(await p.locator('[aria-label^="Kepentingan KPI"]').count() === 0, 'pekerja tidak boleh mengubah KPI');
   await p.screenshot({ path: `${shots}/prestasi-kpi.png` });

@@ -242,10 +242,10 @@ function BorangKitaran({ cid, k, tutup, selesai }: { cid: string; k: Kitaran | n
   const asal: ItemKpi[] = k?.template?.length
     ? k.template
     : [
-        { title: tr("Pencapaian sasaran kerja"), description: null, target: null, weight: KEPENTINGAN_LALAI },
-        { title: tr("Kualiti kerja"), description: null, target: null, weight: KEPENTINGAN_LALAI },
-        { title: tr("Kerjasama & komunikasi"), description: null, target: null, weight: KEPENTINGAN_LALAI },
-        { title: tr("Disiplin & kehadiran"), description: null, target: null, weight: KEPENTINGAN_LALAI },
+        { title: tr("Pencapaian sasaran kerja"), description: tr("Sejauh mana sasaran dan tugasan utama bagi tempoh ini dicapai, mengikut masa dan kuantiti yang ditetapkan."), target: null, weight: KEPENTINGAN_LALAI },
+        { title: tr("Kualiti kerja"), description: tr("Ketepatan, kekemasan dan kebolehpercayaan hasil kerja: kurang kesilapan, kurang perlu dibetulkan, mematuhi prosedur."), target: null, weight: KEPENTINGAN_LALAI },
+        { title: tr("Kerjasama & komunikasi"), description: tr("Bekerja dengan baik bersama rakan sekerja dan pelanggan, berkongsi maklumat dengan jelas dan membantu pasukan."), target: null, weight: KEPENTINGAN_LALAI },
+        { title: tr("Disiplin & kehadiran"), description: tr("Hadir tepat pada masanya, mematuhi peraturan syarikat, dan bertanggungjawab terhadap tugasan."), target: null, weight: KEPENTINGAN_LALAI },
       ];
   const [kpi, setKpi] = useState<ItemKpi[]>(asal);
   const [busy, setBusy] = useState(false);
@@ -300,6 +300,15 @@ function BorangKitaran({ cid, k, tutup, selesai }: { cid: string; k: Kitaran | n
                 ×
               </button>
             </div>
+            <textarea
+              className={`${inputKecil} min-h-16 py-2 text-[13px] leading-snug`}
+              rows={2}
+              disabled={!draf}
+              value={x.description ?? ""}
+              placeholder={tr("Huraian (apa yang dinilai)")}
+              aria-label={tr("Huraian KPI {0}", i + 1)}
+              onChange={(e) => setKpi(kpi.map((y, j) => (j === i ? { ...y, description: e.target.value } : y)))}
+            />
             <PilihKepentingan nilai={x.weight} disabled={!draf} label={tr("Kepentingan KPI {0}", i + 1)} onUbah={(n) => setKpi(kpi.map((y, j) => (j === i ? { ...y, weight: n } : y)))} />
           </div>
         ))}

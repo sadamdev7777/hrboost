@@ -182,6 +182,7 @@ export function PenilaianWizard({ id, kitaran, tarikhAkhir, pelulus, items: awal
       </div>
       <div className="flex flex-col gap-1 rounded-card bg-surface px-5 py-4">
         <b className="text-lg leading-snug font-extrabold">{x.title}</b>
+        {x.description && <span className="text-sm leading-snug text-subtle">{x.description}</span>}
         {(x.target || !samaBerat) && (
           <span className="text-[13px] text-subtle">
             {[x.target ? tr("Sasaran: {0}", x.target) : null, samaBerat ? null : teksKepentingan(x.weight, items)].filter(Boolean).join(" · ")}
