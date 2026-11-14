@@ -27,6 +27,7 @@ import {
   IconWallet,
   IconOrg,
   IconTarget,
+  IconGrid,
 } from "@/components/icons";
 import { Screen } from "@/components/ui";
 import { PilihBahasa } from "@/components/PilihBahasa";
@@ -77,6 +78,7 @@ export default function SayaPage() {
           <Baris href="/kehadiran" icon={<IconClock size={18} />} label={tr("Kehadiran")} />
           <Baris href="/gaji" icon={<IconWallet size={18} />} label={tr("Slip Gaji")} />
           <Baris href="/kalendar" icon={<IconCalendar size={18} />} label={tr("Kalendar pasukan")} />
+          <Baris href="/inventori" icon={<IconGrid size={18} />} label={tr("Inventori saya")} />
           <Baris href="/pengumuman" icon={<IconBell size={18} />} label={tr("Pengumuman")} />
           <Baris href="/prestasi" icon={<IconTarget size={18} />} label={tr("Penilaian prestasi")} />
           <Baris href="/tanya-hr" icon={<IconSparkle size={18} />} tone="bg-[#EDE9F8] text-ai" label={tr("Tanya HR")} />

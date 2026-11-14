@@ -835,21 +835,39 @@ isOneToOne: false
                   ]
                 },"company_assets": {
                   Row: {
-                    "category": string | null,"created_at": string,"employment_id": string,"id": string,"issued_on": string | null,"name": string,"note": string | null,"returned_on": string | null,"serial_no": string | null
+                    "brand_model": string | null,"category": string | null,"company_id": string,"condition": string,"created_at": string,"created_by": string | null,"employment_id": string | null,"id": string,"issued_on": string | null,"location": string | null,"name": string,"note": string | null,"photo_paths": (string)[],"price": number | null,"receipt_paths": (string)[],"reject_reason": string | null,"returned_on": string | null,"serial_no": string | null,"status": string,"updated_at": string,"verified_at": string | null,"verified_by": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "category"?: string | null,"created_at"?: string,"employment_id": string,"id"?: string,"issued_on"?: string | null,"name": string,"note"?: string | null,"returned_on"?: string | null,"serial_no"?: string | null
+                    "brand_model"?: string | null,"category"?: string | null,"company_id": string,"condition"?: string,"created_at"?: string,"created_by"?: string | null,"employment_id"?: string | null,"id"?: string,"issued_on"?: string | null,"location"?: string | null,"name": string,"note"?: string | null,"photo_paths"?: (string)[],"price"?: number | null,"receipt_paths"?: (string)[],"reject_reason"?: string | null,"returned_on"?: string | null,"serial_no"?: string | null,"status"?: string,"updated_at"?: string,"verified_at"?: string | null,"verified_by"?: string | null
                   }
                   Update: {
-                    "category"?: string | null,"created_at"?: string,"employment_id"?: string,"id"?: string,"issued_on"?: string | null,"name"?: string,"note"?: string | null,"returned_on"?: string | null,"serial_no"?: string | null
+                    "brand_model"?: string | null,"category"?: string | null,"company_id"?: string,"condition"?: string,"created_at"?: string,"created_by"?: string | null,"employment_id"?: string | null,"id"?: string,"issued_on"?: string | null,"location"?: string | null,"name"?: string,"note"?: string | null,"photo_paths"?: (string)[],"price"?: number | null,"receipt_paths"?: (string)[],"reject_reason"?: string | null,"returned_on"?: string | null,"serial_no"?: string | null,"status"?: string,"updated_at"?: string,"verified_at"?: string | null,"verified_by"?: string | null
                   }
                   Relationships: [
                     {
+      foreignKeyName: "company_assets_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_assets_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "company_assets_employment_id_fkey"
       columns: ["employment_id"]
 isOneToOne: false
       referencedRelation: "employments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_assets_verified_by_fkey"
+      columns: ["verified_by"]
+isOneToOne: false
+      referencedRelation: "persons"
       referencedColumns: ["id"]
     }
                   ]
@@ -2023,6 +2041,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"platform_secrets": {
+                  Row: {
+                    "hint": string | null,"name": string,"secret": string | null,"updated_at": string,"updated_by": string | null,"vault_id": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "hint"?: string | null,"name": string,"secret"?: string | null,"updated_at"?: string,"updated_by"?: string | null,"vault_id"?: string | null
+                  }
+                  Update: {
+                    "hint"?: string | null,"name"?: string,"secret"?: string | null,"updated_at"?: string,"updated_by"?: string | null,"vault_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "platform_secrets_updated_by_fkey"
+      columns: ["updated_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"platform_settings": {
                   Row: {
                     "key": string,"value": NonNullable<Json>
@@ -2813,6 +2851,12 @@ isOneToOne: false
               "employee_no": string,"leave_code": string,"message": string,"ok": boolean
             }[]
                            },
+"hr_inventory_return":
+{ Args: { "p_date"?: string,"p_id": string }; Returns: undefined
+                           },
+"hr_inventory_verify":
+{ Args: { "p_id": string,"p_ok": boolean,"p_reason"?: string }; Returns: undefined
+                           },
 "hr_leave_overview":
 { Args: { "p_company": string }; Returns: Json
                            },
@@ -2925,6 +2969,17 @@ isOneToOne: false
                            },
 "integration_secret_set":
 { Args: { "p_company": string,"p_provider": string,"p_secret": string }; Returns: undefined
+                           },
+"inventory_delete":
+{ Args: { "p_id": string }; Returns: undefined
+                           },
+"inventory_list":
+{ Args: { "p_company": string,"p_scope"?: string }; Returns: {
+              "brand_model": string,"category": string,"condition": string,"created_at": string,"created_by_name": string,"department": string,"editable": boolean,"employment_id": string,"holder": string,"id": string,"issued_on": string,"location": string,"name": string,"note": string,"photo_paths": (string)[],"price": number,"receipt_paths": (string)[],"reject_reason": string,"returned_on": string,"serial_no": string,"status": string,"verified_at": string
+            }[]
+                           },
+"inventory_save":
+{ Args: { "p_company": string,"p_data": Json,"p_id"?: string }; Returns: string
                            },
 "invite_check_ic":
 { Args: { "p_ic_last4": string,"p_token": string }; Returns: Json
@@ -3103,6 +3158,12 @@ isOneToOne: false
 "notify_channels":
 { Args: { "p_company": string }; Returns: Json
                            },
+"notify_cron_check":
+{ Args: { "p_secret": string }; Returns: boolean
+                           },
+"notify_email_allowed":
+{ Args: { "p_email": string }; Returns: boolean
+                           },
 "notify_mark":
 { Args: { "p_error"?: string,"p_id": string,"p_ok": boolean,"p_provider_ref"?: string }; Returns: undefined
                            },
@@ -3267,6 +3328,9 @@ isOneToOne: false
 "person_other_companies":
 { Args: { "p_employment": string }; Returns: number
                            },
+"platform_secret_get":
+{ Args: { "p_name": string }; Returns: string
+                           },
 "platform_setting":
 { Args: { "p_key": string }; Returns: Json
                            },
@@ -3384,17 +3448,34 @@ isOneToOne: false
               "name": string,"person_id": string,"whatsapp": string
             }[]
                            },
+"sa_platform_secret_clear":
+{ Args: { "p_name": string }; Returns: undefined
+                           },
+"sa_platform_secret_set":
+{ Args: { "p_name": string,"p_value": string }; Returns: undefined
+                           },
+"sa_platform_secrets":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "hint": string,"is_set": boolean,"name": string,"updated_at": string
+            }[]
+                           },
 "sa_set_company_limits":
 { Args: { "p_ai": number,"p_company": string,"p_wa": number }; Returns: undefined
                            },
 "sa_set_company_status":
 { Args: { "p_company": string,"p_reason": string,"p_status": string }; Returns: undefined
                            },
+"sa_set_email_allowlist":
+{ Args: { "p_emails": (string)[] }; Returns: undefined
+                           },
 "sa_set_person_active":
 { Args: { "p_active": boolean,"p_person": string,"p_reason"?: string }; Returns: undefined
                            },
 "sa_set_setting":
 { Args: { "p_key": string,"p_value": Json }; Returns: undefined
+                           },
+"sa_test_email":
+{ Args: Record<PropertyKey, never>; Returns: string
                            },
 "sa_users":
 { Args: { "p_query": string }; Returns: {

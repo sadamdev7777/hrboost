@@ -30,6 +30,7 @@ export const TAB_MODUL = {
       { href: "/pengurusan/carta", label: tr("Carta organisasi") },
       { href: "/pengurusan/tetapan/jabatan", label: tr("Jabatan"), roles: ["hr", "admin"] },
       { href: "/pengurusan/pekerja/nama", label: tr("Nama panggilan"), roles: ["hr", "admin"] },
+      { href: "/pengurusan/inventori", label: tr("Inventori") },
     ],
   },
   cuti: {
