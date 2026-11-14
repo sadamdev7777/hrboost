@@ -1,32 +1,32 @@
 "use client";
 
 import { tr } from "@/lib/i18n";
-import { beratSama, labelKepentingan, peratusBerat, TAHAP_KEPENTINGAN } from "@/lib/prestasi";
+import { beratSama, peratusBerat, SKALA_KEPENTINGAN } from "@/lib/prestasi";
 
-/** Pilih kepentingan satu KPI: Biasa / Penting / Sangat penting (pemberat relatif 1/2/3). */
+/** Pilih kepentingan satu KPI pada skala 1–5 (pemberat relatif). */
 export function PilihKepentingan({ nilai, onUbah, label, disabled }: { nilai: number; onUbah: (n: number) => void; label: string; disabled?: boolean }) {
-  const tersuai = !TAHAP_KEPENTINGAN.some((t) => t.w === Number(nilai));
+  const tersuai = !SKALA_KEPENTINGAN.some((n) => n === Number(nilai));
   return (
     <div className="flex flex-col gap-1">
-      <div role="radiogroup" aria-label={label} className="grid grid-cols-3 gap-1 rounded-[12px] bg-page p-1">
-        {TAHAP_KEPENTINGAN.map((t) => {
-          const on = Number(nilai) === t.w;
+      <div role="radiogroup" aria-label={label} className="grid grid-cols-5 gap-1 rounded-[12px] bg-page p-1">
+        {SKALA_KEPENTINGAN.map((n) => {
+          const on = Number(nilai) === n;
           return (
             <button
-              key={t.w}
+              key={n}
               type="button"
               role="radio"
               aria-checked={on}
               disabled={disabled}
-              onClick={() => onUbah(t.w)}
-              className={`min-h-11 rounded-[10px] px-2 text-[13px] font-bold leading-tight disabled:opacity-60 ${on ? "bg-primary text-white" : "text-muted"}`}
+              onClick={() => onUbah(n)}
+              className={`min-h-11 rounded-[10px] px-2 text-[15px] font-bold leading-tight disabled:opacity-60 ${on ? "bg-primary text-white" : "text-muted"}`}
             >
-              {tr(t.l)}
+              {n}
             </button>
           );
         })}
       </div>
-      {tersuai && <span className="text-xs text-muted">{tr("Pemberat tersuai: {0}. Pilih satu tahap untuk menukar.", nilai)}</span>}
+      <span className="text-xs text-muted">{tersuai ? tr("Pemberat tersuai: {0}. Pilih satu tahap untuk menukar.", nilai) : tr("1 = Kurang penting · 5 = Paling penting")}</span>
     </div>
   );
 }
@@ -43,9 +43,8 @@ export function RingkasanSumbangan({ items }: { items: { title: string; weight: 
   );
 }
 
-/** Teks kepentingan untuk paparan baca sahaja, cth. "Kepentingan: Sangat penting (43%)". */
+/** Teks kepentingan untuk paparan baca sahaja, cth. "Kepentingan 5/5 (50%)". */
 export function teksKepentingan(w: number, items: { weight: number }[]) {
-  const l = labelKepentingan(w);
   const pct = peratusBerat(w, items);
-  return l ? tr("Kepentingan: {0} ({1}%)", tr(l), pct) : tr("Kepentingan: {0}%", pct);
+  return SKALA_KEPENTINGAN.some((n) => n === Number(w)) ? tr("Kepentingan {0}/5 ({1}%)", w, pct) : tr("Kepentingan: {0}%", pct);
 }

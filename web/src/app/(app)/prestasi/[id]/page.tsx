@@ -22,6 +22,7 @@ import {
   type ItemKpi,
   type Penilaian,
 } from "@/lib/prestasi";
+import { KEPENTINGAN_LALAI } from "@/lib/prestasi";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
 import { PenilaianWizard } from "@/components/PenilaianWizard";
 import { ButangUtama, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
@@ -223,7 +224,7 @@ function Borang({ p, reload }: { p: Penilaian; reload: () => void }) {
               type="button"
               disabled={!kpiBaru.trim() || items.length >= 20}
               onClick={() => {
-                setItems([...items, { title: kpiBaru.trim(), description: null, target: null, weight: 1 }]);
+                setItems([...items, { title: kpiBaru.trim(), description: null, target: null, weight: items.length && beratSama(items) ? items[0].weight : KEPENTINGAN_LALAI }]);
                 setKpiBaru("");
               }}
               className="h-11 shrink-0 rounded-[12px] border border-primary px-4 text-sm font-bold text-primary disabled:opacity-50"

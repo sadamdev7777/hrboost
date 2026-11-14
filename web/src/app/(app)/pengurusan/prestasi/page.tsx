@@ -18,6 +18,7 @@ import {
   type ItemKpi,
   type Kitaran,
 } from "@/lib/prestasi";
+import { KEPENTINGAN_LALAI } from "@/lib/prestasi";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar } from "@/components/TabNav";
 import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
@@ -241,10 +242,10 @@ function BorangKitaran({ cid, k, tutup, selesai }: { cid: string; k: Kitaran | n
   const asal: ItemKpi[] = k?.template?.length
     ? k.template
     : [
-        { title: tr("Pencapaian sasaran kerja"), description: null, target: null, weight: 1 },
-        { title: tr("Kualiti kerja"), description: null, target: null, weight: 1 },
-        { title: tr("Kerjasama & komunikasi"), description: null, target: null, weight: 1 },
-        { title: tr("Disiplin & kehadiran"), description: null, target: null, weight: 1 },
+        { title: tr("Pencapaian sasaran kerja"), description: null, target: null, weight: KEPENTINGAN_LALAI },
+        { title: tr("Kualiti kerja"), description: null, target: null, weight: KEPENTINGAN_LALAI },
+        { title: tr("Kerjasama & komunikasi"), description: null, target: null, weight: KEPENTINGAN_LALAI },
+        { title: tr("Disiplin & kehadiran"), description: null, target: null, weight: KEPENTINGAN_LALAI },
       ];
   const [kpi, setKpi] = useState<ItemKpi[]>(asal);
   const [busy, setBusy] = useState(false);
@@ -303,7 +304,7 @@ function BorangKitaran({ cid, k, tutup, selesai }: { cid: string; k: Kitaran | n
           </div>
         ))}
         {draf && kpi.length < 20 && (
-          <button type="button" onClick={() => setKpi([...kpi, { title: "", description: null, target: null, weight: 1 }])} className="flex min-h-11 items-center self-start text-sm font-bold text-primary">
+          <button type="button" onClick={() => setKpi([...kpi, { title: "", description: null, target: null, weight: KEPENTINGAN_LALAI }])} className="flex min-h-11 items-center self-start text-sm font-bold text-primary">
             {tr("+ Tambah KPI")}
           </button>
         )}
