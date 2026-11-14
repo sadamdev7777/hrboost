@@ -95,3 +95,15 @@ do $$ begin assert (select status from company_assets where name = 'Telefon syar
 set test.uid='00000000-0000-0000-0000-00000000a003';
 do $$ begin assert (select count(*) from inventory_list('00000000-0000-0000-0000-0000000000c1', 'mine')) = 2, 'Zul nampak item yang dipegangnya'; end $$;
 reset test.uid; reset test.role;
+
+\echo '=== I6: pekerja berhenti → item belum dipulangkan dikesan ==='
+update employments set status = 'resigned', end_date = '2026-11-30' where id = '00000000-0000-0000-0000-0000000000e2';
+set test.role='authenticated'; set test.uid='00000000-0000-0000-0000-00000000a001';
+select name, holder, holder_active, holder_end_date, returned_on from inventory_list('00000000-0000-0000-0000-0000000000c1', 'all') where employment_id is not null;
+do $$ begin
+  assert (select count(*) from inventory_list('00000000-0000-0000-0000-0000000000c1', 'all')
+           where holder_active = false and returned_on is null) = 1, 'laptop Amin perlu dipulangkan';
+  assert (select holder_end_date from inventory_list('00000000-0000-0000-0000-0000000000c1', 'all') where name = 'Laptop Dell Latitude') = '2026-11-30', 'tarikh akhir pemegang';
+  assert (select holder_active from inventory_list('00000000-0000-0000-0000-0000000000c1', 'all') where name = 'Printer Epson L3210') is null, 'item lokasi tiada status pemegang';
+end $$;
+reset test.uid; reset test.role;

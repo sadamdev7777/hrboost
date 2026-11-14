@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { Suspense, useRef, useState, useSyncExternalStore } from "react";
 import { useMe } from "@/lib/me";
+import { ItemBelumDipulang } from "@/components/Inventori";
 import { bukaWa, teksJemputan, useSaluran } from "@/lib/saluran";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
@@ -261,6 +262,8 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
           )}
         </div>
       )}
+
+      {bolehUbah && (tamat || p.endDate) && <ItemBelumDipulang employmentId={p.id} nota={tamat ? tr("Pekerja ini telah berhenti. Dapatkan semula item syarikat dan tekan Dipulangkan.") : tr("Pekerja ini akan berhenti. Dapatkan semula item syarikat sebelum hari bekerja terakhir.")} />}
 
       {bolehUbah && !tamat && (
         <section aria-label={tr("Tindakan")} className="flex flex-col gap-2">
@@ -674,6 +677,7 @@ function Tamatkan({ p, onClose, onDone }: { p: ButiranPekerja; onClose: () => vo
       <MedanBorang label={tr("Catatan (pilihan)")}>
         <textarea className={`${inputKecil} h-20 py-2`} value={sebab} onChange={(e) => setSebab(e.target.value)} />
       </MedanBorang>
+      <ItemBelumDipulang employmentId={p.id} nota={tr("Pastikan item ini dipulangkan sebelum hari bekerja terakhir. Tekan Dipulangkan apabila diterima.")} />
       <span className="text-xs text-muted">{tr("Pekerja kekal aktif hingga hari bekerja terakhir. Selepas itu peranan dan jemputan dalam syarikat ini dibatalkan. Rekod gaji dan cuti kekal untuk audit.")}</span>
       {ralat && <ErrorBox message={ralat} />}
       <button type="button" onClick={sahkan} disabled={busy} className="h-12 rounded-button bg-danger text-base font-extrabold text-white disabled:opacity-60">

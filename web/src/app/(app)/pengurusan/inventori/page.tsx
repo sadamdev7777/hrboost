@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { useMe, hasRole } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { ringgit, tarikh } from "@/lib/format";
-import { getInventori, KATEGORI_INVENTORI, LABEL_STATUS_INVENTORI, type ItemInventori } from "@/lib/inventori";
+import { getInventori, KATEGORI_INVENTORI, LABEL_STATUS_INVENTORI, perluDipulang, type ItemInventori } from "@/lib/inventori";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar } from "@/components/TabNav";
 import { TabModul } from "@/components/TabModul";
@@ -14,7 +14,7 @@ import { BarisStat, Cip, Jadual, KadStat, Kosong } from "@/components/Modul";
 import { BarisInventori, BorangInventori, ButiranInventori, Lakaran } from "@/components/Inventori";
 import { useSkrinLebar } from "@/lib/skrin";
 
-type Tapis = "semua" | "pending" | "dipegang" | "lokasi" | "dipulangkan";
+type Tapis = "semua" | "pending" | "pulang" | "dipegang" | "lokasi" | "dipulangkan";
 
 /** HR: semua inventori syarikat — sahkan rekod pekerja, nilai keseluruhan, pemegang & lokasi. */
 export default function InventoriHrPage() {
@@ -40,9 +40,11 @@ function InventoriHr() {
 
   const aktif = semua.filter((x) => x.status === "verified" && !x.returned_on);
   const menunggu = semua.filter((x) => x.status === "pending").length;
+  const pulang = semua.filter(perluDipulang).length;
   const nilai = aktif.reduce((a, x) => a + Number(x.price ?? 0), 0);
   const papar = semua.filter((x) => {
     if (tapis === "pending" && x.status !== "pending") return false;
+    if (tapis === "pulang" && !perluDipulang(x)) return false;
     if (tapis === "dipegang" && !(x.employment_id && !x.returned_on)) return false;
     if (tapis === "lokasi" && x.employment_id) return false;
     if (tapis === "dipulangkan" && !x.returned_on) return false;
@@ -86,6 +88,7 @@ function InventoriHr() {
               <KadStat label={tr("Item aktif")} nilai={String(aktif.length)} onClick={() => setTapis("semua")} aktif={tapis === "semua"} />
               <KadStat label={tr("Nilai inventori")} nilai={ringgit(nilai)} />
               <KadStat label={tr("Menunggu semakan")} nilai={String(menunggu)} tone={menunggu ? "warning" : undefined} onClick={() => setTapis("pending")} aktif={tapis === "pending"} />
+              <KadStat label={tr("Perlu dipulangkan")} nilai={String(pulang)} tone={pulang ? "danger" : undefined} onClick={() => setTapis("pulang")} aktif={tapis === "pulang"} />
               <KadStat label={tr("Dipegang pekerja")} nilai={String(aktif.filter((x) => x.employment_id).length)} onClick={() => setTapis("dipegang")} aktif={tapis === "dipegang"} />
             </BarisStat>
             <div className="flex flex-wrap items-center gap-2">
@@ -93,6 +96,7 @@ function InventoriHr() {
                 [
                   ["semua", tr("Semua")],
                   ["pending", tr("Menunggu semakan")],
+                  ["pulang", tr("Perlu dipulangkan")],
                   ["dipegang", tr("Dipegang pekerja")],
                   ["lokasi", tr("Di lokasi")],
                   ["dipulangkan", tr("Dipulangkan")],
@@ -136,7 +140,18 @@ function InventoriHr() {
                       </td>
                       <td className="text-right tabular-nums">{x.price != null ? ringgit(Number(x.price)) : "-"}</td>
                       <td className="whitespace-nowrap text-muted">{x.issued_on ? tarikh(x.issued_on) : "-"}</td>
-                      <td>{x.returned_on ? <Tag tone="neutral">{tr("Dipulangkan")}</Tag> : <Tag tone={st.tone}>{st.l}</Tag>}</td>
+                      <td>
+                        {x.returned_on ? (
+                          <Tag tone="neutral">{tr("Dipulangkan")}</Tag>
+                        ) : perluDipulang(x) ? (
+                          <span className="flex flex-col items-start gap-0.5">
+                            <Tag tone="danger">{tr("Perlu dipulangkan")}</Tag>
+                            <span className="text-[11px] text-muted">{x.holder_end_date ? tr("Hari terakhir {0}", tarikh(x.holder_end_date)) : tr("Pekerja telah berhenti")}</span>
+                          </span>
+                        ) : (
+                          <Tag tone={st.tone}>{st.l}</Tag>
+                        )}
+                      </td>
                     </tr>
                   );
                 })}

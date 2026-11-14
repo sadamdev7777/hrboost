@@ -32,7 +32,13 @@ export type ItemInventori = {
   created_at: string;
   verified_at: string | null;
   editable: boolean;
+  holder_active: boolean | null; // null = item di lokasi (tiada pemegang)
+  holder_end_date: string | null; // hari bekerja terakhir pemegang (jika dijadualkan / sudah berhenti)
 };
+
+/** Item yang dipegang oleh pekerja yang sudah / akan berhenti dan belum dipulangkan. */
+export const perluDipulang = (x: ItemInventori) =>
+  !!x.employment_id && !x.returned_on && x.status !== "rejected" && (x.holder_active === false || !!x.holder_end_date);
 
 export type DrafInventori = {
   name: string;

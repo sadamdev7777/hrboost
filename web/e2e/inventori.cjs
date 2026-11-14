@@ -83,6 +83,20 @@ async function login(browser, phone, viewport) {
   expect(await p.locator('[role=dialog] button:text-is("Ubah")').count() === 0, 'tiada butang Ubah selepas disahkan');
   await ctx.close();
 
+  log('4. Lily: tamatkan Amin → item belum dipulangkan dipaparkan → Dipulangkan');
+  ({ ctx, p } = await login(browser, '100000002', { width: 1280, height: 900 }));
+  await p.goto(BASE + '/pengurusan/pekerja');
+  await p.click('a:has-text("Amin")');
+  await p.waitForSelector('text=TINDAKAN', { timeout: 15000 });
+  await p.click('button:has-text("Tamatkan pekerjaan")');
+  await p.waitForSelector('[role=dialog] >> text=1 item syarikat belum dipulangkan', { timeout: 15000 });
+  expect(await p.locator('[role=dialog] >> text=Laptop Dell Latitude').count() > 0, 'dialog Tamatkan menyenaraikan laptop yang belum dipulangkan');
+  await p.screenshot({ path: `${shots}/inv-tamat.png` });
+  await p.click('[role=dialog] button:text-is("Dipulangkan")');
+  await p.waitForSelector('[role=dialog] >> text=1 item syarikat belum dipulangkan', { state: 'detached', timeout: 15000 });
+  expect(true, 'item ditanda dipulangkan terus dari dialog');
+  await ctx.close();
+
   await browser.close();
   log('LULUS: inventori');
 })().catch((e) => { console.error('GAGAL:', e.message); process.exit(1); });

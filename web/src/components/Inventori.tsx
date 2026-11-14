@@ -2,18 +2,20 @@
 
 import { tr, trRalat } from "@/lib/i18n";
 import { useRef, useState } from "react";
-import { useMe } from "@/lib/me";
+import { hasRole, useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { muatNaikPeribadi, urlSementara } from "@/lib/upload";
 import { ringgit, tarikh, todayISO } from "@/lib/format";
 import { getSenaraiPekerja } from "@/lib/hr";
 import {
+  getInventori,
   drafDaripada,
   drafKosong,
   KATEGORI_INVENTORI,
   LABEL_KEADAAN,
   LABEL_STATUS_INVENTORI,
   padamInventori,
+  perluDipulang,
   pulangInventori,
   sahkanInventori,
   simpanInventori,
@@ -355,7 +357,59 @@ export function BarisInventori({ x, onClick, tunjukPemegang }: { x: ItemInventor
           {[x.category, tunjukPemegang ? (x.holder ?? x.location) : x.employment_id ? null : x.location, x.price != null ? ringgit(Number(x.price)) : null].filter(Boolean).join(" · ")}
         </span>
       </span>
-      {x.returned_on ? <Tag tone="neutral">{tr("Dipulangkan")}</Tag> : <Tag tone={st.tone}>{st.l}</Tag>}
+      {x.returned_on ? <Tag tone="neutral">{tr("Dipulangkan")}</Tag> : perluDipulang(x) ? <Tag tone="danger">{tr("Perlu dipulangkan")}</Tag> : <Tag tone={st.tone}>{st.l}</Tag>}
     </button>
+  );
+}
+
+/**
+ * HR: item syarikat yang masih dipegang oleh seorang pekerja (belum dipulangkan) — dalam dialog
+ * Tamatkan pekerjaan dan profil pekerja yang berhenti. Tidak dipaparkan jika tiada item.
+ */
+export function ItemBelumDipulang({ employmentId, nota }: { employmentId: string; nota?: string }) {
+  const me = useMe();
+  const hr = hasRole(me, ["hr", "admin"]);
+  const d = useData(() => (hr ? getInventori(me.active!.companyId, "all") : Promise.resolve([])), [hr, me.active?.companyId]);
+  const [sibuk, setSibuk] = useState<string | null>(null);
+  const [ralat, setRalat] = useState<string | null>(null);
+  const item = (d.data ?? []).filter((x) => x.employment_id === employmentId && !x.returned_on && x.status !== "rejected");
+  if (!hr || item.length === 0) return null;
+  const jumlah = item.reduce((a, x) => a + Number(x.price ?? 0), 0);
+  return (
+    <div className="flex flex-col gap-2 rounded-[14px] border border-warning/30 bg-warning-soft px-4 py-3 text-sm">
+      <b className="text-warning">{tr("{0} item syarikat belum dipulangkan", item.length)}{jumlah > 0 ? ` · ${ringgit(jumlah)}` : ""}</b>
+      {nota && <span className="text-xs leading-snug text-warning">{nota}</span>}
+      <div className="flex flex-col rounded-[12px] bg-surface px-3 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
+        {item.map((x) => (
+          <div key={x.id} className="flex min-h-[64px] items-center gap-3 py-2">
+            {x.photo_paths[0] ? <Lakaran path={x.photo_paths[0]} /> : <span className="flex size-14 shrink-0 items-center justify-center rounded-[12px] bg-page text-[11px] text-muted">-</span>}
+            <span className="flex min-w-0 grow flex-col">
+              <b className="truncate">{x.name}</b>
+              <span className="truncate text-xs text-muted">{[x.category, x.serial_no, x.price != null ? ringgit(Number(x.price)) : null].filter(Boolean).join(" · ")}</span>
+            </span>
+            <button
+              type="button"
+              disabled={sibuk === x.id}
+              onClick={async () => {
+                setSibuk(x.id);
+                setRalat(null);
+                try {
+                  await pulangInventori(x.id, todayISO());
+                  beritahu(tr("{0} ditanda dipulangkan.", x.name));
+                  d.reload();
+                } catch (e) {
+                  setRalat(e instanceof Error ? trRalat(e.message) : tr("Ralat"));
+                }
+                setSibuk(null);
+              }}
+              className="h-11 shrink-0 rounded-[12px] border border-primary px-3 text-[13px] font-bold text-primary disabled:opacity-60"
+            >
+              {tr("Dipulangkan")}
+            </button>
+          </div>
+        ))}
+      </div>
+      {ralat && <ErrorBox message={ralat} />}
+    </div>
   );
 }
