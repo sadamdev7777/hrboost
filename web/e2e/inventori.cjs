@@ -1,5 +1,5 @@
 // Ujian hujung-ke-hujung Inventori: Amin (telefon) rekod laptop dengan gambar, harga & resit →
-// Lily (HR, desktop) nampak dalam tab Inventori, sahkan → Amin nampak "Disahkan".
+// Lily (HR, desktop) nampak dalam menu Inventori, sahkan → Amin nampak "Disahkan".
 // Prasyarat: `npx supabase db reset` (data demo), aplikasi di localhost:3000.
 // Jalankan: node web/e2e/inventori.cjs
 const os = require('os');
@@ -60,7 +60,7 @@ async function login(browser, phone, viewport) {
   ({ ctx, p } = await login(browser, '100000002', { width: 1280, height: 900 }));
   await p.goto(BASE + '/pengurusan/inventori');
   await p.waitForSelector('text=Laptop Dell Latitude', { timeout: 15000 });
-  expect(await p.locator('a[href="/pengurusan/inventori"]').count() > 0, 'tab Inventori dalam modul Pekerja');
+  expect(await p.locator('aside a[href="/pengurusan/inventori"], nav a[href="/pengurusan/inventori"]').count() > 0, 'Inventori dalam menu sisi HR');
   const teks = await p.innerText('main');
   expect(teks.includes('Amin') && teks.includes('Menunggu semakan'), 'pemegang Amin & status menunggu dipaparkan');
   await p.click('tr:has-text("Laptop Dell Latitude")');

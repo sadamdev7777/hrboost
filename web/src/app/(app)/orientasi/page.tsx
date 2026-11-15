@@ -67,7 +67,7 @@ export default function OrientasiPage() {
                 <span className={ok ? "text-muted line-through" : ""}>{tr(l.label)}</span>
                 {!ok && (
                   <span className={`ml-auto text-xs whitespace-nowrap ${now ? "font-bold text-primary" : "text-muted"}`}>
-                    {now ? tr("Mulakan →") : l.masa}
+                    {now ? tr("Mulakan →") : l.masa ? tr(l.masa) : null}
                   </span>
                 )}
               </>

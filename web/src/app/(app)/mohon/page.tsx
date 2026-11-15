@@ -8,7 +8,7 @@ import { useData } from "@/lib/useData";
 import { getBaki, getPermohonanSaya, kiniDi, paparPermohonan, type Baki } from "@/lib/data";
 import { hari } from "@/lib/format";
 import { getOtDigunakan } from "@/lib/urusan";
-import { IconCalendar, IconChat, IconChevronRight, IconClock, IconDocument, IconReceipt, IconWallet } from "@/components/icons";
+import { IconCalendar, IconChat, IconBox, IconChevronRight, IconClock, IconDocument, IconReceipt, IconWallet } from "@/components/icons";
 import { Screen, StatusPill } from "@/components/ui";
 import { TabNav } from "@/components/TabNav";
 
@@ -81,6 +81,13 @@ export default function MohonPage() {
           icon={<IconDocument />}
           title={tr("Surat")}
           sub={tr("Pengesahan majikan atau gaji, cth. untuk pinjaman bank")}
+        />
+        <Pilihan
+          href="/inventori"
+          tone="bg-primary-soft text-primary"
+          icon={<IconBox />}
+          title={tr("Rekod item syarikat")}
+          sub={tr("Laptop, telefon atau peralatan yang anda pegang")}
         />
 
         {proses && (

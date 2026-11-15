@@ -246,7 +246,7 @@ export function ButiranInventori({ x, hr, onClose, onUbah, onSelesai }: { x: Ite
     }
   }
   const butir: [string, string | null][] = [
-    [tr("Kategori"), x.category],
+    [tr("Kategori"), x.category ? tr(x.category) : null],
     [tr("Jenama / model"), x.brand_model],
     [tr("No. siri / tag"), x.serial_no],
     [tr("Harga"), x.price != null ? ringgit(Number(x.price)) : null],
@@ -354,7 +354,7 @@ export function BarisInventori({ x, onClick, tunjukPemegang }: { x: ItemInventor
       <span className="flex min-w-0 grow flex-col gap-0.5">
         <b className="truncate text-sm font-bold">{x.name}</b>
         <span className="truncate text-xs text-muted">
-          {[x.category, tunjukPemegang ? (x.holder ?? x.location) : x.employment_id ? null : x.location, x.price != null ? ringgit(Number(x.price)) : null].filter(Boolean).join(" · ")}
+          {[x.category ? tr(x.category) : null, tunjukPemegang ? (x.holder ?? x.location) : x.employment_id ? null : x.location, x.price != null ? ringgit(Number(x.price)) : null].filter(Boolean).join(" · ")}
         </span>
       </span>
       {x.returned_on ? <Tag tone="neutral">{tr("Dipulangkan")}</Tag> : perluDipulang(x) ? <Tag tone="danger">{tr("Perlu dipulangkan")}</Tag> : <Tag tone={st.tone}>{st.l}</Tag>}
@@ -385,7 +385,7 @@ export function ItemBelumDipulang({ employmentId, nota }: { employmentId: string
             {x.photo_paths[0] ? <Lakaran path={x.photo_paths[0]} /> : <span className="flex size-14 shrink-0 items-center justify-center rounded-[12px] bg-page text-[11px] text-muted">-</span>}
             <span className="flex min-w-0 grow flex-col">
               <b className="truncate">{x.name}</b>
-              <span className="truncate text-xs text-muted">{[x.category, x.serial_no, x.price != null ? ringgit(Number(x.price)) : null].filter(Boolean).join(" · ")}</span>
+              <span className="truncate text-xs text-muted">{[x.category ? tr(x.category) : null, x.serial_no, x.price != null ? ringgit(Number(x.price)) : null].filter(Boolean).join(" · ")}</span>
             </span>
             <button
               type="button"

@@ -8,7 +8,6 @@ import { ringgit, tarikh } from "@/lib/format";
 import { getInventori, KATEGORI_INVENTORI, LABEL_STATUS_INVENTORI, perluDipulang, type ItemInventori } from "@/lib/inventori";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar } from "@/components/TabNav";
-import { TabModul } from "@/components/TabModul";
 import { HadPeranan, Tag, inputKecil } from "@/components/Senarai";
 import { BarisStat, Cip, Jadual, KadStat, Kosong } from "@/components/Modul";
 import { BarisInventori, BorangInventori, ButiranInventori, Lakaran } from "@/components/Inventori";
@@ -78,7 +77,6 @@ function InventoriHr() {
           )
         }
       />
-      <TabModul modul="pekerja" />
       <main className="flex grow flex-col gap-3 px-4 pt-1 pb-6 lg:px-0">
         {d.error && <ErrorBox message={d.error} />}
         {!d.data && !d.error && <Loading />}
@@ -132,7 +130,7 @@ function InventoriHr() {
                       <td className="w-16">{x.photo_paths[0] ? <Lakaran path={x.photo_paths[0]} /> : <span className="flex size-14 items-center justify-center rounded-[12px] bg-page text-[11px] text-muted">-</span>}</td>
                       <td>
                         <b className="block font-bold">{x.name}</b>
-                        <span className="text-xs text-muted">{[x.category, x.brand_model, x.serial_no].filter(Boolean).join(" · ")}</span>
+                        <span className="text-xs text-muted">{[x.category ? tr(x.category) : null, x.brand_model, x.serial_no].filter(Boolean).join(" · ")}</span>
                       </td>
                       <td>
                         <span className="block">{x.holder ?? x.location ?? "-"}</span>

@@ -53,7 +53,7 @@ export function useMod(): { mod: Mod; boleh: boolean; tukar: (m: Mod) => void } 
 
 export type IkonNav =
   | "home" | "plus" | "check" | "user" | "chart" | "users" | "card" | "settings" | "org" | "calendar" | "document" | "bell" | "chat"
-  | "clock" | "receipt" | "userplus" | "inbox" | "grid" | "wallet" | "sparkle" | "cake" | "target";
+  | "clock" | "receipt" | "userplus" | "inbox" | "grid" | "wallet" | "sparkle" | "cake" | "target" | "box";
 /** `padan`: awalan laluan lain yang turut menandakan item ini aktif (tab dalam modul). */
 export type ItemNav = { href: string; label: string; pendek?: string; ikon: IkonNav; roles?: string[]; padan?: string[] };
 export type KumpulanNav = { tajuk: string | null; items: ItemNav[] };
@@ -84,9 +84,9 @@ export const MENU_PEKERJA: KumpulanNav[] = [
       { href: "/gaji", label: tr("Slip gaji"), ikon: "wallet" },
       { href: "/cuti", label: tr("Cuti"), ikon: "calendar" },
       { href: "/tuntutan", label: tr("Tuntutan"), ikon: "receipt" },
+      { href: "/inventori", label: tr("Inventori saya"), ikon: "box" },
       { href: "/kehadiran", label: tr("Kehadiran"), ikon: "clock" },
       { href: "/permohonan", label: tr("Permohonan saya"), ikon: "document" },
-      { href: "/inventori", label: tr("Inventori saya"), ikon: "grid" },
     ],
   },
   {
@@ -123,9 +123,10 @@ export const MENU_HR: KumpulanNav[] = [
   {
     tajuk: tr("ORANG"),
     items: [
-      { href: "/pengurusan/pekerja", label: tr("Pekerja"), ikon: "users", roles: HR_CEO, padan: ["/pengurusan/carta", "/pengurusan/tetapan/jabatan", "/pengurusan/inventori"] },
+      { href: "/pengurusan/pekerja", label: tr("Pekerja"), ikon: "users", roles: HR_CEO, padan: ["/pengurusan/carta", "/pengurusan/tetapan/jabatan"] },
       { href: "/pengurusan/orientasi", label: tr("Orientasi"), ikon: "userplus", roles: HR_CEO },
       { href: "/pengurusan/prestasi", label: tr("Prestasi"), ikon: "target", roles: HR_CEO },
+      { href: "/pengurusan/inventori", label: tr("Inventori"), ikon: "box", roles: ["hr", "finance", "ceo", "admin"] },
     ],
   },
   {

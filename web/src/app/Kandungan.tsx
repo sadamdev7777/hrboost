@@ -17,6 +17,8 @@ const MODUL = () => [
   [tr("Kelulusan melalui WhatsApp"), tr("Ketua → HR → CEO atau sebarang susunan. Balas LULUS atau TOLAK terus di WhatsApp.")],
   [tr("Orientasi pekerja baharu"), tr("Jemputan WhatsApp, 8 langkah orientasi di telefon, senarai semak dan penilaian percubaan.")],
   [tr("Pekerja & carta organisasi"), tr("Profil, dokumen dengan tarikh tamat, sejarah perubahan, jabatan dan carta organisasi.")],
+  [tr("Inventori syarikat"), tr("Pekerja merekod laptop, telefon dan peralatan dengan gambar dan resit. HR mengesahkan dan nampak siapa memegang apa.")],
+  [tr("Penilaian prestasi & KPI"), tr("Satu KPI satu skrin untuk pekerja, kepentingan 1–5, ketua menilai dan HR memuktamadkan.")],
   [tr("Peti HR & Pembantu AI"), tr("Pekerja bertanya polisi atau memohon surat pengesahan. Pengumuman sampai ke WhatsApp semua.")],
 ];
 // Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
@@ -26,6 +28,7 @@ const BANDING = () => [
   [tr("Tuntutan"), tr("Resit hilang, kira semula"), tr("Gambar resit, AI isi borang, terus ke gaji")],
   [tr("Gaji & caruman"), tr("Kalkulator berasingan, risiko silap"), tr("KWSP, PERKESO, SIP, PCB dikira serentak")],
   [tr("Borang EA"), tr("Disediakan satu per satu pada Februari"), tr("Semua pekerja sekali gus, dihantar ke WhatsApp")],
+  [tr("Inventori"), tr("Excel lama, tiada siapa tahu siapa memegang laptop"), tr("Pekerja rekod sendiri dengan gambar, HR sahkan")],
 ];
 // Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
 const LANGKAH = () => [
@@ -47,15 +50,66 @@ const SOALAN = () => [
   [tr("Bagaimana menghubungi pasukan HRBoost?"), tr("E-mel hi@hrboost.io atau WhatsApp 019-444 2424. Pejabat kami di D-G-6 Putra Walk, Taman Pinggiran Putra, 43300 Seri Kembangan, Selangor.")],
 ];
 // Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
-const SKRIN = () => {
+const CIRI_UTAMA = () => {
   const d = `/skrin/${bahasa()}`;
   return [
-    { src: `${d}/pekerja-utama.webp`, alt: tr("Skrin utama pekerja: baki cuti, permohonan dan kehadiran"), tajuk: tr("Pekerja"), sub: tr("Baki cuti, permohonan dan kehadiran di satu skrin.") },
-    { src: `${d}/pekerja-mohon-cuti.webp`, alt: tr("Skrin mohon cuti: jenis cuti, tarikh dan pelulus"), tajuk: tr("Mohon cuti"), sub: tr("Hari bekerja dan baki dikira semasa memilih tarikh.") },
-    { src: `${d}/ketua-kelulusan.webp`, alt: tr("Skrin kelulusan ketua jabatan dengan butang Lulus dan Tolak"), tajuk: tr("Kelulusan"), sub: tr("Ketua melihat baki dan rakan yang bercuti, kemudian lulus dengan satu tekan.") },
-    { src: `${d}/hr-papan-pemuka.webp`, alt: tr("Papan Pemuka HR di telefon: tindakan, kehadiran dan gaji"), tajuk: tr("Papan Pemuka HR"), sub: tr("Semua yang perlu diuruskan hari ini — juga di telefon.") },
+    {
+      src: `${d}/ketua-kelulusan.webp`,
+      alt: tr("Skrin kelulusan tuntutan dengan aliran Ketua Jabatan, Kewangan dan CEO"),
+      label: tr("KELULUSAN"),
+      tajuk: tr("Kelulusan berbilang peringkat, di satu tempat."),
+      sub: tr("Cuti, tuntutan, pembetulan masa dan gaji melalui satu aliran kelulusan. Setiap pelulus nampak siapa sudah meluluskan dan siapa seterusnya."),
+      titik: [
+        tr("Ketua Jabatan → Kewangan → CEO, atau susunan anda sendiri"),
+        tr("Lulus, tolak atau kembalikan dengan satu tekan — juga dengan membalas LULUS di WhatsApp"),
+        tr("Wakil kelulusan semasa pelulus bercuti; peringatan jika tertangguh"),
+      ],
+    },
+    {
+      src: `${d}/pekerja-inventori.webp`,
+      alt: tr("Skrin inventori pekerja: laptop dan telefon syarikat dengan gambar dan status pengesahan HR"),
+      label: tr("INVENTORI"),
+      tajuk: tr("Inventori syarikat, direkod oleh pekerja sendiri."),
+      sub: tr("Tiada lagi senarai Excel yang tidak dikemas kini. Pekerja mengambil gambar item dan resit dengan telefon; HR hanya perlu mengesahkan."),
+      titik: [
+        tr("Gambar item, no. siri, harga dan resit pembelian"),
+        tr("Nilai inventori, pemegang dan lokasi di satu skrin HR"),
+        tr("Senarai item belum dipulangkan apabila pekerja berhenti"),
+      ],
+    },
+    {
+      src: `${d}/pekerja-tuntutan.webp`,
+      alt: tr("Skrin tuntutan baharu: gambar resit, borang diisi oleh AI"),
+      label: tr("TUNTUTAN"),
+      tajuk: tr("Tuntutan terus dari telefon."),
+      sub: tr("Ambil gambar resit, AI mengisi jenis, jumlah dan tujuan. Pekerja semak dan hantar — tiada borang kertas, tiada resit hilang."),
+      titik: [
+        tr("Kamera belakang terus, atau muat naik e-resit dan PDF"),
+        tr("Had ikut jenis tuntutan; jumlah besar naik ke CEO secara automatik"),
+        tr("Dibayar bersama gaji dan dihantar ke QuickBooks"),
+      ],
+    },
+    {
+      src: `${d}/pekerja-orientasi.webp`,
+      alt: tr("Skrin orientasi pekerja baharu: 3 daripada 8 langkah selesai"),
+      label: tr("ORIENTASI"),
+      tajuk: tr("Orientasi pekerja baharu melalui telefon."),
+      sub: tr("Pekerja baharu menerima pautan jemputan dan melengkapkan semua maklumat sendiri sebelum hari pertama. HR tidak perlu menaip semula."),
+      titik: [
+        tr("Sahkan 4 digit kad pengenalan, kemudian cipta log masuk"),
+        tr("Swafoto, bank & waris, kad pengenalan (dibaca oleh AI), KWSP & cukai"),
+        tr("Buku panduan syarikat wajib dibaca; HR nampak kemajuan setiap pekerja"),
+      ],
+    },
   ];
 };
+// Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
+const CIRI_LAIN = () => [
+  [tr("Gaji & fail berkanun automatik"), tr("KWSP, PERKESO, SIP, PCB dan HRDF dikira serentak. Fail bank, CP39 dan Borang EA sedia dimuat turun.")],
+  [tr("Penilaian prestasi yang mudah"), tr("Satu KPI satu skrin dengan huraian. HR boleh pratonton seperti pekerja sebelum kitaran dibuka.")],
+  [tr("Cuti ikut Akta Kerja"), tr("Cuti ganti automatik (s.60D), jadual kerja separuh hari Sabtu, baki dikira sendiri.")],
+  [tr("Data selamat, sentiasa percuma"), tr("Setiap syarikat diasingkan. Akses kepada data peribadi direkodkan. Tiada kad kredit.")],
+];
 // Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
 const PATUH = () => [tr("Akta Kerja 1955"), tr("KWSP"), tr("PERKESO"), tr("SIP"), tr("PCB / MTD"), "HRDF", tr("Borang EA"), tr("PDPA")];
 
@@ -109,17 +163,41 @@ export default function Kandungan() {
       </section>
 
       <section id="skrin" className="scroll-mt-20 mx-auto max-w-[1120px] px-4 pt-14">
-        <h2 className="m-0 text-2xl leading-tight font-extrabold md:text-[34px]">{tr("Lihat sendiri.")}</h2>
-        <p className="mt-3 mb-8 max-w-[680px] text-base text-[#4A5A57]">{tr("Skrin sebenar HRBoost di telefon — untuk pekerja, ketua dan HR. Contoh menggunakan data demo.")}</p>
-        <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">
-          {SKRIN().map((x) => (
-            <figure key={x.src} className="m-0 flex flex-col gap-2">
-              <Image src={x.src} alt={x.alt} width={780} height={1560} sizes="(min-width: 1024px) 260px, 50vw" className="w-full rounded-[22px] border-4 border-ink shadow-md" />
-              <figcaption className="flex flex-col">
-                <b className="text-sm">{x.tajuk}</b>
-                <span className="text-[13px] text-[#4A5A57]">{x.sub}</span>
-              </figcaption>
-            </figure>
+        <h2 className="m-0 max-w-[720px] text-2xl leading-tight font-extrabold md:text-[34px]">{tr("Dibina untuk kerja HR harian PKS.")}</h2>
+        <p className="mt-3 mb-10 max-w-[680px] text-base text-[#4A5A57]">{tr("Skrin sebenar HRBoost di telefon pekerja, ketua dan HR. Contoh menggunakan data demo.")}</p>
+        <div className="flex flex-col gap-12 md:gap-16">
+          {CIRI_UTAMA().map((x, i) => (
+            <article key={x.src} className="grid items-center gap-6 md:grid-cols-2 md:gap-12">
+              <Image
+                src={x.src}
+                alt={x.alt}
+                width={780}
+                height={1560}
+                sizes="(min-width: 768px) 280px, 70vw"
+                className={`mx-auto w-[70%] max-w-[280px] rounded-[26px] border-4 border-ink shadow-md ${i % 2 ? "md:order-2" : ""}`}
+              />
+              <div className="flex flex-col gap-3">
+                <span className="text-xs font-extrabold tracking-[0.08em] text-primary">{x.label}</span>
+                <h3 className="m-0 text-[22px] leading-tight font-extrabold md:text-[28px]">{x.tajuk}</h3>
+                <p className="m-0 text-base leading-relaxed text-[#4A5A57]">{x.sub}</p>
+                <ul className="m-0 flex list-none flex-col gap-2 p-0 text-[15px] text-[#33433F]">
+                  {x.titik.map((t) => (
+                    <li key={t} className="flex items-start gap-2">
+                      <span aria-hidden="true" className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-[#E3F1EE] text-[11px] font-extrabold text-primary">✓</span>
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {CIRI_LAIN().map(([t, s2]) => (
+            <div key={t} className="flex flex-col gap-2 rounded-card border border-line-soft bg-surface p-5">
+              <b className="text-base font-extrabold">{t}</b>
+              <span className="text-sm leading-relaxed text-[#4A5A57]">{s2}</span>
+            </div>
           ))}
         </div>
       </section>
