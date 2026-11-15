@@ -3441,7 +3441,7 @@ export const EN: Record<string, string> = {
  "Tiada isu.": "No issues.",
  "Tiada item sepadan dengan tapisan.": "No items match the filter.",
  "Tiada jabatan": "No department",
- "Tiada kad kredit · Sedia digunakan dalam satu petang · Pekerja?": "No credit card · Ready in one afternoon · Employee?",
+ "Tiada kad kredit · Sedia digunakan dalam satu petang": "No credit card · Ready in one afternoon",
  "Tiada kelulusan automatik. Perubahan terpakai kepada permohonan baharu dan peringkat seterusnya bagi permohonan yang sedang berjalan.": "No automatic approval. Changes apply to new requests and to the next levels of requests in progress.",
  "Tiada kelulusan automatik: AI perlu pengesahan anda sebelum meluluskan atau memohon.": "No auto-approval: the AI needs your confirmation before approving or applying.",
  "Tiada ketua": "No head",

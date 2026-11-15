@@ -80,7 +80,7 @@ const TEKS_KAD = "text-[13px] leading-normal text-[#5B6B68] min-[700px]:text-sm"
 
 export default function Kandungan() {
   return (
-    <div className="min-h-dvh bg-white pb-[76px] text-ink min-[700px]:pb-0">
+    <div className="min-h-dvh bg-white text-ink">
       <Pengepala />
       <main>
         <Hero />
@@ -254,7 +254,6 @@ export default function Kandungan() {
         </section>
       </main>
       <KakiHalaman />
-      <BarBawah />
     </div>
   );
 }
@@ -320,12 +319,7 @@ function Hero() {
             </a>
           )}
         </div>
-        <span className="text-[13px] text-[#5B6B68]">
-          {tr("Tiada kad kredit · Sedia digunakan dalam satu petang · Pekerja?")}{" "}
-          <Link href="/masuk" className="inline-flex min-h-11 items-center font-bold">
-            {tr("Log masuk")}
-          </Link>
-        </span>
+        <span className="text-[13px] text-[#5B6B68]">{tr("Tiada kad kredit · Sedia digunakan dalam satu petang")}</span>
       </div>
       <div className="relative flex justify-center">
         <div className="w-[200px] overflow-hidden rounded-[30px] border-[6px] border-ink bg-ink min-[700px]:w-[260px] min-[700px]:rounded-[38px] min-[700px]:border-8">
@@ -469,21 +463,5 @@ function KakiHalaman() {
         <SuisBahasa />
       </div>
     </footer>
-  );
-}
-
-/** Bar tindakan melekat di bawah skrin — telefon sahaja */
-function BarBawah() {
-  return (
-    <div className="fixed inset-x-0 bottom-0 z-20 flex gap-2 border-t border-[#E2E8E6] bg-white/95 px-4 pt-2.5 pb-3.5 min-[700px]:hidden">
-      {BENDERA.demo && (
-        <a href="#demo" className="box-border flex h-12 flex-1 items-center justify-center rounded-xl border-[1.5px] border-[#C9D3D1] text-[15px] font-bold text-ink!">
-          {tr("Cuba demo")}
-        </a>
-      )}
-      <Link href="/daftar" className="flex h-12 flex-[1.4] items-center justify-center rounded-xl bg-primary text-[15px] font-bold text-white!">
-        {tr("Daftar percuma")}
-      </Link>
-    </div>
   );
 }

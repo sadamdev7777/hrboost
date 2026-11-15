@@ -2,7 +2,7 @@
 //  - tiada teks BM tertinggal dalam English; tiada dakwaan "balas LULUS" di WhatsApp
 //  - seksyen demo & alat percuma disembunyikan (bendera lalai)
 //  - tab skrin boleh digunakan dengan anak panah; kalkulator 25 pekerja → jimat RM5,100 setahun
-//  - bar bawah hanya di telefon; tiada limpahan mendatar; sasaran sentuh ≥ 44px
+//  - tiada bar daftar melekat; tiada limpahan mendatar; sasaran sentuh ≥ 44px
 // Prasyarat: aplikasi di localhost:3000. Jalankan: node web/e2e/laman-utama.cjs
 const os = require('os');
 const { chromium } = require('playwright');
@@ -55,7 +55,7 @@ async function semakUmum(p, label) {
   const tinggal = BM.filter((w) => new RegExp(`(^|[^a-z])${w}([^a-z]|$)`).test(teksEn));
   expect(tinggal.length === 0, `tiada teks BM tertinggal${tinggal.length ? ': ' + tinggal.join(', ') : ''}`);
   await semakUmum(p, 'EN 1280');
-  expect(!(await p.locator('a:text-is("Register free")').isVisible()), 'bar bawah tidak dipaparkan di komputer');
+  expect((await p.locator('a:text-is("Register free")').count()) === 0, 'tiada bar daftar melekat');
   // Tab: anak panah kanan
   const tab = p.locator('[role=tab]');
   expect((await tab.count()) === 4, '4 tab skrin');
@@ -85,7 +85,10 @@ async function semakUmum(p, label) {
   log('2. English, 390px');
   ({ ctx, p, ralat } = await buka(browser, null, { width: 390, height: 844 }));
   await semakUmum(p, 'EN 390');
-  expect(await p.locator('a:text-is("Register free")').isVisible(), 'bar bawah dipaparkan di telefon');
+  expect((await p.locator('a:text-is("Register free")').count()) === 0, 'tiada bar daftar melekat di telefon');
+  const daftarSkrinPertama = await p.evaluate(() => [...document.querySelectorAll('a[href="/daftar"]')].filter((a) => { const r = a.getBoundingClientRect(); return r.height > 0 && r.top < window.innerHeight; }).length);
+  expect(daftarSkrinPertama === 2, `hanya 2 butang daftar di skrin pertama (pengepala + hero): ${daftarSkrinPertama}`);
+  expect(!(await p.innerText('main section')).includes('Employee?'), 'tiada "Employee? Log in" berulang di hero');
   const h1 = await p.evaluate(() => parseFloat(getComputedStyle(document.querySelector('h1')).fontSize));
   expect(h1 === 31, `tajuk utama 31px di telefon (${h1})`);
   await p.screenshot({ path: `${shots}/laman-en-390.png`, fullPage: true });
