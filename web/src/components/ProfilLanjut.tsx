@@ -4,7 +4,7 @@ import { tr, trRalat } from "@/lib/i18n";
 import { useState, type ReactNode } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
-import { tarikhPenuh } from "@/lib/format";
+import { tarikhPenuh, todayISO } from "@/lib/format";
 import { ErrorBox, Loading } from "./ui";
 import { Lembaran, Seksyen, Tag } from "./Senarai";
 import { sahkan } from "./Dialog";
@@ -324,7 +324,7 @@ export function AsetSyarikat({ employmentId, boleh }: { employmentId: string; bo
 // ---------------------------------------------------------------------------------------------
 // 4. Latihan & sijil
 export function LatihanSijil({ employmentId, boleh }: { employmentId: string; boleh: boolean }) {
-  const hari = (s: string) => Math.ceil((new Date(s).getTime() - Date.now()) / 864e5);
+  const hari = (s: string) => Math.ceil((new Date(s).getTime() - new Date(todayISO()).getTime()) / 864e5);
   return (
     <SenaraiRekod
       jadual="trainings"

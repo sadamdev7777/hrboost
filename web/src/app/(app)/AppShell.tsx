@@ -3,7 +3,7 @@
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Suspense, useEffect, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import { MeProvider, useMeContext } from "@/lib/me";
 import { getSupabase } from "@/lib/supabase";
 import { paparTelefon } from "@/lib/format";
@@ -95,12 +95,19 @@ function Notis() {
   const admin = !!me?.roles.includes("admin");
   const [n, setN] = useState<{ notis: string | null; mula: boolean }>({ notis: null, mula: false });
   // Banner persediaan boleh disembunyikan selama 7 hari (per pelayar)
-  const [sorok, setSorok] = useState(false);
-  useEffect(() => {
-    try {
-      setSorok(Number(localStorage.getItem("hrb_sorok_mula") ?? 0) > Date.now());
-    } catch {}
-  }, []);
+  const sorokDisimpan = useSyncExternalStore(
+    () => () => {},
+    () => {
+      try {
+        return Number(localStorage.getItem("hrb_sorok_mula") ?? 0) > Date.now();
+      } catch {
+        return false;
+      }
+    },
+    () => false,
+  );
+  const [sorokBaru, setSorok] = useState(false);
+  const sorok = sorokDisimpan || sorokBaru;
   const path = usePathname();
   useEffect(() => {
     let batal = false;

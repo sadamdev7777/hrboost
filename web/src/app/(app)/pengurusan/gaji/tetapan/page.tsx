@@ -168,6 +168,12 @@ function Borang({ cid, awal, item, reload }: { cid: string; awal: TetapanGaji; i
                 </MedanBorang>
               </Grid>
               <BarisSuis
+                label={tr("Ingatkan HR dan Kewangan sebelum hari gaji")}
+                nota={tr("Peringatan dihantar 5 hari dan 1 hari sebelum hari gaji, bersama status kelulusan gaji bulan itu.")}
+                on={f.payday_reminder}
+                onChange={(v) => set("payday_reminder", v)}
+              />
+              <BarisSuis
                 label={tr("Pekerja tempatan menyertai Lindung 24 Jam (SKBBK) secara lalai")}
                 nota={tr("Lalai bagi pekerja tempatan. Pilih pekerja yang menyertai di bawah. Wajib bagi pekerja asing.")}
                 on={f.skbbk_default}

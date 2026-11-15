@@ -27,6 +27,8 @@ export type TetapanGaji = {
   bank_corporate_id: string | null;
   bank_batch_id: string | null;
   payday: number;
+  /** Peringatan kepada HR & Kewangan 5 hari dan 1 hari sebelum hari gaji */
+  payday_reminder: boolean;
   hours_per_day: number;
   /** Bilangan hari bagi asas "fixed" (cth. 31) */
   fixed_days: number;
@@ -41,7 +43,7 @@ export type TetapanGaji = {
 };
 
 const LAJUR_TETAPAN =
-  "reg_no, lhdn_employer_no, lhdn_c_no, epf_employer_no, socso_employer_no, zakat_no, hrdf_registered, signatory_name, signatory_ic, signatory_position, signatory_email, signatory_phone, company_bank_name, company_bank_account, bank_corporate_id, bank_batch_id, payday, hours_per_day, fixed_days, prorate_basis, unpaid_basis, ot_basis, unpaid_items, ot_items, skbbk_default, payslip_options, gl_accounts";
+  "reg_no, lhdn_employer_no, lhdn_c_no, epf_employer_no, socso_employer_no, zakat_no, hrdf_registered, signatory_name, signatory_ic, signatory_position, signatory_email, signatory_phone, company_bank_name, company_bank_account, bank_corporate_id, bank_batch_id, payday, payday_reminder, hours_per_day, fixed_days, prorate_basis, unpaid_basis, ot_basis, unpaid_items, ot_items, skbbk_default, payslip_options, gl_accounts";
 
 export async function getTetapanGaji(companyId: string): Promise<TetapanGaji> {
   const r = must(await getSupabase().from("companies").select(LAJUR_TETAPAN).eq("id", companyId).single()) as unknown as TetapanGaji;
@@ -54,7 +56,9 @@ export async function getTetapanGaji(companyId: string): Promise<TetapanGaji> {
 }
 
 export async function simpanTetapanGaji(companyId: string, data: Partial<TetapanGaji>) {
-  must(await getSupabase().rpc("hr_set_payroll_settings", { p_company: companyId, p_data: data as never }));
+  const { payday_reminder, ...lain } = data;
+  must(await getSupabase().rpc("hr_set_payroll_settings", { p_company: companyId, p_data: lain as never }));
+  if (payday_reminder !== undefined) must(await getSupabase().rpc("set_payday_reminder", { p_company: companyId, p_on: payday_reminder }));
 }
 
 export const LABEL_ASAS: Record<Asas, string> = {

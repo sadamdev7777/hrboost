@@ -1,477 +1,489 @@
 "use client";
 
-import { bahasa, tr, trKonteks } from "@/lib/i18n";
+import { bahasa, tetapkanBahasa, tr, trKonteks, type Bahasa } from "@/lib/i18n";
 import Image from "next/image";
 import Link from "next/link";
-import { PilihBahasa } from "@/components/PilihBahasa";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore, type ReactNode } from "react";
+import { Kalkulator } from "@/components/laman/Kalkulator";
+import { TabSkrin } from "@/components/laman/TabSkrin";
+import { BENDERA, HUBUNGI } from "@/lib/laman";
 
+// Rujukan reka bentuk: design/HomepageV2.dc.html (telefon < 700px, komputer ≥ 980px)
 
-// Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
+// Fungsi (bukan pemalar) supaya teks mengikut bahasa semasa
+const ALIRAN = () => [
+  [tr("Pekerja memohon"), tr("Melalui telefon. Hari bekerja dan baki cuti dikira secara automatik.")],
+  [tr("Ketua meluluskan"), tr("Dimaklumkan melalui e-mel dan pemberitahuan dalam aplikasi, kemudian meluluskan dengan satu sentuhan.")],
+  [tr("HR dan CEO meluluskan"), tr("Mengikut susunan yang ditetapkan syarikat. Peringatan dihantar jika permohonan tertangguh.")],
+  [tr("Rekod dan gaji dikemas kini"), tr("Baki cuti dikemas kini dan tuntutan dibayar bersama gaji.")],
+];
+/** Jenis surat yang dijana oleh hr_issue_letter (memo pendahuluan gaji ialah dalaman, tidak disenaraikan) */
+const SURAT = () => [
+  tr("Surat tawaran"),
+  tr("Pengesahan jawatan"),
+  tr("Lanjutan percubaan"),
+  tr("Kenaikan gaji"),
+  tr("Pengalaman kerja"),
+  tr("Terima peletakan jawatan"),
+  tr("Amaran"),
+  tr("Tunjuk sebab"),
+];
+const PERINGATAN = () => [
+  [tr("Hari gaji"), tr("mengikut tetapan syarikat")],
+  [tr("KWSP, PERKESO, SIP, PCB"), tr("15hb setiap bulan")],
+  [tr("Borang EA"), tr("28 Februari")],
+  [tr("Borang E"), tr("31 Mac")],
+];
+const DEMO = () => [
+  [tr("Sebagai pekerja"), tr("Mohon cuti, buat tuntutan, lihat slip gaji.")],
+  [tr("Sebagai ketua"), tr("Luluskan atau tolak permohonan pasukan.")],
+  [tr("Sebagai pemilik / pentadbir"), tr("Papan Pemuka, gaji dan tetapan syarikat.")],
+];
 const MODUL = () => [
-  [tr("Cuti & kalendar pasukan"), tr("Mohon dari telefon, hari bekerja dan baki dikira automatik, cuti umum ikut negeri, siapa bercuti hari ini.")],
-  [tr("Tuntutan perbelanjaan"), tr("Ambil gambar resit, AI mengisi borang. Had ikut jenis tuntutan, dibayar bersama gaji.")],
-  [tr("Kehadiran"), tr("Sambung mesin kehadiran sedia ada. Lewat, tiada rekod dan pembetulan masa di satu skrin.")],
-  [tr("Gaji & caruman berkanun"), tr("KWSP, PERKESO, SIP, PCB dan HRDF dikira automatik. Slip gaji ke WhatsApp, fail bank dan fail caruman.")],
-  [tr("Borang EA & Borang E"), tr("Borang EA setiap pekerja, C.P.8D dan ringkasan Borang E dijana daripada rekod gaji setahun.")],
-  [tr("Kelulusan melalui WhatsApp"), tr("Ketua → HR → CEO atau sebarang susunan. Balas LULUS atau TOLAK terus di WhatsApp.")],
-  [tr("Orientasi pekerja baharu"), tr("Jemputan WhatsApp, 8 langkah orientasi di telefon, senarai semak dan penilaian percubaan.")],
-  [tr("Pekerja & carta organisasi"), tr("Profil, dokumen dengan tarikh tamat, sejarah perubahan, jabatan dan carta organisasi.")],
-  [tr("Inventori syarikat"), tr("Pekerja merekod laptop, telefon dan peralatan dengan gambar dan resit. HR mengesahkan dan nampak siapa memegang apa.")],
-  [tr("Penilaian prestasi & KPI"), tr("Satu KPI satu skrin untuk pekerja, kepentingan 1–5, ketua menilai dan HR memuktamadkan.")],
-  [tr("Peti HR & Pembantu AI"), tr("Pekerja bertanya polisi atau memohon surat pengesahan. Pengumuman sampai ke WhatsApp semua.")],
+  tr("Cuti & kalendar pasukan"),
+  tr("Tuntutan perbelanjaan"),
+  tr("Kehadiran"),
+  tr("Gaji & caruman berkanun"),
+  tr("Borang EA & Borang E"),
+  tr("Kelulusan berbilang peringkat"),
+  tr("Orientasi pekerja baharu"),
+  tr("Pekerja & carta organisasi"),
+  tr("Inventori syarikat"),
+  tr("Penilaian prestasi & KPI"),
+  tr("Peti HR & Pembantu AI"),
+  tr("Surat HR dijana automatik"),
+  tr("Sambungan AI (MCP)"),
 ];
-// Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
-const BANDING = () => [
-  [tr("Permohonan cuti"), tr("Mesej WhatsApp & borang kertas, mudah terlepas"), tr("Satu aliran kelulusan, peringatan automatik")],
-  [tr("Baki cuti"), tr("Dikira manual dalam Excel"), tr("Dikira automatik, pekerja semak sendiri")],
-  [tr("Tuntutan"), tr("Resit hilang, kira semula"), tr("Gambar resit, AI isi borang, terus ke gaji")],
-  [tr("Gaji & caruman"), tr("Kalkulator berasingan, risiko silap"), tr("KWSP, PERKESO, SIP, PCB dikira serentak")],
-  [tr("Borang EA"), tr("Disediakan satu per satu pada Februari"), tr("Semua pekerja sekali gus, dihantar ke WhatsApp")],
-  [tr("Inventori"), tr("Excel lama, tiada siapa tahu siapa memegang laptop"), tr("Pekerja rekod sendiri dengan gambar, HR sahkan")],
-  [tr("Surat HR"), tr("Ditaip semula dalam Word setiap kali"), tr("Dijana daripada rekod pekerja dengan satu tekan")],
+const ALAT = () => [
+  [tr("Kalkulator gaji bersih"), tr("Kira KWSP, PERKESO, SIP dan PCB bagi sesuatu gaji.")],
+  [tr("Surat tawaran kerja"), tr("Isi borang ringkas dan muat turun sebagai PDF.")],
+  [tr("Templat polisi cuti"), tr("Mematuhi had minimum Akta Kerja 1955.")],
+  [tr("Buku panduan pekerja"), tr("Templat yang boleh diubah suai.")],
 ];
-// Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
-const LANGKAH = () => [
-  [tr("Daftar syarikat"), tr("Isi nama syarikat dan e-mel anda, kemudian sahkan melalui pautan dalam e-mel. Tetapan cuti, kelulusan dan tuntutan disediakan secara automatik mengikut Akta Kerja.")],
-  [tr("Import pekerja"), tr("Muat naik senarai Excel sedia ada. Sistem akan memadankan jabatan dan ketua untuk anda semak.")],
-  [tr("Pekerja menerima jemputan"), tr("Setiap pekerja menerima pautan di WhatsApp, mengesahkan 4 digit kad pengenalan, mencipta log masuk e-mel dan terus boleh memohon cuti.")],
-];
-// Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
 const SOALAN = () => [
-  [tr("Adakah HRBoost benar-benar percuma?"), tr("Ya. Daftar syarikat, jemput pekerja dan gunakan cuti, tuntutan, kelulusan, kehadiran dan gaji tanpa bayaran dan tanpa kad kredit.")],
-  [tr("Adakah sesuai untuk syarikat kecil?"), tr("Ya. HRBoost dibina untuk PKS dengan 5 hingga 200 pekerja: tiada pemasangan, tiada latihan panjang, dan pekerja menggunakan telefon sendiri.")],
-  [tr("Adakah data pekerja selamat?"), tr("Setiap syarikat diasingkan sepenuhnya. Hanya HR syarikat anda boleh melihat kad pengenalan, akaun bank, gaji dan sijil cuti sakit, dan setiap akses direkodkan. Pentadbir platform hanya melihat jumlah keseluruhan, bukan data peribadi.")],
-  [tr("Adakah kiraan KWSP, PERKESO dan PCB tepat?"), tr("Kadar berkanun disimpan sebagai data dan dikemas kini oleh HRBoost untuk semua syarikat. Semak slip gaji pertama dengan kalkulator rasmi KWSP, PERKESO dan LHDN sebelum membayar.")],
-  [tr("Perlukah pekerja memasang aplikasi?"), tr("Tidak. Pekerja menerima pautan di WhatsApp dan boleh terus menggunakan pelayar telefon. Mereka boleh memasangnya pada skrin utama jika mahu.")],
-  [tr("Bagaimana jika pekerja tiada WhatsApp?"), tr("HR boleh menyalin pautan jemputan dan menghantarnya melalui saluran lain. Pekerja kemudian log masuk dengan e-mel dan kata laluan.")],
-  [tr("Bolehkah saya menggunakan mesin kehadiran sedia ada?"), tr("Ya, mesin CrossChex Cloud boleh disambungkan. Rekod masuk dan keluar diterima secara automatik setiap 5 minit.")],
-  [tr("Bolehkah saya mengeksport data saya?"), tr("Ya. Senarai pekerja, baki cuti, kehadiran, tuntutan, laporan dan fail gaji boleh dimuat turun sebagai CSV / Excel pada bila-bila masa.")],
-  [tr("Berapa lama untuk mula?"), tr("Kebanyakan syarikat siap dalam satu petang: daftar, import senarai pekerja daripada Excel, semak jabatan dan ketua, kemudian jemput pekerja.")],
-  [tr("Bagaimana menghubungi pasukan HRBoost?"), tr("E-mel hi@hrboost.io atau WhatsApp 019-444 2424. Pejabat kami di D-G-6 Putra Walk, Taman Pinggiran Putra, 43300 Seri Kembangan, Selangor.")],
+  [tr("Saya tiada pegawai HR. Bolehkah saya menggunakan HRBoost?"), tr("Boleh. HRBoost dibina untuk syarikat 5–50 pekerja yang menguruskan HR sendiri. Tetapan cuti, kelulusan dan tuntutan disediakan mengikut Akta Kerja, dan kadar berkanun dikemas kini secara automatik.")],
+  [tr("Adakah HRBoost benar-benar percuma?"), tr("Ya. Daftar syarikat, jemput pekerja dan gunakan semua modul tanpa bayaran dan tanpa kad kredit.")],
+  [tr("Adakah data pekerja selamat?"), tr("Setiap syarikat diasingkan sepenuhnya. Hanya HR syarikat anda boleh melihat data peribadi, dan setiap akses direkodkan.")],
+  [tr("Perlukah pekerja memasang aplikasi?"), tr("Tidak. Pekerja membuka pautan jemputan dan terus menggunakan pelayar telefon. Aplikasi juga boleh dipasang pada skrin utama telefon jika dikehendaki.")],
+  [tr("Adakah kiraan KWSP, PERKESO dan PCB tepat?"), tr("Kadar berkanun dikemas kini oleh HRBoost. Semak slip gaji pertama dengan kalkulator rasmi sebelum membayar.")],
+  [tr("Bolehkah saya menggunakan mesin kehadiran sedia ada?"), tr("Ya. Mesin kehadiran CrossChex Cloud boleh disambungkan, dan rekod diterima setiap 5 minit.")],
+  [tr("Bolehkah saya mengeksport data saya?"), tr("Ya. Data boleh dieksport dalam format CSV atau Excel pada bila-bila masa.")],
 ];
-// Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
-const CIRI_UTAMA = () => {
-  const d = `/skrin/${bahasa()}`;
-  return [
-    {
-      src: `${d}/ketua-kelulusan.webp`,
-      alt: tr("Skrin kelulusan tuntutan dengan aliran Ketua Jabatan, Kewangan dan CEO"),
-      label: tr("KELULUSAN"),
-      tajuk: tr("Kelulusan berbilang peringkat, di satu tempat."),
-      sub: tr("Cuti, tuntutan, pembetulan masa dan gaji melalui satu aliran kelulusan. Setiap pelulus nampak siapa sudah meluluskan dan siapa seterusnya."),
-      titik: [
-        tr("Ketua Jabatan → Kewangan → CEO, atau susunan anda sendiri"),
-        tr("Lulus, tolak atau kembalikan dengan satu tekan — juga dengan membalas LULUS di WhatsApp"),
-        tr("Wakil kelulusan semasa pelulus bercuti; peringatan jika tertangguh"),
-      ],
-    },
-    {
-      src: `${d}/pekerja-inventori.webp`,
-      alt: tr("Skrin inventori pekerja: laptop dan telefon syarikat dengan gambar dan status pengesahan HR"),
-      label: tr("INVENTORI"),
-      tajuk: tr("Inventori syarikat, direkod oleh pekerja sendiri."),
-      sub: tr("Tiada lagi senarai Excel yang tidak dikemas kini. Pekerja mengambil gambar item dan resit dengan telefon; HR hanya perlu mengesahkan."),
-      titik: [
-        tr("Gambar item, no. siri, harga dan resit pembelian"),
-        tr("Nilai inventori, pemegang dan lokasi di satu skrin HR"),
-        tr("Senarai item belum dipulangkan apabila pekerja berhenti"),
-      ],
-    },
-    {
-      src: `${d}/pekerja-tuntutan.webp`,
-      alt: tr("Skrin tuntutan baharu: gambar resit, borang diisi oleh AI"),
-      label: tr("TUNTUTAN"),
-      tajuk: tr("Tuntutan terus dari telefon."),
-      sub: tr("Ambil gambar resit, AI mengisi jenis, jumlah dan tujuan. Pekerja semak dan hantar — tiada borang kertas, tiada resit hilang."),
-      titik: [
-        tr("Kamera belakang terus, atau muat naik e-resit dan PDF"),
-        tr("Had ikut jenis tuntutan; jumlah besar naik ke CEO secara automatik"),
-        tr("Dibayar bersama gaji dan dihantar ke QuickBooks"),
-      ],
-    },
-    {
-      src: `${d}/pekerja-orientasi.webp`,
-      alt: tr("Skrin orientasi pekerja baharu: 3 daripada 8 langkah selesai"),
-      label: tr("ORIENTASI"),
-      tajuk: tr("Orientasi pekerja baharu melalui telefon."),
-      sub: tr("Pekerja baharu menerima pautan jemputan dan melengkapkan semua maklumat sendiri sebelum hari pertama. HR tidak perlu menaip semula."),
-      titik: [
-        tr("Sahkan 4 digit kad pengenalan, kemudian cipta log masuk"),
-        tr("Swafoto, bank & waris, kad pengenalan (dibaca oleh AI), KWSP & cukai"),
-        tr("Buku panduan syarikat wajib dibaca; HR nampak kemajuan setiap pekerja"),
-      ],
-    },
-  ];
-};
-// Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
-const CIRI_LAIN = () => [
-  [tr("Surat dijana automatik"), tr("Surat tawaran, pengesahan jawatan, kenaikan gaji, amaran, terima peletakan jawatan dan pengalaman kerja dijana daripada rekod pekerja. HR tidak perlu menaip.")],
-  [tr("Gaji & fail berkanun automatik"), tr("KWSP, PERKESO, SIP, PCB dan HRDF dikira serentak. Fail bank, CP39 dan Borang EA sedia dimuat turun.")],
-  [tr("Penilaian prestasi yang mudah"), tr("Satu KPI satu skrin dengan huraian. HR boleh pratonton seperti pekerja sebelum kitaran dibuka.")],
-  [tr("Cuti ikut Akta Kerja"), tr("Cuti ganti automatik (s.60D), jadual kerja separuh hari Sabtu, baki dikira sendiri.")],
-  [tr("Kehadiran disambung terus"), tr("Mesin CrossChex sedia ada disambung; lewat, tiada rekod dan pembetulan masa di satu skrin.")],
-  [tr("Data selamat, sentiasa percuma"), tr("Setiap syarikat diasingkan. Akses kepada data peribadi direkodkan. Tiada kad kredit.")],
-];
-// Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
-const PATUH = () => [tr("Akta Kerja 1955"), tr("KWSP"), tr("PERKESO"), tr("SIP"), tr("PCB / MTD"), "HRDF", tr("Borang EA"), tr("PDPA")];
 
-// Rujukan reka bentuk: design/Homepage.dc.html
+const BALUT = "mx-auto box-border w-full max-w-[1080px] px-4 min-[700px]:px-6";
+const H2 = "m-0 text-[23px] leading-[1.15] font-extrabold tracking-[-0.015em] min-[700px]:text-[28px] min-[980px]:text-[36px]";
+const SEKSYEN = "pt-14 min-[700px]:pt-24";
+const SEKSYEN_BESAR = "pt-14 min-[700px]:pt-28";
+const KAD = "flex flex-col gap-1.5 rounded-2xl border-[1.5px] border-[#E2E8E6] p-3.5 min-[700px]:p-5";
+const TAJUK_KAD = "text-[15px] font-extrabold min-[700px]:text-base";
+const TEKS_KAD = "text-[13px] leading-normal text-[#5B6B68] min-[700px]:text-sm";
+
 export default function Kandungan() {
   return (
-    <div className="min-h-dvh bg-page text-ink">
+    <div className="min-h-dvh bg-white pb-[76px] text-ink min-[700px]:pb-0">
       <Pengepala />
+      <main>
+        <Hero />
 
-      <section className="mx-auto grid max-w-[1120px] items-center gap-10 px-4 pt-4 pb-14 md:grid-cols-[1.1fr_0.9fr] md:pt-14">
-        <div className="flex flex-col gap-5">
-          <span className="self-start rounded-full bg-[#E3F1EE] px-3 py-1.5 text-[13px] font-extrabold text-primary">{tr("100% percuma · untuk syarikat di Malaysia")}</span>
-          <h1 className="m-0 text-[34px] leading-[1.15] font-extrabold md:text-[48px]">{tr("Urus HR syarikat terus melalui WhatsApp.")}</h1>
-          <p className="m-0 max-w-[560px] text-base leading-relaxed text-[#4A5A57] md:text-lg">
-            {tr("Pekerja memohon cuti dan membuat tuntutan melalui telefon. Ketua meluluskan dengan satu balasan. Gaji dikira mengikut KWSP, PERKESO dan PCB. Semuanya dalam satu sistem yang mudah.")}</p>
-          <div className="flex flex-col gap-2.5 sm:flex-row">
-            <Link href="/daftar" className="flex h-12 items-center justify-center rounded-button bg-primary px-6 text-base font-extrabold text-white!">
-              {tr("Daftar syarikat — percuma")}</Link>
-            <Link href="/masuk" className="flex h-12 items-center justify-center rounded-button border-2 border-primary bg-surface px-6 text-base font-extrabold text-primary!">
-              {tr("Saya pekerja — log masuk")}</Link>
-          </div>
-          <ul className="m-0 flex list-none flex-wrap gap-x-5 gap-y-1.5 p-0 text-sm font-semibold text-[#33433F]">
-            {[tr("Percuma, tiada kad kredit"), tr("Sedia dalam satu petang"), tr("Bahasa Melayu & English"), tr("Untuk PKS 5–200 pekerja")].map((x) => (
-              <li key={x} className="flex items-center gap-1.5">
-                <span aria-hidden="true" className="flex size-5 items-center justify-center rounded-full bg-[#E3F1EE] text-[11px] font-extrabold text-primary">✓</span>
-                {x}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="mx-auto flex w-full max-w-[380px] flex-col gap-2.5 rounded-[28px] bg-[#E7DED3] p-4 shadow-sm" aria-label={tr("Contoh perbualan WhatsApp")}>
-          <div className="max-w-[88%] rounded-[14px] rounded-tl-sm bg-white px-3.5 py-2.5 text-[14px] leading-snug">
-            {tr("Terdapat permohonan yang menunggu kelulusan anda:")}<br />
-            <b>{tr("Amin · Cuti Tahunan 23–28 Dis (3 hari)")}</b>
-            <br />
-            <span className="text-ai">{tr("AI: Baki mencukupi. Zulfa juga bercuti pada 24 Dis.")}</span>
-            <br />
-            {tr("Sila balas LULUS atau TOLAK <sebab>.")}</div>
-          <div className="self-end rounded-[14px] rounded-tr-sm bg-[#D9FDD3] px-3.5 py-2.5 text-[14px] font-bold">{tr("LULUS")}</div>
-          <div className="max-w-[88%] rounded-[14px] rounded-tl-sm bg-white px-3.5 py-2.5 text-[14px] leading-snug">{tr("Diluluskan. Dihantar kepada HR untuk peringkat seterusnya.")}</div>
-        </div>
-      </section>
-
-      <section className="border-y border-line-soft bg-surface" aria-label={tr("Patuh undang-undang Malaysia")}>
-        <div className="mx-auto flex max-w-[1120px] flex-wrap items-center justify-center gap-x-6 gap-y-2 px-4 py-5 text-sm font-bold text-[#4A5A57]">
-          <span className="w-full text-center text-[11px] font-extrabold tracking-[0.08em] text-primary md:w-auto">{tr("PATUH UNDANG-UNDANG MALAYSIA")}</span>
-          {PATUH().map((p) => (
-            <span key={p}>{p}</span>
-          ))}
-        </div>
-      </section>
-
-      <section id="skrin" className="scroll-mt-20 mx-auto max-w-[1120px] px-4 pt-14">
-        <h2 className="m-0 max-w-[720px] text-2xl leading-tight font-extrabold md:text-[34px]">{tr("Dibina untuk kerja HR harian PKS.")}</h2>
-        <p className="mt-3 mb-10 max-w-[680px] text-base text-[#4A5A57]">{tr("Skrin sebenar HRBoost di telefon pekerja, ketua dan HR. Contoh menggunakan data demo.")}</p>
-        <div className="flex flex-col gap-12 md:gap-16">
-          {CIRI_UTAMA().map((x, i) => (
-            <article key={x.src} className="grid items-center gap-6 md:grid-cols-2 md:gap-12">
-              <Image
-                src={x.src}
-                alt={x.alt}
-                width={780}
-                height={1560}
-                sizes="(min-width: 768px) 280px, 70vw"
-                className={`mx-auto w-[70%] max-w-[280px] rounded-[26px] border-4 border-ink shadow-md ${i % 2 ? "md:order-2" : ""}`}
-              />
-              <div className="flex flex-col gap-3">
-                <span className="text-xs font-extrabold tracking-[0.08em] text-primary">{x.label}</span>
-                <h3 className="m-0 text-[22px] leading-tight font-extrabold md:text-[28px]">{x.tajuk}</h3>
-                <p className="m-0 text-base leading-relaxed text-[#4A5A57]">{x.sub}</p>
-                <ul className="m-0 flex list-none flex-col gap-2 p-0 text-[15px] text-[#33433F]">
-                  {x.titik.map((t) => (
-                    <li key={t} className="flex items-start gap-2">
-                      <span aria-hidden="true" className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-[#E3F1EE] text-[11px] font-extrabold text-primary">✓</span>
-                      {t}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </article>
-          ))}
-        </div>
-        <div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {CIRI_LAIN().map(([t, s2]) => (
-            <div key={t} className="flex flex-col gap-2 rounded-card border border-line-soft bg-surface p-5">
-              <b className="text-base font-extrabold">{t}</b>
-              <span className="text-sm leading-relaxed text-[#4A5A57]">{s2}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="ciri" className="scroll-mt-16 mx-auto max-w-[1120px] px-4 py-14">
-        <h2 className="m-0 max-w-[680px] text-2xl leading-tight font-extrabold md:text-[34px]">{tr("Semua modul HR yang diperlukan PKS, dalam satu sistem.")}</h2>
-        <p className="mt-3 mb-8 max-w-[680px] text-base text-[#4A5A57]">{tr("Tanpa kertas, tanpa Excel berasingan, dan tanpa perlu mengejar sesiapa. Pekerja menggunakan telefon; HR menggunakan komputer.")}</p>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {MODUL().map(([t, s2]) => (
-            <div key={t} className="flex flex-col gap-2 rounded-card bg-surface p-5">
-              <b className="text-base font-extrabold">{t}</b>
-              <span className="text-sm leading-relaxed text-[#4A5A57]">{s2}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="banding" className="scroll-mt-16 mx-auto max-w-[1120px] px-4 pb-14">
-        <h2 className="m-0 mb-6 text-2xl leading-tight font-extrabold md:text-[34px]">{tr("Sebelum dan selepas HRBoost")}</h2>
-        <div className="overflow-x-auto rounded-card bg-surface">
-          <table className="w-full min-w-[620px] border-collapse text-left text-sm">
-            <thead>
-              <tr className="border-b border-line-soft text-xs font-bold tracking-[0.04em] text-muted">
-                <th className="px-5 py-3">{tr("URUSAN")}</th>
-                <th className="px-5 py-3">{tr("CARA LAMA (WHATSAPP & EXCEL)")}</th>
-                <th className="px-5 py-3 text-primary">HRBOOST</th>
-              </tr>
-            </thead>
-            <tbody className="[&>tr+tr]:border-t [&>tr+tr]:border-[#EEF2F1]">
-              {BANDING().map(([u, lama, baru]) => (
-                <tr key={u}>
-                  <td className="px-5 py-3 font-bold">{u}</td>
-                  <td className="px-5 py-3 text-[#4A5A57]">{lama}</td>
-                  <td className="px-5 py-3 font-semibold text-primary">{baru}</td>
-                </tr>
+        {/* 3. Aliran permohonan */}
+        <section className="bg-[#F4F6F5]">
+          <div className={`${BALUT} py-12 min-[700px]:py-[88px]`}>
+            <h2 className={`${H2} mb-6 max-w-[640px] min-[700px]:mb-12`}>{tr("Satu aliran untuk setiap permohonan.")}</h2>
+            <ol className="m-0 grid list-none grid-cols-2 gap-x-3 gap-y-5 p-0 min-[700px]:gap-7 min-[980px]:grid-cols-4">
+              {ALIRAN().map(([t, s], k) => (
+                <li key={t} className={`flex flex-col gap-2 border-t-2 pt-4 ${k === 0 ? "border-primary" : "border-[#C9D3D1]"}`}>
+                  <span className="text-[13px] font-extrabold text-primary">{String(k + 1).padStart(2, "0")}</span>
+                  <b className="text-base font-extrabold min-[700px]:text-[17px]">{t}</b>
+                  <span className="text-sm leading-normal text-[#5B6B68] min-[700px]:text-[15px]">{s}</span>
+                </li>
               ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+            </ol>
+          </div>
+        </section>
 
-      <section id="cara" className="scroll-mt-16 bg-surface">
-        <div className="mx-auto max-w-[1120px] px-4 py-14">
-          <h2 className="m-0 mb-8 text-2xl font-extrabold md:text-[34px]">{tr("Mulakan dalam satu petang.")}</h2>
-          <ol className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4 p-0">
-            {LANGKAH().map(([t, s], i) => (
-              <li key={t} className="flex gap-4">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-base font-extrabold text-white">{i + 1}</span>
-                <span className="flex flex-col gap-1">
-                  <b className="text-base font-extrabold">{t}</b>
-                  <span className="text-sm leading-relaxed text-[#4A5A57]">{s}</span>
+        {/* 4. Kelebihan */}
+        <section className={`${BALUT} ${SEKSYEN}`}>
+          <h2 className={`${H2} mb-2.5 max-w-[680px]`}>{tr("Kelebihan yang jarang ada pada sistem HR lain.")}</h2>
+          <p className="m-0 mb-8 max-w-[580px] text-base leading-relaxed text-[#5B6B68]">
+            {tr("Dibina untuk syarikat yang tiada pegawai HR — sistem yang melaksanakan kerja, bukan sekadar menyimpan rekod.")}
+          </p>
+          <div className="grid gap-3.5 min-[980px]:grid-cols-3">
+            <KadKelebihan label={tr("AI · MCP")} tajuk={tr("Sambungkan dengan Claude melalui MCP.")} teks={tr("Tanya Claude tentang syarikat anda dalam bahasa harian. Claude bertindak bagi pihak anda, dengan kebenaran yang sama seperti anda dalam aplikasi.")}>
+              <div className="mt-auto flex flex-col gap-2 rounded-[14px] bg-[#F3F0FC] p-3.5">
+                <span className="max-w-[85%] self-end rounded-[12px_4px_12px_12px] bg-white px-3 py-2 text-[13px]">{tr("Siapa bercuti minggu ini?")}</span>
+                <span className="max-w-[90%] self-start rounded-[4px_12px_12px_12px] bg-white px-3 py-2 text-[13px] leading-snug text-[#2E2650]">
+                  {tr("Zulfa (24 Dis) dan Amin (23–28 Dis). 2 permohonan lagi menunggu kelulusan anda.")}
                 </span>
+              </div>
+              <span className="text-xs leading-normal text-[#5B6B68]">{tr("Butiran kad pengenalan, akaun bank dan gaji individu tidak dikongsi. Setiap panggilan direkodkan.")}</span>
+            </KadKelebihan>
+            <KadKelebihan label={tr("SURAT HR")} tajuk={tr("Surat rasmi dijana dalam beberapa saat.")} teks={tr("Pilih pekerja dan jenis surat. Butiran diisi secara automatik daripada rekod pekerja, menggunakan kepala surat syarikat, dan sedia untuk dimuat turun sebagai PDF atau dikongsi.")}>
+              <ul className="m-0 mt-auto flex list-none flex-wrap gap-1.5 p-0" aria-label={tr("Jenis surat")}>
+                {SURAT().map((s) => (
+                  <li key={s} className="rounded-lg bg-[#F4F6F5] px-2.5 py-[5px] text-xs font-bold text-[#33433F]">
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            </KadKelebihan>
+            <KadKelebihan label={tr("PERINGATAN")} tajuk={tr("Hari gaji dan tarikh akhir bayaran tidak akan terlepas.")} teks={tr("HR dan Kewangan diingatkan 5 hari dan 1 hari sebelum setiap tarikh penting.")}>
+              <dl className="m-0 mt-auto flex flex-col">
+                {PERINGATAN().map(([k, v], i, a) => (
+                  <div key={k} className={`flex justify-between gap-2.5 py-[9px] text-[13px] ${i < a.length - 1 ? "border-b border-[#EEF2F1]" : ""}`}>
+                    <dt className="font-bold">{k}</dt>
+                    <dd className="m-0 text-right text-[#5B6B68]">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </KadKelebihan>
+          </div>
+        </section>
+
+        {/* 5. Demo — disembunyikan sehingga syarikat demo tersedia */}
+        {BENDERA.demo && (
+          <section id="demo" className={`${BALUT} ${SEKSYEN} scroll-mt-20`}>
+            <h2 className={`${H2} mb-2.5 max-w-[640px]`}>{tr("Cuba dahulu, tanpa perlu mendaftar.")}</h2>
+            <p className="m-0 mb-8 max-w-[560px] text-base leading-relaxed text-[#5B6B68]">{tr("Buka syarikat contoh dan cuba sendiri: mohon cuti sebagai pekerja, kemudian luluskannya sebagai ketua.")}</p>
+            <div className="grid grid-cols-2 gap-3 min-[980px]:grid-cols-4">
+              {DEMO().map(([t, s]) => (
+                <Link key={t} href="/demo" className={`${KAD} text-ink!`}>
+                  <b className={TAJUK_KAD}>{t}</b>
+                  <span className={TEKS_KAD}>{s}</span>
+                  <span className="mt-1.5 text-sm font-bold text-primary">{tr("Buka demo ›")}</span>
+                </Link>
+              ))}
+              <div className="flex flex-col justify-center gap-1.5 rounded-2xl bg-[#F4F6F5] p-3.5 min-[700px]:p-5">
+                <b className="text-[15px] font-extrabold">{tr("± 30 saat")}</b>
+                <span className={TEKS_KAD}>{tr("Data contoh sahaja. Ditetapkan semula setiap hari.")}</span>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* 6. Kalkulator penjimatan */}
+        <section className={`${BALUT} ${SEKSYEN}`}>
+          <Kalkulator />
+        </section>
+
+        {/* 7. Skrin sebenar */}
+        <section id="ciri" className={`${BALUT} ${SEKSYEN} scroll-mt-20`}>
+          <TabSkrin />
+        </section>
+
+        {/* 8. Modul */}
+        <section className={`${BALUT} ${SEKSYEN_BESAR}`}>
+          <h2 className={`${H2} mb-8 max-w-[640px]`}>{tr("Semua modul HR, dalam satu sistem.")}</h2>
+          <ul className="m-0 grid list-none gap-x-10 p-0 min-[700px]:grid-cols-2 min-[980px]:grid-cols-3">
+            {MODUL().map((m, k) => (
+              <li key={m} className="flex min-h-11 items-center gap-3 border-b border-[#EEF2F1] text-sm font-semibold min-[700px]:min-h-[52px] min-[700px]:text-[15px]">
+                <span className="w-5 shrink-0 text-xs font-bold text-[#5B6B68] tabular-nums">{String(k + 1).padStart(2, "0")}</span>
+                {m}
               </li>
             ))}
-          </ol>
-        </div>
-      </section>
-
-      <section id="pekerja" className="scroll-mt-20 mx-auto grid max-w-[1120px] gap-6 px-4 pt-14 md:grid-cols-2">
-        <div className="flex flex-col gap-3 rounded-card bg-surface p-6">
-          <h2 className="m-0 text-xl font-extrabold">{tr("Untuk pekerja")}</h2>
-          <ul className="m-0 flex list-disc flex-col gap-1.5 pl-5 text-sm leading-relaxed text-[#4A5A57]">
-            <li>{tr("Mohon cuti dan buat tuntutan dari telefon — ambil gambar resit, AI mengisi borang.")}</li>
-            <li>{tr("Semak baki cuti, slip gaji dan kehadiran bila-bila masa.")}</li>
-            <li>{tr("Terima keputusan dan slip gaji terus di WhatsApp.")}</li>
-            <li>{tr("Muat turun Borang EA sendiri untuk e-Filing.")}</li>
           </ul>
-          <Link href="/masuk" className="flex min-h-11 items-center self-start text-sm font-bold">
-            {tr("Sudah dijemput? Log masuk ›")}</Link>
-        </div>
-        <div className="flex flex-col gap-3 rounded-card bg-surface p-6">
-          <h2 className="m-0 text-xl font-extrabold">{tr("Untuk HR & majikan")}</h2>
-          <ul className="m-0 flex list-disc flex-col gap-1.5 pl-5 text-sm leading-relaxed text-[#4A5A57]">
-            <li>{tr("Semua kelulusan di satu tempat — atau terus dari WhatsApp dengan membalas LULUS.")}</li>
-            <li>{tr("Gaji, KWSP, PERKESO, SIP dan PCB dikira secara automatik, termasuk fail untuk bank.")}</li>
-            <li>{tr("Papan Pemuka harian: siapa tiada, siapa lewat, apa yang perlu diluluskan.")}</li>
-            <li>{tr("Borang EA, C.P.8D dan ringkasan Borang E dijana daripada rekod gaji.")}</li>
-          </ul>
-          <Link href="/daftar" className="flex min-h-11 items-center self-start text-sm font-bold">
-            {tr("Daftar syarikat ›")}</Link>
-        </div>
-      </section>
+          <p className="m-0 mt-7 text-sm text-[#5B6B68]">{tr("Patuh Akta Kerja 1955, KWSP, PERKESO, SIP, PCB, HRDF, Borang EA dan PDPA.")}</p>
+        </section>
 
-      <section id="soalan" className="scroll-mt-20 mx-auto max-w-[1120px] px-4 pt-14">
-        <h2 className="m-0 mb-6 text-2xl font-extrabold md:text-[34px]">{tr("Soalan lazim")}</h2>
-        <div className="flex flex-col rounded-card bg-surface px-5 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
-          {SOALAN().map(([q, a]) => (
-            <details key={q} className="group py-2">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-base font-bold [&::-webkit-details-marker]:hidden">
-                {q}
-                <span aria-hidden="true" className="text-xl text-primary transition-transform group-open:rotate-45">
-                  +
-                </span>
-              </summary>
-              <p className="mt-2 mb-0 text-sm leading-relaxed text-[#4A5A57]">{a}</p>
-            </details>
-          ))}
-        </div>
-      </section>
+        {/* 9. Alat percuma — disembunyikan sehingga alat tersedia */}
+        {BENDERA.alatPercuma && (
+          <section id="alat" className={`${BALUT} ${SEKSYEN_BESAR} scroll-mt-20`}>
+            <h2 className={`${H2} mb-2.5`}>{tr("Alat HR percuma tanpa perlu log masuk.")}</h2>
+            <p className="m-0 mb-7 max-w-[560px] text-base leading-relaxed text-[#5B6B68]">{tr("Untuk syarikat yang menguruskan HR sendiri.")}</p>
+            <div className="grid grid-cols-2 gap-3 min-[980px]:grid-cols-4">
+              {ALAT().map(([t, s]) => (
+                <Link key={t} href="/alat" className={`${KAD} text-ink!`}>
+                  <b className={TAJUK_KAD}>{t}</b>
+                  <span className={TEKS_KAD}>{s}</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
-      <section className="mx-auto max-w-[1120px] px-4 py-14">
-        <div className="flex flex-col items-center gap-4 rounded-[24px] bg-primary px-6 py-10 text-center text-white">
-          <h2 className="m-0 text-2xl font-extrabold">{tr("Sedia untuk mencuba?")}</h2>
-          <p className="m-0 max-w-[560px] text-base opacity-90">{tr("Percuma. Tiada kad kredit. Daftar syarikat dan jemput pekerja pertama anda hari ini.")}</p>
-          <div className="flex flex-col gap-2.5 sm:flex-row">
-            <Link href="/daftar" className="flex h-12 items-center justify-center rounded-button bg-white px-8 text-base font-extrabold text-primary!">
-              {tr("Daftar syarikat")}</Link>
-            <Link href="/masuk" className="flex h-12 items-center justify-center rounded-button border-2 border-white/70 px-8 text-base font-extrabold text-white!">
-              {tr("Saya pekerja — log masuk")}</Link>
+        {/* 10. Cara bermula */}
+        <section id="cara" className={`${BALUT} ${SEKSYEN_BESAR} scroll-mt-20`}>
+          <div className="flex flex-col gap-5 rounded-[20px] bg-[#F4F6F5] px-[18px] py-6 min-[700px]:rounded-[24px] min-[700px]:px-8 min-[700px]:py-10">
+            <h2 className={H2}>{tr("Mulakan dalam satu petang.")}</h2>
+            <ol className="m-0 flex flex-col gap-2.5 pl-[22px] text-base leading-normal text-[#33433F]">
+              <li>
+                <b>{tr("Daftar syarikat")}</b> {tr("dan sahkan e-mel. Tetapan asas disediakan mengikut Akta Kerja.")}
+              </li>
+              <li>
+                <b>{tr("Muat naik senarai pekerja")}</b> {tr("dalam fail Excel sedia ada. Sistem akan memadankan jabatan dan ketua.")}
+              </li>
+              <li>
+                <b>{tr("Pekerja menerima pautan jemputan")}</b> {tr("melalui WhatsApp atau e-mel, dan boleh terus memohon cuti.")}
+              </li>
+            </ol>
+            <span className="text-sm text-[#5B6B68]">{tr("Percuma sepenuhnya. Setiap syarikat diasingkan dan setiap akses kepada data peribadi direkodkan.")}</span>
           </div>
-          <span className="text-[13px] opacity-80">{tr("Pekerja tidak perlu mendaftar syarikat — gunakan pautan jemputan daripada HR.")}</span>
-        </div>
-      </section>
+        </section>
 
-      <Kaki />
+        {/* 11. Soalan lazim */}
+        <section id="soalan" className={`${BALUT} ${SEKSYEN_BESAR} scroll-mt-20`}>
+          <h2 className={`${H2} mb-4`}>{tr("Soalan lazim")}</h2>
+          <div className="grid gap-x-12 min-[980px]:grid-cols-2">
+            {SOALAN().map(([q, a]) => (
+              <details key={q} className="group border-b border-[#EEF2F1] py-1">
+                <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 text-[15px] font-bold min-[700px]:min-h-[52px] min-[700px]:text-base [&::-webkit-details-marker]:hidden">
+                  {q}
+                  <span aria-hidden="true" className="text-xl font-normal text-[#5B6B68] transition-transform group-open:rotate-45">
+                    +
+                  </span>
+                </summary>
+                <p className="m-0 mb-3.5 text-[15px] leading-relaxed text-[#5B6B68]">{a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        {/* 12. Seruan akhir */}
+        <section className={`${BALUT} flex flex-col items-center gap-5 pt-16 pb-10 text-center min-[700px]:py-32`}>
+          <h2 className={H2}>{tr("Sedia untuk mencuba?")}</h2>
+          <p className="m-0 text-base text-[#5B6B68]">{tr("Percuma. Tiada kad kredit.")}</p>
+          <Link href="/daftar" className="flex h-[52px] items-center rounded-xl bg-primary px-7 text-base font-bold text-white!">
+            {tr("Daftar syarikat")}
+          </Link>
+          <span className="text-[13px] text-[#5B6B68]">
+            {tr("Pekerja? Gunakan pautan jemputan daripada HR, atau")}{" "}
+            <Link href="/masuk" className="inline-flex min-h-11 items-center font-bold">
+              {tr("log masuk")}
+            </Link>
+            .
+          </span>
+        </section>
+      </main>
+      <KakiHalaman />
+      <BarBawah />
     </div>
   );
 }
 
-const PAUTAN = () => [
-  { id: "ciri", label: tr("Ciri") },
-  { id: "cara", label: tr("Cara mula") },
-  { id: "soalan", label: trKonteks("Soalan lazim", "FAQ") },
-];
-
 function Logo() {
   return (
-    <Link href="/" className="flex shrink-0 items-center gap-2 text-ink!">
-      <span className="flex size-9 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold text-white">HR</span>
-      <b className="text-lg font-extrabold">HRBoost.io</b>
-    </Link>
+    <span className="flex items-center gap-2">
+      <span aria-hidden="true" className="flex size-[30px] items-center justify-center rounded-lg bg-primary text-xs font-extrabold text-white">
+        HR
+      </span>
+      <b className="text-[17px] font-extrabold text-ink">HRBoost.io</b>
+    </span>
   );
 }
 
-/** Pengepala melekat: pautan seksyen (aktif ikut skrol), suis bahasa, Log masuk & Daftar; menu ☰ pada telefon. */
 function Pengepala() {
-  const [buka, setBuka] = useState(false);
-  const [aktif, setAktif] = useState<string | null>(null);
-  const [skrol, setSkrol] = useState(false);
-  useEffect(() => {
-    // Seksyen aktif = seksyen terakhir yang bahagian atasnya telah melepasi pengepala (dan masih kelihatan)
-    const onSkrol = () => {
-      setSkrol(window.scrollY > 8);
-      let semasa: string | null = null;
-      for (const x of PAUTAN()) {
-        const el = document.getElementById(x.id);
-        if (!el) continue;
-        const r = el.getBoundingClientRect();
-        if (r.top <= 120 && r.bottom > 120) semasa = x.id;
-      }
-      setAktif(semasa);
-    };
-    onSkrol();
-    window.addEventListener("scroll", onSkrol, { passive: true });
-    return () => window.removeEventListener("scroll", onSkrol);
-  }, []);
-  useEffect(() => {
-    if (!buka) return;
-    const k = (e: KeyboardEvent) => e.key === "Escape" && setBuka(false);
-    window.addEventListener("keydown", k);
-    return () => window.removeEventListener("keydown", k);
-  }, [buka]);
+  const pautan = "flex h-11 items-center px-3 text-sm font-semibold text-[#5B6B68]!";
   return (
-    <header className={`sticky top-0 z-40 bg-surface/95 backdrop-blur transition-shadow ${skrol ? "border-b border-line-soft shadow-sm" : "border-b border-transparent"}`}>
-      <nav aria-label={tr("Menu utama")} className="mx-auto flex h-16 max-w-[1120px] items-center gap-3 px-4">
-        <Logo />
-        <div className="ml-6 hidden items-center gap-1 md:flex">
-          {PAUTAN().map((x) => (
-            <a
-              key={x.id}
-              href={`#${x.id}`}
-              aria-current={aktif === x.id ? "true" : undefined}
-              className={`relative flex h-16 items-center px-3 text-sm font-bold transition-colors ${aktif === x.id ? "text-primary!" : "text-[#4A5A57]! hover:text-ink!"}`}
-            >
-              {x.label}
-              <span className={`absolute inset-x-3 bottom-0 h-[3px] rounded-t-full bg-primary transition-opacity ${aktif === x.id ? "opacity-100" : "opacity-0"}`} />
-            </a>
-          ))}
+    <header className="sticky top-0 z-20 border-b border-[#EEF2F1] bg-white/95 backdrop-blur">
+      <nav aria-label={tr("Menu utama")} className={`${BALUT} flex h-16 items-center gap-2`}>
+        <Link href="/" aria-label="HRBoost.io" className="flex min-h-11 items-center">
+          <Logo />
+        </Link>
+        <div className="ml-6 hidden min-[980px]:flex">
+          <a href="#ciri" className={pautan}>
+            {tr("Ciri")}
+          </a>
+          <a href="#cara" className={pautan}>
+            {tr("Cara bermula")}
+          </a>
+          <a href="#soalan" className={pautan}>
+            {trKonteks("Soalan lazim", "FAQ")}
+          </a>
         </div>
         <span className="grow" />
-        <div className="hidden items-center gap-3 md:flex">
-          <PilihBahasa kecil bingkai />
-          <Link href="/masuk" className="flex h-11 items-center px-2 text-sm font-bold">
-            {tr("Log masuk")}</Link>
-          <Link href="/daftar" className="flex h-11 items-center rounded-[12px] bg-primary px-4 text-sm font-extrabold text-white!">
-            {tr("Daftar percuma")}</Link>
-        </div>
-        <Link href="/masuk" className="flex h-11 items-center px-1 text-sm font-bold md:hidden">
-          {tr("Log masuk")}</Link>
-        <button
-          type="button"
-          aria-label={buka ? tr("Tutup menu") : tr("Buka menu")}
-          aria-expanded={buka}
-          aria-controls="menu-telefon"
-          onClick={() => setBuka(!buka)}
-          className="flex size-11 items-center justify-center rounded-[12px] border border-line text-ink md:hidden"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
-            {buka ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
-          </svg>
-        </button>
+        <Link href="/masuk" className="flex h-11 items-center px-2.5 text-sm font-bold text-ink!">
+          {tr("Log masuk")}
+        </Link>
+        <Link href="/daftar" className="flex h-11 items-center rounded-[10px] bg-primary px-4 text-sm font-bold text-white!">
+          {tr("Daftar")}
+        </Link>
       </nav>
-      {buka && (
-        <div id="menu-telefon" className="border-t border-line-soft bg-surface px-4 pt-2 pb-5 shadow-md md:hidden">
-          <div className="flex flex-col">
-            {PAUTAN().map((x) => (
-              <a key={x.id} href={`#${x.id}`} onClick={() => setBuka(false)} className="flex min-h-12 items-center border-b border-[#EEF2F1] text-base font-bold text-ink!">
-                {x.label}
-              </a>
-            ))}
-          </div>
-          <div className="flex items-center justify-between gap-3 py-4">
-            <span className="text-sm font-bold text-[#4A5A57]">{tr("Bahasa")}</span>
-            <PilihBahasa kecil bingkai />
-          </div>
-          <div className="flex flex-col gap-2.5">
-            <Link href="/daftar" className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white!">
-              {tr("Daftar syarikat — percuma")}</Link>
-            <Link href="/masuk" className="flex h-12 items-center justify-center rounded-button border-2 border-primary text-base font-extrabold text-primary!">
-              {tr("Saya pekerja — log masuk")}</Link>
-          </div>
-        </div>
-      )}
     </header>
   );
 }
 
-/** Footer 4 lajur (telefon: bertindan). */
-function Kaki() {
-  const tajuk = "m-0 mb-3 text-xs font-extrabold tracking-[0.08em] text-ink";
-  const senarai = "m-0 flex list-none flex-col gap-1 p-0 text-sm [&_a]:flex [&_a]:min-h-9 [&_a]:items-center [&_a]:text-[#4A5A57]! [&_a:hover]:text-primary!";
+function Hero() {
   return (
-    <footer className="mt-4 border-t border-line-soft bg-surface">
-      <div className="mx-auto grid max-w-[1120px] gap-8 px-4 py-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1.2fr_1fr]">
-        <div className="flex flex-col gap-3">
-          <Logo />
-          <p className="m-0 max-w-[300px] text-sm leading-relaxed text-[#4A5A57]">{tr("Sistem HR percuma untuk PKS di Malaysia: cuti, tuntutan, kehadiran dan gaji, terus melalui WhatsApp.")}</p>
+    <section className={`${BALUT} grid items-center gap-7 pt-7 pb-12 min-[700px]:gap-14 min-[700px]:pt-[72px] min-[700px]:pb-24 min-[980px]:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]`}>
+      <div className="flex flex-col gap-6">
+        <span className="text-sm font-bold text-primary">{tr("Untuk syarikat 5–50 pekerja tanpa pegawai HR")}</span>
+        <h1 className="m-0 text-[31px] leading-[1.08] font-extrabold tracking-[-0.025em] min-[700px]:text-[38px] min-[980px]:text-[56px]">{tr("Urusan HR yang lengkap, tanpa pegawai HR.")}</h1>
+        <p className="m-0 max-w-[500px] text-base leading-relaxed text-[#5B6B68] min-[700px]:text-lg">
+          {tr("Cuti, tuntutan, kehadiran dan gaji diuruskan dalam satu sistem. Pekerja memohon melalui telefon, ketua meluluskan dengan satu sentuhan, dan gaji dikira mengikut KWSP, PERKESO dan PCB. Percuma.")}
+        </p>
+        <div className="mt-2 flex flex-col gap-3 min-[700px]:flex-row">
+          <Link href="/daftar" className="flex h-12 items-center justify-center rounded-xl bg-primary px-[26px] text-[15px] font-bold text-white! min-[700px]:h-[52px] min-[700px]:text-base">
+            {tr("Daftar syarikat — percuma")}
+          </Link>
+          {BENDERA.demo && (
+            <a href="#demo" className="box-border flex h-12 items-center justify-center rounded-xl border-[1.5px] border-[#C9D3D1] px-6 text-[15px] font-bold text-ink! min-[700px]:h-[52px] min-[700px]:text-base">
+              {tr("Cuba demo dahulu")}
+            </a>
+          )}
         </div>
-        <nav aria-label={tr("Produk")}>
-          <h2 className={tajuk}>{tr("PRODUK")}</h2>
-          <ul className={senarai}>
-            <li><a href="#ciri">{tr("Ciri")}</a></li>
-            <li><a href="#cara">{tr("Cara mula")}</a></li>
-            <li><a href="#soalan">{tr("Soalan lazim")}</a></li>
-            <li><Link href="/masuk">{tr("Log masuk")}</Link></li>
-            <li><Link href="/daftar">{tr("Daftar syarikat")}</Link></li>
-          </ul>
-        </nav>
-        <div>
-          <h2 className={tajuk}>{tr("SOKONGAN")}</h2>
-          <ul className={senarai}>
-            <li><a href="https://wa.me/60194442424">{tr("WhatsApp 019-444 2424")}</a></li>
-            <li><a href="mailto:hi@hrboost.io">{tr("hi@hrboost.io")}</a></li>
-            <li className="pt-1 text-[13px] leading-relaxed text-[#4A5A57]">{tr("D-G-6 Putra Walk, Taman Pinggiran Putra, 43300 Seri Kembangan, Selangor")}</li>
-          </ul>
-        </div>
-        <nav aria-label={tr("Undang-undang")}>
-          <h2 className={tajuk}>{tr("UNDANG-UNDANG")}</h2>
-          <ul className={senarai}>
-            <li><Link href="/privasi#privasi">{tr("Notis privasi (PDPA)")}</Link></li>
-            <li><Link href="/privasi#terma">{tr("Terma")}</Link></li>
-            <li><Link href="/privasi#hubungi">{tr("Hubungi kami")}</Link></li>
-          </ul>
-        </nav>
+        <span className="text-[13px] text-[#5B6B68]">
+          {tr("Tiada kad kredit · Sedia digunakan dalam satu petang · Pekerja?")}{" "}
+          <Link href="/masuk" className="inline-flex min-h-11 items-center font-bold">
+            {tr("Log masuk")}
+          </Link>
+        </span>
       </div>
-      <div className="border-t border-line-soft">
-        <div className="mx-auto flex max-w-[1120px] flex-col gap-3 px-4 py-5 text-[13px] text-muted sm:flex-row sm:items-center sm:justify-between">
-          <span>{tr("© {0} HRBoost.io · Dibina di Malaysia", "2026")}</span>
-          <PilihBahasa kecil bingkai />
+      <div className="relative flex justify-center">
+        <div className="w-[200px] overflow-hidden rounded-[30px] border-[6px] border-ink bg-ink min-[700px]:w-[260px] min-[700px]:rounded-[38px] min-[700px]:border-8">
+          <Image
+            src={`/skrin/${bahasa()}/ketua-kelulusan.webp`}
+            alt={tr("Skrin kelulusan tuntutan: aliran Ketua Jabatan, Kewangan dan CEO")}
+            width={780}
+            height={1560}
+            priority
+            sizes="260px"
+            className="block w-full rounded-[24px] min-[700px]:rounded-[30px]"
+          />
         </div>
+        <div className="absolute bottom-10 left-0 flex items-center gap-2.5 rounded-[14px] border border-[#E2E8E6] bg-white px-4 py-3 shadow-[0_10px_30px_rgba(20,33,31,0.08)]">
+          <span aria-hidden="true" className="flex size-[26px] items-center justify-center rounded-full bg-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12l5 5L20 7" />
+            </svg>
+          </span>
+          <span className="flex flex-col">
+            <b className="text-[13px]">{tr("Diluluskan")}</b>
+            <span className="text-xs text-[#5B6B68]">{tr("Ketua Jabatan · 9:14 pg")}</span>
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function KadKelebihan({ label, tajuk, teks, children }: { label: string; tajuk: string; teks: string; children: ReactNode }) {
+  return (
+    <div className="flex flex-col gap-3 rounded-[20px] border-[1.5px] border-[#E2E8E6] bg-white px-[18px] py-6 min-[700px]:p-6">
+      <span className="text-xs font-extrabold tracking-[0.08em] text-primary">{label}</span>
+      <h3 className="m-0 text-[19px] leading-snug font-extrabold">{tajuk}</h3>
+      <p className="m-0 text-sm leading-relaxed text-[#5B6B68]">{teks}</p>
+      {children}
+    </div>
+  );
+}
+
+function SuisBahasa() {
+  const semasa = useSyncExternalStore(
+    () => () => {},
+    () => bahasa(),
+    () => "en" as Bahasa,
+  );
+  const pilihan: [Bahasa, string, string][] = [
+    ["ms", "BM", "Bahasa Melayu"],
+    ["en", "EN", "English"],
+  ];
+  return (
+    <span role="group" aria-label="Bahasa / Language" className="flex rounded-[10px] border border-[#E2E8E6] bg-white p-[3px]">
+      {pilihan.map(([b, pendek, penuh]) => (
+        <button
+          key={b}
+          type="button"
+          lang={b}
+          aria-label={penuh}
+          aria-pressed={semasa === b}
+          onClick={() => semasa !== b && tetapkanBahasa(b)}
+          className={`h-11 rounded-lg px-3.5 text-xs font-bold ${semasa === b ? "bg-primary text-white" : "text-[#5B6B68]"}`}
+        >
+          {pendek}
+        </button>
+      ))}
+    </span>
+  );
+}
+
+function KakiHalaman() {
+  const pautan = "flex min-h-11 items-center text-sm text-[#5B6B68]!";
+  const tajuk = "m-0 mb-1.5 text-xs font-extrabold tracking-[0.08em] text-ink";
+  return (
+    <footer className="border-t border-[#E2E8E6] bg-[#F4F6F5]">
+      <div className={`${BALUT} grid gap-8 pt-11 pb-8 min-[980px]:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]`}>
+        <div className="flex flex-col gap-3.5">
+          <Logo />
+          <p className="m-0 max-w-[320px] text-sm leading-relaxed text-[#5B6B68]">{tr("Sistem HR percuma untuk syarikat 5–50 pekerja di Malaysia yang tiada pegawai HR.")}</p>
+          <div className="flex flex-wrap gap-2">
+            <a href={HUBUNGI.waUrl} className="flex h-11 items-center gap-2 rounded-[10px] border border-[#E2E8E6] bg-white px-3.5 text-[13px] font-bold text-ink!">
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0F6B5F" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l2-5.2A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z" />
+              </svg>
+              <span>
+                <span className="sr-only">WhatsApp </span>
+                {HUBUNGI.whatsapp}
+              </span>
+            </a>
+            <a href={`mailto:${HUBUNGI.emel}`} className="flex h-11 items-center gap-2 rounded-[10px] border border-[#E2E8E6] bg-white px-3.5 text-[13px] font-bold text-ink!">
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0F6B5F" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="M3 7l9 6 9-6" />
+              </svg>
+              {HUBUNGI.emel}
+            </a>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-6 min-[700px]:grid-cols-3">
+          <nav aria-label={tr("Produk")} className="flex flex-col">
+            <h2 className={tajuk}>{tr("PRODUK")}</h2>
+            <a href="#ciri" className={pautan}>
+              {tr("Ciri")}
+            </a>
+            {BENDERA.demo && (
+              <a href="#demo" className={pautan}>
+                {tr("Cuba demo")}
+              </a>
+            )}
+            <a href="#cara" className={pautan}>
+              {tr("Cara bermula")}
+            </a>
+            <a href="#soalan" className={pautan}>
+              {tr("Soalan lazim")}
+            </a>
+          </nav>
+          {BENDERA.alatPercuma && (
+            <nav aria-label={tr("Alat percuma")} className="flex flex-col">
+              <h2 className={tajuk}>{tr("ALAT PERCUMA")}</h2>
+              {ALAT()
+                .slice(0, 3)
+                .map(([t]) => (
+                  <a key={t} href="#alat" className={pautan}>
+                    {t}
+                  </a>
+                ))}
+            </nav>
+          )}
+          <nav aria-label={tr("Undang-undang")} className="flex flex-col">
+            <h2 className={tajuk}>{tr("UNDANG-UNDANG")}</h2>
+            <Link href="/privasi#privasi" className={pautan}>
+              {tr("Notis privasi (PDPA)")}
+            </Link>
+            <Link href="/privasi#terma" className={pautan}>
+              {tr("Terma")}
+            </Link>
+          </nav>
+        </div>
+      </div>
+      <div className={`${BALUT} flex flex-wrap items-center justify-between gap-3 border-t border-[#E2E8E6] pt-4 pb-6 text-[13px] text-[#5B6B68]`}>
+        <span>{tr("© {0} HRBoost.io · Dibina di Malaysia", "2026")}</span>
+        <SuisBahasa />
       </div>
     </footer>
+  );
+}
+
+/** Bar tindakan melekat di bawah skrin — telefon sahaja */
+function BarBawah() {
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-20 flex gap-2 border-t border-[#E2E8E6] bg-white/95 px-4 pt-2.5 pb-3.5 min-[700px]:hidden">
+      {BENDERA.demo && (
+        <a href="#demo" className="box-border flex h-12 flex-1 items-center justify-center rounded-xl border-[1.5px] border-[#C9D3D1] text-[15px] font-bold text-ink!">
+          {tr("Cuba demo")}
+        </a>
+      )}
+      <Link href="/daftar" className="flex h-12 flex-[1.4] items-center justify-center rounded-xl bg-primary text-[15px] font-bold text-white!">
+        {tr("Daftar percuma")}
+      </Link>
+    </div>
   );
 }
