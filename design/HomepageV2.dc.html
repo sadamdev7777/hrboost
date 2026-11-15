@@ -208,29 +208,34 @@ details summary::-webkit-details-marker{display:none}
   </section>
 
   <section class="wrap s" style="padding-top: 96px">
-    <div class="show box" style="gap: 32px; padding: 36px 32px; border-radius: 24px; background: #F4F6F5; align-items: start">
-      <div style="display: flex; flex-direction: column; gap: 14px">
+    <div class="show box" style="gap: 28px; padding: 36px 32px; border-radius: 24px; background: #F4F6F5; align-items: center">
+      <div style="display: flex; flex-direction: column; gap: 12px">
         <h2 class="h2" style="margin: 0; line-height: 1.15; font-weight: 800; letter-spacing: -0.015em">Berapa banyak yang boleh anda jimatkan?</h2>
-        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5B6B68">Kebanyakan sistem HR dan gaji di Malaysia mengenakan bayaran bagi setiap pekerja, setiap bulan. HRBoost percuma, tanpa mengira bilangan pekerja.</p>
-        <span style="font-size: 14px; font-weight: 700">Bilangan pekerja</span>
-        <div style="display: flex; align-items: center; gap: 12px">
-          <button onClick="{{kurang}}" aria-label="Kurangkan bilangan pekerja" style="width: 48px; height: 48px; border-radius: 12px; border: 1.5px solid #C9D3D1; background: #FFFFFF; font-family: inherit; font-size: 22px; font-weight: 700; color: #14211F; cursor: pointer">−</button>
-          <output style="min-width: 72px; text-align: center; font-size: 32px; font-weight: 800">{{n}}</output>
-          <button onClick="{{tambah}}" aria-label="Tambah bilangan pekerja" style="width: 48px; height: 48px; border-radius: 12px; border: 1.5px solid #C9D3D1; background: #FFFFFF; font-family: inherit; font-size: 22px; font-weight: 700; color: #14211F; cursor: pointer">+</button>
+        <p class="lede" style="margin: 0; font-size: 16px; line-height: 1.6; color: #5B6B68">Sistem lain mengenakan bayaran bagi setiap pekerja, setiap bulan. HRBoost percuma.</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px; padding: 8px 8px 8px 16px; border-radius: 14px; background: #FFFFFF">
+          <span style="font-size: 14px; font-weight: 700">Bilangan pekerja</span>
+          <span style="display: flex; align-items: center; gap: 4px">
+            <button onClick="{{kurang}}" aria-label="Kurangkan bilangan pekerja" style="width: 44px; height: 44px; border-radius: 10px; border: 1.5px solid #E2E8E6; background: #F4F6F5; font-family: inherit; font-size: 20px; font-weight: 700; color: #14211F; cursor: pointer">−</button>
+            <output style="min-width: 48px; text-align: center; font-size: 22px; font-weight: 800">{{n}}</output>
+            <button onClick="{{tambah}}" aria-label="Tambah bilangan pekerja" style="width: 44px; height: 44px; border-radius: 10px; border: 1.5px solid #E2E8E6; background: #F4F6F5; font-family: inherit; font-size: 20px; font-weight: 700; color: #14211F; cursor: pointer">+</button>
+          </span>
         </div>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 12px">
-        <div style="display: flex; flex-direction: column; gap: 4px; padding: 20px; border-radius: 16px; background: #FFFFFF">
-          <span style="font-size: 13px; font-weight: 700; color: #5B6B68">Sistem lain (anggaran HR dan gaji)</span>
-          <b style="font-size: 26px; font-weight: 800; color: #92400E">{{lain}}</b>
-          <span style="font-size: 13px; color: #5B6B68">{{lainTahun}}</span>
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+          <div style="display: flex; flex-direction: column; gap: 2px; padding: 14px; border-radius: 14px; background: #FFFFFF">
+            <span style="font-size: 12px; font-weight: 700; color: #5B6B68">Sistem lain</span>
+            <b style="font-size: 19px; line-height: 1.25; font-weight: 800; color: #92400E">{{lain}}</b>
+            <span style="font-size: 12px; color: #5B6B68">sebulan</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 2px; padding: 14px; border-radius: 14px; background: #0F6B5F; color: #FFFFFF">
+            <span style="font-size: 12px; font-weight: 700; color: #D7ECE7">HRBoost</span>
+            <b style="font-size: 19px; line-height: 1.25; font-weight: 800">RM0</b>
+            <span style="font-size: 12px; color: #D7ECE7">sebulan, semua modul</span>
+          </div>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 4px; padding: 20px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF">
-          <span style="font-size: 13px; font-weight: 700; color: #D7ECE7">HRBoost</span>
-          <b style="font-size: 26px; font-weight: 800">RM0 sebulan</b>
-          <span style="font-size: 13px; color: #D7ECE7">Semua modul disertakan</span>
-        </div>
-        <span style="font-size: 12px; line-height: 1.5; color: #5B6B68">Anggaran berdasarkan harga umum yang diterbitkan: RM8–RM17 bagi setiap pekerja sebulan untuk HR dan gaji. [SAHKAN SEBELUM DITERBITKAN]</span>
+        <p style="margin: 0; font-size: 15px; font-weight: 700; color: #0A4F46">Jimat sehingga {{jimat}} setahun.</p>
+        <span style="font-size: 11px; line-height: 1.5; color: #5B6B68">Anggaran RM8–RM17 seorang sebulan untuk HR dan gaji, berdasarkan harga umum yang diterbitkan. [SAHKAN SEBELUM DITERBITKAN]</span>
       </div>
     </div>
   </section>
@@ -353,7 +358,7 @@ details summary::-webkit-details-marker{display:none}
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":6000}}'>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":5900}}'>
 class Component extends DCLogic {
   constructor(props) { super(props); this.state = { tab: 0, n: 20 }; }
   renderVals() {
@@ -391,8 +396,8 @@ class Component extends DCLogic {
     const n = this.state.n;
     const rm = (v) => 'RM' + v.toLocaleString('en-MY');
     return { tabs, cur: T[i], mods, faq, n,
-      lain: rm(n * 8) + ' – ' + rm(n * 17) + ' sebulan',
-      lainTahun: rm(n * 8 * 12) + ' – ' + rm(n * 17 * 12) + ' setahun',
+      lain: rm(n * 8) + '–' + rm(n * 17),
+      jimat: rm(n * 17 * 12),
       kurang: () => this.setState({ n: Math.max(5, n - 5) }),
       tambah: () => this.setState({ n: Math.min(50, n + 5) }) };
   }
