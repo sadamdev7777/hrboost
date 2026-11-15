@@ -196,8 +196,11 @@ export async function janaSlipPdf(s: Slip): Promise<Uint8Array> {
 
 /** Muat turun PDF, atau kongsi terus (cth. ke WhatsApp) jika pelayar menyokong perkongsian fail. */
 export async function simpanAtauKongsiSlip(s: Slip, kongsi: boolean): Promise<"dikongsi" | "dimuat-turun" | "dibatalkan"> {
-  const bait = await janaSlipPdf(s);
-  const nama = namaFailSlip(s);
+  return simpanAtauKongsiPdf(await janaSlipPdf(s), namaFailSlip(s), kongsi);
+}
+
+/** Muat turun fail PDF, atau kongsi (Web Share) jika diminta dan disokong. */
+export async function simpanAtauKongsiPdf(bait: Uint8Array, nama: string, kongsi: boolean): Promise<"dikongsi" | "dimuat-turun" | "dibatalkan"> {
   const fail = new File([bait as BlobPart], nama, { type: "application/pdf" });
   if (kongsi && typeof navigator !== "undefined" && navigator.canShare?.({ files: [fail] })) {
     try {

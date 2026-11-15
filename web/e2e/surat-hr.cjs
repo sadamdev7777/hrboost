@@ -4,6 +4,7 @@
 // Prasyarat: `npx supabase db reset` (data demo), aplikasi di localhost:3000.
 // Jalankan: node web/e2e/surat-hr.cjs
 const os = require('os');
+const fs = require('fs');
 const { execSync } = require('child_process');
 const { chromium } = require('playwright');
 require('./_bahasa.cjs');
@@ -14,6 +15,14 @@ const shots = process.env.E2E_SHOTS || os.tmpdir();
 const log = (...a) => console.log(...a);
 const expect = (ok, msg) => { if (!ok) throw new Error('SEMAKAN GAGAL: ' + msg); log('   ✔ ' + msg); };
 const sql = (q) => execSync(`psql -h 127.0.0.1 -p 54322 -U postgres -Atc "${q}"`, { env: { ...process.env, PGPASSWORD: 'postgres' } }).toString().trim();
+// Muat turun PDF surat melalui butang dan semak fail
+async function muatTurunPdf(p, nama) {
+  const [dl] = await Promise.all([p.waitForEvent('download', { timeout: 20000 }), p.click('button:has-text("Muat turun PDF")')]);
+  const fail = `${shots}/${nama}.pdf`;
+  await dl.saveAs(fail);
+  const bait = fs.readFileSync(fail);
+  return { nama: dl.suggestedFilename(), bait, fail };
+}
 const AMIN = sql(`select id from employments where employee_no = 'DEMO004'`);
 
 async function login(browser, phone, viewport) {
@@ -51,6 +60,17 @@ async function janaDariProfil(p, jenis) {
   expect(/Gaji pokok bulanan\s*:\s*RM\s?[\d,]+\.\d\d/.test(teks), 'gaji pokok daripada rekod');
   expect(/akuan penerimaan/i.test(teks) && /HR\/\d{4}\/0001/.test(teks), 'ruang akuan & no. rujukan');
   await p.screenshot({ path: `${shots}/surat-tawaran.png`, fullPage: true });
+  let pdf = await muatTurunPdf(p, 'surat-tawaran');
+  log('    ' + pdf.nama + ' ' + pdf.bait.length + ' bait');
+  expect(pdf.bait.slice(0, 4).toString() === '%PDF' && pdf.bait.length > 2000, 'fail PDF sebenar dimuat turun');
+  expect(/^Surat-tawaran-kerja-.*HR-\d{4}-0001-Amin-bin-Demo\.pdf$/.test(pdf.nama), 'nama fail mengandungi jenis, rujukan & nama');
+  try {
+    const teksPdf = execSync(`pdftotext -layout "${pdf.fail}" -`).toString();
+    expect(teksPdf.includes('Amin bin Demo') && /TAWARAN PEKERJAAN/.test(teksPdf) && /Gaji pokok bulanan/.test(teksPdf), 'kandungan PDF sama dengan surat di skrin');
+  } catch (e) {
+    if (String(e.message).includes('SEMAKAN GAGAL')) throw e;
+    log('   (pdftotext tiada — semakan teks PDF dilangkau)');
+  }
 
   log('2. Lily: surat amaran (peringatan Akta Kerja s.14)');
   await janaDariProfil(p, 'Surat amaran');
@@ -64,6 +84,8 @@ async function janaDariProfil(p, jenis) {
   teks = await p.innerText('article');
   expect(teks.includes('Lewat hadir bekerja sebanyak 6 kali') && teks.includes('SULIT'), 'butiran amaran & tanda sulit');
   await p.screenshot({ path: `${shots}/surat-amaran.png`, fullPage: true });
+  pdf = await muatTurunPdf(p, 'surat-amaran');
+  expect(pdf.bait.slice(0, 4).toString() === '%PDF' && /^Surat-amaran-/.test(pdf.nama), 'PDF surat amaran');
   await ctx.close();
 
   log('3. Amin: surat HR dalam Mohon → Surat');
