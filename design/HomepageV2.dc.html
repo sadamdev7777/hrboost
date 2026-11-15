@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>HRBoost.io — laman utama (reka semula)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0F6B5F;text-decoration:none}a:hover{color:#0A4F46}
+.pg{container-type:inline-size}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;box-sizing:border-box}
+.navlinks{display:none}
+.hero{display:grid;gap:56px;align-items:center}
+.flow{display:grid;gap:28px}
+.show{display:grid;gap:40px;align-items:center}
+.mods{display:grid;gap:0 40px}
+.faq{display:grid;gap:0 48px}
+.ctas{display:flex;flex-direction:column;gap:12px}
+.foot{display:flex;flex-direction:column;gap:16px}
+.h1{font-size:38px}
+.h2{font-size:28px}
+@container (min-width: 700px){
+  .flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mods{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ctas{flex-direction:row}
+  .foot{flex-direction:row;justify-content:space-between;align-items:center}
+}
+@container (min-width: 980px){
+  .navlinks{display:flex}
+  .hero{grid-template-columns:minmax(0,1.15fr) minmax(0,0.85fr)}
+  .flow{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .show{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .mods{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .faq{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .h1{font-size:56px}
+  .h2{font-size:36px}
+}
+details summary{list-style:none;cursor:pointer}
+details summary::-webkit-details-marker{display:none}
+</style>
+</helmet>
+<div class="pg" style="background: #FFFFFF; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #14211F">
+
+  <header style="position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,0.96); border-bottom: 1px solid #EEF2F1">
+    <nav class="wrap" aria-label="Menu utama" style="height: 64px; display: flex; align-items: center; gap: 8px">
+      <a href="#" style="display: flex; align-items: center; gap: 8px; color: #14211F">
+        <span style="width: 30px; height: 30px; border-radius: 8px; background: #0F6B5F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800">HR</span>
+        <b style="font-size: 17px; font-weight: 800">HRBoost.io</b>
+      </a>
+      <div class="navlinks" style="margin-left: 24px">
+        <a href="#ciri" style="height: 44px; display: flex; align-items: center; padding: 0 12px; font-size: 14px; font-weight: 600; color: #5B6B68">Ciri</a>
+        <a href="#cara" style="height: 44px; display: flex; align-items: center; padding: 0 12px; font-size: 14px; font-weight: 600; color: #5B6B68">Cara bermula</a>
+        <a href="#soalan" style="height: 44px; display: flex; align-items: center; padding: 0 12px; font-size: 14px; font-weight: 600; color: #5B6B68">Soalan lazim</a>
+      </div>
+      <span style="flex-grow: 1"></span>
+      <a href="Login.dc.html" style="height: 44px; display: flex; align-items: center; padding: 0 10px; font-size: 14px; font-weight: 700; color: #14211F">Log masuk</a>
+      <a href="DaftarSyarikat.dc.html" style="height: 40px; display: flex; align-items: center; padding: 0 16px; border-radius: 10px; background: #0F6B5F; color: #FFFFFF; font-size: 14px; font-weight: 700">Daftar</a>
+    </nav>
+  </header>
+
+  <section class="wrap hero" style="padding-top: 72px; padding-bottom: 96px">
+    <div style="display: flex; flex-direction: column; gap: 24px">
+      <span style="font-size: 14px; font-weight: 700; color: #0F6B5F">Untuk syarikat 5–50 orang tanpa pegawai HR</span>
+      <h1 class="h1" style="margin: 0; line-height: 1.08; font-weight: 800; letter-spacing: -0.025em">Tiada pegawai HR? HRBoost uruskan.</h1>
+      <p style="margin: 0; max-width: 500px; font-size: 18px; line-height: 1.6; color: #5B6B68">Cuti, tuntutan, kehadiran dan gaji berjalan sendiri. Pekerja memohon di telefon, ketua meluluskan dengan satu tekan, dan gaji dikira mengikut KWSP, PERKESO dan PCB. Percuma.</p>
+      <div class="ctas" style="margin-top: 8px">
+        <a href="DaftarSyarikat.dc.html" style="height: 52px; display: flex; align-items: center; justify-content: center; padding: 0 26px; border-radius: 12px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 700">Daftar syarikat — percuma</a>
+        <a href="#demo" style="height: 52px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 24px; border-radius: 12px; border: 1.5px solid #C9D3D1; font-size: 16px; font-weight: 700; color: #14211F">Cuba demo dahulu</a>
+      </div>
+      <span style="font-size: 13px; color: #5B6B68">Tiada kad kredit · Sedia dalam satu petang · Pekerja? <a href="Login.dc.html" style="font-weight: 700">Log masuk</a></span>
+    </div>
+    <div style="position: relative; display: flex; justify-content: center">
+      <div style="width: 260px; border-radius: 38px; border: 8px solid #14211F; background: #14211F; overflow: hidden">
+        <img src="/_blob/7d67153f79a517466f4ba16b9f4b9df0" alt="Skrin kelulusan tuntutan: aliran Ketua Jabatan, Kewangan dan CEO" style="display: block; width: 100%; border-radius: 30px">
+      </div>
+      <div style="position: absolute; left: 0; bottom: 40px; display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 14px; background: #FFFFFF; border: 1px solid #E2E8E6; box-shadow: 0 10px 30px rgba(20,33,31,0.08)">
+        <span style="width: 26px; height: 26px; border-radius: 13px; background: #0F6B5F; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg></span>
+        <span style="display: flex; flex-direction: column"><b style="font-size: 13px">Diluluskan</b><span style="font-size: 12px; color: #5B6B68">Ketua Jabatan · 9:14 pg</span></span>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: #F4F6F5">
+    <div class="wrap" style="padding-top: 88px; padding-bottom: 88px">
+      <h2 class="h2" style="margin: 0 0 48px; max-width: 640px; line-height: 1.15; font-weight: 800; letter-spacing: -0.015em">Satu aliran untuk setiap permohonan.</h2>
+      <ol class="flow" style="margin: 0; padding: 0; list-style: none">
+        <li style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 2px solid #0F6B5F">
+          <span style="font-size: 13px; font-weight: 800; color: #0F6B5F">01</span>
+          <b style="font-size: 17px; font-weight: 800">Pekerja memohon</b>
+          <span style="font-size: 15px; line-height: 1.55; color: #5B6B68">Dari telefon. Hari bekerja dan baki dikira automatik.</span>
+        </li>
+        <li style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 2px solid #C9D3D1">
+          <span style="font-size: 13px; font-weight: 800; color: #0F6B5F">02</span>
+          <b style="font-size: 17px; font-weight: 800">Ketua meluluskan</b>
+          <span style="font-size: 15px; line-height: 1.55; color: #5B6B68">Dimaklumkan melalui e-mel dan loceng, lulus dengan satu tekan.</span>
+        </li>
+        <li style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 2px solid #C9D3D1">
+          <span style="font-size: 13px; font-weight: 800; color: #0F6B5F">03</span>
+          <b style="font-size: 17px; font-weight: 800">HR dan CEO meluluskan</b>
+          <span style="font-size: 15px; line-height: 1.55; color: #5B6B68">Ikut susunan anda. Peringatan dihantar jika tertangguh.</span>
+        </li>
+        <li style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 2px solid #C9D3D1">
+          <span style="font-size: 13px; font-weight: 800; color: #0F6B5F">04</span>
+          <b style="font-size: 17px; font-weight: 800">Terus ke rekod dan gaji</b>
+          <span style="font-size: 15px; line-height: 1.55; color: #5B6B68">Baki dikemas kini, tuntutan dibayar bersama gaji.</span>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="demo" class="wrap" style="padding-top: 96px">
+    <h2 class="h2" style="margin: 0 0 10px; max-width: 640px; line-height: 1.15; font-weight: 800; letter-spacing: -0.015em">Cuba dahulu. Tanpa daftar.</h2>
+    <p style="margin: 0 0 32px; max-width: 560px; font-size: 16px; line-height: 1.6; color: #5B6B68">Buka syarikat contoh dan cuba sendiri: mohon cuti sebagai pekerja, kemudian luluskannya sebagai ketua.</p>
+    <div class="flow" style="gap: 12px">
+      <a href="Main.dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 16px; border: 1.5px solid #E2E8E6; color: #14211F">
+        <b style="font-size: 16px; font-weight: 800">Sebagai pekerja</b>
+        <span style="font-size: 14px; line-height: 1.5; color: #5B6B68">Mohon cuti, buat tuntutan, lihat slip gaji.</span>
+        <span style="margin-top: 6px; font-size: 14px; font-weight: 700; color: #0F6B5F">Buka demo ›</span>
+      </a>
+      <a href="KetuaUtama.dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 16px; border: 1.5px solid #E2E8E6; color: #14211F">
+        <b style="font-size: 16px; font-weight: 800">Sebagai ketua</b>
+        <span style="font-size: 14px; line-height: 1.5; color: #5B6B68">Lulus atau tolak permohonan pasukan.</span>
+        <span style="margin-top: 6px; font-size: 14px; font-weight: 700; color: #0F6B5F">Buka demo ›</span>
+      </a>
+      <a href="DashboardHR.dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 16px; border: 1.5px solid #E2E8E6; color: #14211F">
+        <b style="font-size: 16px; font-weight: 800">Sebagai pemilik / admin</b>
+        <span style="font-size: 14px; line-height: 1.5; color: #5B6B68">Papan Pemuka, gaji dan tetapan syarikat.</span>
+        <span style="margin-top: 6px; font-size: 14px; font-weight: 700; color: #0F6B5F">Buka demo ›</span>
+      </a>
+      <div style="display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 20px; border-radius: 16px; background: #F4F6F5">
+        <b style="font-size: 15px; font-weight: 800">± 30 saat</b>
+        <span style="font-size: 14px; line-height: 1.5; color: #5B6B68">Data contoh sahaja. Ditetapkan semula setiap hari.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top: 96px">
+    <div class="show" style="gap: 32px; padding: 36px 32px; border-radius: 24px; background: #F4F6F5; align-items: start">
+      <div style="display: flex; flex-direction: column; gap: 14px">
+        <h2 class="h2" style="margin: 0; line-height: 1.15; font-weight: 800; letter-spacing: -0.015em">Berapa yang anda jimat?</h2>
+        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5B6B68">Kebanyakan sistem HR dan gaji di Malaysia mengenakan bayaran bagi setiap pekerja, setiap bulan. HRBoost percuma, berapa pun bilangan pekerja anda.</p>
+        <span style="font-size: 14px; font-weight: 700">Bilangan pekerja</span>
+        <div style="display: flex; align-items: center; gap: 12px">
+          <button onClick="{{kurang}}" aria-label="Kurangkan bilangan pekerja" style="width: 48px; height: 48px; border-radius: 12px; border: 1.5px solid #C9D3D1; background: #FFFFFF; font-family: inherit; font-size: 22px; font-weight: 700; color: #14211F; cursor: pointer">−</button>
+          <output style="min-width: 72px; text-align: center; font-size: 32px; font-weight: 800">{{n}}</output>
+          <button onClick="{{tambah}}" aria-label="Tambah bilangan pekerja" style="width: 48px; height: 48px; border-radius: 12px; border: 1.5px solid #C9D3D1; background: #FFFFFF; font-family: inherit; font-size: 22px; font-weight: 700; color: #14211F; cursor: pointer">+</button>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; flex-direction: column; gap: 4px; padding: 20px; border-radius: 16px; background: #FFFFFF">
+          <span style="font-size: 13px; font-weight: 700; color: #5B6B68">Sistem lain (anggaran HR + gaji)</span>
+          <b style="font-size: 26px; font-weight: 800; color: #92400E">{{lain}}</b>
+          <span style="font-size: 13px; color: #5B6B68">{{lainTahun}}</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; padding: 20px; border-radius: 16px; background: #0F6B5F; color: #FFFFFF">
+          <span style="font-size: 13px; font-weight: 700; color: #D7ECE7">HRBoost</span>
+          <b style="font-size: 26px; font-weight: 800">RM0 sebulan</b>
+          <span style="font-size: 13px; color: #D7ECE7">Semua modul termasuk</span>
+        </div>
+        <span style="font-size: 12px; line-height: 1.5; color: #5B6B68">Anggaran berdasarkan harga umum yang diterbitkan: RM8–RM17 bagi setiap pekerja sebulan untuk HR dan gaji. [SAHKAN SEBELUM DITERBITKAN]</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="ciri" class="wrap show" style="padding-top: 96px">
+    <div style="display: flex; flex-direction: column; gap: 28px">
+      <h2 class="h2" style="margin: 0; line-height: 1.15; font-weight: 800; letter-spacing: -0.015em">Skrin sebenar, di telefon pekerja.</h2>
+      <div role="tablist" aria-label="Pilih ciri" style="display: flex; flex-direction: column">
+        <sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">
+          <button role="tab" aria-selected="{{t.sel}}" onClick="{{t.pick}}" style="{{t.style}}">
+            <b style="font-size: 17px; font-weight: 800">{{t.label}}</b>
+            <span style="{{t.subStyle}}">{{t.tajuk}}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: center">
+      <div style="width: 250px; border-radius: 36px; border: 8px solid #14211F; background: #14211F; overflow: hidden">
+        <img src="{{cur.img}}" alt="{{cur.alt}}" style="display: block; width: 100%; border-radius: 28px">
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top: 112px">
+    <h2 class="h2" style="margin: 0 0 32px; max-width: 640px; line-height: 1.15; font-weight: 800; letter-spacing: -0.015em">Semua modul HR, dalam satu sistem.</h2>
+    <ul class="mods" style="margin: 0; padding: 0; list-style: none">
+      <sc-for list="{{mods}}" as="m" hint-placeholder-count="11">
+        <li style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-bottom: 1px solid #EEF2F1; font-size: 15px; font-weight: 600">
+          <span style="font-size: 12px; font-weight: 700; color: #8A9996">{{m.n}}</span>{{m.t}}
+        </li>
+      </sc-for>
+    </ul>
+    <p style="margin: 28px 0 0; font-size: 14px; color: #5B6B68">Patuh Akta Kerja 1955, KWSP, PERKESO, SIP, PCB, HRDF, Borang EA dan PDPA.</p>
+  </section>
+
+  <section class="wrap" style="padding-top: 112px">
+    <h2 class="h2" style="margin: 0 0 10px; line-height: 1.15; font-weight: 800; letter-spacing: -0.015em">Alat HR percuma, tanpa log masuk.</h2>
+    <p style="margin: 0 0 28px; max-width: 560px; font-size: 16px; line-height: 1.6; color: #5B6B68">Untuk syarikat yang menguruskan HR sendiri.</p>
+    <div class="flow" style="gap: 12px">
+      <a href="#" style="display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 16px; border: 1.5px solid #E2E8E6; color: #14211F"><b style="font-size: 16px; font-weight: 800">Kalkulator gaji bersih</b><span style="font-size: 14px; line-height: 1.5; color: #5B6B68">KWSP, PERKESO, SIP dan PCB bagi satu gaji.</span></a>
+      <a href="#" style="display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 16px; border: 1.5px solid #E2E8E6; color: #14211F"><b style="font-size: 16px; font-weight: 800">Surat tawaran kerja</b><span style="font-size: 14px; line-height: 1.5; color: #5B6B68">Isi borang ringkas, muat turun PDF.</span></a>
+      <a href="#" style="display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 16px; border: 1.5px solid #E2E8E6; color: #14211F"><b style="font-size: 16px; font-weight: 800">Templat polisi cuti</b><span style="font-size: 14px; line-height: 1.5; color: #5B6B68">Ikut minimum Akta Kerja 1955.</span></a>
+      <a href="#" style="display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 16px; border: 1.5px solid #E2E8E6; color: #14211F"><b style="font-size: 16px; font-weight: 800">Buku panduan pekerja</b><span style="font-size: 14px; line-height: 1.5; color: #5B6B68">Templat yang boleh diubah suai.</span></a>
+    </div>
+  </section>
+
+  <section id="cara" class="wrap" style="padding-top: 112px">
+    <div style="display: flex; flex-direction: column; gap: 20px; padding: 40px 32px; border-radius: 24px; background: #F4F6F5">
+      <h2 class="h2" style="margin: 0; line-height: 1.15; font-weight: 800; letter-spacing: -0.015em">Mulakan dalam satu petang.</h2>
+      <ol style="margin: 0; padding: 0 0 0 22px; display: flex; flex-direction: column; gap: 10px; font-size: 16px; line-height: 1.55; color: #33433F">
+        <li><b>Daftar syarikat</b> dan sahkan e-mel. Tetapan disediakan mengikut Akta Kerja.</li>
+        <li><b>Seret fail Excel</b> senarai pekerja sedia ada — sistem memadankan jabatan dan ketua.</li>
+        <li><b>Pekerja menerima pautan jemputan</b> melalui WhatsApp atau e-mel, dan terus boleh memohon cuti.</li>
+      </ol>
+      <span style="font-size: 14px; color: #5B6B68">Percuma sepenuhnya. Setiap syarikat diasingkan dan setiap akses kepada data peribadi direkodkan.</span>
+    </div>
+  </section>
+
+  <section id="soalan" class="wrap" style="padding-top: 112px">
+    <h2 class="h2" style="margin: 0 0 16px; line-height: 1.15; font-weight: 800; letter-spacing: -0.015em">Soalan lazim</h2>
+    <div class="faq">
+      <sc-for list="{{faq}}" as="f" hint-placeholder-count="7">
+        <details style="border-bottom: 1px solid #EEF2F1; padding: 4px 0">
+          <summary style="min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 16px; font-weight: 700">{{f.q}}<span aria-hidden="true" style="font-size: 20px; font-weight: 400; color: #5B6B68">+</span></summary>
+          <p style="margin: 0 0 14px; font-size: 15px; line-height: 1.6; color: #5B6B68">{{f.a}}</p>
+        </details>
+      </sc-for>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top: 128px; padding-bottom: 128px; display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center">
+    <h2 class="h2" style="margin: 0; line-height: 1.15; font-weight: 800; letter-spacing: -0.015em">Sedia untuk mencuba?</h2>
+    <p style="margin: 0; font-size: 16px; color: #5B6B68">Percuma. Tiada kad kredit.</p>
+    <a href="DaftarSyarikat.dc.html" style="height: 52px; display: flex; align-items: center; padding: 0 28px; border-radius: 12px; background: #0F6B5F; color: #FFFFFF; font-size: 16px; font-weight: 700">Daftar syarikat</a>
+    <span style="font-size: 13px; color: #5B6B68">Pekerja? Gunakan pautan jemputan daripada HR, atau <a href="Login.dc.html" style="font-weight: 700">log masuk</a>.</span>
+  </section>
+
+  <footer style="border-top: 1px solid #EEF2F1">
+    <div class="wrap foot" style="padding-top: 28px; padding-bottom: 32px; font-size: 13px; color: #5B6B68">
+      <span>© 2026 HRBoost.io · Dibina di Malaysia</span>
+      <span style="display: flex; flex-wrap: wrap; gap: 4px 20px">
+        <a href="Privasi.dc.html" style="color: #5B6B68">Privasi</a>
+        <a href="Privasi.dc.html" style="color: #5B6B68">Terma</a>
+        <a href="#" style="color: #5B6B68">hi@hrboost.io</a>
+        <a href="#" style="color: #5B6B68">WhatsApp 019-444 2424</a>
+        <a href="#" style="color: #5B6B68">BM · EN</a>
+      </span>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":5200}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { tab: 0, n: 20 }; }
+  renderVals() {
+    const T = [
+      { label: 'Kelulusan', tajuk: 'Ketua Jabatan → Kewangan → CEO, lulus dengan satu tekan.', img: '/_blob/7d67153f79a517466f4ba16b9f4b9df0',
+        alt: 'Skrin kelulusan tuntutan dengan aliran Ketua Jabatan, Kewangan dan CEO' },
+      { label: 'Tuntutan', tajuk: 'Ambil gambar resit, AI mengisi borang.', img: '/_blob/22c53f3098a489840761df4a308016ba',
+        alt: 'Skrin tuntutan baharu: gambar resit, borang diisi oleh AI' },
+      { label: 'Inventori', tajuk: 'Pekerja merekod peralatan, HR mengesahkan.', img: '/_blob/85348dfb9185f462e3247203794f97e7',
+        alt: 'Skrin inventori pekerja: laptop dan telefon syarikat dengan gambar dan status pengesahan HR' },
+      { label: 'Orientasi', tajuk: 'Pekerja baharu melengkapkan maklumat sendiri.', img: '/_blob/40412c5705f43251136aa9524b63dd0b',
+        alt: 'Skrin orientasi pekerja baharu: 3 daripada 8 langkah selesai' },
+    ];
+    const i = this.state.tab;
+    const tabs = T.map((t, k) => ({
+      label: t.label, tajuk: t.tajuk, sel: k === i ? 'true' : 'false',
+      pick: () => this.setState({ tab: k }),
+      style: 'display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 16px 0 16px 18px; border: none; background: transparent; text-align: left; font-family: inherit; cursor: pointer; ' +
+        (k === i ? 'border-left: 3px solid #0F6B5F; color: #14211F;' : 'border-left: 3px solid #EEF2F1; color: #5B6B68;'),
+      subStyle: 'font-size: 14px; line-height: 1.45; color: #5B6B68',
+    }));
+    const mods = ['Cuti & kalendar pasukan', 'Tuntutan perbelanjaan', 'Kehadiran', 'Gaji & caruman berkanun', 'Borang EA & Borang E',
+      'Kelulusan berbilang peringkat', 'Orientasi pekerja baharu', 'Pekerja & carta organisasi', 'Inventori syarikat',
+      'Penilaian prestasi & KPI', 'Peti HR & Pembantu AI']
+      .map((t, k) => ({ n: String(k + 1).padStart(2, '0'), t }));
+    const faq = [
+      ['Saya tiada pegawai HR. Bolehkah saya menggunakan HRBoost?', 'Boleh. HRBoost dibina untuk syarikat 5–50 orang yang menguruskan HR sendiri. Tetapan cuti, kelulusan dan tuntutan disediakan mengikut Akta Kerja, dan kadar berkanun dikemas kini secara automatik.'],
+      ['Adakah HRBoost benar-benar percuma?', 'Ya. Daftar syarikat, jemput pekerja dan gunakan semua modul tanpa bayaran dan tanpa kad kredit.'],
+      ['Adakah data pekerja selamat?', 'Setiap syarikat diasingkan sepenuhnya. Hanya HR syarikat anda boleh melihat data peribadi, dan setiap akses direkodkan.'],
+      ['Perlukah pekerja memasang aplikasi?', 'Tidak. Pekerja membuka pautan jemputan dan terus menggunakan pelayar telefon. Mereka boleh memasangnya pada skrin utama jika mahu.'],
+      ['Adakah kiraan KWSP, PERKESO dan PCB tepat?', 'Kadar berkanun dikemas kini oleh HRBoost. Semak slip gaji pertama dengan kalkulator rasmi sebelum membayar.'],
+      ['Bolehkah saya menggunakan mesin kehadiran sedia ada?', 'Ya, mesin CrossChex Cloud boleh disambungkan. Rekod diterima setiap 5 minit.'],
+      ['Bolehkah saya mengeksport data saya?', 'Ya, dalam CSV atau Excel pada bila-bila masa.'],
+    ].map((f) => ({ q: f[0], a: f[1] }));
+    const n = this.state.n;
+    const rm = (v) => 'RM' + v.toLocaleString('en-MY');
+    return { tabs, cur: T[i], mods, faq, n,
+      lain: rm(n * 8) + ' – ' + rm(n * 17) + ' sebulan',
+      lainTahun: rm(n * 8 * 12) + ' – ' + rm(n * 17 * 12) + ' setahun',
+      kurang: () => this.setState({ n: Math.max(5, n - 5) }),
+      tambah: () => this.setState({ n: Math.min(50, n + 5) }) };
+  }
+}
+</script>
+</body>
+</html>
