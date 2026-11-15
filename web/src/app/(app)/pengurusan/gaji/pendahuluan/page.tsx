@@ -12,6 +12,9 @@ import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { TabGaji } from "@/components/TabGaji";
 import { HadPeranan } from "@/components/Senarai";
 import { beritahu, sahkan } from "@/components/Dialog";
+import { useState } from "react";
+import { hasRole } from "@/lib/me";
+import { JanaSurat } from "@/components/JanaSurat";
 
 /** Pendahuluan gaji: bayar (Kewangan) dan ditolak secara automatik dalam Proses Gaji. */
 export default function PendahuluanHrPage() {
@@ -26,6 +29,8 @@ function Kandungan() {
   const me = useMe();
   const emp = me.active!;
   const d = useData(() => getPendahuluanHr(emp.companyId), [emp.companyId]);
+  const bolehMemo = hasRole(me, ["hr", "finance", "admin"]);
+  const [memo, setMemo] = useState<{ id: string; employment_id: string; name: string } | null>(null);
   return (
     <Screen lebar="lebar">
       <PengepalaAkar title={tr("Penggajian")} />
@@ -57,6 +62,16 @@ function Kandungan() {
                   </span>
                 </span>
                 <StatusPill status={a.status as StatusPermohonan} />
+                {a.status === "approved" && bolehMemo &&
+                  (a.memo_id ? (
+                    <Link href={`/surat/${a.memo_id}`} className="flex h-9 items-center rounded-full border border-line px-4 text-xs font-bold text-ink!">
+                      {tr("Lihat memo")}
+                    </Link>
+                  ) : (
+                    <button type="button" onClick={() => setMemo(a)} className="flex h-9 items-center rounded-full border border-primary px-4 text-xs font-bold text-primary">
+                      {tr("Memo kepada Kewangan")}
+                    </button>
+                  ))}
                 {a.status === "approved" &&
                   (a.disbursed_at ? (
                     <span className="text-xs font-bold text-success">{tr("Dibayar {0}", tarikh(tarikhTempatan(a.disbursed_at)))}</span>
@@ -82,6 +97,16 @@ function Kandungan() {
           </div>
         )}
       </main>
+      {memo && (
+        <JanaSurat
+          employmentId={memo.employment_id}
+          nama={memo.name}
+          jenisAwal="salary_advance"
+          jenisBoleh={["salary_advance"]}
+          pendahuluanId={memo.id}
+          onClose={() => setMemo(null)}
+        />
+      )}
       <TabNav />
     </Screen>
   );

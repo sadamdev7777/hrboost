@@ -430,4 +430,11 @@ export const RALAT: Record<string, string> = {
  "Item ini telah disahkan. Hubungi HR untuk membuangnya.": "This item has been verified. Contact HR to remove it.",
  "Nyatakan pemegang atau lokasi item": "Enter the item's holder or location",
  "Syarikat item tidak diketahui": "Unknown item company",
+ "Sila nyatakan tarikh tamat percubaan yang baharu": "Please enter the new probation end date",
+ "Tarikh baharu mesti selepas tarikh tamat percubaan semasa": "The new date must be after the current probation end date",
+ "Tetapkan hari bekerja terakhir dahulu (Tamatkan pekerjaan)": "Set the last working day first (End employment)",
+ "Tiada rekod kenaikan gaji pokok. Kemas kini gaji pekerja dahulu": "No basic salary increase on record. Update the employee's salary first",
+ "Sila nyatakan butiran salah laku (sekurang-kurangnya 20 aksara)": "Please describe the misconduct (at least 20 characters)",
+ "Sila nyatakan tarikh akhir jawapan bertulis": "Please enter the deadline for the written reply",
+ "Pendahuluan gaji belum diluluskan": "The salary advance has not been approved",
 };

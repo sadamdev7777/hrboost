@@ -8,6 +8,8 @@ import { useParams, useSearchParams } from "next/navigation";
 import { Suspense, useRef, useState, useSyncExternalStore } from "react";
 import { useMe } from "@/lib/me";
 import { ItemBelumDipulang } from "@/components/Inventori";
+import { JanaSurat, SenaraiSuratPekerja } from "@/components/JanaSurat";
+import type { JenisSuratHr } from "@/lib/urusan";
 import { bukaWa, teksJemputan, useSaluran } from "@/lib/saluran";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
@@ -125,7 +127,12 @@ function bacaPautan(id: string) {
 }
 
 function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja; reload: () => void; bolehUbah: boolean; baru: boolean; keDokumen: () => void }) {
-  const [lembaran, setLembaran] = useState<null | "ubah" | "tamat" | "tarikh" | "peribadi">(null);
+  const [lembaran, setLembaran] = useState<null | "ubah" | "tamat" | "tarikh" | "peribadi" | "surat">(null);
+  const [jenisSurat, setJenisSurat] = useState<JenisSuratHr | undefined>(undefined);
+  const bukaSurat = (j?: JenisSuratHr) => {
+    setJenisSurat(j);
+    setLembaran("surat");
+  };
   // HR terus melihat maklumat peribadi; setiap paparan direkodkan dalam data_access_log (hr_view_sensitive).
   const sd = useData(() => (bolehUbah ? bukaMaklumatSensitif(p.id) : Promise.resolve(null as MaklumatSensitif | null)), [p.id, bolehUbah]);
   const sensitif = sd.data;
@@ -222,6 +229,11 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
         <div className="flex items-center gap-2.5 rounded-[14px] bg-danger-soft px-3.5 py-3 text-[13px] font-semibold text-danger">
           <span className="grow">
             {tr("{0} · hari bekerja terakhir {1}", { resigned: tr("Letak jawatan"), terminated: tr("Ditamatkan"), retired: tr("Bersara") }[p.endStatus as string], tarikhPenuh(p.endDate))}</span>
+          {bolehUbah && p.endStatus === "resigned" && (
+            <button type="button" className="h-9 shrink-0 rounded-[10px] bg-surface px-3 font-bold text-primary" onClick={() => bukaSurat("resignation_accept")}>
+              {tr("Jana surat")}
+            </button>
+          )}
           {bolehUbah && (
             <button
               type="button"
@@ -277,6 +289,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
                   try {
                     await kemasKiniPekerjaan(p.id, { confirm: true });
                     reload();
+                    if (await sahkan({ tajuk: tr("Jana surat sekarang?"), mesej: tr("Surat pengesahan jawatan dijana daripada rekod pekerja."), ok: tr("Jana surat") })) bukaSurat("confirmation");
                   } catch (e) {
                     setRalat(e instanceof Error ? e.message : tr("Ralat"));
                   }
@@ -286,7 +299,8 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
               />
             )}
             <Tindakan onClick={keDokumen} tajuk={tr("Dokumen")} keterangan={tr("Kontrak, surat tawaran, sijil")} />
-            <Tindakan href={`/pembantu-ai?pekerja=${p.id}&surat=1`} ai tajuk={tr("Draf surat (AI)")} keterangan={tr("Pengesahan, amaran, tawaran, pelepasan")} />
+            <Tindakan onClick={() => bukaSurat()} tajuk={tr("Jana surat")} keterangan={tr("Tawaran, pengesahan, kenaikan gaji, amaran, berhenti")} />
+            <Tindakan href={`/pembantu-ai?pekerja=${p.id}&surat=1`} ai tajuk={tr("Draf surat lain (AI)")} keterangan={tr("Surat yang tiada templat")} />
             <Tindakan onClick={() => setLembaran("tarikh")} tajuk={tr("Tarikh tamat kontrak, permit & pasport")} keterangan={tr("Peringatan sebelum tamat")} />
             {!p.activated && <Tindakan onClick={jemputSemula} disabled={busy} tajuk={busy ? tr("Menghantar…") : tr("Hantar semula jemputan")} keterangan={saluran.whatsapp ? tr("Pautan pengaktifan baharu melalui WhatsApp") : tr("Jana pautan pengaktifan baharu untuk dihantar kepada pekerja")} />}
           </div>
@@ -300,7 +314,14 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
           </button>
         </section>
       )}
-      {bolehUbah && p.status === "probation" && !p.endStatus && <PanelPercubaan employmentId={p.id} onTamatkan={() => setLembaran("tamat")} onUbah={reload} />}
+      {bolehUbah && tamat && (
+        <section aria-label={tr("Tindakan")} className="flex flex-col gap-2">
+          <Seksyen>{tr("TINDAKAN")}</Seksyen>
+          <Tindakan onClick={() => bukaSurat()} tajuk={tr("Jana surat")} keterangan={tr("Terima peletakan jawatan, pengalaman kerja")} />
+        </section>
+      )}
+      {bolehUbah && <SenaraiSuratPekerja employmentId={p.id} />}
+      {bolehUbah && p.status === "probation" && !p.endStatus && <PanelPercubaan employmentId={p.id} onTamatkan={() => setLembaran("tamat")} onUbah={reload} onSurat={bukaSurat} />}
       {bolehUbah && !tamat && <SenaraiSemakPekerja employmentId={p.id} hr />}
       </div>
       <div className="flex flex-col gap-3">
@@ -406,6 +427,17 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
             setLembaran(null);
             reload();
           }}
+        />
+      )}
+      {lembaran === "surat" && (
+        <JanaSurat
+          employmentId={p.id}
+          nama={p.name}
+          jenisAwal={jenisSurat}
+          probationEnd={p.probationEnd}
+          sudahBerhenti={!!p.endDate}
+          jenisBoleh={tamat ? ["resignation_accept", "experience"] : undefined}
+          onClose={() => setLembaran(null)}
         />
       )}
       {lembaran === "tamat" && (

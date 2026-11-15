@@ -63,18 +63,98 @@ export async function getLebihMasaSaya(employmentId: string) {
 
 // ---------------------------------------------------------------- Surat
 
+/** Surat atas permintaan pekerja */
 export type JenisSurat = "employment" | "salary";
+/** Surat dikeluarkan oleh HR (dijana automatik daripada rekod pekerja) */
+export type JenisSuratHr =
+  | "offer" | "confirmation" | "probation_extension" | "resignation_accept" | "experience"
+  | "salary_increment" | "warning" | "show_cause" | "salary_advance";
+export type SemuaJenisSurat = JenisSurat | JenisSuratHr;
 export const LABEL_SURAT: Record<JenisSurat, string> = { employment: tr("Surat pengesahan majikan"), salary: tr("Surat pengesahan gaji") };
+export const LABEL_SURAT_HR: Record<JenisSuratHr, string> = {
+  offer: tr("Surat tawaran kerja"),
+  confirmation: tr("Surat pengesahan jawatan"),
+  probation_extension: tr("Surat lanjutan tempoh percubaan"),
+  resignation_accept: tr("Surat terima peletakan jawatan"),
+  experience: tr("Surat pengalaman kerja"),
+  salary_increment: tr("Surat kenaikan gaji"),
+  warning: tr("Surat amaran"),
+  show_cause: tr("Surat tunjuk sebab"),
+  salary_advance: tr("Memo pendahuluan gaji"),
+};
+export const labelSurat = (k: string) => (LABEL_SURAT as Record<string, string>)[k] ?? (LABEL_SURAT_HR as Record<string, string>)[k] ?? k;
+
+/** Medan yang diisi HR bagi setiap jenis surat (selebihnya diambil daripada rekod pekerja). */
+export type MedanSurat = { k: string; label: string; jenis: "date" | "text" | "textarea" | "select"; wajib?: boolean; pilihan?: [string, string][]; nota?: string };
+export const MEDAN_SURAT_HR: Record<JenisSuratHr, MedanSurat[]> = {
+  offer: [
+    { k: "accept_by", label: tr("Tarikh akhir menerima tawaran"), jenis: "date", wajib: true },
+    { k: "work_hours", label: tr("Waktu bekerja (biarkan kosong untuk jadual syarikat)"), jenis: "text" },
+    { k: "note", label: tr("Syarat tambahan (pilihan)"), jenis: "textarea" },
+  ],
+  confirmation: [
+    { k: "effective_date", label: tr("Tarikh pengesahan berkuat kuasa"), jenis: "date", wajib: true },
+    { k: "note", label: tr("Nota tambahan (pilihan)"), jenis: "textarea" },
+  ],
+  probation_extension: [
+    { k: "new_end_date", label: tr("Tarikh tamat percubaan yang baharu"), jenis: "date", wajib: true },
+    { k: "improve", label: tr("Perkara yang perlu diperbaiki"), jenis: "textarea", wajib: true },
+  ],
+  resignation_accept: [
+    { k: "notice_date", label: tr("Tarikh surat peletakan jawatan diterima"), jenis: "date", wajib: true },
+    { k: "note", label: tr("Bayaran akhir / baki cuti (pilihan)"), jenis: "textarea" },
+  ],
+  experience: [{ k: "note", label: tr("Ulasan prestasi (pilihan)"), jenis: "textarea" }],
+  salary_increment: [{ k: "reason", label: tr("Sebab kenaikan"), jenis: "text", wajib: true }],
+  warning: [
+    {
+      k: "warning_no",
+      label: tr("Peringkat amaran"),
+      jenis: "select",
+      wajib: true,
+      pilihan: [
+        ["1", tr("Amaran pertama")],
+        ["2", tr("Amaran kedua")],
+        ["3", tr("Amaran terakhir")],
+      ],
+    },
+    { k: "incident_date", label: tr("Tarikh kejadian"), jenis: "date", wajib: true },
+    { k: "description", label: tr("Butiran salah laku"), jenis: "textarea", wajib: true, nota: tr("Nyatakan fakta: apa, bila, di mana. Sekurang-kurangnya 20 aksara.") },
+    { k: "rule", label: tr("Peraturan / polisi yang dilanggar (pilihan)"), jenis: "text" },
+  ],
+  show_cause: [
+    { k: "incident_date", label: tr("Tarikh kejadian"), jenis: "date", wajib: true },
+    { k: "description", label: tr("Butiran dakwaan"), jenis: "textarea", wajib: true, nota: tr("Nyatakan fakta: apa, bila, di mana. Sekurang-kurangnya 20 aksara.") },
+    { k: "reply_by", label: tr("Tarikh akhir jawapan bertulis"), jenis: "date", wajib: true },
+  ],
+  salary_advance: [{ k: "note", label: tr("Arahan kepada Kewangan (pilihan)"), jenis: "textarea" }],
+};
+
+export async function keluarkanSuratHr(employmentId: string, jenis: JenisSuratHr, butiran: Record<string, string>, pendahuluanId?: string): Promise<string> {
+  return must(
+    await getSupabase().rpc("hr_issue_letter", {
+      p_employment: employmentId,
+      p_kind: jenis,
+      p_details: butiran,
+      ...(pendahuluanId ? { p_salary_advance: pendahuluanId } : {}),
+    }),
+  ) as string;
+}
+export type SuratPekerja = { id: string; kind: SemuaJenisSurat; purpose: string; status: string; ref_no: string | null; issued_at: string | null; created_at: string; source: string; issued_by: string | null; salary_advance_id: string | null };
+export async function getSuratPekerja(employmentId: string): Promise<SuratPekerja[]> {
+  return (must(await getSupabase().rpc("letter_list_employment", { p_employment: employmentId })) ?? []) as SuratPekerja[];
+}
 
 export type PermohonanSurat = {
   id: string;
   employment_id: string;
   name: string;
   employee_no: string;
-  kind: JenisSurat;
+  kind: SemuaJenisSurat;
   purpose: string;
   addressed_to: string | null;
   status: "pending" | "issued" | "rejected" | "cancelled";
+  source: "employee" | "hr";
   ref_no: string | null;
   issued_at: string | null;
   reject_reason: string | null;
@@ -106,7 +186,32 @@ export async function tolakSurat(id: string, sebab: string) {
 
 export type DataSurat = {
   logo_path?: string | null;
-  kind: JenisSurat;
+  kind: SemuaJenisSurat;
+  source?: "employee" | "hr";
+  details?: Record<string, string>;
+  address?: string | null;
+  probation_end_date?: string | null;
+  end_date?: string | null;
+  end_status?: string | null;
+  work_schedule?: Record<string, { start: string; end: string; half?: boolean }> | null;
+  work_start?: string | null;
+  work_end?: string | null;
+  weekend_days?: number[] | null;
+  leave?: Record<string, number | null> | null;
+  assets?: { name: string; serial_no: string | null; category: string | null }[];
+  old_basic?: number | null;
+  new_basic?: number | null;
+  increment_from?: string | null;
+  advance?: {
+    amount: number;
+    reason: string;
+    requested_at: string;
+    deduct_year: number | null;
+    deduct_month: number | null;
+    disbursed_at: string | null;
+    approvers: { name: string; step: string; at: string | null }[];
+    bank: string | null;
+  } | null;
   purpose: string;
   addressed_to: string | null;
   ref_no: string;

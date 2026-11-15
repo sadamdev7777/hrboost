@@ -29,6 +29,7 @@ const BANDING = () => [
   [tr("Gaji & caruman"), tr("Kalkulator berasingan, risiko silap"), tr("KWSP, PERKESO, SIP, PCB dikira serentak")],
   [tr("Borang EA"), tr("Disediakan satu per satu pada Februari"), tr("Semua pekerja sekali gus, dihantar ke WhatsApp")],
   [tr("Inventori"), tr("Excel lama, tiada siapa tahu siapa memegang laptop"), tr("Pekerja rekod sendiri dengan gambar, HR sahkan")],
+  [tr("Surat HR"), tr("Ditaip semula dalam Word setiap kali"), tr("Dijana daripada rekod pekerja dengan satu tekan")],
 ];
 // Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
 const LANGKAH = () => [
@@ -105,9 +106,11 @@ const CIRI_UTAMA = () => {
 };
 // Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
 const CIRI_LAIN = () => [
+  [tr("Surat dijana automatik"), tr("Surat tawaran, pengesahan jawatan, kenaikan gaji, amaran, terima peletakan jawatan dan pengalaman kerja dijana daripada rekod pekerja. HR tidak perlu menaip.")],
   [tr("Gaji & fail berkanun automatik"), tr("KWSP, PERKESO, SIP, PCB dan HRDF dikira serentak. Fail bank, CP39 dan Borang EA sedia dimuat turun.")],
   [tr("Penilaian prestasi yang mudah"), tr("Satu KPI satu skrin dengan huraian. HR boleh pratonton seperti pekerja sebelum kitaran dibuka.")],
   [tr("Cuti ikut Akta Kerja"), tr("Cuti ganti automatik (s.60D), jadual kerja separuh hari Sabtu, baki dikira sendiri.")],
+  [tr("Kehadiran disambung terus"), tr("Mesin CrossChex sedia ada disambung; lewat, tiada rekod dan pembetulan masa di satu skrin.")],
   [tr("Data selamat, sentiasa percuma"), tr("Setiap syarikat diasingkan. Akses kepada data peribadi direkodkan. Tiada kad kredit.")],
 ];
 // Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
@@ -192,7 +195,7 @@ export default function Kandungan() {
             </article>
           ))}
         </div>
-        <div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {CIRI_LAIN().map(([t, s2]) => (
             <div key={t} className="flex flex-col gap-2 rounded-card border border-line-soft bg-surface p-5">
               <b className="text-base font-extrabold">{t}</b>

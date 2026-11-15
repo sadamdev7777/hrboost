@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { tarikh, tarikhTempatan } from "@/lib/format";
-import { batalSurat, getSurat, LABEL_SURAT, mohonSurat, STATUS_SURAT, type JenisSurat } from "@/lib/urusan";
+import { batalSurat, getSurat, LABEL_SURAT, labelSurat, mohonSurat, STATUS_SURAT, type JenisSurat } from "@/lib/urusan";
 import { BackHeader, ErrorBox, Screen } from "@/components/ui";
 import { ButangUtama, Cip, MedanBorang, Seksyen, Tag, inputKecil } from "@/components/Senarai";
 import { beritahu } from "@/components/Dialog";
@@ -79,14 +79,14 @@ export default function MohonSuratPage() {
 
         {(d.data ?? []).length > 0 && (
           <>
-            <Seksyen className="pt-3">{tr("PERMOHONAN SAYA")}</Seksyen>
+            <Seksyen className="pt-3">{tr("SURAT SAYA")}</Seksyen>
             <div className="flex flex-col rounded-card bg-surface px-4 [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
               {(d.data ?? []).map((s) => (
                 <div key={s.id} className="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-1 py-2.5 text-sm">
                   <span className="flex min-w-0 grow basis-48 flex-col gap-0.5">
-                    <b className="font-bold">{LABEL_SURAT[s.kind]}</b>
+                    <b className="font-bold">{labelSurat(s.kind)}</b>
                     <span className="text-xs text-muted">
-                      {s.purpose} · {tarikh(tarikhTempatan(s.created_at))}
+                      {s.source === "hr" ? tr("Dikeluarkan oleh HR") : s.purpose} · {tarikh(tarikhTempatan(s.issued_at ?? s.created_at))}
                       {s.reject_reason ? ` · ${s.reject_reason}` : ""}
                     </span>
                   </span>

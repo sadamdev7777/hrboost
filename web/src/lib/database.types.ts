@@ -1517,14 +1517,14 @@ isOneToOne: false
                   ]
                 },"letter_requests": {
                   Row: {
-                    "addressed_to": string | null,"company_id": string,"created_at": string,"employment_id": string,"id": string,"issued_at": string | null,"issued_by": string | null,"kind": string,"purpose": string,"ref_no": string | null,"reject_reason": string | null,"snapshot": Json | null,"status": string
+                    "addressed_to": string | null,"company_id": string,"created_at": string,"details": NonNullable<Json>,"employment_id": string,"id": string,"issued_at": string | null,"issued_by": string | null,"kind": string,"purpose": string,"ref_no": string | null,"reject_reason": string | null,"salary_advance_id": string | null,"snapshot": Json | null,"source": string,"status": string,"visible_to_employee": boolean
                   }
                   ComputedFields: never
                   Insert: {
-                    "addressed_to"?: string | null,"company_id": string,"created_at"?: string,"employment_id": string,"id"?: string,"issued_at"?: string | null,"issued_by"?: string | null,"kind": string,"purpose": string,"ref_no"?: string | null,"reject_reason"?: string | null,"snapshot"?: Json | null,"status"?: string
+                    "addressed_to"?: string | null,"company_id": string,"created_at"?: string,"details"?: NonNullable<Json>,"employment_id": string,"id"?: string,"issued_at"?: string | null,"issued_by"?: string | null,"kind": string,"purpose": string,"ref_no"?: string | null,"reject_reason"?: string | null,"salary_advance_id"?: string | null,"snapshot"?: Json | null,"source"?: string,"status"?: string,"visible_to_employee"?: boolean
                   }
                   Update: {
-                    "addressed_to"?: string | null,"company_id"?: string,"created_at"?: string,"employment_id"?: string,"id"?: string,"issued_at"?: string | null,"issued_by"?: string | null,"kind"?: string,"purpose"?: string,"ref_no"?: string | null,"reject_reason"?: string | null,"snapshot"?: Json | null,"status"?: string
+                    "addressed_to"?: string | null,"company_id"?: string,"created_at"?: string,"details"?: NonNullable<Json>,"employment_id"?: string,"id"?: string,"issued_at"?: string | null,"issued_by"?: string | null,"kind"?: string,"purpose"?: string,"ref_no"?: string | null,"reject_reason"?: string | null,"salary_advance_id"?: string | null,"snapshot"?: Json | null,"source"?: string,"status"?: string,"visible_to_employee"?: boolean
                   }
                   Relationships: [
                     {
@@ -1544,6 +1544,12 @@ isOneToOne: false
       columns: ["issued_by"]
 isOneToOne: false
       referencedRelation: "persons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "letter_requests_salary_advance_id_fkey"
+      columns: ["salary_advance_id"]
+isOneToOne: false
+      referencedRelation: "salary_advances"
       referencedColumns: ["id"]
     }
                   ]
@@ -2857,6 +2863,9 @@ isOneToOne: false
 "hr_inventory_verify":
 { Args: { "p_id": string,"p_ok": boolean,"p_reason"?: string }; Returns: undefined
                            },
+"hr_issue_letter":
+{ Args: { "p_addressed_to"?: string,"p_details"?: Json,"p_employment": string,"p_kind": string,"p_salary_advance"?: string }; Returns: string
+                           },
 "hr_leave_overview":
 { Args: { "p_company": string }; Returns: Json
                            },
@@ -2895,7 +2904,7 @@ isOneToOne: false
                            },
 "hr_salary_advances":
 { Args: { "p_company": string }; Returns: {
-              "amount": number,"created_at": string,"deduct_month": number,"deduct_year": number,"deducted": boolean,"disbursed_at": string,"employment_id": string,"id": string,"name": string,"reason": string,"status": Database["public"]['Enums']["request_status"]
+              "amount": number,"created_at": string,"deduct_month": number,"deduct_year": number,"deducted": boolean,"disbursed_at": string,"employment_id": string,"id": string,"memo_id": string,"name": string,"reason": string,"status": Database["public"]['Enums']["request_status"]
             }[]
                            },
 "hr_save_pay_component":
@@ -2975,7 +2984,7 @@ isOneToOne: false
                            },
 "inventory_list":
 { Args: { "p_company": string,"p_scope"?: string }; Returns: {
-              "brand_model": string,"category": string,"condition": string,"created_at": string,"created_by_name": string,"department": string,"editable": boolean,"employment_id": string,"holder": string,"id": string,"issued_on": string,"location": string,"name": string,"note": string,"photo_paths": (string)[],"price": number,"receipt_paths": (string)[],"reject_reason": string,"returned_on": string,"serial_no": string,"status": string,"verified_at": string
+              "brand_model": string,"category": string,"condition": string,"created_at": string,"created_by_name": string,"department": string,"editable": boolean,"employment_id": string,"holder": string,"holder_active": boolean,"holder_end_date": string,"id": string,"issued_on": string,"location": string,"name": string,"note": string,"photo_paths": (string)[],"price": number,"receipt_paths": (string)[],"reject_reason": string,"returned_on": string,"serial_no": string,"status": string,"verified_at": string
             }[]
                            },
 "inventory_save":
@@ -3046,10 +3055,24 @@ isOneToOne: false
 "letter_build_snapshot":
 { Args: { "p_id": string }; Returns: Json
                            },
+"letter_kind_label":
+{ Args: { "p_kind": string }; Returns: string
+                           },
 "letter_list":
 { Args: { "p_company": string,"p_mine"?: boolean }; Returns: {
-              "addressed_to": string,"created_at": string,"employee_no": string,"employment_id": string,"id": string,"issued_at": string,"kind": string,"name": string,"purpose": string,"ref_no": string,"reject_reason": string,"status": string
+              "addressed_to": string,"created_at": string,"employee_no": string,"employment_id": string,"id": string,"issued_at": string,"kind": string,"name": string,"purpose": string,"ref_no": string,"reject_reason": string,"source": string,"status": string
             }[]
+                           },
+"letter_list_employment":
+{ Args: { "p_employment": string }; Returns: {
+              "created_at": string,"id": string,"issued_at": string,"issued_by": string,"kind": string,"purpose": string,"ref_no": string,"salary_advance_id": string,"source": string,"status": string
+            }[]
+                           },
+"letter_next_ref":
+{ Args: { "p_company": string }; Returns: string
+                           },
+"letter_signatory":
+{ Args: { "p_company": string }; Returns: Json
                            },
 "letter_view":
 { Args: { "p_id": string }; Returns: Json

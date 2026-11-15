@@ -32,7 +32,18 @@ export function KadPenilaianKetua({ companyId }: { companyId: string }) {
 }
 
 /** Profil Pekerja (HR): penilaian ketua terkini & keputusan. */
-export function PanelPercubaan({ employmentId, onTamatkan, onUbah }: { employmentId: string; onTamatkan: () => void; onUbah: () => void }) {
+export function PanelPercubaan({
+  employmentId,
+  onTamatkan,
+  onUbah,
+  onSurat,
+}: {
+  employmentId: string;
+  onTamatkan: () => void;
+  onUbah: () => void;
+  /** Selepas keputusan: tawarkan surat pengesahan / lanjutan */
+  onSurat?: (jenis: "confirmation" | "probation_extension") => void;
+}) {
   const d = useData(() => getPenilaianTerkini(employmentId), [employmentId]);
   const r = d.data;
   async function putus(k: "confirmed" | "extended", bulan?: number) {
@@ -47,6 +58,9 @@ export function PanelPercubaan({ employmentId, onTamatkan, onUbah }: { employmen
       beritahu(k === "confirmed" ? tr("Jawatan disahkan.") : tr("Tempoh percubaan dilanjutkan."));
       onUbah();
       d.reload();
+      if (onSurat && (await sahkan({ tajuk: tr("Jana surat sekarang?"), mesej: k === "confirmed" ? tr("Surat pengesahan jawatan dijana daripada rekod pekerja.") : tr("Surat lanjutan tempoh percubaan dijana daripada rekod pekerja."), ok: tr("Jana surat") }))) {
+        onSurat(k === "confirmed" ? "confirmation" : "probation_extension");
+      }
     } catch (e) {
       beritahu(e instanceof Error ? e.message : tr("Ralat"), "ralat");
     }
