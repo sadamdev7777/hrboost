@@ -23,7 +23,7 @@ export const JENIS_DARI_PROFIL: JenisSuratHr[] = [
   "show_cause",
 ];
 
-const HURAIAN: Record<JenisSuratHr, string> = {
+export const HURAIAN_SURAT: Record<JenisSuratHr, string> = {
   offer: tr("Jawatan, gaji, tarikh mula, tempoh percubaan dan kelayakan cuti diambil daripada rekod pekerja."),
   confirmation: tr("Mengesahkan pekerja dalam jawatan selepas tempoh percubaan."),
   probation_extension: tr("Melanjutkan tempoh percubaan dengan perkara yang perlu diperbaiki."),
@@ -72,6 +72,7 @@ export function JanaSurat({
   probationEnd,
   sudahBerhenti,
   pendahuluanId,
+  onKembali,
   onClose,
 }: {
   employmentId: string;
@@ -82,6 +83,8 @@ export function JanaSurat({
   /** false = pekerja belum ada hari bekerja terakhir (surat berhenti dimatikan); undefined = tidak diketahui */
   sudahBerhenti?: boolean;
   pendahuluanId?: string;
+  /** Butang Kembali apabila jenis sudah dipilih di luar (cth. halaman Surat: kembali ke pilihan pekerja) */
+  onKembali?: () => void;
   onClose: () => void;
 }) {
   const router = useRouter();
@@ -130,7 +133,7 @@ export function JanaSurat({
                 className="flex min-h-14 flex-col items-start gap-0.5 rounded-[14px] border border-line bg-surface px-4 py-3 text-left hover:border-primary disabled:opacity-50"
               >
                 <b className="text-sm font-bold">{LABEL_SURAT_HR[j]}</b>
-                <span className="text-xs leading-snug text-muted">{mati ? tr("Tetapkan hari bekerja terakhir dahulu (Tamatkan pekerjaan).") : HURAIAN[j]}</span>
+                <span className="text-xs leading-snug text-muted">{mati ? tr("Tetapkan hari bekerja terakhir dahulu (Tamatkan pekerjaan).") : HURAIAN_SURAT[j]}</span>
               </button>
             );
           })}
@@ -138,7 +141,7 @@ export function JanaSurat({
       ) : (
         <div className="flex flex-col gap-3">
           <span className="text-[13px] leading-snug text-subtle">
-            {tr("Untuk {0}.", nama)} {HURAIAN[jenis]}
+            {tr("Untuk {0}.", nama)} {HURAIAN_SURAT[jenis]}
           </span>
           {(jenis === "warning" || jenis === "show_cause") && (
             <div role="note" className="rounded-[12px] bg-warning-soft px-3.5 py-3 text-[13px] leading-snug text-warning">
@@ -180,8 +183,8 @@ export function JanaSurat({
           </span>
           {ralat && <ErrorBox message={ralat} />}
           <div className="flex gap-2">
-            {!jenisAwal && (
-              <button type="button" onClick={() => setJenis(null)} className="h-12 shrink-0 rounded-button border border-line bg-surface px-5 text-sm font-bold">
+            {(!jenisAwal || onKembali) && (
+              <button type="button" onClick={() => (onKembali ? onKembali() : setJenis(null))} className="h-12 shrink-0 rounded-button border border-line bg-surface px-5 text-sm font-bold">
                 {tr("Kembali")}
               </button>
             )}

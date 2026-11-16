@@ -53,7 +53,13 @@ export const TAB_MODUL = {
     label: tr("Peti HR"),
     tabs: [
       { href: "/pengurusan/soalan", label: tr("Soalan HR") },
-      { href: "/pengurusan/surat", label: tr("Permintaan surat") },
+    ],
+  },
+  surat: {
+    label: tr("Surat"),
+    tabs: [
+      { href: "/pengurusan/surat", label: tr("Semua surat") },
+      { href: "/pengurusan/surat/permintaan", label: tr("Permintaan pekerja") },
     ],
   },
 } satisfies Record<string, { label: string; tabs: Tab[] }>;

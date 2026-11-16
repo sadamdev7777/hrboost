@@ -78,10 +78,10 @@ async function masuk(b, email, vp) {
   ({ ctx, p } = await masuk(b, 'lily@demo.hrboost.io', DESKTOP));
   await p.waitForSelector(V('text=permohonan surat pengesahan menunggu dikeluarkan'));
   expect(true, 'Papan Pemuka: surat menunggu dalam Perlu tindakan');
-  // Surat kini tab dalam modul Peti HR
-  await p.click(V('aside a[href="/pengurusan/soalan"]'));
-  await p.click(V('nav[aria-label="Peti HR"] >> text=Permintaan surat'));
-  await p.waitForURL('**/pengurusan/surat');
+  // Surat: menu sendiri di bawah ORANG; permintaan pekerja ialah tab kedua
+  await p.click(V('aside a[href="/pengurusan/surat"]'));
+  await p.click(V('nav[aria-label="Surat"] >> text=Permintaan pekerja'));
+  await p.waitForURL('**/pengurusan/surat/permintaan');
   await p.click(V('button:has-text("Keluarkan")'));
   await p.click('[role=alertdialog] button:has-text("Keluarkan surat")');
   await p.waitForURL(/\/surat\/[0-9a-f-]+$/);

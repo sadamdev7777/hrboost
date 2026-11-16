@@ -124,6 +124,30 @@ async function janaDariProfil(p, jenis) {
   await p.goto(`${BASE}/pengurusan/pekerja/${AMIN}`);
   await p.waitForSelector('text=SURAT · 4', { timeout: 15000 });
   expect(true, 'profil pekerja menyenaraikan 4 surat');
+
+  log('6. Halaman Surat: daftar semua surat & aliran jenis → pekerja → butiran');
+  await p.goto(BASE + '/pengurusan/surat');
+  await p.waitForSelector('main a[href^="/surat/"] >> text=Surat terima peletakan jawatan', { timeout: 15000 });
+  teks = (await p.locator('main a[href^="/surat/"]').allInnerTexts()).join('\n');
+  expect(['Surat tawaran kerja', 'Surat amaran', 'Surat terima peletakan jawatan'].every((t) => teks.includes(t)), 'daftar menyenaraikan surat yang dikeluarkan');
+  await p.selectOption('select[aria-label="Jenis surat"]', 'warning');
+  teks = (await p.locator('main a[href^="/surat/"]').allInnerTexts()).join('\n');
+  expect(teks.includes('Surat amaran') && !teks.includes('Surat tawaran kerja'), 'tapis ikut jenis surat');
+  await p.click('button:has-text("+ Jana surat")');
+  await p.click('[role=dialog] button:has-text("Surat pengalaman kerja")');
+  await p.waitForSelector('[role=dialog] >> text=Hari bekerja terakhir');
+  const calon = await p.locator('[role=dialog] button:has(b)').allInnerTexts();
+  expect(calon.length === 1 && calon[0].includes('Amin'), `hanya pekerja dengan hari bekerja terakhir disenaraikan (${calon.length})`);
+  await p.click('[role=dialog] button:has-text("Amin")');
+  await p.click('[role=dialog] button:has-text("Kembali")');
+  await p.waitForSelector('[role=dialog] >> text=Pilih pekerja');
+  expect(true, 'Kembali ke pilihan pekerja');
+  await p.click('[role=dialog] button:has-text("Amin")');
+  await p.click('[role=dialog] button:has-text("Keluarkan surat")');
+  await p.waitForURL(/\/surat\/[0-9a-f-]+$/, { timeout: 15000 });
+  await p.waitForSelector('article', { timeout: 15000 });
+  expect((await p.innerText('article')).includes('Amin bin Demo'), 'surat pengalaman kerja dijana dari halaman Surat');
+  await p.screenshot({ path: `${shots}/surat-halaman.png` });
   await ctx.close();
 
   ({ ctx, p } = await login(browser, '100000004', { width: 390, height: 844 }));

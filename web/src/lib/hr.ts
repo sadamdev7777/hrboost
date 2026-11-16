@@ -59,13 +59,15 @@ export type PekerjaRingkas = {
   joinDate: string;
   type: EmpType;
   probationEnd: string | null;
+  /** Hari bekerja terakhir (jika sudah ditetapkan) */
+  endDate: string | null;
 };
 
 export async function getSenaraiPekerja(companyId: string, termasukTamat = false): Promise<PekerjaRingkas[]> {
   const sb = getSupabase();
   let q = sb
     .from("employments")
-    .select("id, person_id, employee_no, status, join_date, employment_type, probation_end_date, department_id, departments(name, head_person_id), positions(title), persons!employments_person_id_fkey(preferred_name, full_name, auth_user_id)")
+    .select("id, person_id, employee_no, status, join_date, employment_type, probation_end_date, end_date, department_id, departments(name, head_person_id), positions(title), persons!employments_person_id_fkey(preferred_name, full_name, auth_user_id)")
     .eq("company_id", companyId)
     .order("employee_no");
   if (!termasukTamat) q = q.in("status", ["probation", "active"]);
@@ -86,6 +88,7 @@ export async function getSenaraiPekerja(companyId: string, termasukTamat = false
     joinDate: e.join_date,
     type: e.employment_type,
     probationEnd: e.probation_end_date,
+    endDate: e.end_date,
   }));
 }
 

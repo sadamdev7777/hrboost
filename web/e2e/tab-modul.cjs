@@ -13,7 +13,7 @@ const MODUL = [
   ['Cuti', '/pengurusan/cuti'],
   ['Penggajian', '/pengurusan/gaji'],
   ['Kehadiran', '/pengurusan/kehadiran'],
-  ['Peti HR', '/pengurusan/soalan'],
+  ['Surat', '/pengurusan/surat'],
 ];
 
 async function ukur(p, label) {

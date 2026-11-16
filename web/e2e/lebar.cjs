@@ -13,7 +13,7 @@ const ROUTES_HR = ['/pengurusan', '/pengurusan/pekerja', '/pengurusan/pekerja/ba
   '/pengurusan/gaji/pendahuluan', '/pengurusan/gaji/data-terkumpul', '/pengurusan/laporan', '/pengurusan/akses', '/pengurusan/jabatan', '/pengurusan/tetapan',
   '/pengurusan/tetapan/aliran', '/pengurusan/tetapan/cuti', '/pengurusan/tetapan/tuntutan', '/pengurusan/tetapan/syarikat', '/pengurusan/tetapan/automasi',
   '/pengurusan/tetapan/pengguna', '/pengurusan/tetapan/cuti-umum', '/pengurusan/tetapan/kehadiran', '/pengurusan/tetapan/akaun', '/pengurusan/tetapan/pengetahuan-ai',
-  '/pengurusan/tetapan/kadar-berkanun', '/pengurusan/tetapan/wakil', '/pengurusan/surat', '/pengurusan/pengumuman', '/pengurusan/soalan', '/pengurusan/kerja-fleksibel',
+  '/pengurusan/tetapan/kadar-berkanun', '/pengurusan/tetapan/wakil', '/pengurusan/surat', '/pengurusan/surat/permintaan', '/pengurusan/pengumuman', '/pengurusan/soalan', '/pengurusan/kerja-fleksibel',
   '/kalendar', '/kelulusan', '/saya', '/mula', '/pengurusan/cuti', '/pengurusan/cuti/baki', '/pengurusan/kehadiran',
   '/pengurusan/kehadiran/pembetulan', '/pengurusan/tuntutan', '/pengurusan/orientasi', '/pengurusan/carta', '/pengurusan/menu', '/pengurusan/gaji/ea', '/pengurusan/pekerja/nama'];
 const ROUTES_STAF = ['/utama', '/mohon', '/mohon/cuti', '/mohon/surat', '/mohon/pendahuluan', '/mohon/kerja-fleksibel', '/tuntutan', '/tuntutan/baru', '/kehadiran',

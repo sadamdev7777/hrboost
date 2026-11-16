@@ -45,7 +45,7 @@ const teksMenu = (p) => p.locator('aside[aria-label="Menu sisi"]').innerText();
   log('1. Menu sisi (Lily, HR)');
   let { ctx, p } = await masuk(b, 'lily@demo.hrboost.io', DESKTOP);
   let m = await teksMenu(p);
-  for (const t of ['Papan Pemuka', 'Kelulusan', 'Pengumuman', 'ORANG', 'Pekerja', 'Orientasi', 'MASA', 'Cuti', 'Kehadiran', 'WANG', 'Penggajian', 'Tuntutan perbelanjaan', 'LAIN-LAIN', 'Peti HR', 'Laporan', 'Tetapan'])
+  for (const t of ['Papan Pemuka', 'Kelulusan', 'Pengumuman', 'ORANG', 'Pekerja', 'Orientasi', 'Surat', 'MASA', 'Cuti', 'Kehadiran', 'WANG', 'Penggajian', 'Tuntutan perbelanjaan', 'LAIN-LAIN', 'Peti HR', 'Laporan', 'Tetapan'])
     expect(m.includes(t), `menu: ${t}`);
   expect(!/Kalendar pasukan|Kerja fleksibel|Soalan HR/.test(m), 'alat kecil tiada dalam menu (kini tab dalam modul)');
   await p.screenshot({ path: path.join(shots, 'modul-hr-menu.png') });
@@ -89,11 +89,12 @@ const teksMenu = (p) => p.locator('aside[aria-label="Menu sisi"]').innerText();
   const carta = await p.locator('main:visible').innerText();
   expect(carta.includes('Pelancongan') && carta.includes('Zuerin'), 'carta: jabatan Pelancongan dengan ketua Zuerin');
 
-  log('6. Peti HR');
-  await p.click(V('aside a[href="/pengurusan/soalan"]'));
-  await p.click(V('nav[aria-label="Peti HR"] >> text=Permintaan surat'));
+  log('6. Surat');
+  await p.click(V('aside a[href="/pengurusan/surat"]'));
   await p.waitForURL(/\/pengurusan\/surat$/);
-  expect((await p.locator('aside a[aria-current=page]').innerText()).includes('Peti HR'), 'Surat: menu Peti HR kekal aktif');
+  await p.click(V('nav[aria-label="Surat"] >> text=Permintaan pekerja'));
+  await p.waitForURL(/\/pengurusan\/surat\/permintaan$/);
+  expect((await p.locator('aside a[aria-current=page]').innerText()).includes('Surat'), 'Permintaan pekerja: menu Surat kekal aktif');
 
   log('7. Saya di bawah menu');
   await p.click(V('aside a[href="/saya"]'));

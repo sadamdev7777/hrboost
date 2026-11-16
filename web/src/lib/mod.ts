@@ -125,6 +125,7 @@ export const MENU_HR: KumpulanNav[] = [
     items: [
       { href: "/pengurusan/pekerja", label: tr("Pekerja"), ikon: "users", roles: HR_CEO, padan: ["/pengurusan/carta", "/pengurusan/tetapan/jabatan"] },
       { href: "/pengurusan/orientasi", label: tr("Orientasi"), ikon: "userplus", roles: HR_CEO },
+      { href: "/pengurusan/surat", label: tr("Surat"), ikon: "document", roles: ["hr", "admin"] },
       { href: "/pengurusan/prestasi", label: tr("Prestasi"), ikon: "target", roles: HR_CEO },
       { href: "/pengurusan/inventori", label: tr("Inventori"), ikon: "box", roles: ["hr", "finance", "ceo", "admin"] },
     ],
@@ -146,7 +147,7 @@ export const MENU_HR: KumpulanNav[] = [
   {
     tajuk: tr("LAIN-LAIN"),
     items: [
-      { href: "/pengurusan/soalan", label: tr("Peti HR"), ikon: "inbox", roles: ["hr", "admin"], padan: ["/pengurusan/surat"] },
+      { href: "/pengurusan/soalan", label: tr("Peti HR"), ikon: "inbox", roles: ["hr", "admin"] },
       { href: "/pengurusan/laporan", label: tr("Laporan"), ikon: "chart" },
     ],
   },

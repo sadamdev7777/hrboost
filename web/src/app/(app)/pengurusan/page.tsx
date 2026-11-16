@@ -142,7 +142,7 @@ function Kandungan() {
         nama: sm.name,
       });
     if (t.no_salary) tambah({ key: "gaji", jenis: tr("Gaji"), segera: 1, teks: tr("{0} pekerja belum mempunyai gaji pokok", t.no_salary), href: "/pengurusan/gaji/pekerja", aksi: tr("Tetapkan") });
-    if (x.surat > 0) tambah({ key: "surat", jenis: tr("Surat"), segera: 1, teks: tr("{0} permohonan surat pengesahan menunggu dikeluarkan", x.surat), href: "/pengurusan/surat", aksi: tr("Keluarkan") });
+    if (x.surat > 0) tambah({ key: "surat", jenis: tr("Surat"), segera: 1, teks: tr("{0} permohonan surat pengesahan menunggu dikeluarkan", x.surat), href: "/pengurusan/surat/permintaan", aksi: tr("Keluarkan") });
     if (x.soalan > 0) tambah({ key: "soalan", jenis: tr("Peti HR"), segera: 1, teks: tr("{0} soalan pekerja belum dijawab", x.soalan), href: "/pengurusan/soalan", aksi: tr("Jawab") });
     if ((td?.probation_ending ?? 0) > 0 && !a.attention.some((p) => p.kind === "probation"))
       tambah({ key: "percubaan", jenis: tr("Percubaan"), segera: 2, teks: tr("{0} tempoh percubaan tamat dalam 30 hari", td!.probation_ending), href: "/pengurusan/orientasi", aksi: tr("Semak") });

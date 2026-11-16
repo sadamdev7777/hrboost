@@ -10,7 +10,7 @@ const log = (...a) => console.log(...a);
 const HR = ['/pengurusan', '/kelulusan', '/pengurusan/pengumuman', '/pengurusan/pekerja', '/pengurusan/pekerja/00000000-0000-0000-0000-0000000000e4',
   '/pengurusan/pekerja/baru', '/pengurusan/carta', '/pengurusan/pekerja/nama', '/pengurusan/orientasi', '/pengurusan/cuti', '/pengurusan/cuti/baki', '/kalendar',
   '/pengurusan/kehadiran', '/pengurusan/kehadiran/pembetulan', '/pengurusan/kerja-fleksibel', '/pengurusan/gaji', '/pengurusan/gaji/pekerja', '/pengurusan/gaji/pendahuluan',
-  '/pengurusan/gaji/sejarah', '/pengurusan/gaji/ea', '/pengurusan/gaji/data-terkumpul', '/pengurusan/tuntutan', '/pengurusan/soalan', '/pengurusan/surat', '/pengurusan/laporan',
+  '/pengurusan/gaji/sejarah', '/pengurusan/gaji/ea', '/pengurusan/gaji/data-terkumpul', '/pengurusan/tuntutan', '/pengurusan/soalan', '/pengurusan/surat', '/pengurusan/surat/permintaan', '/pengurusan/laporan',
   '/pengurusan/tetapan', '/pengurusan/tetapan/syarikat', '/pengurusan/tetapan/jabatan', '/pengurusan/tetapan/pengguna', '/pengurusan/tetapan/aliran', '/pengurusan/tetapan/wakil',
   '/pengurusan/tetapan/automasi', '/pengurusan/tetapan/cuti', '/pengurusan/tetapan/cuti-umum', '/pengurusan/tetapan/tuntutan', '/pengurusan/tetapan/kehadiran',
   '/pengurusan/tetapan/kadar', '/pengurusan/tetapan/akaun', '/pengurusan/tetapan/pengetahuan-ai', '/pengurusan/akses', '/pengurusan/menu', '/saya'];
