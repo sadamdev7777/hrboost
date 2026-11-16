@@ -6,6 +6,7 @@ import { HosDialog, HosToast } from "@/components/Dialog";
 import { BahasaAwal, LangHtml } from "@/components/PilihBahasa";
 import { PelaporRalat } from "@/components/PelaporRalat";
 import { PembetulTarikh } from "@/components/PembetulTarikh";
+import { AlihPautanAuth } from "@/components/AlihPautanAuth";
 import { cookies } from "next/headers";
 import { Suspense, type ReactNode } from "react";
 
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <LangHtml />
         <PelaporRalat />
         <PembetulTarikh />
+        <AlihPautanAuth />
       </body>
     </html>
   );
