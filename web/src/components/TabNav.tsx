@@ -53,9 +53,10 @@ function Lencana({ n }: { n: number }) {
  * Mod Pekerja: 4 tab (CLAUDE.md §1). Mod HR: Papan Pemuka, Pekerja, Kelulusan, Gaji + "Lagi" (modul lain, Saya).
  */
 export function TabNav() {
-  const { data } = useData(getBilanganTugasan, []);
   const { state } = useMeContext();
   const me = state.status === "ready" ? state.me : null;
+  const cid = me?.active?.companyId ?? null;
+  const { data } = useData(() => getBilanganTugasan(cid), [cid]);
   const { mod } = useMod();
   const items = navUntuk(me, mod);
   const path = usePathname();
@@ -119,9 +120,10 @@ export function TukarMod({ className = "" }: { className?: string }) {
 
 /** Menu sisi untuk skrin lebar (≥ 1024px). Mod HR: berkumpulan ikut modul; Tetapan & akaun di bawah. */
 export function MenuSisi() {
-  const { data } = useData(getBilanganTugasan, []);
   const { state } = useMeContext();
   const me = state.status === "ready" ? state.me : null;
+  const cid = me?.active?.companyId ?? null;
+  const { data } = useData(() => getBilanganTugasan(cid), [cid]);
   const { mod } = useMod();
   const path = usePathname();
   const lebar = useSkrinLebar();

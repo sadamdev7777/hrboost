@@ -1,5 +1,6 @@
 "use client";
 
+import { padamRekod } from "@/lib/padam";
 import { tr, trRalat } from "@/lib/i18n";
 import { beritahu, mintaTeks, sahkan } from "@/components/Dialog";
 import { BANK } from "@/lib/senarai";
@@ -1020,8 +1021,8 @@ function TabDokumen({ p, bolehUbah }: { p: ButiranPekerja; bolehUbah: boolean })
       ) : (
         <Senarai kosong={tr("Tiada dokumen.")}>
           {d.data.map((x) => (
-            <button key={x.id} type="button" onClick={() => buka(x.storage_path)} className="flex min-h-12 items-center justify-between gap-2 py-2 text-left text-sm">
-              <span className="flex flex-col gap-0.5">
+            <div key={x.id} className="flex min-h-12 items-center justify-between gap-2 py-2 text-left text-sm">
+              <span className="flex min-w-0 grow flex-col gap-0.5">
                 <b className="font-bold">{x.title}</b>
                 <span className="text-xs text-muted">
                   {JENIS_DOKUMEN.find((j) => j.value === x.doc_type)?.label ?? x.doc_type} · {tarikh(x.created_at)}
@@ -1033,8 +1034,28 @@ function TabDokumen({ p, bolehUbah }: { p: ButiranPekerja; bolehUbah: boolean })
                   )}
                 </span>
               </span>
-              <span className="text-[13px] font-bold text-primary">{tr("Buka")}</span>
-            </button>
+              <button type="button" onClick={() => buka(x.storage_path)} className="flex min-h-11 items-center px-2 text-[13px] font-bold text-primary">
+                {tr("Buka")}
+              </button>
+              {bolehUbah && (
+                <button
+                  type="button"
+                  aria-label={tr("Padam {0}", x.title)}
+                  onClick={async () => {
+                    if (!(await sahkan({ tajuk: tr("Padam dokumen ini?"), mesej: tr("Dokumen boleh dipulihkan di Tetapan → Rekod dipadam."), ok: tr("Padam"), bahaya: true }))) return;
+                    try {
+                      await padamRekod("document", x.id, null, d.reload);
+                      d.reload();
+                    } catch (e) {
+                      setRalat(e instanceof Error ? e.message : tr("Ralat"));
+                    }
+                  }}
+                  className="flex min-h-11 items-center px-2 text-[13px] font-bold text-danger"
+                >
+                  {tr("Padam")}
+                </button>
+              )}
+            </div>
           ))}
         </Senarai>
       )}

@@ -1,5 +1,6 @@
 "use client";
 
+import { padamRekod } from "@/lib/padam";
 import { tr, trRalat } from "@/lib/i18n";
 import Link from "next/link";
 import { useState } from "react";
@@ -178,6 +179,21 @@ function ButiranKitaran({ k, hr, reload, ubah }: { k: Kitaran; hr: boolean; relo
                 className="h-10 rounded-full bg-primary px-4 text-[13px] font-bold text-white disabled:opacity-60"
               >
                 {k.status === "draft" ? tr("Buka kepada pekerja") : tr("Tambah pekerja baharu")}
+              </button>
+            )}
+            {k.status === "draft" && (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() =>
+                  buat(async () => {
+                    if (!(await sahkan({ tajuk: tr("Padam kitaran penilaian draf?"), mesej: tr("Boleh dipulihkan di Tetapan → Rekod dipadam."), ok: tr("Padam"), bahaya: true }))) return;
+                    await padamRekod("appraisal_cycle", k.id);
+                  })
+                }
+                className="h-10 rounded-full border border-line px-4 text-[13px] font-bold text-danger disabled:opacity-60"
+              >
+                {tr("Padam")}
               </button>
             )}
             {k.status === "open" && (

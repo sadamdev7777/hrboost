@@ -260,6 +260,9 @@ export async function tandaDibaca(id: string) {
 export async function arkibPengumuman(id: string) {
   must(await getSupabase().rpc("archive_announcement", { p_id: id }));
 }
+export async function nyaharkibPengumuman(id: string) {
+  must(await getSupabase().rpc("unarchive_announcement", { p_id: id }));
+}
 export async function getBelumBaca(id: string) {
   return (must(await getSupabase().rpc("announcement_unread", { p_id: id })) ?? []) as { employment_id: string; name: string; department: string | null }[];
 }

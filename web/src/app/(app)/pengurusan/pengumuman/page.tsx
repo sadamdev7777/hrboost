@@ -1,10 +1,11 @@
 "use client";
 
+import { padamRekod } from "@/lib/padam";
 import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
-import { arkibPengumuman, getBelumBaca, getPengumuman, siarPengumuman, type Pengumuman } from "@/lib/urusan";
+import { arkibPengumuman, nyaharkibPengumuman, getBelumBaca, getPengumuman, siarPengumuman, type Pengumuman } from "@/lib/urusan";
 import { bilaDihantar } from "@/lib/format";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar, TabNav } from "@/components/TabNav";
@@ -107,16 +108,46 @@ function Kandungan() {
                           onClick={async () => {
                             try {
                               await arkibPengumuman(a.id);
-                              beritahu("Pengumuman diarkibkan.");
+                              beritahu(tr("Pengumuman diarkibkan."));
                               d.reload();
                             } catch (e) {
-                              beritahu(e instanceof Error ? e.message : "Ralat", "ralat");
+                              beritahu(e instanceof Error ? e.message : tr("Ralat"), "ralat");
                             }
                           }}
                           className="flex min-h-9 items-center text-xs font-bold text-muted"
                         >
                           {tr("Arkibkan")}</button>
                       )}
+                      {a.archived && (
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            try {
+                              await nyaharkibPengumuman(a.id);
+                              beritahu(tr("Pengumuman dikembalikan daripada arkib."));
+                              d.reload();
+                            } catch (e) {
+                              beritahu(e instanceof Error ? e.message : tr("Ralat"), "ralat");
+                            }
+                          }}
+                          className="flex min-h-9 items-center text-xs font-bold text-primary"
+                        >
+                          {tr("Keluarkan daripada arkib")}</button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          if (!(await sahkan({ tajuk: tr("Padam pengumuman ini?"), mesej: tr("Pengumuman hilang daripada senarai pekerja. Boleh dipulihkan di Tetapan → Rekod dipadam."), ok: tr("Padam"), bahaya: true }))) return;
+                          try {
+                            await padamRekod("announcement", a.id, null, d.reload);
+                            d.reload();
+                          } catch (e) {
+                            beritahu(e instanceof Error ? e.message : tr("Ralat"), "ralat");
+                          }
+                        }}
+                        className="flex min-h-9 items-center text-xs font-bold text-danger"
+                      >
+                        {tr("Padam")}</button>
                     </div>
                   </div>
                 );

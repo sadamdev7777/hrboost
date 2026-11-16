@@ -437,4 +437,14 @@ export const RALAT: Record<string, string> = {
  "Sila nyatakan butiran salah laku (sekurang-kurangnya 20 aksara)": "Please describe the misconduct (at least 20 characters)",
  "Sila nyatakan tarikh akhir jawapan bertulis": "Please enter the deadline for the written reply",
  "Pendahuluan gaji belum diluluskan": "The salary advance has not been approved",
+ // Rekod dipadam
+ "Jenis rekod tidak boleh dipadam": "This type of record cannot be deleted",
+ "Rekod tidak dijumpai": "Record not found",
+ "Jabatan ini masih mempunyai pekerja. Pindahkan pekerja dahulu.": "This department still has employees. Move them first.",
+ "Hanya kitaran penilaian draf yang belum dibuka boleh dipadam.": "Only draft appraisal cycles that have not been opened can be deleted.",
+ "Hanya draf tuntutan boleh dipadam. Tuntutan yang dihantar boleh dibatalkan.": "Only draft claims can be deleted. Submitted claims can be cancelled.",
+ "Sila nyatakan sebab memadam surat yang telah dikeluarkan.": "Please give a reason for deleting an issued letter.",
+ "Rekod ini telah dipulihkan.": "This record has already been restored.",
+ "Tidak dapat dipulihkan: rekod dengan nama atau nombor yang sama sudah wujud.": "Cannot restore: a record with the same name or number already exists.",
+ "Tidak dapat dipulihkan: rekod berkaitan (cth. pekerja atau jabatan) sudah tiada.": "Cannot restore: a related record (e.g. the employee or department) no longer exists.",
 };

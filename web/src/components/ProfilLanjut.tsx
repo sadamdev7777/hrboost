@@ -1,5 +1,6 @@
 "use client";
 
+import { padamRekod, type EntitiPadam } from "@/lib/padam";
 import { tr, trRalat } from "@/lib/i18n";
 import { useState, type ReactNode } from "react";
 import { getSupabase } from "@/lib/supabase";
@@ -30,8 +31,9 @@ async function simpan(jadual: Jadual, employmentId: string, id: string | null, d
   must(await q);
 }
 
-async function buang(jadual: Jadual, id: string) {
-  must(await sb().from(jadual).delete().eq("id", id));
+const ENTITI: Record<Jadual, EntitiPadam> = { job_timeline: "timeline", family_members: "family", company_assets: "asset", trainings: "training" };
+async function buang(jadual: Jadual, id: string, selepasPulih?: () => void) {
+  await padamRekod(ENTITI[jadual], id, null, selepasPulih);
 }
 
 const kotak = "h-11 w-full rounded-[12px] border border-line bg-surface px-3 text-sm text-ink outline-none focus:border-primary";
@@ -129,7 +131,7 @@ function SenaraiRekod({
 
   async function padam(r: Rekod) {
     if (!(await sahkan({ tajuk: tr("Padam rekod ini?"), mesej: tr("Rekod akan dibuang daripada profil pekerja."), ok: tr("Padam"), bahaya: true }))) return;
-    await buang(jadual, r.id);
+    await buang(jadual, r.id, d.reload);
     d.reload();
   }
 

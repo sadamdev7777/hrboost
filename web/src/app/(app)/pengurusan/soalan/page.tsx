@@ -1,5 +1,6 @@
 "use client";
 
+import { padamRekod } from "@/lib/padam";
 import { tr } from "@/lib/i18n";
 import { TabModul } from "@/components/TabModul";
 import Link from "next/link";
@@ -11,7 +12,7 @@ import { getSoalan, getStatistikSoalan, jawabSoalan, type SoalanHr } from "@/lib
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { HadPeranan, Tag } from "@/components/Senarai";
-import { beritahu } from "@/components/Dialog";
+import { beritahu, sahkan } from "@/components/Dialog";
 
 /** Peti soalan daripada pekerja yang tidak dapat dijawab oleh Pembantu AI. */
 export default function SoalanHrPage() {
@@ -116,7 +117,25 @@ function Soalan({ q, onDone }: { q: SoalanHr; onDone: () => void }) {
           </Link>
           <b className="text-[15px] font-bold">{q.question}</b>
         </span>
-        <Tag tone={q.status === "answered" ? "success" : "warning"}>{q.status === "answered" ? tr("Dijawab") : tr("Belum dijawab")}</Tag>
+        <span className="flex shrink-0 items-center gap-1">
+          <Tag tone={q.status === "answered" ? "success" : "warning"}>{q.status === "answered" ? tr("Dijawab") : tr("Belum dijawab")}</Tag>
+          <button
+            type="button"
+            aria-label={tr("Padam soalan")}
+            onClick={async () => {
+              if (!(await sahkan({ tajuk: tr("Padam soalan ini?"), mesej: tr("Soalan boleh dipulihkan di Tetapan → Rekod dipadam."), ok: tr("Padam"), bahaya: true }))) return;
+              try {
+                await padamRekod("question", q.id, null, onDone);
+                onDone();
+              } catch (e) {
+                setRalat(e instanceof Error ? e.message : tr("Ralat"));
+              }
+            }}
+            className="flex min-h-9 items-center px-2 text-xs font-bold text-danger"
+          >
+            {tr("Padam")}
+          </button>
+        </span>
       </div>
       {q.ai_answer && (
         <details className="rounded-[12px] bg-ai-soft px-3 py-2 text-[13px]">

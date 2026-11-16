@@ -943,6 +943,38 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"deleted_records": {
+                  Row: {
+                    "children": NonNullable<Json>,"company_id": string | null,"deleted_at": string,"deleted_by": string | null,"detail": string | null,"entity": string,"id": string,"label": string,"reason": string | null,"record_id": string,"restored_at": string | null,"restored_by": string | null,"snapshot": NonNullable<Json>
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "children"?: NonNullable<Json>,"company_id"?: string | null,"deleted_at"?: string,"deleted_by"?: string | null,"detail"?: string | null,"entity": string,"id"?: string,"label": string,"reason"?: string | null,"record_id": string,"restored_at"?: string | null,"restored_by"?: string | null,"snapshot": NonNullable<Json>
+                  }
+                  Update: {
+                    "children"?: NonNullable<Json>,"company_id"?: string | null,"deleted_at"?: string,"deleted_by"?: string | null,"detail"?: string | null,"entity"?: string,"id"?: string,"label"?: string,"reason"?: string | null,"record_id"?: string,"restored_at"?: string | null,"restored_by"?: string | null,"snapshot"?: NonNullable<Json>
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "deleted_records_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "deleted_records_deleted_by_fkey"
+      columns: ["deleted_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "deleted_records_restored_by_fkey"
+      columns: ["restored_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"departments": {
                   Row: {
                     "company_id": string,"head_person_id": string | null,"id": string,"name": string
@@ -2421,7 +2453,25 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "accept_invite":
+            "_rd_anak":
+{ Args: { "p_entity": string }; Returns: (string)[]
+                           },
+"_rd_boleh":
+{ Args: { "p_company": string,"p_entity": string,"r": Json }; Returns: boolean
+                           },
+"_rd_jadual":
+{ Args: { "p_entity": string }; Returns: string
+                           },
+"_rd_label":
+{ Args: { "p_entity": string,"r": Json }; Returns: Record<string, unknown>
+                           },
+"_rd_masuk":
+{ Args: { "p_row": Json,"p_table": string }; Returns: undefined
+                           },
+"_rd_syarikat":
+{ Args: { "p_row": Json }; Returns: string
+                           },
+"accept_invite":
 { Args: { "p_ic_last4": string,"p_token": string }; Returns: Json
                            },
 "accept_invite_email":
@@ -2688,6 +2738,11 @@ isOneToOne: false
                            },
 "decide_probation":
 { Args: { "p_decision": string,"p_employment": string,"p_months"?: number }; Returns: undefined
+                           },
+"deleted_records_list":
+{ Args: { "p_company": string,"p_include_restored"?: boolean }; Returns: {
+              "can_restore": boolean,"deleted_at": string,"deleted_by": string,"detail": string,"entity": string,"id": string,"label": string,"reason": string,"record_id": string,"restored_at": string,"restored_by": string
+            }[]
                            },
 "digits":
 { Args: { "p": string }; Returns: string
@@ -3117,6 +3172,11 @@ isOneToOne: false
               "company_code": string,"company_name": string,"created_at": string,"days": number,"decision_note": string,"expires_at": string,"id": string,"role": Database["public"]['Enums']["app_role"],"status": string
             }[]
                            },
+"my_action_queue":
+{ Args: { "p_company": string }; Returns: {
+              "created_at": string,"detail": string,"due_date": string,"employment_id": string,"extra": Json,"id": string,"kind": string,"name": string
+            }[]
+                           },
 "my_ai_actions":
 { Args: { "p_limit"?: number }; Returns: {
               "action": string,"channel": Database["public"]['Enums']["action_channel"],"created_at": string,"payload": Json
@@ -3386,6 +3446,12 @@ isOneToOne: false
                            },
 "rebuild_attendance_day":
 { Args: { "p_date": string,"p_employment": string }; Returns: undefined
+                           },
+"record_delete":
+{ Args: { "p_entity": string,"p_id": string,"p_reason"?: string }; Returns: string
+                           },
+"record_restore":
+{ Args: { "p_id": string }; Returns: string
                            },
 "register_company":
 { Args: { "p_company_name": string,"p_email"?: string,"p_full_name": string,"p_phone": string,"p_size": string }; Returns: string
@@ -3766,6 +3832,9 @@ isOneToOne: false
                            },
 "translate_message":
 { Args: { "p_lang": string,"p_msg": string }; Returns: string
+                           },
+"unarchive_announcement":
+{ Args: { "p_id": string }; Returns: undefined
                            },
 "update_my_profile":
 { Args: { "p_data": Json,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: undefined

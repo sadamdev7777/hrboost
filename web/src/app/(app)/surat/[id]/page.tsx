@@ -3,14 +3,15 @@
 import { LogoSyarikat } from "@/components/Logo";
 import { tr } from "@/lib/i18n";
 import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { getDataSurat, type DataSurat } from "@/lib/urusan";
 import { binaSurat, suratSulit, tarikhSurat, teksKaki, type Blok, type Seg } from "@/lib/suratKandungan";
 import { simpanAtauKongsiSurat } from "@/lib/suratPdf";
 import { bolehKongsiFail } from "@/lib/slipPdf";
-import { beritahu } from "@/components/Dialog";
+import { beritahu, mintaTeks } from "@/components/Dialog";
+import { padamRekod } from "@/lib/padam";
 import { ErrorBox, Loading } from "@/components/ui";
 import { BarDokumen } from "@/components/BarDokumen";
 
@@ -23,6 +24,26 @@ export default function SuratPage() {
   const hr = me.roles.includes("hr") || me.roles.includes("admin");
   const balik = d.data?.kind === "salary_advance" ? "/pengurusan/gaji/pendahuluan" : hr ? "/pengurusan/surat" : "/mohon/surat";
   const kongsi = bolehKongsiFail();
+  const router = useRouter();
+  const bolehPadam = hr || (d.data?.kind === "salary_advance" && me.roles.includes("finance"));
+
+  async function padam() {
+    const sebab = await mintaTeks({
+      tajuk: tr("Padam surat ini?"),
+      mesej: tr("Surat hilang daripada senarai pekerja dan HR. No. rujukan tidak digunakan semula. Boleh dipulihkan di Tetapan → Rekod dipadam."),
+      label: tr("Sebab (wajib)"),
+      ok: tr("Padam surat"),
+      wajib: true,
+      bahaya: true,
+    });
+    if (!sebab) return;
+    try {
+      await padamRekod("letter", id, sebab);
+      router.push(balik);
+    } catch (e) {
+      beritahu(e instanceof Error ? e.message : tr("Ralat"), "ralat");
+    }
+  }
 
   async function pdf(cara: "muat" | "kongsi") {
     if (!d.data) return;
@@ -39,7 +60,16 @@ export default function SuratPage() {
   return (
     <div className="min-h-dvh bg-page print:bg-white">
       <style>{`@media print { @page { size: A4; margin: 18mm } .no-print { display: none !important } .kertas { box-shadow: none !important; padding: 0 !important; max-width: none !important } }`}</style>
-      <BarDokumen title={tr("Surat")} href={balik} onMuatTurun={() => pdf("muat")} onKongsi={kongsi ? () => pdf("kongsi") : undefined} sibuk={sibuk} sedia={!!d.data} />
+      <BarDokumen title={tr("Surat")} href={balik} onMuatTurun={() => pdf("muat")} onKongsi={kongsi ? () => pdf("kongsi") : undefined} sibuk={sibuk}
+        sedia={!!d.data}
+        tambahan={
+          bolehPadam && d.data ? (
+            <button type="button" onClick={padam} className="flex h-11 items-center rounded-button px-3 text-sm font-bold text-danger hover:bg-danger/5">
+              {tr("Padam")}
+            </button>
+          ) : null
+        }
+      />
       {d.error && (
         <div className="px-4">
           <ErrorBox message={d.error} />

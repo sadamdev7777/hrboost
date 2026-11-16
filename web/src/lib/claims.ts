@@ -162,5 +162,5 @@ export async function hantarTuntutan(claimId: string) {
 }
 
 export async function padamDraf(claimId: string) {
-  must(await getSupabase().from("claims").delete().eq("id", claimId));
+  must(await getSupabase().rpc("record_delete", { p_entity: "claim_draft", p_id: claimId }));
 }

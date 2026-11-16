@@ -235,7 +235,7 @@ export async function tambahTp1(employmentId: string, t: Omit<Tp1, "id">) {
   must(await getSupabase().from("tp1_reliefs").insert({ employment_id: employmentId, ...t }));
 }
 export async function buangTp1(id: string) {
-  must(await getSupabase().from("tp1_reliefs").delete().eq("id", id));
+  must(await getSupabase().rpc("record_delete", { p_entity: "tp1", p_id: id }));
 }
 export const KATEGORI_TP1 = [
   tr("Insurans hayat & KWSP sukarela"),

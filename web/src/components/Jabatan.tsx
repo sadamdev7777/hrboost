@@ -1,5 +1,6 @@
 "use client";
 
+import { padamRekod } from "@/lib/padam";
 import { tr } from "@/lib/i18n";
 import { useState } from "react";
 import { getSupabase } from "@/lib/supabase";
@@ -113,8 +114,7 @@ export function BorangJabatan({
 /** Padam jabatan kosong. */
 export async function padamJabatan(id: string): Promise<string | null> {
   try {
-    must(await getSupabase().from("departments").delete().eq("id", id));
-    beritahu(tr("Jabatan dipadam."));
+    await padamRekod("department", id);
     return null;
   } catch (e) {
     return ralatJabatan(e);

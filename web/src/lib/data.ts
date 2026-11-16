@@ -159,13 +159,15 @@ export function kiniDi(waitingFor: string | null): string | null {
   return tr("Kini di ") + waitingFor.split(", ").map(namaPeringkat).join(", ");
 }
 
-/** Bilangan tugasan kelulusan yang menunggu tindakan saya. */
-export async function getBilanganTugasan(): Promise<number> {
-  const { count, error } = await getSupabase()
-    .from("v_my_approval_tasks")
-    .select("task_id", { count: "exact", head: true });
-  if (error) throw new Error(error.message);
-  return count ?? 0;
+/** Bilangan tugasan kelulusan yang menunggu tindakan saya (enjin kelulusan + keputusan lain dalam syarikat aktif). */
+export async function getBilanganTugasan(companyId?: string | null): Promise<number> {
+  const sb = getSupabase();
+  const [enjin, lain] = await Promise.all([
+    sb.from("v_my_approval_tasks").select("task_id", { count: "exact", head: true }),
+    companyId ? sb.rpc("my_action_queue", { p_company: companyId }) : Promise.resolve({ data: [], error: null }),
+  ]);
+  if (enjin.error) throw new Error(enjin.error.message);
+  return (enjin.count ?? 0) + (lain.error ? 0 : (lain.data?.length ?? 0));
 }
 
 // ---------------------------------------------------------------- Kehadiran

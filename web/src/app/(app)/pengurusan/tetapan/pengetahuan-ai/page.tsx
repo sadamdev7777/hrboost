@@ -1,5 +1,7 @@
 "use client";
 
+import { padamRekod } from "@/lib/padam";
+import { beritahu, sahkan } from "@/components/Dialog";
 import { tr } from "@/lib/i18n";
 import { useRef, useState } from "react";
 import { useMe } from "@/lib/me";
@@ -59,6 +61,24 @@ function Pengetahuan() {
                 </span>
               </span>
               {x.global ? <Tag tone="neutral">{tr("Platform")}</Tag> : <Suis on={x.active} label={`${x.active ? tr("Nyahaktifkan") : tr("Aktifkan")} ${x.title}`} onChange={(v) => togol(x.id, v)} />}
+              {!x.global && (
+                <button
+                  type="button"
+                  aria-label={tr("Padam {0}", x.title)}
+                  onClick={async () => {
+                    if (!(await sahkan({ tajuk: tr("Padam dokumen pengetahuan ini?"), mesej: tr("Pembantu AI tidak lagi menggunakannya. Boleh dipulihkan di Tetapan → Rekod dipadam."), ok: tr("Padam"), bahaya: true }))) return;
+                    try {
+                      await padamRekod("kb_doc", x.id, null, d.reload);
+                      d.reload();
+                    } catch (e) {
+                      beritahu(e instanceof Error ? e.message : tr("Ralat"), "ralat");
+                    }
+                  }}
+                  className="flex min-h-11 items-center px-2 text-[13px] font-bold text-danger"
+                >
+                  {tr("Padam")}
+                </button>
+              )}
             </div>
           ))}
           <div className="flex min-h-12 items-center gap-2 py-2">

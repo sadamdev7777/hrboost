@@ -1,5 +1,6 @@
 "use client";
 
+import { padamRekod } from "@/lib/padam";
 import { tr } from "@/lib/i18n";
 import { sahkan } from "@/components/Dialog";
 import { useState } from "react";
@@ -67,7 +68,7 @@ function Wakil() {
   async function padam(id: string) {
     if (!(await sahkan({ tajuk: tr("Buang wakil ini?"), mesej: tr("Tugasan kelulusan akan kembali kepada pelulus asal."), ok: tr("Buang"), bahaya: true }))) return;
     try {
-      must(await getSupabase().from("approval_delegations").delete().eq("id", id));
+      await padamRekod("delegation", id, null, d.reload);
       d.reload();
     } catch (e) {
       setRalat(e instanceof Error ? e.message : tr("Ralat"));

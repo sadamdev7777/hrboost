@@ -19,6 +19,7 @@ import { SenaraiPermohonanSaya } from "@/components/PermohonanSaya";
 import { ReasonSheet } from "@/components/ReasonSheet";
 import { RequestDetail } from "@/components/RequestDetail";
 import { useSkrinLebar } from "@/lib/skrin";
+import { getTindakanLain, LABEL_TINDAKAN, SenaraiTindakanLain, type JenisTindakan, type Tindakan } from "@/components/TindakanLain";
 
 // Rujukan reka bentuk: design/Kelulusan.dc.html
 type Filter = "all" | "leave" | "claim" | "attendance_correction" | "payroll_run" | "overtime" | "salary_advance" | "profile_change";
@@ -56,9 +57,13 @@ function Kelulusan({ tabAwal }: { tabAwal: "pending" | "syarikat" }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const tasks = useData(loadPending, []);
+  // Keputusan di luar enjin kelulusan (surat, inventori, akaun bank, soalan HR, percubaan, prestasi, dll.)
+  const cid = me.active?.companyId;
+  const lain = useData(() => (cid ? getTindakanLain(cid) : Promise.resolve([] as Tindakan[])), [cid]);
+  const [filterLain, setFilterLain] = useState<JenisTindakan | null>(null);
   // Pekerja yang bukan pelulus (bukan ketua, tiada peranan) dan tiada tugasan: buka terus pada "Permohonan Saya"
   const bukanPelulus = !me.isHead && me.roles.length === 0;
-  const tab = tabPilih ?? (bukanPelulus && tasks.data && tasks.data.length === 0 ? "saya" : "pending");
+  const tab = tabPilih ?? (bukanPelulus && tasks.data && tasks.data.length === 0 && lain.data && lain.data.length === 0 ? "saya" : "pending");
   const lebar = useSkrinLebar();
   const [pilih, setPilih] = useState<string | null>(null);
   const [tanda, setTanda] = useState<Set<string>>(new Set());
@@ -71,8 +76,12 @@ function Kelulusan({ tabAwal }: { tabAwal: "pending" | "syarikat" }) {
   const history = useData(() => (tab === "history" ? loadHistory(me.personId) : Promise.resolve(null)), [tab]);
 
   const list = tasks.data ?? [];
-  const shown = list.filter((t) => filter === "all" || t.type === filter);
+  const shown = filterLain ? [] : list.filter((t) => filter === "all" || t.type === filter);
   const counts = list.reduce<Record<string, number>>((m, t) => ({ ...m, [t.type]: (m[t.type] ?? 0) + 1 }), {});
+  const lainList = lain.data ?? [];
+  const lainShown = filter !== "all" ? [] : lainList.filter((t) => !filterLain || t.kind === filterLain);
+  const countsLain = lainList.reduce<Record<string, number>>((m, t) => ({ ...m, [t.kind]: (m[t.kind] ?? 0) + 1 }), {});
+  const jumlah = list.length + lainList.length;
 
   async function act(taskId: string, action: "approve" | "reject", comment?: string) {
     setBusy(taskId);
@@ -162,7 +171,7 @@ function Kelulusan({ tabAwal }: { tabAwal: "pending" | "syarikat" }) {
             onClick={() => setTab("pending")}
             className={`h-10 rounded-[10px] text-[13px] ${tab === "pending" ? "bg-surface font-extrabold text-ink" : "font-semibold text-subtle"}`}
           >
-            {tr("Menunggu · {0}", list.length)}</button>
+            {tr("Menunggu · {0}", jumlah)}</button>
           <button
             role="tab"
             aria-selected={tab === "saya"}
@@ -195,22 +204,29 @@ function Kelulusan({ tabAwal }: { tabAwal: "pending" | "syarikat" }) {
         {tab === "pending" && (
           <>
             <SlaBanner tasks={list} />
-            {list.length > 0 && (
+            {jumlah > 0 && (
               <div className="flex flex-wrap gap-2">
-                <Chip on={filter === "all"} onClick={() => setFilter("all")}>
+                <Chip on={filter === "all" && !filterLain} onClick={() => { setFilter("all"); setFilterLain(null); }}>
                   {tr("Semua")}</Chip>
                 {(Object.keys(FILTER_LABEL) as Exclude<Filter, "all">[])
                   .filter((k) => counts[k])
                   .map((k) => (
-                    <Chip key={k} on={filter === k} onClick={() => setFilter(k)}>
+                    <Chip key={k} on={filter === k} onClick={() => { setFilter(k); setFilterLain(null); }}>
                       {FILTER_LABEL[k]} · {counts[k]}
+                    </Chip>
+                  ))}
+                {(Object.keys(LABEL_TINDAKAN()) as JenisTindakan[])
+                  .filter((k) => countsLain[k])
+                  .map((k) => (
+                    <Chip key={k} on={filterLain === k} onClick={() => { setFilter("all"); setFilterLain(k); }}>
+                      {LABEL_TINDAKAN()[k]} · {countsLain[k]}
                     </Chip>
                   ))}
               </div>
             )}
             {tasks.error && <ErrorBox message={tasks.error} />}
             {tasks.loading && !tasks.data && <Loading />}
-            {tasks.data && list.length === 0 && (
+            {tasks.data && lain.data && jumlah === 0 && (
               <Empty>
                 {tr("Tiada permohonan menunggu kelulusan anda.")}{!me.isHead && !me.roles.some((r) => ["hr", "finance", "ceo", "admin"].includes(r)) && (
                   <span className="mt-1 block text-xs">
@@ -328,6 +344,13 @@ function Kelulusan({ tabAwal }: { tabAwal: "pending" | "syarikat" }) {
                 </div>
               ))}
             </div>
+            )}
+            {lain.error && <ErrorBox message={lain.error} />}
+            {lainShown.length > 0 && (
+              <section aria-label={tr("Keputusan lain")} className="flex flex-col gap-2.5">
+                {shown.length > 0 && <h2 className="m-0 pt-2 text-xs font-extrabold tracking-wide text-subtle">{tr("KEPUTUSAN LAIN · {0}", lainShown.length)}</h2>}
+                <SenaraiTindakanLain senarai={lainShown} onSelesai={lain.reload} />
+              </section>
             )}
           </>
         )}

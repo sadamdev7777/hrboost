@@ -32,7 +32,7 @@ type CutiHadapan = { name: string; label: string };
 export function KetuaUtama() {
   const me = useMe();
   const emp = me.active!;
-  const pending = useData(getBilanganTugasan, []);
+  const pending = useData(() => getBilanganTugasan(emp.companyId), [emp.companyId]);
   const team = useData(() => loadPasukan(me.headOfDepartmentIds, me.personId, emp.graceMinutes), [
     me.headOfDepartmentIds.join(),
   ]);
