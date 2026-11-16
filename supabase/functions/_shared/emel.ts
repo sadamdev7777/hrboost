@@ -58,6 +58,7 @@ export async function hantarEmelNotifikasi(ke: string, mesej: string, bahasa: st
         text: `${mesej}\n\n${butang}: ${app}\n\n${kaki}`,
         html:
           `<div style="font-family:Arial,sans-serif;font-size:15px;color:#14211F;line-height:1.55;max-width:520px">` +
+          `<div style="margin-bottom:14px"><img src="${esc(app)}/brand/hrboost-wordmark.png" alt="HRBoost" width="133" height="24" style="display:block;border:0;height:24px;width:133px"></div>` +
           `<p style="white-space:pre-line">${pautkan(esc(mesej))}</p>` +
           `<p><a href="${esc(app)}" style="display:inline-block;background:#0F6B5F;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:bold">${butang}</a></p>` +
           `<p style="color:#5B6B68;font-size:12px">${kaki}</p>` +

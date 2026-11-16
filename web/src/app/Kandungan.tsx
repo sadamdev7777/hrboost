@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoTeks } from "@/components/LogoTeks";
 import { bahasa, tetapkanBahasa, tr, trKonteks, type Bahasa } from "@/lib/i18n";
 import Image from "next/image";
 import Link from "next/link";
@@ -260,12 +261,7 @@ export default function Kandungan() {
 
 function Logo() {
   return (
-    <span className="flex items-center gap-2">
-      <span aria-hidden="true" className="flex size-[30px] items-center justify-center rounded-lg bg-primary text-xs font-extrabold text-white">
-        HR
-      </span>
-      <b className="text-[17px] font-extrabold text-ink">HRBoost.io</b>
-    </span>
+    <LogoTeks tinggi={22} />
   );
 }
 

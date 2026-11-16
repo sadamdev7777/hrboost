@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoTeks } from "@/components/LogoTeks";
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { PilihBahasa } from "@/components/PilihBahasa";
@@ -17,9 +18,8 @@ export function KerangkaMasuk({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-dvh w-full bg-page text-ink">
       <div className="hidden w-[46%] max-w-[640px] flex-col justify-between bg-primary px-14 py-12 text-on-primary lg:flex">
-        <Link href="/" className="flex items-center gap-2.5 text-white!">
-          <span className="flex size-10 items-center justify-center rounded-[10px] bg-surface text-base font-extrabold text-primary">HR</span>
-          <b className="text-xl font-extrabold">HRBoost.io</b>
+        <Link href="/" className="flex w-fit items-center">
+          <LogoTeks varian="putih" tinggi={28} />
         </Link>
         <div className="flex flex-col gap-6">
           <h1 className="m-0 text-[40px] leading-[1.12] font-extrabold">{tr("Selamat datang.")}</h1>
@@ -49,7 +49,7 @@ export function KerangkaMasuk({ children }: { children: ReactNode }) {
           <PilihBahasa kecil />
         </div>
         <header className="flex flex-col gap-3 bg-primary px-6 pt-14 pb-8 text-on-primary lg:bg-transparent lg:px-6 lg:pt-0 lg:pb-2 lg:text-ink">
-          <span className="flex size-12 items-center justify-center rounded-logo bg-surface text-lg font-extrabold text-primary lg:hidden">HR</span>
+          <LogoTeks varian="putih" tinggi={22} className="mb-1 self-start lg:hidden" />
           <h1 className="m-0 text-[26px] leading-[1.15] font-extrabold lg:hidden">{tr("Selamat datang.")}</h1>
           <span className="text-sm leading-normal opacity-[0.92] lg:hidden">
             {tr("Log masuk ke")} <b>HRBoost.io</b>

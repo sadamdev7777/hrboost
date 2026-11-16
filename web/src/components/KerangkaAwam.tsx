@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoTeks } from "@/components/LogoTeks";
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -12,9 +13,8 @@ export function KerangkaAwam({ children, tajuk, kecil, ciri }: { children: React
   return (
     <div className="flex min-h-dvh w-full bg-page text-ink">
       <aside className="sticky top-0 hidden h-dvh w-[42%] max-w-[600px] shrink-0 flex-col justify-between bg-primary px-14 py-12 text-on-primary lg:flex">
-        <Link href="/" className="flex items-center gap-2.5 text-white!">
-          <span className="flex size-10 items-center justify-center rounded-[10px] bg-surface text-base font-extrabold text-primary">HR</span>
-          <b className="text-xl font-extrabold">HRBoost.io</b>
+        <Link href="/" className="flex w-fit items-center">
+          <LogoTeks varian="putih" tinggi={28} />
         </Link>
         <div className="flex flex-col gap-6">
           <h1 className="m-0 text-[36px] leading-[1.15] font-extrabold">{tajuk}</h1>

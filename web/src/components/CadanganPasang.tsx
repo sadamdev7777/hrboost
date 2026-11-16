@@ -68,7 +68,8 @@ export function CadanganPasang() {
 
   return (
     <div role="region" aria-label={tr("Pasang HRBoost")} className={`fixed inset-x-3 z-30 mx-auto flex max-w-[456px] ${path === "/pengurusan" ? "bottom-[164px]" : "bottom-[92px]"} items-center gap-3 rounded-[16px] bg-ink px-4 py-3 text-white shadow-xl`}>
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold">HR</span>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/icon-192.png" alt="" width={40} height={40} className="size-10 shrink-0 rounded-[10px]" />
       <span className="flex grow flex-col text-[13px] leading-snug">
         <b className="text-sm">{tr("Pasang HRBoost di telefon")}</b>
         {ios && !evt ? <span className="opacity-85">{tr("Tekan Kongsi, kemudian “Tambah ke Skrin Utama”.")}</span> : <span className="opacity-85">{tr("Buka dengan sekali tekan, seperti aplikasi.")}</span>}

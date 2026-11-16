@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoTeks } from "@/components/LogoTeks";
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -67,12 +68,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col bg-page text-ink md:flex-row">
       <nav aria-label={tr("Menu pentadbir platform")} className="flex shrink-0 flex-col gap-1 bg-surface p-4 md:min-h-dvh md:w-[240px] md:border-r md:border-line-soft">
-        <div className="mb-4 flex items-center gap-2 px-2">
-          <span className="flex size-9 items-center justify-center rounded-[10px] bg-primary text-sm font-extrabold text-white">HR</span>
-          <span className="flex flex-col">
-            <b className="text-[15px] font-extrabold">HRBoost.io</b>
-            <span className="text-xs text-muted">{tr("Pentadbir Platform")}</span>
-          </span>
+        <div className="mb-4 flex flex-col items-start gap-1.5 px-2">
+          <LogoTeks tinggi={20} />
+          <span className="text-xs text-muted">{tr("Pentadbir Platform")}</span>
         </div>
         <div className="flex gap-1 overflow-x-auto md:flex-col">
           {MENU.map((m) => {

@@ -3106,6 +3106,7 @@ export const EN: Record<string, string> = {
  "Slip gaji pekerja": "Employee payslips",
  "Slip gaji telah dihantar dan tuntutan ditanda dibayar.": "Payslips have been sent and claims marked paid.",
  "Slip gaji tidak dijumpai.": "Payslip not found.",
+ "Dijana melalui": "Generated with",
  "Slip ini dijana oleh komputer. Tandatangan tidak diperlukan.": "This payslip is computer-generated. No signature is required.",
  "Slip pekerja": "Employee payslips",
  "Slip telah dilepaskan kepada pekerja ({0}).": "Payslips released to employees ({0}).",

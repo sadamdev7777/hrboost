@@ -31,6 +31,31 @@ export function namaFailSlip(s: Slip) {
   return `${tr("Slip-Gaji")}-${s.year}-${String(s.month).padStart(2, "0")}${s.label ? "-" + s.label.replace(/[^A-Za-z0-9]+/g, "-") : ""}-${nama}.pdf`;
 }
 
+/** Logo teks HRBoost (PNG; pdf-lib tidak menyokong SVG) untuk kaki PDF. Null jika gagal dimuatkan. */
+export async function benamLogoHRBoost(doc: import("pdf-lib").PDFDocument) {
+  try {
+    const res = await fetch("/brand/hrboost-wordmark.png");
+    if (!res.ok) return null;
+    return await doc.embedPng(new Uint8Array(await res.arrayBuffer()));
+  } catch {
+    return null;
+  }
+}
+
+/** Lukis logo teks HRBoost kecil di tengah bawah halaman, dengan label pilihan di sebelah kiri. */
+export function lukisLogoHRBoost(
+  page: import("pdf-lib").PDFPage,
+  img: import("pdf-lib").PDFImage,
+  label?: { teks: string; font: import("pdf-lib").PDFFont; warna: import("pdf-lib").RGB },
+) {
+  const t = 8;
+  const w = (img.width / img.height) * t;
+  const lebarLabel = label ? label.font.widthOfTextAtSize(label.teks, 7) + 4 : 0;
+  const x = (page.getWidth() - (lebarLabel + w)) / 2;
+  if (label) page.drawText(label.teks, { x, y: 25, size: 7, font: label.font, color: label.warna });
+  page.drawImage(img, { x: x + lebarLabel, y: 23.5, width: w, height: t });
+}
+
 export async function janaSlipPdf(s: Slip): Promise<Uint8Array> {
   const { PDFDocument, StandardFonts, rgb } = await import("pdf-lib");
   const doc = await PDFDocument.create();
@@ -190,6 +215,9 @@ export async function janaSlipPdf(s: Slip): Promise<Uint8Array> {
   y -= 11;
   teks(tr("Sulit — untuk penerima sahaja."), M, y, { saiz: 7.5, b: true, warna: KELABU });
   teks(tr("Rujukan slip {0}", rujukan), M + W, y, { saiz: 7.5, warna: KELABU, kanan: true });
+
+  const jenama = await benamLogoHRBoost(doc);
+  if (jenama) lukisLogoHRBoost(page, jenama, { teks: tr("Dijana melalui"), font: biasa, warna: KELABU });
 
   return doc.save();
 }

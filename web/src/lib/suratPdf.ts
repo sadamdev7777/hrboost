@@ -4,7 +4,7 @@ import { tr } from "@/lib/i18n";
 import { urlLogo } from "@/lib/logo";
 import { labelSurat, type DataSurat } from "@/lib/urusan";
 import { binaSurat, suratSulit, tarikhSurat, teksKaki, type Blok, type Seg } from "@/lib/suratKandungan";
-import { simpanAtauKongsiPdf } from "@/lib/slipPdf";
+import { benamLogoHRBoost, lukisLogoHRBoost, simpanAtauKongsiPdf } from "@/lib/slipPdf";
 
 // Surat sebagai fail PDF A4 sebenar, dijana dalam pelayar daripada blok yang sama dengan paparan skrin
 // (lib/suratKandungan.ts). Data pekerja tidak dihantar ke mana-mana pelayan.
@@ -237,8 +237,10 @@ export async function janaSuratPdf(s: DataSurat): Promise<Uint8Array> {
   // ---------------------------------------------------------------- kaki setiap halaman
   const halaman = doc.getPages();
   const kaki = teksKaki(s);
+  const jenama = await benamLogoHRBoost(doc);
   halaman.forEach((hp, i) => {
     page = hp;
+    if (jenama) lukisLogoHRBoost(hp, jenama);
     garis(M + 22, M, M + W, 0.5, rgb(0.8, 0.8, 0.8));
     const baris = bungkus([kaki], W - 70, 7.5);
     let yy = M + 12;
