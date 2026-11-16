@@ -186,3 +186,24 @@ export const IconBox = (p: P) => (
     <path d="M12 13v8" />
   </Svg>
 );
+export const IconDownload = (p: P) => (
+  <Svg {...p}>
+    <path d="M12 4v11" />
+    <path d="M7 10l5 5 5-5" />
+    <path d="M5 20h14" />
+  </Svg>
+);
+export const IconShare = (p: P) => (
+  <Svg {...p}>
+    <path d="M12 15V4" />
+    <path d="M8 8l4-4 4 4" />
+    <path d="M6 12H5a1 1 0 00-1 1v6a1 1 0 001 1h14a1 1 0 001-1v-6a1 1 0 00-1-1h-1" />
+  </Svg>
+);
+export const IconPrinter = (p: P) => (
+  <Svg {...p}>
+    <path d="M7 9V4h10v5" />
+    <rect x="3" y="9" width="18" height="8" rx="2" />
+    <path d="M7 14h10v6H7z" />
+  </Svg>
+);

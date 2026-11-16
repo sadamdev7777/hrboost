@@ -17,6 +17,7 @@ export const EN: Record<string, string> = {
  " dan data terkumpul daripada sistem terdahulu": " and year-to-date data from the previous system",
  " dan {0}": " and {0}",
  " di Jabatan {0}": " in {0} Department",
+ " di {0}": " in {0}",
  " hingga {0}": " to {0}",
  " melalui {0}": " via {0}",
  " oleh {0}": " by {0}",

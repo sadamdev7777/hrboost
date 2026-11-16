@@ -7,7 +7,8 @@ import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { BULAN_PENUH } from "@/lib/gaji";
 import { tarikh } from "@/lib/format";
-import { BackHeader, ErrorBox, Loading } from "@/components/ui";
+import { ErrorBox, Loading } from "@/components/ui";
+import { BarDokumen } from "@/components/BarDokumen";
 import { HadPeranan } from "@/components/Senarai";
 import { LogoSyarikat } from "@/components/Logo";
 
@@ -40,22 +41,15 @@ function Kandungan() {
   return (
     <div className="min-h-dvh bg-page print:bg-white">
       <style>{`@media print { @page { size: A4; margin: 14mm } .no-print { display: none !important } }`}</style>
-      <div className="no-print mx-auto flex max-w-[794px] items-center">
-        <div className="grow">
-          <BackHeader title={tr("Penyata PCB {0}", tahun)} href={`/pengurusan/pekerja/${id}`} />
-        </div>
-        <div className="flex gap-1 pr-3">
-          {[tahun - 1, tahun + 1].map((y) => (
-            <a key={y} href={`?y=${y}`} className="flex h-10 items-center rounded-full border border-line px-3 text-[13px] font-bold text-ink!">
-              {y}
-            </a>
-          ))}
-        </div>
-      </div>
+      <BarDokumen title={tr("Penyata PCB {0}", tahun)} href={`/pengurusan/pekerja/${id}`} sedia={!!x} tambahan={[tahun - 1, tahun + 1].map((y) => (
+          <a key={y} href={`?y=${y}`} className="flex h-10 items-center rounded-full border border-line px-3 text-[13px] font-bold text-ink!">
+            {y}
+          </a>
+        ))} />
       {d.error && <ErrorBox message={d.error} />}
       {d.loading && !x && <Loading />}
       {x && (
-        <div className="px-2 pb-28 sm:px-5 print:p-0">
+        <div className="px-2 pb-28 sm:px-5 min-[700px]:pb-10 print:p-0">
           <article className="mx-auto w-full max-w-[794px] bg-white px-8 py-7 text-[12px] text-ink print:px-0 print:py-0">
             <header className="flex items-start justify-between gap-4 border-b-2 border-ink pb-3">
               <div className="flex flex-col gap-0.5">
@@ -128,13 +122,6 @@ function Kandungan() {
             </footer>
             <p className="m-0 mt-5 text-[9px] text-muted">{tr("Dijana oleh HRBoost daripada gaji yang diluluskan. No. resit diisi oleh HR selepas bayaran PCB kepada LHDN.")}</p>
           </article>
-        </div>
-      )}
-      {x && (
-        <div className="no-print fixed inset-x-0 bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
-          <button type="button" onClick={() => window.print()} className="mx-auto block h-12 w-full max-w-[440px] rounded-button bg-primary text-base font-extrabold text-white">
-            {tr("Simpan sebagai PDF / Cetak")}
-          </button>
         </div>
       )}
     </div>

@@ -55,13 +55,15 @@ function waktuKerja(s: DataSurat): string {
 }
 
 const p = (...isi: Seg[]): Blok => ({ t: "p", isi });
+/** " di Jabatan X" — tanpa mengulang perkataan jika nama jabatan sudah mengandungi "Jabatan" / "Department". */
+const diJabatan = (nama: string) => (/jabatan|department/i.test(nama) ? tr(" di {0}", nama) : tr(" di Jabatan {0}", nama));
 const baris = (k: string, v: Seg | Seg[], tebal?: boolean): BarisJadual => ({ k, v: Array.isArray(v) ? v : [v], tebal });
 
 /** Bina kandungan surat (selepas kepala, rujukan & tarikh) */
 export function binaSurat(s: DataSurat): Blok[] {
   const d = s.details ?? {};
   const jawatan = s.position ?? tr("pekerja");
-  const jabatan = s.department ? tr(" di Jabatan {0}", s.department) : "";
+  const jabatan = s.department ? diJabatan(s.department) : "";
   const penerima: Blok = { t: "penerima", nama: s.full_name, ic: tr("No. kad pengenalan: {0}", formatIc(s.ic_no)), alamat: s.address ?? null };
   const tt: Blok = {
     t: "tandatangan",
@@ -271,7 +273,7 @@ export function binaSurat(s: DataSurat): Blok[] {
         tr("Dengan hormatnya perkara di atas adalah dirujuk. Kami dengan ini mengesahkan bahawa") + " ",
         { b: s.full_name },
         " " + tr("(No. kad pengenalan: {0}) adalah pekerja {1} {2} sejak {3}", formatIc(s.ic_no), tetap ? tr("tetap") : labelJenis(s.employment_type).toLowerCase(), s.company.name, tarikhSurat(s.join_date)),
-        ...(s.position ? [tr(", dan kini memegang jawatan sebagai") + " ", { b: s.position }, s.department ? tr(" di Jabatan {0}", s.department) : ""] : s.department ? [tr(", di Jabatan {0}", s.department)] : []),
+        ...(s.position ? [tr(", dan kini memegang jawatan sebagai") + " ", { b: s.position }, s.department ? diJabatan(s.department) : ""] : s.department ? ["," + diJabatan(s.department)] : []),
         ".",
       ];
       return [

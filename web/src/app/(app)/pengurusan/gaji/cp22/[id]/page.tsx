@@ -6,7 +6,8 @@ import { useParams } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import { ringgit, tarikhPenuh } from "@/lib/format";
-import { BackHeader, ErrorBox, Loading } from "@/components/ui";
+import { ErrorBox, Loading } from "@/components/ui";
+import { BarDokumen } from "@/components/BarDokumen";
 import { HadPeranan } from "@/components/Senarai";
 import { LogoSyarikat } from "@/components/Logo";
 
@@ -62,13 +63,11 @@ function Kandungan() {
   return (
     <div className="min-h-dvh bg-page print:bg-white">
       <style>{`@media print { @page { size: A4; margin: 14mm } .no-print { display: none !important } }`}</style>
-      <div className="no-print mx-auto max-w-[794px]">
-        <BackHeader title={tr("Borang CP22")} href={`/pengurusan/pekerja/${id}`} />
-      </div>
+      <BarDokumen title={tr("Borang CP22")} href={`/pengurusan/pekerja/${id}`} sedia={!!x} />
       {d.error && <ErrorBox message={d.error} />}
       {d.loading && !x && <Loading />}
       {x && (
-        <div className="px-2 pb-28 sm:px-5 print:p-0">
+        <div className="px-2 pb-28 sm:px-5 min-[700px]:pb-10 print:p-0">
           <article className="mx-auto w-full max-w-[794px] bg-white px-8 py-7 text-[12px] text-ink print:px-0 print:py-0">
             <header className="flex items-start justify-between gap-4 border-b-2 border-ink pb-3">
               <div className="flex flex-col gap-0.5">
@@ -124,13 +123,6 @@ function Kandungan() {
               {tr("Dijana oleh HRBoost sebagai rujukan pengisian CP22. Pemberitahuan rasmi dibuat melalui e-CP22 di portal MyTax atau borang LHDN terkini. Sahkan butiran sebelum dihantar.")}
             </p>
           </article>
-        </div>
-      )}
-      {x && (
-        <div className="no-print fixed inset-x-0 bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
-          <button type="button" onClick={() => window.print()} className="mx-auto block h-12 w-full max-w-[440px] rounded-button bg-primary text-base font-extrabold text-white">
-            {tr("Simpan sebagai PDF / Cetak")}
-          </button>
         </div>
       )}
     </div>

@@ -6,7 +6,8 @@ import { useSearchParams } from "next/navigation";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { getEaSaya } from "@/lib/ea";
-import { BackHeader, ErrorBox, Loading } from "@/components/ui";
+import { ErrorBox, Loading } from "@/components/ui";
+import { BarDokumen } from "@/components/BarDokumen";
 import { BorangEA } from "@/components/BorangEA";
 
 /** Pekerja: Borang EA sendiri (selepas HR mengeluarkannya). */
@@ -28,9 +29,7 @@ function Kandungan() {
   return (
     <div className="min-h-dvh bg-page print:bg-white">
       <style>{`@media print { @page { size: A4; margin: 12mm } .no-print { display: none !important } }`}</style>
-      <div className="no-print mx-auto max-w-[794px]">
-        <BackHeader title={tr("Borang EA {0}", tahun)} href="/gaji" />
-      </div>
+      <BarDokumen title={tr("Borang EA {0}", tahun)} href={"/gaji"} sedia={!!(x?.released && x.row && x.company)} />
       {d.error && <ErrorBox message={d.error} />}
       {d.loading && !x && <Loading />}
       {x && (!x.released || !x.row) && (
@@ -39,12 +38,8 @@ function Kandungan() {
       )}
       {x?.released && x.row && x.company && (
         <>
-          <div className="px-2 pb-28 sm:px-5 print:p-0">
+          <div className="px-2 pb-28 sm:px-5 min-[700px]:pb-10 print:p-0">
             <BorangEA m={x.company} r={x.row} />
-          </div>
-          <div className="no-print fixed inset-x-0 bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-5">
-            <button type="button" onClick={() => window.print()} className="mx-auto block h-12 w-full max-w-[440px] rounded-button bg-primary text-base font-extrabold text-white">
-              {tr("Simpan sebagai PDF / Cetak")}</button>
           </div>
         </>
       )}

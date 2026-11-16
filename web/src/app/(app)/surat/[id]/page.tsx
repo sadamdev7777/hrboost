@@ -11,7 +11,8 @@ import { binaSurat, suratSulit, tarikhSurat, teksKaki, type Blok, type Seg } fro
 import { simpanAtauKongsiSurat } from "@/lib/suratPdf";
 import { bolehKongsiFail } from "@/lib/slipPdf";
 import { beritahu } from "@/components/Dialog";
-import { BackHeader, ErrorBox, Loading } from "@/components/ui";
+import { ErrorBox, Loading } from "@/components/ui";
+import { BarDokumen } from "@/components/BarDokumen";
 
 /** Surat (A4): muat turun PDF, kongsi (cth. WhatsApp) atau cetak. */
 export default function SuratPage() {
@@ -38,9 +39,7 @@ export default function SuratPage() {
   return (
     <div className="min-h-dvh bg-page print:bg-white">
       <style>{`@media print { @page { size: A4; margin: 18mm } .no-print { display: none !important } .kertas { box-shadow: none !important; padding: 0 !important; max-width: none !important } }`}</style>
-      <div className="no-print mx-auto max-w-[794px]">
-        <BackHeader title={tr("Surat")} href={balik} />
-      </div>
+      <BarDokumen title={tr("Surat")} href={balik} onMuatTurun={() => pdf("muat")} onKongsi={kongsi ? () => pdf("kongsi") : undefined} sibuk={sibuk} sedia={!!d.data} />
       {d.error && (
         <div className="px-4">
           <ErrorBox message={d.error} />
@@ -49,35 +48,8 @@ export default function SuratPage() {
       {!d.data && !d.error && <Loading />}
       {d.data && (
         <>
-          <div className="px-2 pb-36 sm:px-5 print:p-0">
+          <div className="px-2 pt-1 pb-28 sm:px-5 min-[700px]:pb-10 print:p-0">
             <Kertas s={d.data} />
-          </div>
-          <div className="no-print fixed inset-x-0 bottom-0 border-t border-line-soft bg-surface px-4 pt-3 pb-4">
-            <div className="mx-auto flex max-w-[440px] flex-col gap-1">
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => pdf("muat")}
-                  disabled={!!sibuk}
-                  className="h-12 grow rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60"
-                >
-                  {sibuk === "muat" ? tr("Menyediakan PDF…") : tr("Muat turun PDF")}
-                </button>
-                {kongsi && (
-                  <button
-                    type="button"
-                    onClick={() => pdf("kongsi")}
-                    disabled={!!sibuk}
-                    className="h-12 shrink-0 rounded-button border border-primary bg-surface px-5 text-base font-extrabold text-primary disabled:opacity-60"
-                  >
-                    {tr("Kongsi")}
-                  </button>
-                )}
-              </div>
-              <button type="button" onClick={() => window.print()} className="min-h-11 text-sm font-bold text-primary">
-                {tr("Cetak")}
-              </button>
-            </div>
           </div>
         </>
       )}
