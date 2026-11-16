@@ -3,10 +3,11 @@
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { PilihBahasa } from "@/components/PilihBahasa";
+import { IconBack } from "@/components/icons";
 import type { ReactNode } from "react";
 
 // Fungsi (bukan pemalar) supaya teks mengikut bahasa permintaan semasa
-const CIRI = () => [tr("Mohon cuti & tuntutan dari telefon"), tr("Lulus terus dari WhatsApp"), tr("Gaji, KWSP, PERKESO & PCB automatik")];
+const CIRI = () => [tr("Mohon cuti & tuntutan dari telefon"), tr("Kelulusan dengan satu sentuhan"), tr("Gaji, KWSP, PERKESO & PCB automatik")];
 
 /**
  * Kerangka skrin log masuk (rujukan reka bentuk: design/Login.dc.html).
@@ -21,10 +22,8 @@ export function KerangkaMasuk({ children }: { children: ReactNode }) {
           <b className="text-xl font-extrabold">HRBoost.io</b>
         </Link>
         <div className="flex flex-col gap-6">
-          <h1 className="m-0 text-[40px] leading-[1.12] font-extrabold">
-            {tr("Assalamualaikum.")}<br />
-            {tr("Selamat datang.")}</h1>
-          <p className="m-0 max-w-[420px] text-lg leading-relaxed opacity-90">{tr("HR syarikat anda, terus melalui WhatsApp.")}</p>
+          <h1 className="m-0 text-[40px] leading-[1.12] font-extrabold">{tr("Selamat datang.")}</h1>
+          <p className="m-0 max-w-[420px] text-lg leading-relaxed opacity-90">{tr("Urusan HR yang lengkap, tanpa pegawai HR.")}</p>
           <ul className="m-0 flex list-none flex-col gap-3 p-0">
             {CIRI().map((c) => (
               <li key={c} className="flex items-center gap-3 text-base font-semibold">
@@ -38,24 +37,27 @@ export function KerangkaMasuk({ children }: { children: ReactNode }) {
       </div>
 
       <main className="relative mx-auto flex min-h-dvh w-full max-w-[480px] flex-col lg:max-w-[440px] lg:justify-center">
+        <Link
+          href="/"
+          aria-label={tr("Kembali ke laman utama")}
+          title={tr("Kembali ke laman utama")}
+          className="absolute top-3 left-3 z-10 flex size-11 items-center justify-center rounded-full text-white! hover:bg-white/10 lg:top-6 lg:left-0 lg:text-ink! lg:hover:bg-black/5"
+        >
+          <IconBack size={22} />
+        </Link>
         <div className="absolute top-3 right-3 z-10 lg:top-6 lg:right-0">
           <PilihBahasa kecil />
         </div>
         <header className="flex flex-col gap-3 bg-primary px-6 pt-14 pb-8 text-on-primary lg:bg-transparent lg:px-6 lg:pt-0 lg:pb-2 lg:text-ink">
           <span className="flex size-12 items-center justify-center rounded-logo bg-surface text-lg font-extrabold text-primary lg:hidden">HR</span>
-          <h1 className="m-0 text-[26px] leading-[1.15] font-extrabold lg:hidden">
-            {tr("Assalamualaikum.")}<br />
-            {tr("Selamat datang.")}</h1>
+          <h1 className="m-0 text-[26px] leading-[1.15] font-extrabold lg:hidden">{tr("Selamat datang.")}</h1>
           <span className="text-sm leading-normal opacity-[0.92] lg:hidden">
-            {tr("Log masuk ke")}{" "}<b>HRBoost.io</b> {" "}{tr("— HR syarikat anda, terus melalui WhatsApp.")}</span>
+            {tr("Log masuk ke")} <b>HRBoost.io</b>
+          </span>
           <h2 className="m-0 hidden text-2xl font-extrabold lg:block">{tr("Log masuk")}</h2>
         </header>
         {children}
-        <div className="flex flex-col items-center gap-1.5 px-6 pb-8 text-center text-[13px] leading-normal text-muted">
-          <span>{tr("Pekerja baharu? Buka pautan jemputan yang dihantar oleh HR.")}</span>
-          <Link href="/jemputan" className="flex min-h-11 items-center font-bold">
-            {tr("Saya mempunyai pautan jemputan")}</Link>
-        </div>
+        <div className="pb-8" />
       </main>
     </div>
   );
