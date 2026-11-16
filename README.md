@@ -92,7 +92,7 @@ Kunci projek tidak disimpan dalam repo.
 
 ### Aplikasi staging
 
-- Laman: https://hrboost-staging.netlify.app (projek Netlify `hrboost-staging`, binaan daripada `netlify.toml`, folder `web/`)
+- Laman: https://hrboost.io (domain utama, DNS di Namecheap; alias https://hrboost-staging.netlify.app) (projek Netlify `hrboost-staging`, binaan daripada `netlify.toml`, folder `web/`)
 - Pemboleh ubah Netlify: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (kunci awam/publishable staging sahaja)
 - Data demo rekaan yang sama seperti `supabase/seed.sql` (syarikat DEMO, 7 orang). Padam sebelum data MTB sebenar diimport.
 - Log masuk e-mel (data demo staging, rekaan): `<nama>@demo.hrboost.io` / `Demo1234` (sadam, lily, zuerin, amin, farah, zulfa, owner). Pengguna baharu menetapkan e-mel & kata laluan sendiri selepas OTP pertama.
@@ -102,7 +102,7 @@ Tetapan papan pemuka Supabase (Authentication) yang diperlukan untuk staging:
 
 1. **Auth Hooks** → Add hook → *Send SMS hook* → Postgres → skema `staging_dev`, fungsi `send_sms_hook`.
 2. **Sign In / Providers → Phone** → hidupkan. Jika diminta penyedia SMS, isi nilai palsu (hook mengatasi penyedia). *Test Phone Numbers and OTPs*: `60100000001=123456, 60100000002=123456, … 60100000007=123456`.
-3. **URL Configuration** → Site URL: `https://hrboost-staging.netlify.app`.
+3. **URL Configuration** → Site URL: `https://hrboost.io`; Redirect URLs: `https://hrboost.io/**`, `https://hrboost-staging.netlify.app/**`.
 
 ## Aplikasi web
 
