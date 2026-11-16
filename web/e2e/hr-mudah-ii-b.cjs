@@ -35,7 +35,8 @@ async function lulusSemua(b, email) {
   await p.waitForSelector(V('text=Pendahuluan gaji RM2,500.00'));
   await p.click(V('text=Pendahuluan gaji RM2,500.00'));
   await p.click(V('button:text-is("Lulus")'));
-  await p.waitForSelector(V('text=Tiada permohonan menunggu kelulusan anda'), { timeout: 20000 });
+  // Semua permohonan enjin diluluskan (keputusan lain mungkin masih dipaparkan)
+  await p.waitForSelector(V('text=Pilih semua'), { state: 'detached', timeout: 20000 });
   await ctx.close();
 }
 

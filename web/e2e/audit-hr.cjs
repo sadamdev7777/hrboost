@@ -53,7 +53,8 @@ async function mohonCuti(b, email, hariDepan) {
   await p.waitForSelector(V('text=Pilih semua'));
   await p.check(V('label:has-text("Pilih semua") input'));
   await p.click(V('button:has-text("Lulus 2 dipilih")'));
-  await p.waitForSelector(V('text=Tiada permohonan menunggu kelulusan anda'), { timeout: 20000 });
+  // Semua permohonan enjin diluluskan (keputusan lain mungkin masih dipaparkan)
+  await p.waitForSelector(V('text=Pilih semua'), { state: 'detached', timeout: 20000 });
   expect(true, 'ketua jabatan: lulus 2 permohonan sekali gus');
   await ctx.close();
 

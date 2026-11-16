@@ -70,7 +70,8 @@ async function masuk(b, email, vp) {
   await p.waitForSelector(V('text=Kerja lebih masa 3 jam'));
   await p.click(V('text=Kerja lebih masa 3 jam'));
   await p.click(V('button:text-is("Lulus")'));
-  await p.waitForSelector(V('text=Tiada permohonan menunggu kelulusan anda'), { timeout: 20000 });
+  // Semua permohonan enjin diluluskan (keputusan lain mungkin masih dipaparkan)
+  await p.waitForSelector(V('text=Pilih semua'), { state: 'detached', timeout: 20000 });
   expect(true, 'ketua meluluskan kerja lebih masa');
   await ctx.close();
 
