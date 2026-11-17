@@ -15,14 +15,26 @@ import { useMod } from "@/lib/mod";
 
 function Guard({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const { state } = useMeContext();
+  const { state, reload } = useMeContext();
   const path = usePathname();
   const GATE = "/akaun/kata-laluan";
   const perluKataLaluan = state.status === "ready" && state.me.needsPassword && path !== GATE;
 
   useEffect(() => {
-    if (state.status === "signed-out") router.replace("/masuk");
-  }, [state.status, router]);
+    if (state.status !== "signed-out") return;
+    // Halaman mungkin dipulihkan dengan keadaan lama "log keluar" selepas log masuk semula: semak sesi sebenar dahulu
+    let batal = false;
+    void getSupabase()
+      .auth.getSession()
+      .then(({ data }) => {
+        if (batal) return;
+        if (data.session) reload();
+        else router.replace(path && path !== "/utama" ? `/masuk?seterusnya=${encodeURIComponent(path)}` : "/masuk");
+      });
+    return () => {
+      batal = true;
+    };
+  }, [state.status, router, path, reload]);
 
   // Mod HR: laman utama ialah Papan Pemuka, bukan Utama pekerja.
   const { mod } = useMod();

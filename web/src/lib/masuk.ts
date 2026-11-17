@@ -8,6 +8,13 @@ export async function destinasiSelepasMasuk(): Promise<string> {
   // Pendaftaran syarikat yang belum selesai (e-mel disahkan di peranti lain): cipta syarikat dahulu
   const { data: u } = await sb.auth.getUser();
   if ((u.user?.user_metadata as { daftar?: unknown } | undefined)?.daftar) return "/daftar/sahkan";
+  // Kembali ke halaman asal selepas sesi tamat (cth. /masuk?seterusnya=/orientasi/nama); hanya laluan dalaman
+  try {
+    const seterusnya = new URLSearchParams(window.location.search).get("seterusnya");
+    if (seterusnya && /^\/[^/\\]/.test(seterusnya) && !seterusnya.startsWith("/masuk")) return seterusnya;
+  } catch {
+    /* abaikan */
+  }
   const { data: sa } = await sb.from("platform_admins").select("person_id").limit(1);
   if (sa && sa.length > 0) {
     const { count } = await sb

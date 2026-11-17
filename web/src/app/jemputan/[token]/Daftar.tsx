@@ -82,6 +82,7 @@ export function Daftar() {
       const { data } = await sb.auth.getSession();
       if (dah || !data.session?.user.email_confirmed_at) return;
       dah = true;
+      setKeepSignedIn(true);
       setAdaSesi(true);
       const { data: r } = await sb.rpc("accept_invite_email", { p_token: token });
       const x = r as unknown as { ok: boolean } | null;

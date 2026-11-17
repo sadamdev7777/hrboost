@@ -47,6 +47,8 @@ export function mesejRalat(m: string, code?: string): string {
   if (code === "23503" || t.includes("violates foreign key")) return tr("Rekod ini masih digunakan oleh data lain dan tidak boleh diubah atau dipadam.");
   if (code === "23502" || t.includes("null value in column")) return tr("Sila lengkapkan semua medan yang wajib.");
   if (code === "23514" || t.includes("violates check constraint")) return tr("Nilai yang dimasukkan tidak sah.");
+  // Fungsi ditolak kerana permintaan dihantar tanpa sesi log masuk (peranan anon)
+  if (t.includes("permission denied for function")) return tr("Sesi log masuk anda telah tamat. Sila log masuk semula.");
   if (code === "42501" || t.includes("permission denied") || t.includes("row-level security")) return tr("Anda tidak mempunyai akses untuk tindakan ini.");
   if (t.includes("jwt expired") || t.includes("invalid jwt") || code === "PGRST301") return tr("Sesi anda telah tamat. Sila log masuk semula.");
   if (t.includes("failed to fetch") || t.includes("networkerror") || t.includes("network request failed") || t.includes("load failed"))

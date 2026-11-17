@@ -1,7 +1,7 @@
 "use client";
 
 import { getSupabase } from "./supabase";
-import { must } from "./useData";
+import { mesejRalat, must } from "./useData";
 import type { Json } from "./database.types";
 
 /** Lapan langkah orientasi pekerja (CLAUDE.md §5, onboarding_progress.step). */
@@ -37,6 +37,6 @@ export async function simpanLangkah(employmentId: string, step: KunciLangkah, da
     p_step: step,
     p_data: data,
   });
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(mesejRalat(error.message, error.code));
   return n as number;
 }

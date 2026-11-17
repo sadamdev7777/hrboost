@@ -1,8 +1,8 @@
 "use client";
 
 import { bahasa, bahasaDipilih, tetapkanBahasa, tr } from "@/lib/i18n";
-import { createContext, use, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
-import { getSupabase } from "./supabase";
+import { createContext, use, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { getSupabase, PERISTIWA_SESI_TAMAT } from "./supabase";
 import type { Database } from "./database.types";
 
 type Role = Database["public"]["Enums"]["app_role"];
@@ -142,6 +142,10 @@ async function loadMe(preferredCompany: string | null): Promise<State> {
 export function MeProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>({ status: "loading" });
   const [tick, setTick] = useState(0);
+  const statusRef = useRef(state.status);
+  useEffect(() => {
+    statusRef.current = state.status;
+  }, [state.status]);
 
   useEffect(() => {
     let alive = true;
@@ -162,10 +166,23 @@ export function MeProvider({ children }: { children: ReactNode }) {
   }, [tick]);
 
   useEffect(() => {
-    const { data } = getSupabase().auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") setState({ status: "signed-out" });
+    const sb = getSupabase();
+    const { data } = sb.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT" || (event === "TOKEN_REFRESHED" && !session)) setState({ status: "signed-out" });
+      // Log masuk semula selepas sesi tamat (halaman tidak dimuat semula): muatkan pengguna sekali lagi
+      // Halaman aplikasi disimpan (bukan dimuat semula) semasa di /masuk: keadaan lama "log keluar" dikembalikan.
+      else if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session && statusRef.current === "signed-out") {
+        setState({ status: "loading" });
+        setTick((t) => t + 1);
+      }
     });
-    return () => data.subscription.unsubscribe();
+    // Sesi hilang semasa halaman dibuka (permintaan ditolak tanpa sesi): bawa ke log masuk
+    const tamat = () => setState((s) => (s.status === "ready" ? { status: "signed-out" } : s));
+    window.addEventListener(PERISTIWA_SESI_TAMAT, tamat);
+    return () => {
+      data.subscription.unsubscribe();
+      window.removeEventListener(PERISTIWA_SESI_TAMAT, tamat);
+    };
   }, []);
 
   const reload = useCallback(() => setTick((t) => t + 1), []);
