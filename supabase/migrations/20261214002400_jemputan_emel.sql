@@ -110,6 +110,8 @@ begin
   if p_base_url !~ '^https?://[^\s/]+' then raise exception 'Alamat aplikasi tidak sah'; end if;
   tok := create_invite(p_employment);
   url := rtrim(p_base_url, '/') || '/jemputan/' || tok;
+  -- Tarikh dihantar (dipaparkan sebagai "Dijemput <tarikh>" di Orientasi)
+  update employee_invites set sent_at = now() where employment_id = p_employment and accepted_at is null and sent_at is null;
   mesej := 'Assalamualaikum ' || coalesce(p.preferred_name, p.full_name) || ', anda dijemput menyertai ' || c.name ||
            ' di HRBoost. Buka pautan ini dan sahkan 4 digit akhir kad pengenalan anda: ' || url || ' (sah selama 7 hari)';
   if p_channel in ('auto', 'whatsapp') then
