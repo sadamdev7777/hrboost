@@ -30,7 +30,20 @@ function header(nameSpace: string, nameAction: string) {
   };
 }
 
+const tidur = (ms: number) => new Promise((s) => setTimeout(s, ms));
+
+// CrossChex mengehadkan setiap antara muka kepada sekali setiap 15 saat (FREQUENT_REQUEST): tunggu & cuba semula sekali.
 async function post(apiUrl: string, body: unknown): Promise<Record<string, unknown>> {
+  try {
+    return await postSekali(apiUrl, body);
+  } catch (e) {
+    if (!(e instanceof CrossChexError && e.code === "FREQUENT_REQUEST")) throw e;
+    await tidur(16_000);
+    return await postSekali(apiUrl, body);
+  }
+}
+
+async function postSekali(apiUrl: string, body: unknown): Promise<Record<string, unknown>> {
   const res = await fetch(apiUrl.replace(/\/+$/, "") + "/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -72,6 +85,7 @@ function utc(s: string): string {
 export async function tarikRekod(apiUrl: string, token: string, dari: Date, hingga: Date): Promise<Punch[]> {
   const out: Punch[] = [];
   for (let page = 1; page <= 200; page++) {
+    if (page > 1) await tidur(15_500); // had CrossChex: sekali setiap 15 saat
     const p = await post(apiUrl, {
       header: header("attendance.record", "getrecord"),
       authorize: { type: "token", token },
