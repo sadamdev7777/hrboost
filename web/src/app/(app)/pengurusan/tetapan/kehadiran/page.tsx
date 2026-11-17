@@ -25,6 +25,16 @@ type Status = {
   log: { ok: boolean; message: string; records: number; at: string }[];
 };
 
+type Cadangan = {
+  workno: string;
+  machine_name: string | null;
+  punches: number;
+  last_punch: string;
+  employment_id: string | null;
+  employee_name: string | null;
+  employee_no: string | null;
+};
+
 // Rujukan reka bentuk: design/IntegrasiKehadiran.dc.html
 export default function IntegrasiKehadiranPage() {
   return (
@@ -38,11 +48,16 @@ function Integrasi() {
   const me = useMe();
   const cid = me.active!.companyId;
   const d = useData(async () => {
-    const [s, ppl] = await Promise.all([getSupabase().rpc("attendance_integration_status", { p_company: cid }), getSenaraiPekerja(cid)]);
-    return { s: must(s) as unknown as Status, ppl };
+    const [s, ppl, c] = await Promise.all([
+      getSupabase().rpc("attendance_integration_status", { p_company: cid }),
+      getSenaraiPekerja(cid),
+      getSupabase().rpc("attendance_match_suggestions", { p_company: cid }),
+    ]);
+    return { s: must(s) as unknown as Status, ppl, cadangan: (must(c) ?? []) as unknown as Cadangan[] };
   }, [cid]);
   const [kunci, setKunci] = useState(false);
-  const [padan, setPadan] = useState<string | null>(null);
+  const [padan, setPadan] = useState<Cadangan | null>(null);
+  const [sahkan, setSahkan] = useState<string | null>(null);
   const [busy, setBusy] = useState<null | "test" | "pull">(null);
   const [mesej, setMesej] = useState<{ ok: boolean; text: string } | null>(null);
   const s = d.data?.s;
@@ -71,6 +86,25 @@ function Integrasi() {
     }
   }
 
+  async function padankan(c: Cadangan | "semua") {
+    setSahkan(c === "semua" ? "semua" : c.workno);
+    setMesej(null);
+    try {
+      if (c === "semua") {
+        const n = must(await getSupabase().rpc("attendance_match_apply_suggestions", { p_company: cid })) as number;
+        setMesej({ ok: true, text: tr("{0} pekerja dipadankan. Imbasan lama telah dibina semula sebagai rekod kehadiran.", n) });
+      } else {
+        must(await getSupabase().rpc("match_attendance_workno", { p_employment: c.employment_id!, p_workno: c.workno }));
+      }
+      d.reload();
+    } catch (e) {
+      setMesej({ ok: false, text: e instanceof Error ? e.message : tr("Ralat") });
+    }
+    setSahkan(null);
+  }
+
+  const cadangan = d.data?.cadangan ?? [];
+  const adaCadangan = cadangan.filter((c) => c.employment_id).length;
   const bersambung = s?.configured && !s.last_error && !!s.last_synced_at;
 
   return (
@@ -134,15 +168,35 @@ function Integrasi() {
               <Baris label={tr("Dipadankan")}>
                 {s.matched} / {s.employees}
               </Baris>
-              {s.unmatched.map((u) => (
-                <div key={u.workno} className="flex min-h-12 items-center gap-2">
-                  <span className="flex grow flex-col">
-                    <b>{tr("ID mesin {0}", u.workno)}</b>
+              {adaCadangan > 0 && (
+                <div className="flex min-h-14 flex-wrap items-center gap-2 py-2">
+                  <span className="grow basis-48 text-[13px] text-subtle">{tr("{0} ID mesin sepadan dengan nama pekerja. Semak dan sahkan.", adaCadangan)}</span>
+                  <button type="button" disabled={!!sahkan} onClick={() => padankan("semua")} className="h-10 rounded-full bg-primary px-4 text-[13px] font-bold text-white disabled:opacity-60">
+                    {sahkan === "semua" ? tr("Memadankan…") : tr("Sahkan semua ({0})", adaCadangan)}
+                  </button>
+                </div>
+              )}
+              {cadangan.map((u) => (
+                <div key={u.workno} className="flex min-h-12 flex-wrap items-center gap-x-2 gap-y-1 py-2">
+                  <span className="flex min-w-0 grow basis-48 flex-col">
+                    <b>
+                      {tr("ID mesin {0}", u.workno)}
+                      {u.machine_name ? ` · ${u.machine_name}` : ""}
+                    </b>
                     <span className="text-xs text-muted">
-                      {tr("belum dipadankan · {0} imbasan, terakhir {1}", u.punches, tarikh(u.last))}</span>
+                      {u.employee_name
+                        ? tr("Cadangan: {0}{1} · {2} imbasan", u.employee_name, u.employee_no ? ` (${u.employee_no})` : "", u.punches)
+                        : tr("belum dipadankan · {0} imbasan, terakhir {1}", u.punches, tarikh(u.last_punch))}
+                    </span>
                   </span>
-                  <button type="button" onClick={() => setPadan(u.workno)} className="min-h-11 text-[13px] font-bold text-primary">
-                    {tr("Pilih pekerja")}</button>
+                  {u.employment_id && (
+                    <button type="button" disabled={!!sahkan} onClick={() => padankan(u)} className="min-h-11 px-1 text-[13px] font-bold text-primary disabled:opacity-60">
+                      {sahkan === u.workno ? tr("Memadankan…") : tr("Sahkan")}
+                    </button>
+                  )}
+                  <button type="button" onClick={() => setPadan(u)} className="min-h-11 px-1 text-[13px] font-bold text-subtle">
+                    {u.employment_id ? tr("Tukar") : tr("Pilih pekerja")}
+                  </button>
                 </div>
               ))}
             </div>
@@ -188,7 +242,9 @@ function Integrasi() {
       )}
       {padan && d.data && (
         <Padan
-          workno={padan}
+          workno={padan.workno}
+          nama={padan.machine_name}
+          pilihan={padan.employment_id}
           ppl={d.data.ppl.map((p) => ({ id: p.id, name: `${p.name} · ${p.employeeNo}` }))}
           onClose={() => setPadan(null)}
           onDone={() => {
@@ -247,8 +303,8 @@ function Kunci({ cid, s, onClose, onDone }: { cid: string; s: Status; onClose: (
   );
 }
 
-function Padan({ workno, ppl, onClose, onDone }: { workno: string; ppl: { id: string; name: string }[]; onClose: () => void; onDone: () => void }) {
-  const [emp, setEmp] = useState(ppl[0]?.id ?? "");
+function Padan({ workno, nama, pilihan, ppl, onClose, onDone }: { workno: string; nama: string | null; pilihan: string | null; ppl: { id: string; name: string }[]; onClose: () => void; onDone: () => void }) {
+  const [emp, setEmp] = useState(pilihan ?? ppl[0]?.id ?? "");
   const [busy, setBusy] = useState(false);
   const [ralat, setRalat] = useState<string | null>(null);
   async function simpan() {
@@ -263,6 +319,7 @@ function Padan({ workno, ppl, onClose, onDone }: { workno: string; ppl: { id: st
   }
   return (
     <Lembaran title={tr("Padankan ID mesin {0}", workno)} onClose={onClose}>
+      {nama && <span className="text-sm text-subtle">{tr("Nama di mesin: {0}", nama)}</span>}
       <MedanBorang label={tr("Pekerja")}>
         <select className={inputKecil} value={emp} onChange={(e) => setEmp(e.target.value)}>
           {ppl.map((p) => (

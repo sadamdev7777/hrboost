@@ -3,9 +3,11 @@
 // Prasyarat: `npx supabase db reset` (data demo minggu ini), aplikasi di localhost:3000.
 // Jalankan: node web/e2e/kehadiran.cjs
 const os = require('os');
+const { execSync } = require('child_process');
 const { chromium } = require('playwright');
 require('./_bahasa.cjs');
 const { emelDemo } = require('./_demo.cjs');
+const sql = (q) => execSync(`psql -h 127.0.0.1 -p 54322 -U postgres -Atc "${q}"`, { env: { ...process.env, PGPASSWORD: 'postgres' } }).toString().trim();
 
 const BASE = process.env.E2E_BASE || 'http://localhost:3000';
 const shots = process.env.E2E_SHOTS || os.tmpdir();
@@ -84,6 +86,26 @@ async function login(browser, phone) {
   await p.waitForSelector('button.bg-primary:has-text("15 min")');
   expect(true, 'kekerapan tarikan ditukar kepada 15 minit');
   await p.screenshot({ path: `${shots}/e-integrasi.png` });
+
+  log('5. Padanan automatik ikut nama di mesin CrossChex');
+  // Imbasan daripada mesin: ID 901 bernama seperti Amin (nama penuh di mesin), ID 902 nama tidak dikenali
+  const co = sql(`select company_id from employments where employee_no = 'DEMO004'`);
+  const nama = sql(`select p.full_name from employments e join persons p on p.id = e.person_id where e.employee_no = 'DEMO004'`);
+  sql(`update employments set attendance_workno = null where employee_no = 'DEMO004'`);
+  const [depan, ...belakang] = nama.split(' ');
+  for (const [w, fn, ln] of [['901', depan, belakang.join(' ')], ['902', 'Orang', 'Tidak Dikenali']]) {
+    sql(`insert into attendance_punches(company_id, workno, external_uuid, punched_at, raw) values ('${co}', '${w}', 'uji-${w}', now() - interval '1 hour', jsonb_build_object('employee', jsonb_build_object('workno', '${w}', 'first_name', '${fn.replace(/'/g, "''")}', 'last_name', '${ln.replace(/'/g, "''")}')))`);
+  }
+  await p.reload();
+  await p.waitForSelector('text=ID mesin 901');
+  let tp = await p.innerText('main');
+  expect(tp.includes('Cadangan: Amin') && tp.includes('Orang Tidak Dikenali'), 'ID 901 dicadangkan kepada Amin; ID 902 tiada cadangan');
+  await p.click('button:has-text("Sahkan semua (1)")');
+  await p.waitForSelector('text=1 pekerja dipadankan');
+  expect(sql(`select attendance_workno from employments where employee_no = 'DEMO004'`) === '901', 'Amin dipadankan kepada ID mesin 901');
+  expect(sql(`select count(*) from attendance_punches where workno = '901' and employment_id is null`) === '0', 'imbasan lama dikaitkan dengan Amin');
+  tp = await p.innerText('main');
+  expect(!tp.includes('ID mesin 901') && tp.includes('ID mesin 902'), 'hanya ID tanpa padanan kekal dalam senarai');
   await l.ctx.close();
   await browser.close();
   log('LULUS: kehadiran & pembetulan masa');

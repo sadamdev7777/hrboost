@@ -63,7 +63,7 @@ Konsep utama:
 | `request_company_access(kod, peranan, hari, sebab)` | sesiapa | Minta akses syarikat lain |
 | `decide_company_access(grant, lulus, nota)` / `revoke_company_access(grant)` | superadmin / admin sasaran | |
 | `sa_company_overview()`, `sa_set_company_status()`, `sa_set_person_active()`, `sa_set_company_limits()` | superadmin | Agregat & kawalan |
-| `match_attendance_workno(employment, workno)` | HR | Padan workno CrossChex |
+| `match_attendance_workno(employment, workno)`, `attendance_match_suggestions(company)`, `attendance_match_apply_suggestions(company)` | HR | Padan workno CrossChex; cadangan automatik ikut nama di mesin (semua perkataan nama sepadan dengan tepat seorang pekerja), sahkan satu atau semua |
 | `my_context(company?)` | semua | Konteks pengguna (orang, pekerjaan, peranan, ketua, status log masuk) dalam satu panggilan — dimuatkan sekali setiap halaman |
 | `set_company_schedule(company, jadual)` | HR / Pentadbir | Jadual kerja ikut hari (`companies.work_schedule`: cth. Isnin–Jumaat 8:00–4:30, Sabtu 8:00–12:30 separuh hari). Separuh hari = 0.5 hari untuk cuti & asas gaji harian; lewat masuk & SLA ikut waktu hari itu. NULL = mod lama (`weekend_days` + `work_start/end`) |
 | `company_holidays(company, dari, hingga)` | ahli syarikat | Cuti umum + **cuti ganti automatik** (Akta Kerja s.60D: cuti pada hari rehat → hari bekerja berikutnya); `is_working_day` turut mengambil kiranya |
@@ -87,7 +87,7 @@ Konsep utama:
 | `events-worker` | setiap minit | `select process_hr_events()` |
 | `notify-sender` | setiap minit | `notify_set_channels` (lapor saluran yang dikonfigurasi) → `notify_next2(had, wa, emel)` memilih saluran bagi setiap notifikasi: **WhatsApp** (Murpati, jika dikonfigurasi & `companies.notify_whatsapp`; `bump_usage(company,'wa')`) → **e-mel** (Resend `RESEND_API_KEY`/`EMAIL_FROM`, jika `companies.notify_email`) → **dalam aplikasi sahaja** (`skipped`). Notifikasi > 3 hari tidak dihantar. Loceng dalam aplikasi sentiasa memaparkan semua notifikasi |
 | `sla-tick` | setiap 15 minit | `select approval_sla_tick()` |
-| `crosschex-sync` | setiap 5 minit | Untuk setiap syarikat dengan CrossChex: token (cache sehingga `expires`, ralat `TOKEN_EXPIRES` → minta baru), `getrecord` dari `last_synced_at − 10 min` hingga kini, 100 rekod/halaman, panggil `ingest_punch` (uuid, `checktime` UTC, `workno`, peranti). Simpan `integration_sync_state` |
+| `crosschex-sync` | setiap 5 minit (pg_cron `hrboost-crosschex-sync`, `x-cron-secret`) | Untuk setiap syarikat dengan CrossChex: token (cache sehingga `expires`, ralat `TOKEN_EXPIRES` → minta baru), `getrecord` dari `last_synced_at − 10 min` hingga kini, 100 rekod/halaman (had CrossChex: sekali setiap 15 saat — jeda antara halaman), panggil `ingest_punch` (uuid, `checktime` UTC, `workno`, peranti). Simpan `integration_sync_state` |
 | `whatsapp-inbound` | webhook Murpati | Balasan staff: "LULUS" / "TOLAK sebab" → `approval_act` dengan `p_on_behalf`; teks bebas → agent AI |
 | `invite-link` | HTTP | Token jemputan → cipta sesi Supabase untuk nombor itu → halaman sahkan IC |
 | `auth-sms-hook` | Auth hook | (Tidak digunakan lagi — log masuk kini e-mel sahaja) |

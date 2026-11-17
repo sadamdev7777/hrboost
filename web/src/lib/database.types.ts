@@ -2543,6 +2543,9 @@ isOneToOne: false
 "_billing_voucher_ok":
 { Args: { "p_company": string,"v": Omit<Database["public"]['Tables']["billing_vouchers"]['Row'], Database["public"]['Tables']["billing_vouchers"]['ComputedFields']> }; Returns: string
                            },
+"_nama_token":
+{ Args: { "p": string }; Returns: (string)[]
+                           },
 "_rd_anak":
 { Args: { "p_entity": string }; Returns: (string)[]
                            },
@@ -2688,6 +2691,14 @@ isOneToOne: false
                            },
 "attendance_integration_status":
 { Args: { "p_company": string }; Returns: Json
+                           },
+"attendance_match_apply_suggestions":
+{ Args: { "p_company": string }; Returns: number
+                           },
+"attendance_match_suggestions":
+{ Args: { "p_company": string }; Returns: {
+              "employee_name": string,"employee_no": string,"employment_id": string,"last_punch": string,"machine_name": string,"punches": number,"workno": string
+            }[]
                            },
 "attendance_month":
 { Args: { "p_employment": string,"p_from": string,"p_to": string }; Returns: {
