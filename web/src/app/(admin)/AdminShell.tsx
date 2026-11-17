@@ -12,6 +12,7 @@ const MENU = [
   { href: "/admin", label: tr("Ringkasan") },
   { href: "/admin/syarikat", label: tr("Syarikat") },
   { href: "/admin/pengguna", label: tr("Pengguna") },
+  { href: "/admin/langganan", label: tr("Langganan") },
   { href: "/admin/akses", label: tr("Permohonan akses") },
   { href: "/admin/log", label: tr("Log audit") },
   { href: "/admin/ralat", label: tr("Ralat aplikasi") },

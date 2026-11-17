@@ -53,6 +53,7 @@ const SEMUA_TETAPAN: { label: string; href: string; kata: string; roles?: ("hr" 
   { label: tr("Pengetahuan AI"), href: "/pengurusan/tetapan/pengetahuan-ai", kata: tr("ai buku panduan polisi dokumen pembantu"), roles: ["hr", "admin"] },
   { label: tr("Integrasi Kehadiran"), href: "/pengurusan/tetapan/kehadiran", kata: tr("kehadiran crosschex mesin punch"), roles: ["hr", "admin"] },
   { label: tr("Sambungan AI (MCP)"), href: "/sambungan-ai", kata: tr("mcp claude ai sambungan token penyambung") },
+  { label: tr("Langganan"), href: "/pengurusan/langganan", kata: tr("langganan bayar bil invois resit yuran baucar"), roles: ["admin", "hr", "ceo", "finance"] },
   { label: tr("Rekod dipadam"), href: "/pengurusan/tetapan/rekod-dipadam", kata: tr("padam dipadam pulihkan sampah sejarah buat asal"), roles: ["hr", "admin"] },
 ];
 
@@ -155,6 +156,8 @@ function Menu() {
             {tr("Integrasi Kehadiran")}</BarisPautan>
           <BarisPautan href="/sambungan-ai" kanan={em(tr("Claude & pembantu AI"))}>
             {tr("Sambungan AI (MCP)")}</BarisPautan>
+          <BarisPautan href="/pengurusan/langganan" roles={["admin","hr","ceo","finance"]} kanan={em(tr("Bil, invois & resit"))}>
+            {tr("Langganan")}</BarisPautan>
           <BarisPautan href="/pengurusan/tetapan/rekod-dipadam" roles={["hr","admin"]} kanan={em(tr("Sejarah & pulihkan"))}>
             {tr("Rekod dipadam")}</BarisPautan>
         </Kotak>

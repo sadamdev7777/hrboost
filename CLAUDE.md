@@ -1,6 +1,6 @@
 # HRBoost.io — brief pembinaan
 
-Sistem HR percuma untuk syarikat di Malaysia. Mobile-first (PWA), WhatsApp sebagai saluran utama, sedia untuk AI agent.
+Sistem HR untuk syarikat di Malaysia: cuba percuma 5 hari, kemudian RM499 setahun bagi setiap syarikat (semua modul, pekerja tanpa had). Mobile-first (PWA), WhatsApp sebagai saluran utama, sedia untuk AI agent.
 Pemilik produk: Sadam. Reka bentuk skrin: kanvas Design "HRBoost.io — Skrin" (nama skrin di bawah ikut nama fail kanvas).
 
 ---
@@ -14,6 +14,7 @@ Pemilik produk: Sadam. Reka bentuk skrin: kanvas Design "HRBoost.io — Skrin" (
 5. **Agent-ready.** Setiap kejadian penting → `hr_events` → `automation_rules` → `notifications` → WhatsApp. Setiap tindakan ada RPC yang boleh dipanggil oleh app ATAU agent (parameter `p_via`, `p_on_behalf`).
 6. **Nama panggilan** dipakai di semua tempat. Nama penuh (ikut IC) hanya untuk slip gaji, EA, KWSP, surat rasmi.
 7. **Kadar berkanun = data**, bukan kod. Dikemas kini oleh platform untuk semua syarikat.
+8. **Langganan RM499 setahun** (`platform_settings.billing`: harga, hari percubaan 5, tangguh 14, butiran penjual). Syarikat baharu = `trial`; syarikat sedia ada = `exempt`. Tamat → `grace` (14 hari) → `readonly` (data kekal, permohonan baharu disekat). Bayaran melalui CHIP; invois & resit atas nama HRBoost. Tiada SST.
 
 ## 2. Stack
 
@@ -72,10 +73,12 @@ Konsep utama:
 | `inventory_save(company, data, id?)`, `inventory_list(company, 'mine'\|'all')`, `hr_inventory_verify(id, lulus, sebab)`, `hr_inventory_return`, `inventory_delete` | pekerja / HR | Inventori (`company_assets`): item dipegang pekerja atau di lokasi; gambar & resit (bucket peribadi), harga. Rekod pekerja = menunggu semakan HR; HR terus disahkan. Skrin: Saya → Inventori saya (`/inventori`), Pekerja → tab Inventori (`/pengurusan/inventori`) |
 | `notify_channels(company)`, `set_notify_channels(company, wa, emel)`, `approval_current_approvers(request)` | ahli syarikat / HR / pemohon | Saluran notifikasi aktif (Tetapan → Notifikasi & automasi); pelulus semasa untuk butang WhatsApp "Ingatkan pelulus" |
 | `hr_issue_letter(employment, jenis, butiran, kepada?, pendahuluan?)`, `letter_list_employment(employment)` | HR / Kewangan (memo) | Surat dijana automatik daripada rekod pekerja: tawaran, pengesahan jawatan, lanjutan percubaan, kenaikan gaji, terima peletakan jawatan (+ inventori belum dipulangkan), pengalaman kerja, amaran, tunjuk sebab, memo pendahuluan gaji kepada Kewangan (tidak dilihat pekerja). Dipapar di `/surat/[id]` (A4, simpan PDF). Templat amaran / tunjuk sebab / tawaran ialah draf — perlu semakan peguam |
+| `billing_status`, `billing_quote(company, kod?)`, `billing_create_invoice`, `billing_invoices_list`, `billing_invoice_view` | ahli syarikat / Pentadbir, HR, CEO, Kewangan | Langganan (Tetapan → Langganan, `/pengurusan/langganan`): status, sebut harga dengan kempen automatik atau kod baucar (had N syarikat, dikira selepas bayaran), invois & resit PDF (`web/src/lib/bilPdf.ts`) |
+| `sa_billing_overview`, `sa_billing_set`, `sa_vouchers`, `sa_voucher_save`, `sa_billing_invoices`, `sa_billing_settings(_set)` | superadmin | `/admin/langganan`: harga & penjual, kunci CHIP, kempen & baucar, status syarikat (kecualikan / lanjut), invois |
 | `log_client_error(...)` → `sa_client_errors(hari)` | semua → superadmin | Pemantauan ralat pelayar (tanpa perkhidmatan luar); `/admin/ralat` |
 
 ### Fungsi untuk Edge Function sahaja (service role)
-`ingest_punch`, `ingest_attendance`, `process_hr_events`, `approval_sla_tick`, `bump_usage`, `agent_tool_call` (alat data dikongsi MCP & Pembantu AI), `integration_secret_set/get` (Vault), `qbo_connect_finish`, `accounting_queue_next/done`, `accounting_claim_bill`, `accounting_payroll_journal`, `ceo_monthly_report`.
+`ingest_punch`, `ingest_attendance`, `process_hr_events`, `approval_sla_tick`, `bump_usage`, `agent_tool_call` (alat data dikongsi MCP & Pembantu AI), `integration_secret_set/get` (Vault), `qbo_connect_finish`, `accounting_queue_next/done`, `accounting_claim_bill`, `accounting_payroll_journal`, `ceo_monthly_report`, `billing_set_checkout`, `billing_mark_paid`, `billing_invoice_for_checkout`.
 
 ## 4. Edge Functions & jadual (pg_cron)
 
@@ -92,6 +95,8 @@ Konsep utama:
 | `payroll-calc` | HTTP | Kira gaji dari `statutory_rates` → `payslips` + `payslip_lines` |
 | (slip PDF) | dalam pelayar | Slip gaji PDF A4 dijana dalam pelayar (`web/src/lib/slipPdf.ts`, pdf-lib): "Muat turun PDF" & "Kongsi" (Web Share → WhatsApp). Lampiran automatik melalui WhatsApp menunggu API media Murpati |
 | `accounting-sync` | setiap 10 minit | `accounting_sync_queue` → QuickBooks (Bill tuntutan, Journal Entry gaji); cuba semula ≤ 5 kali |
+| `billing` | HTTP | Langganan CHIP: `checkout` (JWT pengguna → invois → pembelian CHIP → `checkout_url`; jumlah RM0 → terus dibayar), `verify` (halaman `/langganan/selesai`), `?webhook=1` (callback CHIP). Bayaran hanya ditanda dibayar selepas `GET /purchases/{id}/` CHIP = `paid` & rujukan = nombor invois. Rahsia: `CHIP_SECRET_KEY`/`CHIP_BRAND_ID` atau Vault (`/admin/langganan`); `CHIP_API_URL` pilihan |
+| `billing_tick()` | pg_cron harian 9:13 pagi MYT | Peralihan percubaan/aktif → tangguh → baca sahaja; peringatan |
 | `qbo-oauth` | HTTP | Sambung QuickBooks (OAuth 2.0); refresh token dalam Vault. Rahsia: `QBO_CLIENT_ID`, `QBO_CLIENT_SECRET`, `QBO_REDIRECT_URI`, `QBO_ENV` |
 
 Rahsia (CrossChex api_key/secret, QuickBooks, Murpati, AI) **hanya** dalam Supabase secrets / Vault. Tidak pernah dipaparkan semula di UI — HR hanya boleh "Tukar".

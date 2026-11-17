@@ -74,7 +74,7 @@ export default function DaftarSyarikatPage() {
         <div className="flex flex-col gap-1.5">
           <Langkah n={1} />
           <h1 className="m-0 text-[22px] font-extrabold">{tr("Daftar syarikat")}</h1>
-          <span className="text-sm text-subtle">{tr("Percuma dan hanya 2 minit. Anda akan menjadi Pentadbir syarikat ini.")}</span>
+          <span className="text-sm text-subtle">{tr("Cuba percuma 5 hari, hanya 2 minit. Anda akan menjadi Pentadbir syarikat ini.")}</span>
         </div>
         <span className="pt-1 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("SYARIKAT")}</span>
         <label className="flex flex-col gap-1.5 text-sm font-bold">

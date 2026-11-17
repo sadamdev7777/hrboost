@@ -86,9 +86,9 @@ export default function Kandungan() {
         <h1 id="terma" className="mt-14 mb-2 text-[32px] leading-[1.15] font-extrabold">
           {tr("Terma Penggunaan")}</h1>
 
-        <H3>{tr("Perkhidmatan percuma")}</H3>
+        <H3>{tr("Yuran langganan")}</H3>
         <P>
-          {tr("HRBoost disediakan secara percuma. Had penggunaan berpatutan dikenakan untuk mesej WhatsApp dan ciri AI bagi setiap syarikat.")}</P>
+          {tr("Syarikat baharu boleh mencuba HRBoost secara percuma selama 5 hari. Selepas itu yuran langganan RM499 setahun dikenakan bagi setiap syarikat dan dibayar melalui CHIP; invois dan resit dikeluarkan secara automatik. Jika langganan tidak diperbaharui, sistem menjadi baca sahaja selepas tempoh tangguh 14 hari dan data tidak dipadam. Had penggunaan berpatutan dikenakan untuk mesej WhatsApp dan ciri AI.")}</P>
         <H3>{tr("Tanggungjawab syarikat")}</H3>
         <P>
           {tr("Syarikat bertanggungjawab ke atas ketepatan maklumat pekerja, polisi syarikat dan semakan akhir gaji serta caruman berkanun sebelum dibayar.")}</P>

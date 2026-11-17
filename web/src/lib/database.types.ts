@@ -671,6 +671,90 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"billing_invoices": {
+                  Row: {
+                    "buyer": NonNullable<Json>,"checkout_url": string | null,"chip_purchase_id": string | null,"company_id": string,"created_at": string,"description": string,"discount_sen": number,"id": string,"number": string,"paid_at": string | null,"payer_email": string | null,"payer_name": string | null,"payer_person_id": string | null,"payment_method": string | null,"period_end": string | null,"period_start": string | null,"receipt_number": string | null,"seller": NonNullable<Json>,"status": string,"subtotal_sen": number,"total_sen": number,"voucher_id": string | null,"voucher_label": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "buyer"?: NonNullable<Json>,"checkout_url"?: string | null,"chip_purchase_id"?: string | null,"company_id": string,"created_at"?: string,"description": string,"discount_sen"?: number,"id"?: string,"number": string,"paid_at"?: string | null,"payer_email"?: string | null,"payer_name"?: string | null,"payer_person_id"?: string | null,"payment_method"?: string | null,"period_end"?: string | null,"period_start"?: string | null,"receipt_number"?: string | null,"seller"?: NonNullable<Json>,"status"?: string,"subtotal_sen": number,"total_sen": number,"voucher_id"?: string | null,"voucher_label"?: string | null
+                  }
+                  Update: {
+                    "buyer"?: NonNullable<Json>,"checkout_url"?: string | null,"chip_purchase_id"?: string | null,"company_id"?: string,"created_at"?: string,"description"?: string,"discount_sen"?: number,"id"?: string,"number"?: string,"paid_at"?: string | null,"payer_email"?: string | null,"payer_name"?: string | null,"payer_person_id"?: string | null,"payment_method"?: string | null,"period_end"?: string | null,"period_start"?: string | null,"receipt_number"?: string | null,"seller"?: NonNullable<Json>,"status"?: string,"subtotal_sen"?: number,"total_sen"?: number,"voucher_id"?: string | null,"voucher_label"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "billing_invoices_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "billing_invoices_payer_person_id_fkey"
+      columns: ["payer_person_id"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "billing_invoices_voucher_id_fkey"
+      columns: ["voucher_id"]
+isOneToOne: false
+      referencedRelation: "billing_vouchers"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"billing_redemptions": {
+                  Row: {
+                    "company_id": string,"created_at": string,"invoice_id": string,"voucher_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "company_id": string,"created_at"?: string,"invoice_id": string,"voucher_id": string
+                  }
+                  Update: {
+                    "company_id"?: string,"created_at"?: string,"invoice_id"?: string,"voucher_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "billing_redemptions_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "billing_redemptions_invoice_id_fkey"
+      columns: ["invoice_id"]
+isOneToOne: false
+      referencedRelation: "billing_invoices"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "billing_redemptions_voucher_id_fkey"
+      columns: ["voucher_id"]
+isOneToOne: false
+      referencedRelation: "billing_vouchers"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"billing_vouchers": {
+                  Row: {
+                    "active": boolean,"code": string | null,"created_at": string,"created_by": string | null,"ends_at": string | null,"id": string,"kind": string,"max_redemptions": number | null,"name": string,"note": string | null,"starts_at": string | null,"value": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "active"?: boolean,"code"?: string | null,"created_at"?: string,"created_by"?: string | null,"ends_at"?: string | null,"id"?: string,"kind": string,"max_redemptions"?: number | null,"name": string,"note"?: string | null,"starts_at"?: string | null,"value": number
+                  }
+                  Update: {
+                    "active"?: boolean,"code"?: string | null,"created_at"?: string,"created_by"?: string | null,"ends_at"?: string | null,"id"?: string,"kind"?: string,"max_redemptions"?: number | null,"name"?: string,"note"?: string | null,"starts_at"?: string | null,"value"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "billing_vouchers_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"claim_items": {
                   Row: {
                     "ai_extracted": Json | null,"ai_flags": (string)[] | null,"amount": number,"claim_id": string,"claim_type_id": string,"description": string | null,"distance_km": number | null,"expense_date": string,"id": string,"receipt_path": string | null,"receipt_paths": (string)[]
@@ -783,14 +867,14 @@ isOneToOne: false
                   ]
                 },"companies": {
                   Row: {
-                    "accounting_config": NonNullable<Json>,"accounting_system": Database["public"]['Enums']["accounting_system"],"address": string | null,"ai_monthly_limit": number | null,"bank_batch_id": string | null,"bank_corporate_id": string | null,"bank_file_format": Json | null,"ceo_monthly_report": boolean,"claim_submit_days": number | null,"code": string,"company_bank_account": string | null,"company_bank_name": string | null,"created_at": string,"created_by": string | null,"epf_employer_no": string | null,"epf_employer_rate": number | null,"fixed_days": number,"gl_accounts": NonNullable<Json>,"hours_per_day": number,"hr_daily_digest": boolean,"hrdf_registered": boolean,"id": string,"late_grace_minutes": number,"lhdn_c_no": string | null,"lhdn_employer_no": string | null,"logo_path": string | null,"name": string,"notify_email": boolean,"notify_whatsapp": boolean,"onboarding_completed_at": string | null,"ot_basis": string,"ot_items": (string)[],"overtime_enabled": boolean,"payday": number,"payday_reminder": boolean,"payslip_options": NonNullable<Json>,"payslip_preview": boolean,"prorate_basis": string,"reg_no": string | null,"signatory_email": string | null,"signatory_ic": string | null,"signatory_name": string | null,"signatory_phone": string | null,"signatory_position": string | null,"size_band": string | null,"skbbk_default": boolean,"socso_employer_no": string | null,"state": string,"status": string,"suspended_at": string | null,"suspended_reason": string | null,"timezone": string,"unpaid_basis": string,"unpaid_items": (string)[],"wa_monthly_limit": number | null,"weekend_days": (number)[],"work_end": string,"work_schedule": Json | null,"work_start": string,"zakat_no": string | null
+                    "accounting_config": NonNullable<Json>,"accounting_system": Database["public"]['Enums']["accounting_system"],"address": string | null,"ai_monthly_limit": number | null,"bank_batch_id": string | null,"bank_corporate_id": string | null,"bank_file_format": Json | null,"billing_notified": NonNullable<Json>,"billing_status": string,"ceo_monthly_report": boolean,"claim_submit_days": number | null,"code": string,"company_bank_account": string | null,"company_bank_name": string | null,"created_at": string,"created_by": string | null,"epf_employer_no": string | null,"epf_employer_rate": number | null,"fixed_days": number,"gl_accounts": NonNullable<Json>,"hours_per_day": number,"hr_daily_digest": boolean,"hrdf_registered": boolean,"id": string,"late_grace_minutes": number,"lhdn_c_no": string | null,"lhdn_employer_no": string | null,"logo_path": string | null,"name": string,"notify_email": boolean,"notify_whatsapp": boolean,"onboarding_completed_at": string | null,"ot_basis": string,"ot_items": (string)[],"overtime_enabled": boolean,"paid_until": string | null,"payday": number,"payday_reminder": boolean,"payslip_options": NonNullable<Json>,"payslip_preview": boolean,"prorate_basis": string,"reg_no": string | null,"signatory_email": string | null,"signatory_ic": string | null,"signatory_name": string | null,"signatory_phone": string | null,"signatory_position": string | null,"size_band": string | null,"skbbk_default": boolean,"socso_employer_no": string | null,"state": string,"status": string,"suspended_at": string | null,"suspended_reason": string | null,"timezone": string,"trial_ends_at": string | null,"unpaid_basis": string,"unpaid_items": (string)[],"wa_monthly_limit": number | null,"weekend_days": (number)[],"work_end": string,"work_schedule": Json | null,"work_start": string,"zakat_no": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"bank_batch_id"?: string | null,"bank_corporate_id"?: string | null,"bank_file_format"?: Json | null,"ceo_monthly_report"?: boolean,"claim_submit_days"?: number | null,"code": string,"company_bank_account"?: string | null,"company_bank_name"?: string | null,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"fixed_days"?: number,"gl_accounts"?: NonNullable<Json>,"hours_per_day"?: number,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_c_no"?: string | null,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name": string,"notify_email"?: boolean,"notify_whatsapp"?: boolean,"onboarding_completed_at"?: string | null,"ot_basis"?: string,"ot_items"?: (string)[],"overtime_enabled"?: boolean,"payday"?: number,"payday_reminder"?: boolean,"payslip_options"?: NonNullable<Json>,"payslip_preview"?: boolean,"prorate_basis"?: string,"reg_no"?: string | null,"signatory_email"?: string | null,"signatory_ic"?: string | null,"signatory_name"?: string | null,"signatory_phone"?: string | null,"signatory_position"?: string | null,"size_band"?: string | null,"skbbk_default"?: boolean,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"unpaid_basis"?: string,"unpaid_items"?: (string)[],"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_schedule"?: Json | null,"work_start"?: string,"zakat_no"?: string | null
+                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"bank_batch_id"?: string | null,"bank_corporate_id"?: string | null,"bank_file_format"?: Json | null,"billing_notified"?: NonNullable<Json>,"billing_status"?: string,"ceo_monthly_report"?: boolean,"claim_submit_days"?: number | null,"code": string,"company_bank_account"?: string | null,"company_bank_name"?: string | null,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"fixed_days"?: number,"gl_accounts"?: NonNullable<Json>,"hours_per_day"?: number,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_c_no"?: string | null,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name": string,"notify_email"?: boolean,"notify_whatsapp"?: boolean,"onboarding_completed_at"?: string | null,"ot_basis"?: string,"ot_items"?: (string)[],"overtime_enabled"?: boolean,"paid_until"?: string | null,"payday"?: number,"payday_reminder"?: boolean,"payslip_options"?: NonNullable<Json>,"payslip_preview"?: boolean,"prorate_basis"?: string,"reg_no"?: string | null,"signatory_email"?: string | null,"signatory_ic"?: string | null,"signatory_name"?: string | null,"signatory_phone"?: string | null,"signatory_position"?: string | null,"size_band"?: string | null,"skbbk_default"?: boolean,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"trial_ends_at"?: string | null,"unpaid_basis"?: string,"unpaid_items"?: (string)[],"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_schedule"?: Json | null,"work_start"?: string,"zakat_no"?: string | null
                   }
                   Update: {
-                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"bank_batch_id"?: string | null,"bank_corporate_id"?: string | null,"bank_file_format"?: Json | null,"ceo_monthly_report"?: boolean,"claim_submit_days"?: number | null,"code"?: string,"company_bank_account"?: string | null,"company_bank_name"?: string | null,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"fixed_days"?: number,"gl_accounts"?: NonNullable<Json>,"hours_per_day"?: number,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_c_no"?: string | null,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name"?: string,"notify_email"?: boolean,"notify_whatsapp"?: boolean,"onboarding_completed_at"?: string | null,"ot_basis"?: string,"ot_items"?: (string)[],"overtime_enabled"?: boolean,"payday"?: number,"payday_reminder"?: boolean,"payslip_options"?: NonNullable<Json>,"payslip_preview"?: boolean,"prorate_basis"?: string,"reg_no"?: string | null,"signatory_email"?: string | null,"signatory_ic"?: string | null,"signatory_name"?: string | null,"signatory_phone"?: string | null,"signatory_position"?: string | null,"size_band"?: string | null,"skbbk_default"?: boolean,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"unpaid_basis"?: string,"unpaid_items"?: (string)[],"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_schedule"?: Json | null,"work_start"?: string,"zakat_no"?: string | null
+                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"bank_batch_id"?: string | null,"bank_corporate_id"?: string | null,"bank_file_format"?: Json | null,"billing_notified"?: NonNullable<Json>,"billing_status"?: string,"ceo_monthly_report"?: boolean,"claim_submit_days"?: number | null,"code"?: string,"company_bank_account"?: string | null,"company_bank_name"?: string | null,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"fixed_days"?: number,"gl_accounts"?: NonNullable<Json>,"hours_per_day"?: number,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_c_no"?: string | null,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name"?: string,"notify_email"?: boolean,"notify_whatsapp"?: boolean,"onboarding_completed_at"?: string | null,"ot_basis"?: string,"ot_items"?: (string)[],"overtime_enabled"?: boolean,"paid_until"?: string | null,"payday"?: number,"payday_reminder"?: boolean,"payslip_options"?: NonNullable<Json>,"payslip_preview"?: boolean,"prorate_basis"?: string,"reg_no"?: string | null,"signatory_email"?: string | null,"signatory_ic"?: string | null,"signatory_name"?: string | null,"signatory_phone"?: string | null,"signatory_position"?: string | null,"size_band"?: string | null,"skbbk_default"?: boolean,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"trial_ends_at"?: string | null,"unpaid_basis"?: string,"unpaid_items"?: (string)[],"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_schedule"?: Json | null,"work_start"?: string,"zakat_no"?: string | null
                   }
                   Relationships: [
                     {
@@ -2453,7 +2537,13 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "_rd_anak":
+            "_billing_discount":
+{ Args: { "p_price": number,"v": Omit<Database["public"]['Tables']["billing_vouchers"]['Row'], Database["public"]['Tables']["billing_vouchers"]['ComputedFields']> }; Returns: number
+                           },
+"_billing_voucher_ok":
+{ Args: { "p_company": string,"v": Omit<Database["public"]['Tables']["billing_vouchers"]['Row'], Database["public"]['Tables']["billing_vouchers"]['ComputedFields']> }; Returns: string
+                           },
+"_rd_anak":
 { Args: { "p_entity": string }; Returns: (string)[]
                            },
 "_rd_boleh":
@@ -2603,6 +2693,68 @@ isOneToOne: false
 { Args: { "p_employment": string,"p_from": string,"p_to": string }; Returns: {
               "clock_in": string,"clock_out": string,"correction_request": string,"correction_status": Database["public"]['Enums']["request_status"],"holiday": string,"late_minutes": number,"leave_code": string,"source": string,"work_date": string,"working_day": boolean
             }[]
+                           },
+"billing_create_invoice":
+{ Args: { "p_code"?: string,"p_company": string }; Returns: Json
+                           },
+"billing_invoice_for_checkout":
+{ Args: { "p_invoice": string }; Returns: Json
+                           },
+"billing_invoice_view":
+{ Args: { "p_id": string }; Returns: Json
+                           },
+"billing_invoices_list":
+{ Args: { "p_company": string }; Returns: {
+              "buyer": NonNullable<Json>,
+"checkout_url": string | null,
+"chip_purchase_id": string | null,
+"company_id": string,
+"created_at": string,
+"description": string,
+"discount_sen": number,
+"id": string,
+"number": string,
+"paid_at": string | null,
+"payer_email": string | null,
+"payer_name": string | null,
+"payer_person_id": string | null,
+"payment_method": string | null,
+"period_end": string | null,
+"period_start": string | null,
+"receipt_number": string | null,
+"seller": NonNullable<Json>,
+"status": string,
+"subtotal_sen": number,
+"total_sen": number,
+"voucher_id": string | null,
+"voucher_label": string | null
+            }[]
+                          SetofOptions: {
+        from: "*"
+        to: "billing_invoices"
+        isOneToOne: false
+        isSetofReturn: true
+      } },
+"billing_mark_paid":
+{ Args: { "p_invoice": string,"p_method"?: string,"p_purchase": string }; Returns: Json
+                           },
+"billing_quote":
+{ Args: { "p_code"?: string,"p_company": string }; Returns: Json
+                           },
+"billing_set_checkout":
+{ Args: { "p_invoice": string,"p_purchase": string,"p_url": string }; Returns: undefined
+                           },
+"billing_setting":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"billing_status":
+{ Args: { "p_company": string }; Returns: Json
+                           },
+"billing_tick":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
+"billing_writable":
+{ Args: { "p_company": string }; Returns: boolean
                            },
 "birthday_whatsapp":
 { Args: { "p_company": string,"p_person": string }; Returns: string
@@ -3514,6 +3666,25 @@ isOneToOne: false
               "action": string,"actor": string,"at": string,"kind": string,"target": string
             }[]
                            },
+"sa_billing_invoices":
+{ Args: { "p_limit"?: number }; Returns: {
+              "company_name": string,"created_at": string,"discount_sen": number,"id": string,"number": string,"paid_at": string,"receipt_number": string,"status": string,"total_sen": number,"voucher_label": string
+            }[]
+                           },
+"sa_billing_overview":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "billing_status": string,"code": string,"company_id": string,"created_at": string,"last_paid_at": string,"name": string,"paid_total_sen": number,"paid_until": string,"trial_ends_at": string
+            }[]
+                           },
+"sa_billing_set":
+{ Args: { "p_company": string,"p_status": string,"p_until"?: string }; Returns: undefined
+                           },
+"sa_billing_settings":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"sa_billing_settings_set":
+{ Args: { "p_data": Json }; Returns: undefined
+                           },
 "sa_client_errors":
 { Args: { "p_days"?: number }; Returns: {
               "companies": string,"count": number,"fingerprint": string,"first_at": string,"last_at": string,"message": string,"path": string,"release": string,"stack": string,"user_agent": string,"users": number
@@ -3578,6 +3749,14 @@ isOneToOne: false
 "sa_users":
 { Args: { "p_query": string }; Returns: {
               "active": boolean,"companies": string,"is_platform_admin": boolean,"last_sign_in": string,"name": string,"person_id": string,"whatsapp": string
+            }[]
+                           },
+"sa_voucher_save":
+{ Args: { "p_data": Json,"p_id"?: string }; Returns: string
+                           },
+"sa_vouchers":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "active": boolean,"code": string,"created_at": string,"ends_at": string,"id": string,"kind": string,"max_redemptions": number,"name": string,"note": string,"starts_at": string,"used": number,"value": number
             }[]
                            },
 "same_company_person":

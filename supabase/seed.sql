@@ -131,3 +131,6 @@ grant usage on schema dev to supabase_auth_admin;
 grant insert, select on dev.sms_outbox to supabase_auth_admin;
 grant execute on function dev.send_sms_hook(jsonb) to supabase_auth_admin;
 revoke execute on function dev.send_sms_hook(jsonb) from public, anon, authenticated;
+
+-- Data demo: syarikat contoh dikecualikan daripada yuran langganan (seperti syarikat sedia ada)
+update companies set billing_status = 'exempt' where id = '00000000-0000-0000-0000-0000000000c1';

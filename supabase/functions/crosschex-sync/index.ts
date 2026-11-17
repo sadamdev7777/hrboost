@@ -4,7 +4,7 @@
 //  mengikut kekerapan pilihannya (5/15/30 minit, attendance_integrations.next_run_at).
 //
 //  Panggilan:
-//   - pg_cron: Authorization: Bearer <service role>, badan kosong → semua syarikat yang tiba masanya
+//   - pg_cron: Bearer <service role> atau x-cron-secret (Vault notify_cron_secret), badan kosong → semua syarikat yang tiba masanya
 //   - Skrin IntegrasiKehadiran: Authorization: Bearer <JWT pengguna>,
 //       { company_id, mode: "test" | "pull" } → HR/Pentadbir syarikat itu sahaja
 //
@@ -42,8 +42,13 @@ Deno.serve(async (req) => {
     body = {};
   }
 
-  // Pengguna (bukan service role): mesti HR/Pentadbir syarikat itu
-  if (auth !== `Bearer ${SERVICE}`) {
+  // pg_cron: kunci service role, atau rahsia jadual (x-cron-secret, Vault 'notify_cron_secret')
+  const rahsia = req.headers.get("x-cron-secret");
+  const cron = auth === `Bearer ${SERVICE}` || (!!rahsia && (await sb.rpc("notify_cron_check", { p_secret: rahsia })).data === true);
+  if (rahsia && !cron) return json({ error: "Tidak dibenarkan" }, 401);
+
+  // Pengguna (bukan pg_cron): mesti HR/Pentadbir syarikat itu
+  if (!cron) {
     if (!body.company_id || !auth.startsWith("Bearer ")) return json({ error: "Tidak dibenarkan" }, 401);
     const user = createClient(URL, ANON, { global: { headers: { Authorization: auth } }, auth: { persistSession: false } });
     const { data: boleh } = await user.rpc("can_manage_attendance", { p_company: body.company_id });

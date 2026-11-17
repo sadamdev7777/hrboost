@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "HRBoost.io",
     short_name: "HRBoost",
-    description: tr("Sistem HR percuma untuk syarikat di Malaysia, terus melalui WhatsApp."),
+    description: tr("Sistem HR untuk syarikat di Malaysia, terus melalui WhatsApp."),
     lang: "ms",
     start_url: "/utama",
     scope: "/",

@@ -1,7 +1,7 @@
 // Ujian laman utama awam (design/HomepageV2.dc.html): English lalai & BM, 1280px & 390px.
 //  - tiada teks BM tertinggal dalam English; tiada dakwaan "balas LULUS" di WhatsApp
 //  - seksyen demo & alat percuma disembunyikan (bendera lalai)
-//  - tab skrin boleh digunakan dengan anak panah; kalkulator 25 pekerja → jimat RM5,100 setahun
+//  - tab skrin boleh digunakan dengan anak panah; kalkulator 25 pekerja → jimat RM4,601 setahun (selepas RM499)
 //  - tiada bar daftar melekat; tiada limpahan mendatar; sasaran sentuh ≥ 44px
 // Prasyarat: aplikasi di localhost:3000. Jalankan: node web/e2e/laman-utama.cjs
 const os = require('os');
@@ -70,7 +70,7 @@ async function semakUmum(p, label) {
   expect((await p.locator('output').innerText()).trim() === '20', 'kalkulator lalai 20 pekerja');
   await p.click('button[aria-label="More employees"]');
   expect((await p.locator('output').innerText()).trim() === '25', '+ menjadi 25');
-  expect((await p.innerText('body')).includes('Save up to RM5,100 a year.'), 'jimat RM5,100 setahun (25 × 17 × 12)');
+  expect((await p.innerText('body')).includes('Save up to RM4,601 a year.'), 'jimat RM4,601 setahun (25 × 17 × 12 − RM499)');
   expect(!(await p.innerText('body')).includes('SAHKAN'), 'nota anggaran tanpa [SAHKAN SEBELUM DITERBITKAN]');
   for (let i = 0; i < 12; i++) await p.click('button[aria-label="More employees"]').catch(() => {});
   expect((await p.locator('output').innerText()).trim() === '50', 'had maksimum 50');

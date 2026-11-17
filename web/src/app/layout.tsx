@@ -18,7 +18,7 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: "HRBoost.io",
-  description: tr("Sistem HR percuma untuk syarikat di Malaysia, terus melalui WhatsApp."),
+  description: tr("Sistem HR untuk syarikat di Malaysia, terus melalui WhatsApp."),
 };
 
 export const viewport: Viewport = {

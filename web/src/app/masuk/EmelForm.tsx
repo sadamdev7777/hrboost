@@ -89,7 +89,7 @@ export function EmelForm() {
         <span>
           {tr("Syarikat baharu?")}{" "}
           <Link href="/daftar" className="font-bold">
-            {tr("Daftar percuma")}</Link>
+            {tr("Cuba percuma")}</Link>
         </span>
       </div>
     </form>

@@ -6,7 +6,7 @@ import Kandungan from "./Kandungan";
 // Teks sumber dalam BM; tr() di pelayan memulangkan English (bahasa lalai)
 const TAJUK = "HRBoost.io — Urusan HR yang lengkap, tanpa pegawai HR";
 const HURAIAN =
-  "Sistem HR percuma untuk syarikat 5–50 pekerja di Malaysia yang tiada pegawai HR. Cuti, tuntutan, kehadiran dan gaji (KWSP, PERKESO, PCB) dalam satu sistem; pekerja memohon melalui telefon dan ketua meluluskan dengan satu sentuhan.";
+  "Sistem HR RM499 setahun untuk syarikat 5–50 pekerja di Malaysia yang tiada pegawai HR. Cuti, tuntutan, kehadiran dan gaji (KWSP, PERKESO, PCB) dalam satu sistem; pekerja memohon melalui telefon dan ketua meluluskan dengan satu sentuhan.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const ms = (await cookies()).get("hrb_bahasa")?.value === "ms";

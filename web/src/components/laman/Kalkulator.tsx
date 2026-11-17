@@ -17,7 +17,7 @@ export function Kalkulator() {
     <div className="grid items-center gap-7 rounded-[20px] bg-[#F4F6F5] px-[18px] py-6 min-[700px]:rounded-[24px] min-[700px]:px-8 min-[700px]:py-9 min-[980px]:grid-cols-2">
       <div className="flex flex-col gap-3">
         <h2 className="m-0 text-[23px] leading-[1.15] font-extrabold tracking-[-0.015em] min-[700px]:text-[28px] min-[980px]:text-[36px]">{tr("Berapa banyak yang boleh anda jimatkan?")}</h2>
-        <p className="m-0 text-base leading-relaxed text-[#5B6B68]">{tr("Sistem lain mengenakan bayaran bagi setiap pekerja, setiap bulan. HRBoost percuma.")}</p>
+        <p className="m-0 text-base leading-relaxed text-[#5B6B68]">{tr("Sistem lain mengenakan bayaran bagi setiap pekerja, setiap bulan. HRBoost RM499 setahun bagi seluruh syarikat.")}</p>
         <div className="mt-1.5 flex items-center justify-between gap-3 rounded-[14px] bg-white py-2 pr-2 pl-4">
           <span id="kalk-label" className="text-sm font-bold">
             {tr("Bilangan pekerja")}
@@ -46,12 +46,12 @@ export function Kalkulator() {
           </div>
           <div className="flex flex-col gap-0.5 rounded-[14px] bg-primary p-3.5 text-white">
             <span className="text-xs font-bold text-[#D7ECE7]">HRBoost</span>
-            <b className="text-[17px] leading-tight font-extrabold min-[700px]:text-[19px]">RM0</b>
-            <span className="text-xs text-[#D7ECE7]">{tr("sebulan, semua modul")}</span>
+            <b className="text-[17px] leading-tight font-extrabold min-[700px]:text-[19px]">RM499</b>
+            <span className="text-xs text-[#D7ECE7]">{tr("setahun, seluruh syarikat")}</span>
           </div>
         </div>
         <p className="m-0 text-[15px] font-bold text-[#0A4F46]" aria-live="polite">
-          {tr("Jimat sehingga {0} setahun.", rm(n * KADAR_SISTEM_LAIN.maks * 12))}
+          {tr("Jimat sehingga {0} setahun.", rm(Math.max(0, n * KADAR_SISTEM_LAIN.maks * 12 - 499)))}
         </p>
         <span className="text-xs leading-normal text-[#5B6B68]">
           {tr("Anggaran RM{0}–RM{1} seorang sebulan untuk HR dan gaji, berdasarkan harga umum yang diterbitkan.", KADAR_SISTEM_LAIN.min, KADAR_SISTEM_LAIN.maks)}

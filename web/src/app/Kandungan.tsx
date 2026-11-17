@@ -63,7 +63,7 @@ const ALAT = () => [
 ];
 const SOALAN = () => [
   [tr("Saya tiada pegawai HR. Bolehkah saya menggunakan HRBoost?"), tr("Boleh. HRBoost dibina untuk syarikat 5–50 pekerja yang menguruskan HR sendiri. Tetapan cuti, kelulusan dan tuntutan disediakan mengikut Akta Kerja, dan kadar berkanun dikemas kini secara automatik.")],
-  [tr("Adakah HRBoost benar-benar percuma?"), tr("Ya. Daftar syarikat, jemput pekerja dan gunakan semua modul tanpa bayaran dan tanpa kad kredit.")],
+  [tr("Berapakah harga HRBoost?"), tr("Cuba percuma selama 5 hari tanpa kad kredit. Selepas itu RM499 setahun bagi seluruh syarikat — semua modul, pekerja tanpa had.")],
   [tr("Adakah data pekerja selamat?"), tr("Setiap syarikat diasingkan sepenuhnya. Hanya HR syarikat anda boleh melihat data peribadi, dan setiap akses direkodkan.")],
   [tr("Perlukah pekerja memasang aplikasi?"), tr("Tidak. Pekerja membuka pautan jemputan dan terus menggunakan pelayar telefon. Aplikasi juga boleh dipasang pada skrin utama telefon jika dikehendaki.")],
   [tr("Adakah kiraan KWSP, PERKESO dan PCB tepat?"), tr("Kadar berkanun dikemas kini oleh HRBoost. Semak slip gaji pertama dengan kalkulator rasmi sebelum membayar.")],
@@ -216,7 +216,7 @@ export default function Kandungan() {
                 <b>{tr("Pekerja menerima pautan jemputan")}</b> {tr("melalui WhatsApp atau e-mel, dan boleh terus memohon cuti.")}
               </li>
             </ol>
-            <span className="text-sm text-[#5B6B68]">{tr("Percuma sepenuhnya. Setiap syarikat diasingkan dan setiap akses kepada data peribadi direkodkan.")}</span>
+            <span className="text-sm text-[#5B6B68]">{tr("RM499 setahun bagi seluruh syarikat. Setiap syarikat diasingkan dan setiap akses kepada data peribadi direkodkan.")}</span>
           </div>
         </section>
 
@@ -241,7 +241,7 @@ export default function Kandungan() {
         {/* 12. Seruan akhir */}
         <section className={`${BALUT} flex flex-col items-center gap-5 pt-16 pb-10 text-center min-[700px]:py-32`}>
           <h2 className={H2}>{tr("Sedia untuk mencuba?")}</h2>
-          <p className="m-0 text-base text-[#5B6B68]">{tr("Percuma. Tiada kad kredit.")}</p>
+          <p className="m-0 text-base text-[#5B6B68]">{tr("Cuba percuma 5 hari, kemudian RM499 setahun. Tiada kad kredit.")}</p>
           <Link href="/daftar" className="flex h-[52px] items-center rounded-xl bg-primary px-7 text-base font-bold text-white!">
             {tr("Daftar syarikat")}
           </Link>
@@ -303,11 +303,11 @@ function Hero() {
         <span className="text-sm font-bold text-primary">{tr("Untuk syarikat 5–50 pekerja tanpa pegawai HR")}</span>
         <h1 className="m-0 text-[31px] leading-[1.08] font-extrabold tracking-[-0.025em] min-[700px]:text-[38px] min-[980px]:text-[56px]">{tr("Urusan HR yang lengkap, tanpa pegawai HR.")}</h1>
         <p className="m-0 max-w-[500px] text-base leading-relaxed text-[#5B6B68] min-[700px]:text-lg">
-          {tr("Cuti, tuntutan, kehadiran dan gaji diuruskan dalam satu sistem. Pekerja memohon melalui telefon, ketua meluluskan dengan satu sentuhan, dan gaji dikira mengikut KWSP, PERKESO dan PCB. Percuma.")}
+          {tr("Cuti, tuntutan, kehadiran dan gaji diuruskan dalam satu sistem. Pekerja memohon melalui telefon, ketua meluluskan dengan satu sentuhan, dan gaji dikira mengikut KWSP, PERKESO dan PCB. Cuba percuma 5 hari, kemudian RM499 setahun.")}
         </p>
         <div className="mt-2 flex flex-col gap-3 min-[700px]:flex-row">
           <Link href="/daftar" className="flex h-12 items-center justify-center rounded-xl bg-primary px-[26px] text-[15px] font-bold text-white! min-[700px]:h-[52px] min-[700px]:text-base">
-            {tr("Daftar syarikat — percuma")}
+            {tr("Daftar syarikat — cuba percuma 5 hari")}
           </Link>
           {BENDERA.demo && (
             <a href="#demo" className="box-border flex h-12 items-center justify-center rounded-xl border-[1.5px] border-[#C9D3D1] px-6 text-[15px] font-bold text-ink! min-[700px]:h-[52px] min-[700px]:text-base">
@@ -393,7 +393,7 @@ function KakiHalaman() {
       <div className={`${BALUT} grid gap-8 pt-11 pb-8 min-[980px]:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]`}>
         <div className="flex flex-col gap-3.5">
           <Logo />
-          <p className="m-0 max-w-[320px] text-sm leading-relaxed text-[#5B6B68]">{tr("Sistem HR percuma untuk syarikat 5–50 pekerja di Malaysia yang tiada pegawai HR.")}</p>
+          <p className="m-0 max-w-[320px] text-sm leading-relaxed text-[#5B6B68]">{tr("Sistem HR RM499 setahun untuk syarikat 5–50 pekerja di Malaysia yang tiada pegawai HR.")}</p>
           <div className="flex flex-wrap gap-2">
             <a href={HUBUNGI.waUrl} className="flex h-11 items-center gap-2 rounded-[10px] border border-[#E2E8E6] bg-white px-3.5 text-[13px] font-bold text-ink!">
               <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0F6B5F" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">

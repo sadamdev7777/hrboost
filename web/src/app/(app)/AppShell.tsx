@@ -1,5 +1,6 @@
 "use client";
 
+import { getLangganan, type Langganan } from "@/lib/langganan";
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -139,6 +140,7 @@ function Notis() {
   }, [admin, cid]);
   return (
     <>
+      <JalurLangganan />
       {n.notis && (
         <div role="status" className="bg-warning-soft px-4 py-2 text-center text-[13px] font-semibold text-warning">
           {n.notis}
@@ -181,5 +183,41 @@ export function AppShell({ children }: { children: ReactNode }) {
         <Guard>{children}</Guard>
       </Suspense>
     </MeProvider>
+  );
+}
+
+/** Jalur langganan: percubaan / tangguh untuk yang boleh membayar; baca sahaja untuk semua. */
+function JalurLangganan() {
+  const { state } = useMeContext();
+  const me = state.status === "ready" ? state.me : null;
+  const cid = me?.active?.companyId;
+  const path = usePathname();
+  const [s, setS] = useState<Langganan | null>(null);
+  useEffect(() => {
+    let batal = false;
+    if (cid) getLangganan(cid).then((x) => !batal && setS(x)).catch(() => {});
+    return () => {
+      batal = true;
+    };
+  }, [cid, path]);
+  if (!s || s.status === "active" || s.status === "exempt" || path.startsWith("/pengurusan/langganan") || path.startsWith("/langganan")) return null;
+  if (s.status === "trial" && !s.can_pay) return null;
+  const teks =
+    s.status === "trial"
+      ? tr("Percubaan percuma: {0} hari lagi — langgan RM{1} setahun", Math.max(0, s.days_left ?? 0), (s.price_sen / 100).toFixed(0))
+      : s.status === "grace"
+        ? tr("Langganan telah tamat — bayar segera untuk mengelakkan mod baca sahaja")
+        : s.can_pay
+          ? tr("Langganan tamat: sistem dalam mod baca sahaja — perbaharui sekarang")
+          : tr("Langganan syarikat telah tamat. Sila hubungi Pentadbir syarikat.");
+  const kelas = s.status === "trial" ? "bg-[#E3F1EE] text-primary!" : "bg-danger text-white!";
+  return s.can_pay ? (
+    <Link href="/pengurusan/langganan" className={`flex min-h-9 items-center justify-center px-3 py-1.5 text-center text-xs font-bold ${kelas}`}>
+      {teks}
+    </Link>
+  ) : (
+    <div role="status" className={`flex min-h-9 items-center justify-center px-3 py-1.5 text-center text-xs font-bold ${kelas}`}>
+      {teks}
+    </div>
   );
 }

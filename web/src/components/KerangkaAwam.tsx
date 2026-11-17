@@ -28,7 +28,7 @@ export function KerangkaAwam({ children, tajuk, kecil, ciri }: { children: React
             ))}
           </ul>
         </div>
-        <span className="text-sm opacity-75">{tr("Sistem HR percuma untuk syarikat di Malaysia.")}</span>
+        <span className="text-sm opacity-75">{tr("Sistem HR untuk syarikat di Malaysia.")}</span>
       </aside>
       <div className="flex min-h-dvh grow justify-center">
         <div className="flex w-full max-w-[480px] flex-col lg:max-w-[540px] lg:justify-center lg:py-10">{children}</div>
@@ -39,7 +39,7 @@ export function KerangkaAwam({ children, tajuk, kecil, ciri }: { children: React
 
 /** Teks panel jenama bagi pendaftaran syarikat. */
 export const CIRI_DAFTAR = () => [
-  tr("Percuma untuk syarikat di Malaysia"),
+  tr("Cuba percuma 5 hari"),
   tr("Cuti, tuntutan, kehadiran & gaji dalam satu sistem"),
   tr("Kelulusan terus dari WhatsApp"),
   tr("KWSP, PERKESO, SIP & PCB dikira automatik"),

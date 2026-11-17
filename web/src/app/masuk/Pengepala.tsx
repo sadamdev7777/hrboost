@@ -33,7 +33,7 @@ export function KerangkaMasuk({ children }: { children: ReactNode }) {
             ))}
           </ul>
         </div>
-        <span className="text-sm opacity-75">{tr("Sistem HR percuma untuk syarikat di Malaysia.")}</span>
+        <span className="text-sm opacity-75">{tr("Sistem HR untuk syarikat di Malaysia.")}</span>
       </div>
 
       <main className="relative mx-auto flex min-h-dvh w-full max-w-[480px] flex-col lg:max-w-[440px] lg:justify-center">
