@@ -1,5 +1,6 @@
 "use client";
 
+import { logKeluar } from "@/lib/push";
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useMe } from "@/lib/me";
@@ -39,7 +40,7 @@ export default function MenuHrPage() {
           <Baris n={NAV_TETAPAN} />
         </section>
         <TukarMod />
-        <button type="button" onClick={() => void getSupabase().auth.signOut()} className="min-h-11 text-sm font-bold text-danger">
+        <button type="button" onClick={() => void logKeluar()} className="min-h-11 text-sm font-bold text-danger">
           {tr("Log keluar")}</button>
       </main>
       <TabNav />

@@ -22,7 +22,7 @@ Pemilik produk: Sadam. Reka bentuk skrin: kanvas Design "HRBoost.io — Skrin" (
 |---|---|
 | Frontend | Next.js (App Router) + Tailwind, PWA (installable), BM sebagai bahasa utama |
 | Backend | Supabase: Postgres + RLS, Auth (e-mel + kata laluan, pautan pengesahan e-mel), Storage, Edge Functions, pg_cron |
-| WhatsApp | Murpati (satu nombor platform HRBoost secara default) — **pilihan**. Tanpa Murpati: loceng dalam aplikasi + e-mel (Resend), dan butang `wa.me` (teks siap diisi, `web/src/lib/saluran.ts`) untuk jemputan & ingatkan pelulus |
+| WhatsApp | Murpati (satu nombor platform HRBoost secara default) — **pilihan**. Tanpa Murpati: loceng dalam aplikasi + e-mel (Resend) + **notifikasi telefon (Web Push)**, dan butang `wa.me` (teks siap diisi, `web/src/lib/saluran.ts`) untuk jemputan & ingatkan pelulus |
 | Kehadiran | CrossChex Cloud (server EU) — tarik setiap 5 minit |
 | Akaun | QuickBooks Online (MTB); syarikat lain eksport CSV |
 | AI | Model bahasa untuk baca resit & IC, ringkasan kelulusan, jawab soalan polisi (RAG dari `ai_knowledge_chunks`) |
@@ -75,17 +75,18 @@ Konsep utama:
 | `hr_issue_letter(employment, jenis, butiran, kepada?, pendahuluan?)`, `letter_list_employment(employment)` | HR / Kewangan (memo) | Surat dijana automatik daripada rekod pekerja: tawaran, pengesahan jawatan, lanjutan percubaan, kenaikan gaji, terima peletakan jawatan (+ inventori belum dipulangkan), pengalaman kerja, amaran, tunjuk sebab, memo pendahuluan gaji kepada Kewangan (tidak dilihat pekerja). Dipapar di `/surat/[id]` (A4, simpan PDF). Templat amaran / tunjuk sebab / tawaran ialah draf — perlu semakan peguam |
 | `billing_status`, `billing_quote(company, kod?)`, `billing_create_invoice`, `billing_invoices_list`, `billing_invoice_view` | ahli syarikat / Pentadbir, HR, CEO, Kewangan | Langganan (Tetapan → Langganan, `/pengurusan/langganan`): status, sebut harga dengan kempen automatik atau kod baucar (had N syarikat, dikira selepas bayaran), invois & resit PDF (`web/src/lib/bilPdf.ts`) |
 | `sa_billing_overview`, `sa_billing_set`, `sa_vouchers`, `sa_voucher_save`, `sa_billing_invoices`, `sa_billing_settings(_set)` | superadmin | `/admin/langganan`: harga & penjual, kunci CHIP, kempen & baucar, status syarikat (kecualikan / lanjut), invois |
+| `push_public_key()`, `push_subscribe(endpoint, p256dh, auth, ua)`, `push_unsubscribe(endpoint)`, `push_status(endpoint)`, `sa_push_overview()` | semua pengguna / superadmin | Notifikasi telefon (Web Push, `web/src/lib/push.ts`, `web/public/sw.js`): Saya → Notifikasi telefon (hidup / mati bagi peranti ini); cadangan sekali di Utama selepas aplikasi dipasang. Android: pelayar atau aplikasi; iPhone: iOS 16.4+ selepas Tambah ke Skrin Utama. Log keluar memadam langganan peranti |
 | `log_client_error(...)` → `sa_client_errors(hari)` | semua → superadmin | Pemantauan ralat pelayar (tanpa perkhidmatan luar); `/admin/ralat` |
 
 ### Fungsi untuk Edge Function sahaja (service role)
-`ingest_punch`, `ingest_attendance`, `process_hr_events`, `approval_sla_tick`, `bump_usage`, `agent_tool_call` (alat data dikongsi MCP & Pembantu AI), `integration_secret_set/get` (Vault), `qbo_connect_finish`, `accounting_queue_next/done`, `accounting_claim_bill`, `accounting_payroll_journal`, `ceo_monthly_report`, `billing_set_checkout`, `billing_mark_paid`, `billing_invoice_for_checkout`.
+`ingest_punch`, `ingest_attendance`, `process_hr_events`, `approval_sla_tick`, `bump_usage`, `agent_tool_call` (alat data dikongsi MCP & Pembantu AI), `integration_secret_set/get` (Vault), `qbo_connect_finish`, `accounting_queue_next/done`, `accounting_claim_bill`, `accounting_payroll_journal`, `ceo_monthly_report`, `billing_set_checkout`, `billing_mark_paid`, `billing_invoice_for_checkout`, `push_vapid`, `push_vapid_init`, `push_next`, `push_mark`.
 
 ## 4. Edge Functions & jadual (pg_cron)
 
 | Fungsi | Jadual | Kerja |
 |---|---|---|
 | `events-worker` | setiap minit | `select process_hr_events()` |
-| `notify-sender` | setiap minit | `notify_set_channels` (lapor saluran yang dikonfigurasi) → `notify_next2(had, wa, emel)` memilih saluran bagi setiap notifikasi: **WhatsApp** (Murpati, jika dikonfigurasi & `companies.notify_whatsapp`; `bump_usage(company,'wa')`) → **e-mel** (Resend `RESEND_API_KEY`/`EMAIL_FROM`, jika `companies.notify_email`) → **dalam aplikasi sahaja** (`skipped`). Notifikasi > 3 hari tidak dihantar. Loceng dalam aplikasi sentiasa memaparkan semua notifikasi |
+| `notify-sender` | setiap minit | `notify_set_channels` (lapor saluran yang dikonfigurasi) → `notify_next2(had, wa, emel)` memilih saluran bagi setiap notifikasi: **WhatsApp** (Murpati, jika dikonfigurasi & `companies.notify_whatsapp`; `bump_usage(company,'wa')`) → **e-mel** (Resend `RESEND_API_KEY`/`EMAIL_FROM`, jika `companies.notify_email`) → **dalam aplikasi sahaja** (`skipped`). Notifikasi > 3 hari tidak dihantar. Loceng dalam aplikasi sentiasa memaparkan semua notifikasi. **Web Push** (saluran tambahan, bebas daripada WhatsApp / e-mel): `push_next` → `_shared/webpush.ts` (Web Crypto, RFC 8291 + VAPID; tajuk & laluan daripada `bentukEmel`); hanya notifikasi selepas peranti dilanggan, < 3 hari, sekali; 404/410 → langganan dipadam. Kunci VAPID dijana sekali oleh fungsi ini (Vault `vapid_private_key`, tidak pernah keluar dari pelayan) |
 | `sla-tick` | setiap 15 minit | `select approval_sla_tick()` |
 | `crosschex-sync` | setiap 5 minit (pg_cron `hrboost-crosschex-sync`, `x-cron-secret`) | Untuk setiap syarikat dengan CrossChex: token (cache sehingga `expires`, ralat `TOKEN_EXPIRES` → minta baru), `getrecord` dari `last_synced_at − 10 min` hingga kini, 100 rekod/halaman (had CrossChex: sekali setiap 15 saat — jeda antara halaman), panggil `ingest_punch` (uuid, `checktime` UTC, `workno`, peranti). Simpan `integration_sync_state` |
 | `whatsapp-inbound` | webhook Murpati | Balasan staff: "LULUS" / "TOLAK sebab" → `approval_act` dengan `p_on_behalf`; teks bebas → agent AI |

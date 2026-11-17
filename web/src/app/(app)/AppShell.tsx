@@ -12,6 +12,8 @@ import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { MenuSisi } from "@/components/TabNav";
 import { CariPantas } from "@/components/CariPantas";
 import { CadanganPasang } from "@/components/CadanganPasang";
+import { CadanganNotifikasi } from "@/components/NotifikasiTelefon";
+import { logKeluar } from "@/lib/push";
 import { useMod } from "@/lib/mod";
 
 function Guard({ children }: { children: ReactNode }) {
@@ -76,7 +78,7 @@ function Guard({ children }: { children: ReactNode }) {
             {tr("Nombor {0} belum dipautkan kepada mana-mana pekerja. Buka pautan jemputan daripada HR, atau hubungi HR syarikat anda.", state.phone ? paparTelefon(state.phone) : "ini")}</p>
           <button
             type="button"
-            onClick={() => void getSupabase().auth.signOut()}
+            onClick={() => void logKeluar()}
             className="h-12 rounded-[14px] border border-line bg-surface text-sm font-bold text-danger"
           >
             {tr("Log keluar")}</button>
@@ -91,6 +93,7 @@ function Guard({ children }: { children: ReactNode }) {
         <MenuSisi />
         <CariPantas />
         <CadanganPasang />
+        <CadanganNotifikasi />
         <div className="min-w-0 lg:flex-1">
           <Notis />
           {children}

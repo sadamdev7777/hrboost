@@ -1731,14 +1731,14 @@ isOneToOne: false
                   ]
                 },"notifications": {
                   Row: {
-                    "attempts": number,"bypass_limit": boolean,"channel": string,"claimed_at": string | null,"company_id": string | null,"created_at": string,"error": string | null,"event_id": number | null,"id": string,"message": string,"person_id": string,"provider_ref": string | null,"read_at": string | null,"rule_id": string | null,"send_after": string | null,"sent_at": string | null,"status": Database["public"]['Enums']["notify_status"],"to_address": string | null
+                    "attempts": number,"bypass_limit": boolean,"channel": string,"claimed_at": string | null,"company_id": string | null,"created_at": string,"error": string | null,"event_id": number | null,"id": string,"message": string,"person_id": string,"provider_ref": string | null,"push_sent_at": string | null,"read_at": string | null,"rule_id": string | null,"send_after": string | null,"sent_at": string | null,"status": Database["public"]['Enums']["notify_status"],"to_address": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "attempts"?: number,"bypass_limit"?: boolean,"channel"?: string,"claimed_at"?: string | null,"company_id"?: string | null,"created_at"?: string,"error"?: string | null,"event_id"?: number | null,"id"?: string,"message": string,"person_id": string,"provider_ref"?: string | null,"read_at"?: string | null,"rule_id"?: string | null,"send_after"?: string | null,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["notify_status"],"to_address"?: string | null
+                    "attempts"?: number,"bypass_limit"?: boolean,"channel"?: string,"claimed_at"?: string | null,"company_id"?: string | null,"created_at"?: string,"error"?: string | null,"event_id"?: number | null,"id"?: string,"message": string,"person_id": string,"provider_ref"?: string | null,"push_sent_at"?: string | null,"read_at"?: string | null,"rule_id"?: string | null,"send_after"?: string | null,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["notify_status"],"to_address"?: string | null
                   }
                   Update: {
-                    "attempts"?: number,"bypass_limit"?: boolean,"channel"?: string,"claimed_at"?: string | null,"company_id"?: string | null,"created_at"?: string,"error"?: string | null,"event_id"?: number | null,"id"?: string,"message"?: string,"person_id"?: string,"provider_ref"?: string | null,"read_at"?: string | null,"rule_id"?: string | null,"send_after"?: string | null,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["notify_status"],"to_address"?: string | null
+                    "attempts"?: number,"bypass_limit"?: boolean,"channel"?: string,"claimed_at"?: string | null,"company_id"?: string | null,"created_at"?: string,"error"?: string | null,"event_id"?: number | null,"id"?: string,"message"?: string,"person_id"?: string,"provider_ref"?: string | null,"push_sent_at"?: string | null,"read_at"?: string | null,"rule_id"?: string | null,"send_after"?: string | null,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["notify_status"],"to_address"?: string | null
                   }
                   Relationships: [
                     {
@@ -2298,6 +2298,26 @@ isOneToOne: false
       columns: ["company_id"]
 isOneToOne: false
       referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"push_subscriptions": {
+                  Row: {
+                    "auth": string,"created_at": string,"endpoint": string,"failures": number,"id": string,"last_ok_at": string | null,"p256dh": string,"person_id": string,"user_agent": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "auth": string,"created_at"?: string,"endpoint": string,"failures"?: number,"id"?: string,"last_ok_at"?: string | null,"p256dh": string,"person_id": string,"user_agent"?: string | null
+                  }
+                  Update: {
+                    "auth"?: string,"created_at"?: string,"endpoint"?: string,"failures"?: number,"id"?: string,"last_ok_at"?: string | null,"p256dh"?: string,"person_id"?: string,"user_agent"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "push_subscriptions_person_id_fkey"
+      columns: ["person_id"]
+isOneToOne: false
+      referencedRelation: "persons"
       referencedColumns: ["id"]
     }
                   ]
@@ -3601,6 +3621,32 @@ isOneToOne: false
 "purge_client_errors":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
+"push_mark":
+{ Args: { "p_endpoint": string,"p_gone"?: boolean,"p_ok": boolean }; Returns: undefined
+                           },
+"push_next":
+{ Args: { "p_limit"?: number }; Returns: {
+              "auth": string,"endpoint": string,"language": string,"message": string,"notification_id": string,"p256dh": string
+            }[]
+                           },
+"push_public_key":
+{ Args: Record<PropertyKey, never>; Returns: string
+                           },
+"push_status":
+{ Args: { "p_endpoint"?: string }; Returns: Json
+                           },
+"push_subscribe":
+{ Args: { "p_auth": string,"p_endpoint": string,"p_p256dh": string,"p_ua"?: string }; Returns: undefined
+                           },
+"push_unsubscribe":
+{ Args: { "p_endpoint": string }; Returns: undefined
+                           },
+"push_vapid":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"push_vapid_init":
+{ Args: { "p_private": string,"p_public": string }; Returns: boolean
+                           },
 "qbo_connect_finish":
 { Args: { "p_state": string }; Returns: string
                            },
@@ -3738,6 +3784,9 @@ isOneToOne: false
 { Args: Record<PropertyKey, never>; Returns: {
               "hint": string,"is_set": boolean,"name": string,"updated_at": string
             }[]
+                           },
+"sa_push_overview":
+{ Args: Record<PropertyKey, never>; Returns: Json
                            },
 "sa_set_company_limits":
 { Args: { "p_ai": number,"p_company": string,"p_wa": number }; Returns: undefined

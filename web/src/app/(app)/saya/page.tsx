@@ -31,6 +31,8 @@ import {
 } from "@/components/icons";
 import { Screen } from "@/components/ui";
 import { PilihBahasa } from "@/components/PilihBahasa";
+import { NotifikasiTelefon } from "@/components/NotifikasiTelefon";
+import { logKeluar as keluarPeranti } from "@/lib/push";
 import { TabNav, TukarMod } from "@/components/TabNav";
 import { useSkrinLebar } from "@/lib/skrin";
 
@@ -50,7 +52,7 @@ export default function SayaPage() {
   const hariIni = (jadi.data ?? []).filter((b) => b.person_id !== me.personId);
 
   async function logKeluar() {
-    await getSupabase().auth.signOut();
+    await keluarPeranti();
     router.replace("/masuk");
   }
 
@@ -112,6 +114,8 @@ export default function SayaPage() {
           </Kumpulan>
         )}
         </div>
+
+        <NotifikasiTelefon />
 
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-surface px-4 py-3 lg:grow">

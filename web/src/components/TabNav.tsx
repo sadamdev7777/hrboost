@@ -2,6 +2,7 @@
 
 import { PilihBahasa } from "./PilihBahasa";
 import { LogoSyarikat } from "./Logo";
+import { logKeluar } from "@/lib/push";
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -211,7 +212,7 @@ export function MenuSisi() {
         <div className="flex items-center justify-between gap-2 px-2">
           {/* Bahasa sentiasa kelihatan (disimpan pada akaun: skrin, WhatsApp & slip gaji) */}
           <PilihBahasa simpan kecil bingkai />
-          <button type="button" onClick={() => void getSupabase().auth.signOut()} className="flex min-h-10 shrink-0 items-center text-[13px] font-bold whitespace-nowrap text-danger">
+          <button type="button" onClick={() => void logKeluar()} className="flex min-h-10 shrink-0 items-center text-[13px] font-bold whitespace-nowrap text-danger">
             {tr("Log keluar")}</button>
         </div>
       </div>

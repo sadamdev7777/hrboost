@@ -1,5 +1,6 @@
 "use client";
 
+import { logKeluar } from "@/lib/push";
 import { tr } from "@/lib/i18n";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
@@ -125,7 +126,7 @@ function KataLaluan() {
           {busy ? tr("Menyimpan…") : pertama ? tr("Simpan & teruskan") : tr("Simpan")}
         </button>
         {pertama && (
-          <button type="button" onClick={() => void getSupabase().auth.signOut()} className="flex min-h-11 items-center justify-center text-sm font-bold text-muted">
+          <button type="button" onClick={() => void logKeluar()} className="flex min-h-11 items-center justify-center text-sm font-bold text-muted">
             {tr("Log keluar")}</button>
         )}
       </form>

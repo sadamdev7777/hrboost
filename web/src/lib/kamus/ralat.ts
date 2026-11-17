@@ -470,4 +470,8 @@ export const RALAT: Record<string, string> = {
   "Nilai CHIP tidak sah": "Invalid CHIP value",
   "Bayaran dalam talian belum diaktifkan. Sila hubungi HRBoost.": "Online payment is not activated yet. Please contact HRBoost.",
   "Bayaran tidak dapat diproses. Sila cuba sebentar lagi.": "The payment could not be processed. Please try again shortly.",
+  // Notifikasi telefon
+  "Langganan notifikasi tidak sah": "Invalid notification subscription",
+  "Notifikasi telefon belum tersedia. Sila cuba sebentar lagi.": "Phone notifications are not available yet. Please try again shortly.",
+  "Kunci VAPID tidak sah": "Invalid VAPID key",
 };
