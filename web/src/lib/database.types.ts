@@ -3048,6 +3048,9 @@ isOneToOne: false
 "invite_check_ic":
 { Args: { "p_ic_last4": string,"p_token": string }; Returns: Json
                            },
+"invite_contact":
+{ Args: { "p_employment": string }; Returns: Json
+                           },
 "invite_employee":
 { Args: { "p_base_url": string,"p_employment": string }; Returns: string
                            },
@@ -3058,6 +3061,9 @@ isOneToOne: false
                            },
 "invite_preview":
 { Args: { "p_token": string }; Returns: Json
+                           },
+"invite_send":
+{ Args: { "p_base_url": string,"p_channel"?: string,"p_employment": string }; Returns: Json
                            },
 "is_approver_of":
 { Args: { "p_request": string }; Returns: boolean

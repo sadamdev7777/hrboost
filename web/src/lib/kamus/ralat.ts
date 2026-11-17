@@ -447,4 +447,8 @@ export const RALAT: Record<string, string> = {
  "Rekod ini telah dipulihkan.": "This record has already been restored.",
  "Tidak dapat dipulihkan: rekod dengan nama atau nombor yang sama sudah wujud.": "Cannot restore: a record with the same name or number already exists.",
  "Tidak dapat dipulihkan: rekod berkaitan (cth. pekerja atau jabatan) sudah tiada.": "Cannot restore: a related record (e.g. the employee or department) no longer exists.",
+ // Jemputan
+ "Saluran jemputan tidak sah": "Invalid invitation channel",
+ "Pekerja ini tiada alamat e-mel. Isi e-mel di profil pekerja dahulu.": "This employee has no email address. Fill in the email on the employee profile first.",
+ "Pekerja ini tiada nombor WhatsApp. Isi nombor di profil pekerja dahulu.": "This employee has no WhatsApp number. Fill in the number on the employee profile first.",
 };

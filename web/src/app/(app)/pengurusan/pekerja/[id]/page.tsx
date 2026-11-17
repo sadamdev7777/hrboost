@@ -1,5 +1,6 @@
 "use client";
 
+import { JemputPekerja } from "@/components/JemputPekerja";
 import { padamRekod } from "@/lib/padam";
 import { tr, trRalat } from "@/lib/i18n";
 import { beritahu, mintaTeks, sahkan } from "@/components/Dialog";
@@ -21,7 +22,6 @@ import {
   getDokumen,
   getGajiSemasa,
   getJabatan,
-  jemputPekerja,
   JENIS_DOKUMEN,
   JENIS_PEKERJAAN,
   kemasKiniPekerjaan,
@@ -152,15 +152,14 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
   const topeng = (v: string | null | undefined, depan: number, belakang: number) =>
     !v ? "-" : tunjuk || v.length <= depan + belakang ? v : v.slice(0, depan) + "•".repeat(Math.max(3, v.length - depan - belakang)) + v.slice(-belakang);
   const [ralat, setRalat] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [pautanBaru, setPautanBaru] = useState<string | null>(null);
   const simpanan = useSyncExternalStore(
     () => () => {},
     () => bacaPautan(p.id),
     () => null,
   );
-  const pautan = pautanBaru ?? simpanan;
-  const saluran = useSaluran(useMe().active?.companyId);
+  const pautan = simpanan;
+  const syarikatAktif = useMe().active?.companyId ?? "";
+  const saluran = useSaluran(syarikatAktif);
   const tamat = !["probation", "active"].includes(p.status);
   const status = tamat
     ? { label: { resigned: tr("Letak jawatan"), terminated: tr("Ditamatkan"), retired: tr("Bersara") }[p.status as string] ?? tr("Tamat"), tone: "neutral" as const }
@@ -170,21 +169,10 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
         ? { label: tr("Percubaan"), tone: "warning" as const }
         : { label: tr("Aktif"), tone: "success" as const };
 
-  async function jemputSemula() {
+  const [jemput, setJemput] = useState(false);
+  function jemputSemula() {
     setRalat(null);
-    setBusy(true);
-    try {
-      const tok = await jemputPekerja(p.id);
-      const url = `${window.location.origin}/jemputan/${tok}`;
-      try {
-        sessionStorage.setItem(`hrb_pautan_jemputan:${p.id}`, url);
-      } catch {}
-      setPautanBaru(url);
-      reload();
-    } catch (e) {
-      setRalat(e instanceof Error ? e.message : tr("Ralat"));
-    }
-    setBusy(false);
+    setJemput(true);
   }
 
   async function bank(lulus: boolean) {
@@ -303,7 +291,8 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
             <Tindakan onClick={() => bukaSurat()} tajuk={tr("Jana surat")} keterangan={tr("Tawaran, pengesahan, kenaikan gaji, amaran, berhenti")} />
             <Tindakan href={`/pembantu-ai?pekerja=${p.id}&surat=1`} ai tajuk={tr("Draf surat lain (AI)")} keterangan={tr("Surat yang tiada templat")} />
             <Tindakan onClick={() => setLembaran("tarikh")} tajuk={tr("Tarikh tamat kontrak, permit & pasport")} keterangan={tr("Peringatan sebelum tamat")} />
-            {!p.activated && <Tindakan onClick={jemputSemula} disabled={busy} tajuk={busy ? tr("Menghantar…") : tr("Hantar semula jemputan")} keterangan={saluran.whatsapp ? tr("Pautan pengaktifan baharu melalui WhatsApp") : tr("Jana pautan pengaktifan baharu untuk dihantar kepada pekerja")} />}
+            {!p.activated && <Tindakan onClick={jemputSemula} tajuk={p.inviteSentAt ? tr("Hantar semula jemputan") : tr("Hantar jemputan")} keterangan={tr("Melalui e-mel atau WhatsApp")} />}
+            {jemput && <JemputPekerja employmentId={p.id} companyId={syarikatAktif} onClose={() => setJemput(false)} onSelesai={reload} />}
           </div>
           <button
             type="button"

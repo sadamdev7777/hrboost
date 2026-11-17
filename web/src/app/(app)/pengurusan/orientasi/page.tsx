@@ -1,21 +1,18 @@
 "use client";
 
+import { JemputPekerja } from "@/components/JemputPekerja";
 import { tr } from "@/lib/i18n";
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { hasRole, useMe } from "@/lib/me";
-import { useSaluran } from "@/lib/saluran";
 import { useData } from "@/lib/useData";
 import { addDays, tarikh, tarikhTempatan, todayISO } from "@/lib/format";
-import { jemputPekerja } from "@/lib/hr";
 import { LANGKAH } from "@/lib/onboarding";
 import { getOrientasiHr, type PekerjaBaharu } from "@/lib/modul";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { HadPeranan, Tag } from "@/components/Senarai";
 import { BarisStat, Jadual, KadStat, Kosong } from "@/components/Modul";
-import { beritahu } from "@/components/Dialog";
 
 type Tapis = "semua" | "belum_aktif" | "orientasi" | "percubaan";
 
@@ -31,10 +28,8 @@ export default function OrientasiHrPage() {
 function Kandungan() {
   const me = useMe();
   const emp = me.active!;
-  const router = useRouter();
   const d = useData(() => getOrientasiHr(emp.companyId), [emp.companyId]);
   const [tapis, setTapis] = useState<Tapis>("semua");
-  const [sibuk, setSibuk] = useState<string | null>(null);
   const [ralat, setRalat] = useState<string | null>(null);
   const hari = todayISO();
   const semua = d.data ?? [];
@@ -44,28 +39,11 @@ function Kandungan() {
   const tamatHampir = percubaan.filter((p) => p.probation_end_date && p.probation_end_date <= addDays(hari, 30));
   const papar = tapis === "belum_aktif" ? belumAktif : tapis === "orientasi" ? orientasi : tapis === "percubaan" ? percubaan : semua;
   const bolehJemput = hasRole(me, ["hr", "admin"]);
-  const saluran = useSaluran(me.active?.companyId);
 
-  async function jemput(p: PekerjaBaharu) {
-    setSibuk(p.employment_id);
+  const [jemputId, setJemputId] = useState<string | null>(null);
+  function jemput(p: PekerjaBaharu) {
     setRalat(null);
-    try {
-      const tok = await jemputPekerja(p.employment_id);
-      if (saluran.whatsapp) {
-        beritahu(tr("Jemputan dihantar kepada {0} melalui WhatsApp.", p.name));
-        d.reload();
-      } else {
-        // Tiada WhatsApp automatik: buka profil pekerja yang memaparkan pautan + butang WhatsApp / salin
-        try {
-          sessionStorage.setItem(`hrb_pautan_jemputan:${p.employment_id}`, `${window.location.origin}/jemputan/${tok}`);
-        } catch {}
-        router.push(`/pengurusan/pekerja/${p.employment_id}`);
-      }
-    } catch (e) {
-      setRalat(e instanceof Error ? e.message : tr("Ralat"));
-    } finally {
-      setSibuk(null);
-    }
+    setJemputId(p.employment_id);
   }
 
   return (
@@ -122,7 +100,7 @@ function Kandungan() {
                         <span className="flex flex-col items-start gap-1">
                           <Tag tone="danger">{p.invite_sent_at ? tr("Dijemput {0}", tarikh(tarikhTempatan(p.invite_sent_at))) : tr("Belum dijemput")}</Tag>
                           {bolehJemput && (
-                            <button type="button" disabled={sibuk === p.employment_id} onClick={() => jemput(p)} className="min-h-8 text-[13px] font-bold whitespace-nowrap text-primary disabled:opacity-50">
+                            <button type="button" onClick={() => jemput(p)} className="min-h-8 text-[13px] font-bold whitespace-nowrap text-primary disabled:opacity-50">
                               {p.invite_sent_at ? tr("Hantar semula") : tr("Hantar jemputan")}</button>
                           )}
                         </span>
@@ -151,6 +129,7 @@ function Kandungan() {
           </>
         )}
       </main>
+      {jemputId && me.active && <JemputPekerja employmentId={jemputId} companyId={me.active.companyId} onClose={() => setJemputId(null)} onSelesai={d.reload} />}
       <TabNav />
     </Screen>
   );
