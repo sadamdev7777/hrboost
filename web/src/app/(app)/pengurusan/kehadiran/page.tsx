@@ -6,7 +6,10 @@ import { useState } from "react";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { addDays, hariTarikh, jam, todayISO } from "@/lib/format";
-import { getKehadiranHari, muatTurunCSV, statusHadir, type StatusHadir } from "@/lib/modul";
+import { getKehadiranHari, muatTurunCSV, statusHadir, type PunchGps, type StatusHadir } from "@/lib/modul";
+import { jarakTeks, laluanSwafoto, petaUrl } from "@/lib/kehadiranGps";
+import { urlSementara } from "@/lib/upload";
+import { beritahu } from "@/components/Dialog";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { PengepalaAkar, TabNav } from "@/components/TabNav";
 import { TabModul } from "@/components/TabModul";
@@ -20,6 +23,41 @@ const LABEL: Record<StatusHadir, { label: string; tone: "success" | "warning" | 
   tiada_rekod: { label: tr("Tiada rekod"), tone: "danger" },
   rehat: { label: tr("Hari rehat"), tone: "neutral" },
 };
+
+const SUMBER: Record<string, string> = { crosschex: tr("Mesin"), gps: tr("Telefon"), campuran: tr("Mesin & telefon"), correction: tr("Pembetulan") };
+
+/** Daftar masuk / keluar melalui telefon: masa, lokasi, peta & swafoto (akses swafoto direkod). */
+function PunchTelefon({ senarai }: { senarai: PunchGps[] }) {
+  async function bukaSwafoto(id: number) {
+    try {
+      const p = await laluanSwafoto(id);
+      const u = p ? await urlSementara(p) : null;
+      if (!u) throw new Error(tr("Swafoto tidak dapat dibuka."));
+      window.open(u, "_blank", "noopener");
+    } catch (e) {
+      beritahu((e as Error).message, "ralat");
+    }
+  }
+  return (
+    <ul className="m-0 mt-1 flex list-none flex-col gap-0.5 p-0 text-xs text-muted">
+      {senarai.map((g) => (
+        <li key={g.id} className="flex flex-wrap items-center gap-x-1.5">
+          <span>
+            {g.kind === "out" ? tr("Keluar") : tr("Masuk")} {jam(g.punched_at)} · {g.outside ? <b className="text-warning">{tr("Luar lokasi {0}", jarakTeks(g.distance_m))}</b> : (g.location_name ?? "")}
+          </span>
+          <a href={petaUrl(g.lat, g.lng)} target="_blank" rel="noreferrer" className="font-bold">
+            {tr("Peta")}
+          </a>
+          {g.has_selfie && (
+            <button type="button" onClick={() => bukaSwafoto(g.id)} className="font-bold text-primary">
+              {tr("Swafoto")}
+            </button>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 /** Modul Kehadiran (HR): kehadiran harian semua pekerja, lewat, cuti dan tiada rekod. */
 export default function KehadiranHrPage() {
@@ -44,8 +82,17 @@ function Kandungan() {
 
   function eksport() {
     muatTurunCSV(tr("kehadiran-{0}-{1}.csv", emp.companyCode, hari), [
-      [tr("Nama"), tr("Jabatan"), tr("Masuk"), tr("Keluar"), tr("Lewat (minit)"), tr("Status")],
-      ...rows.map((r) => [r.name, r.department ?? "", r.clock_in ? jam(r.clock_in) : "", r.clock_out ? jam(r.clock_out) : "", r.late_minutes, LABEL[r.s].label]),
+      [tr("Nama"), tr("Jabatan"), tr("Masuk"), tr("Keluar"), tr("Lewat (minit)"), tr("Status"), tr("Sumber"), tr("Luar lokasi")],
+      ...rows.map((r) => [
+        r.name,
+        r.department ?? "",
+        r.clock_in ? jam(r.clock_in) : "",
+        r.clock_out ? jam(r.clock_out) : "",
+        r.late_minutes,
+        LABEL[r.s].label,
+        SUMBER[r.source ?? ""] ?? "",
+        r.in_outside || r.out_outside ? tr("Ya") : "",
+      ]),
     ]);
   }
 
@@ -113,13 +160,15 @@ function Kandungan() {
                       <span className="flex flex-wrap gap-1">
                         <Tag tone={LABEL[r.s].tone === "neutral" ? "neutral" : LABEL[r.s].tone}>{r.s === "cuti" && r.leave_code ? `${LABEL[r.s].label} · ${r.leave_code}` : LABEL[r.s].label}</Tag>
                         {r.flexible && <Tag tone="ai">{tr("Fleksibel")}</Tag>}
+                        {(r.in_outside || r.out_outside) && <Tag tone="warning">{tr("Luar lokasi")}</Tag>}
                       </span>
+                      {!!r.gps?.length && <PunchTelefon senarai={r.gps} />}
                     </td>
                   </tr>
                 ))}
               </Jadual>
             )}
-            <span className="text-xs text-muted">{tr("Data daripada mesin kehadiran (dikemas kini setiap 5 minit) dan pembetulan masa yang diluluskan.")}</span>
+            <span className="text-xs text-muted">{tr("Data daripada mesin kehadiran (dikemas kini setiap 5 minit), daftar masuk melalui telefon dan pembetulan masa yang diluluskan.")}</span>
           </>
         )}
       </main>

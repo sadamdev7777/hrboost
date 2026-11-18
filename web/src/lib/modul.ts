@@ -59,6 +59,21 @@ export type BarisKehadiran = {
   late_minutes: number;
   leave_code: string | null;
   flexible: boolean | null;
+  source?: string | null;
+  in_outside?: boolean;
+  out_outside?: boolean;
+  gps?: PunchGps[] | null;
+};
+export type PunchGps = {
+  id: number;
+  punched_at: string;
+  kind: "in" | "out" | null;
+  location_name: string | null;
+  distance_m: number | null;
+  outside: boolean | null;
+  lat: number;
+  lng: number;
+  has_selfie: boolean;
 };
 export type PembetulanMenunggu = {
   id: string;

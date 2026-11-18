@@ -8,6 +8,7 @@ import { must, useData } from "@/lib/useData";
 import { getSenaraiPekerja } from "@/lib/hr";
 import { masa, tarikh } from "@/lib/format";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
+import { TetapanGps } from "@/components/TetapanGps";
 import { ButangUtama, HadPeranan, Lembaran, MedanBorang, Seksyen, Tag, inputKecil, GrupLajur } from "@/components/Senarai";
 
 type Status = {
@@ -112,6 +113,7 @@ function Integrasi() {
       <BackHeader title={tr("Integrasi Kehadiran")} href="/pengurusan/tetapan" />
       <main className="flex grow flex-col gap-2.5 px-4 pt-1 pb-4">
         <GrupLajur>
+        <TetapanGps companyId={cid} />
         {d.error && <ErrorBox message={d.error} />}
         {d.loading && !d.data && <Loading />}
         {s && (

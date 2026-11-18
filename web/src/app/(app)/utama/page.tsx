@@ -12,6 +12,7 @@ import { getSupabase } from "@/lib/supabase";
 import { IconCalendar, IconClock, IconReceipt } from "@/components/icons";
 import { Greeting } from "@/components/Greeting";
 import { OrientasiBanner } from "@/components/OrientasiBanner";
+import { KadDaftarMasuk } from "@/components/KadDaftarMasuk";
 import { KadPengumuman } from "@/components/Pengumuman";
 import { ErrorBox, Screen, StatusPill, StepBar } from "@/components/ui";
 import { TabNav } from "@/components/TabNav";
@@ -52,6 +53,7 @@ function StaffUtama({ me }: { me: Me }) {
       <Greeting me={me} />
       <KadProfil />
       {emp && <OrientasiBanner employmentId={emp.id} />}
+      {emp && <KadDaftarMasuk employmentId={emp.id} />}
       {emp && <KadPengumuman companyId={emp.companyId} />}
 
       {!emp && <ErrorBox message={tr("Tiada pekerjaan aktif ditemui untuk akaun ini. Sila hubungi HR.")} />}

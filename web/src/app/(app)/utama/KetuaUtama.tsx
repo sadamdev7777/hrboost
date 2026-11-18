@@ -11,6 +11,7 @@ import { getBilanganTugasan } from "@/lib/data";
 import { addDays, dow, hariPendek, masaRingkas, masaTeks, todayISO } from "@/lib/format";
 import { Greeting } from "@/components/Greeting";
 import { OrientasiBanner } from "@/components/OrientasiBanner";
+import { KadDaftarMasuk } from "@/components/KadDaftarMasuk";
 import { Avatar, ErrorBox } from "@/components/ui";
 import { TugasSemakKetua } from "@/components/SenaraiSemak";
 import { KadPengumuman } from "@/components/Pengumuman";
@@ -49,6 +50,7 @@ export function KetuaUtama() {
       <Greeting me={me} />
       <KadProfil />
       <OrientasiBanner employmentId={emp.id} />
+      <KadDaftarMasuk employmentId={emp.id} />
       <KadPengumuman companyId={emp.companyId} />
 
       {pending.data === 0 ? (

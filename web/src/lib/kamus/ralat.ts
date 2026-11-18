@@ -481,4 +481,16 @@ export const RALAT: Record<string, string> = {
   "Sila pilih sebab": "Please choose a reason",
   "Nota terlalu panjang": "The note is too long",
   "Pekerja tiada dalam gaji ini": "The employee is not in this payroll",
+  // Kehadiran GPS
+  "Daftar masuk melalui telefon tidak diaktifkan oleh syarikat anda": "Phone check-in has not been enabled by your company",
+  "Lokasi tidak dapat dikesan. Sila hidupkan GPS dan benarkan akses lokasi.": "Your location could not be detected. Please turn on GPS and allow location access.",
+  "Isyarat GPS terlalu lemah. Cuba di kawasan terbuka.": "The GPS signal is too weak. Try in an open area.",
+  "Sila ambil swafoto": "Please take a selfie",
+  "Anda telah daftar masuk hari ini pada %": "You already checked in today at %",
+  "Sila daftar masuk dahulu": "Please check in first",
+  "Kehadiran baru sahaja direkod. Cuba sebentar lagi.": "Attendance was just recorded. Try again shortly.",
+  "Sila isi nama lokasi": "Please enter the location name",
+  "Koordinat tidak sah": "Invalid coordinates",
+  "Radius mesti antara 30 dan 2,000 meter": "The radius must be between 30 and 2,000 metres",
+  "Lokasi tidak dijumpai": "Location not found",
 };

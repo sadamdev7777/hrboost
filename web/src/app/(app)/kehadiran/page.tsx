@@ -10,6 +10,7 @@ import { hariPendek, jam, todayISO } from "@/lib/format";
 import { IconBack, IconChevronRight } from "@/components/icons";
 import { BackHeader, ErrorBox, Loading, Screen } from "@/components/ui";
 import { Tag } from "@/components/Senarai";
+import { getSupabase } from "@/lib/supabase";
 
 const BULAN = [tr("Jan"), tr("Feb"), tr("Mac"), tr("Apr"), tr("Mei"), tr("Jun"), tr("Jul"), tr("Ogo"), tr("Sep"), tr("Okt"), tr("Nov"), tr("Dis")];
 const CUTI: Record<string, string> = { AL: tr("Cuti tahunan"), MC: tr("Cuti sakit"), HL: tr("Hospital"), EL: tr("Kecemasan"), UL: tr("Tanpa gaji"), ML: tr("Bersalin"), PL: tr("Paterniti") };
@@ -27,6 +28,18 @@ export default function KehadiranPage() {
   const [bulan, setBulan] = useState(kini);
   const d = useData(() => getKehadiranBulan(emp.id, bulan), [emp.id, bulan]);
   const sambung = useData(() => kehadiranDisambung(emp.companyId), [emp.companyId]);
+  // Hari dengan daftar masuk / keluar di luar lokasi (telefon)
+  const luar = useData(async () => {
+    const [y0, m0] = bulan.split("-").map(Number);
+    const { data } = await getSupabase()
+      .from("attendance_punches")
+      .select("punched_at")
+      .eq("employment_id", emp.id)
+      .eq("outside", true)
+      .gte("punched_at", new Date(Date.UTC(y0, m0 - 1, 1) - 8 * 3600e3).toISOString())
+      .lt("punched_at", new Date(Date.UTC(y0, m0, 1) - 8 * 3600e3).toISOString());
+    return new Set((data ?? []).map((r) => new Date(new Date(r.punched_at).getTime() + 8 * 3600e3).toISOString().slice(0, 10)));
+  }, [emp.id, bulan]);
   // Seperti reka bentuk: hari bekerja sahaja (hujung minggu dipaparkan jika ada imbasan)
   const hari = (d.data ?? []).filter((h) => h.working || h.clockIn || h.holiday);
   const today = todayISO();
@@ -88,7 +101,7 @@ export default function KehadiranPage() {
             </div>
             {hari.length === 0 && <span className="border-t border-[#EEF2F1] py-3 text-sm text-muted">{tr("Tiada rekod bagi bulan ini.")}</span>}
             {hari.map((h) => (
-              <Baris key={h.date} h={h} today={today} grace={emp.graceMinutes} />
+              <Baris key={h.date} h={h} today={today} grace={emp.graceMinutes} luar={!!luar.data?.has(h.date)} />
             ))}
           </div>
         )}
@@ -101,7 +114,7 @@ export default function KehadiranPage() {
   );
 }
 
-function Baris({ h, today, grace }: { h: HariHadir; today: string; grace: number }) {
+function Baris({ h, today, grace, luar }: { h: HariHadir; today: string; grace: number; luar: boolean }) {
   const tarikhLabel = `${hariPendek(h.date)} ${Number(h.date.slice(8))}`;
   const rehat = !h.working || h.holiday || h.leave;
   const bolehBetul = h.working && !h.holiday && !h.leave && h.correction !== "pending" && h.correction !== "approved" && (h.late > grace || !h.clockIn || (!h.clockOut && h.date !== today));
@@ -110,6 +123,8 @@ function Baris({ h, today, grace }: { h: HariHadir; today: string; grace: number
       <span className="flex flex-col">
         <b className="font-bold">{tarikhLabel}</b>
         {h.date === today && <span className="text-[11px] text-muted">{tr("hari ini")}</span>}
+        {(h.source === "gps" || h.source === "campuran") && <span className="text-[11px] text-muted">{tr("Telefon")}</span>}
+        {luar && <span className="text-[11px] font-bold text-warning">{tr("Luar lokasi")}</span>}
       </span>
       {rehat && !h.clockIn ? (
         <span className="col-span-2 text-[13px] text-muted">{(h.holiday && trRalat(h.holiday)) || (h.leave ? (CUTI[h.leave] ?? tr("Cuti")) : tr("Hujung minggu"))}</span>
