@@ -366,3 +366,44 @@ export async function getSkbbk(companyId: string): Promise<PekerjaSkbbk[]> {
 export async function setSkbbk(companyId: string, menyertai: string[]): Promise<number> {
   return Number(must(await getSupabase().rpc("hr_set_skbbk", { p_company: companyId, p_joined: menyertai })));
 }
+
+/** Semakan PCB bagi satu gaji: pekerja yang data terkumpulnya tidak lengkap atau PCB RM0 walaupun gaji tertakluk PCB. */
+export type SebabPcb = "tp1" | "zakat" | "staf_baharu" | "bukan_pemastautin" | "lain";
+export const SEBAB_PCB: { id: SebabPcb; label: string }[] = [
+  { id: "tp1", label: tr("Pelepasan TP1") },
+  { id: "zakat", label: tr("Zakat menolak PCB") },
+  { id: "staf_baharu", label: tr("Pekerja baharu — pendapatan terdahulu") },
+  { id: "bukan_pemastautin", label: tr("Bukan pemastautin / dikecualikan") },
+  { id: "lain", label: tr("Lain-lain (nyatakan)") },
+];
+export type BenderaPcb = {
+  employment_id: string;
+  employee_no: string | null;
+  name: string;
+  gross: number;
+  pcb: number;
+  annual_pcb: number;
+  missing_months: number[];
+  kinds: ("ytd" | "pcb0")[];
+  reason: SebabPcb | null;
+  note: string | null;
+  reason_by: string | null;
+  reason_at: string | null;
+};
+export async function getSemakanPcb(runId: string): Promise<BenderaPcb[]> {
+  return ((must(await getSupabase().rpc("payroll_pcb_flags", { p_run: runId })) ?? []) as BenderaPcb[]).map((x) => ({
+    ...x,
+    gross: Number(x.gross),
+    pcb: Number(x.pcb),
+    annual_pcb: Number(x.annual_pcb),
+  }));
+}
+export async function simpanSebabPcb(runId: string, employmentId: string, reason: SebabPcb, note: string | null): Promise<void> {
+  must(await getSupabase().rpc("hr_pcb_exception_save", { p_run: runId, p_employment: employmentId, p_reason: reason, p_note: note ?? undefined }));
+}
+
+/** Pekerja aktif yang data cukainya (untuk PCB) tidak lengkap: status perkahwinan, status pekerjaan pasangan. */
+export type DataCukaiTakLengkap = { employment_id: string; employee_no: string | null; name: string; missing: ("marital_status" | "spouse_working")[] };
+export async function getDataCukaiTakLengkap(companyId: string): Promise<DataCukaiTakLengkap[]> {
+  return (must(await getSupabase().rpc("hr_tax_data_gaps", { p_company: companyId })) ?? []) as DataCukaiTakLengkap[];
+}

@@ -1955,6 +1955,64 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"payroll_pcb_alerts": {
+                  Row: {
+                    "created_at": string,"employment_id": string,"payroll_run_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"employment_id": string,"payroll_run_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"employment_id"?: string,"payroll_run_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "payroll_pcb_alerts_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "payroll_pcb_alerts_payroll_run_id_fkey"
+      columns: ["payroll_run_id"]
+isOneToOne: false
+      referencedRelation: "payroll_runs"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"payroll_pcb_exceptions": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"employment_id": string,"id": string,"note": string | null,"payroll_run_id": string,"reason": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"employment_id": string,"id"?: string,"note"?: string | null,"payroll_run_id": string,"reason": string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"employment_id"?: string,"id"?: string,"note"?: string | null,"payroll_run_id"?: string,"reason"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "payroll_pcb_exceptions_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "persons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "payroll_pcb_exceptions_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "payroll_pcb_exceptions_payroll_run_id_fkey"
+      columns: ["payroll_run_id"]
+isOneToOne: false
+      referencedRelation: "payroll_runs"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"payroll_run_events": {
                   Row: {
                     "action": string,"actor": string | null,"at": string,"id": string,"note": string | null,"run_id": string
@@ -2100,6 +2158,26 @@ isOneToOne: false
       columns: ["payroll_run_id"]
 isOneToOne: false
       referencedRelation: "payroll_runs"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"pcb_liability_state": {
+                  Row: {
+                    "employment_id": string,"liable": boolean,"monthly_pcb": number,"notified_at": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "employment_id": string,"liable": boolean,"monthly_pcb"?: number,"notified_at"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "employment_id"?: string,"liable"?: boolean,"monthly_pcb"?: number,"notified_at"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "pcb_liability_state_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: true
+      referencedRelation: "employments"
       referencedColumns: ["id"]
     }
                   ]
@@ -2565,6 +2643,23 @@ isOneToOne: false
                            },
 "_nama_token":
 { Args: { "p": string }; Returns: (string)[]
+                           },
+"_notify_hr_finance":
+{ Args: { "p_company": string,"p_message": string }; Returns: undefined
+                           },
+"_pcb_flags":
+{ Args: { "p_run": string }; Returns: {
+              "annual_pcb": number,"employee_no": string,"employment_id": string,"gross": number,"kinds": (string)[],"missing_months": (number)[],"name": string,"pcb": number
+            }[]
+                           },
+"_pcb_liability_check":
+{ Args: { "p_employment": string }; Returns: undefined
+                           },
+"_pcb_monthly_estimate":
+{ Args: { "p_employment": string,"p_on": string }; Returns: number
+                           },
+"_pcb_notice_text":
+{ Args: { "p_employment": string }; Returns: string
                            },
 "_rd_anak":
 { Args: { "p_entity": string }; Returns: (string)[]
@@ -3121,6 +3216,9 @@ isOneToOne: false
 "hr_pay_table":
 { Args: { "p_company": string,"p_on"?: string,"p_via"?: Database["public"]['Enums']["action_channel"] }; Returns: Json
                            },
+"hr_pcb_exception_save":
+{ Args: { "p_employment": string,"p_note"?: string,"p_reason": string,"p_run": string }; Returns: undefined
+                           },
 "hr_pending_requests":
 { Args: { "p_company": string }; Returns: Json
                            },
@@ -3172,6 +3270,11 @@ isOneToOne: false
 "hr_skbbk_list":
 { Args: { "p_company": string }; Returns: {
               "department": string,"employee_no": string,"employment_id": string,"foreign_worker": boolean,"joined": boolean,"name": string,"setting": string
+            }[]
+                           },
+"hr_tax_data_gaps":
+{ Args: { "p_company": string }; Returns: {
+              "employee_no": string,"employment_id": string,"missing": (string)[],"name": string
             }[]
                            },
 "hr_todo":
@@ -3536,6 +3639,11 @@ isOneToOne: false
                            },
 "payroll_mark_paid":
 { Args: { "p_pay_date"?: string,"p_run": string }; Returns: number
+                           },
+"payroll_pcb_flags":
+{ Args: { "p_run": string }; Returns: {
+              "annual_pcb": number,"employee_no": string,"employment_id": string,"gross": number,"kinds": (string)[],"missing_months": (number)[],"name": string,"note": string,"pcb": number,"reason": string,"reason_at": string,"reason_by": string
+            }[]
                            },
 "payroll_period":
 { Args: { "p_run": string }; Returns: Record<string, unknown>

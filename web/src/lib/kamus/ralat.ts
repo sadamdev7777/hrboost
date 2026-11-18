@@ -474,4 +474,11 @@ export const RALAT: Record<string, string> = {
   "Langganan notifikasi tidak sah": "Invalid notification subscription",
   "Notifikasi telefon belum tersedia. Sila cuba sebentar lagi.": "Phone notifications are not available yet. Please try again shortly.",
   "Kunci VAPID tidak sah": "Invalid VAPID key",
+  // Kawalan PCB
+  "Semakan PCB belum selesai: % pekerja memerlukan sebab (PCB RM0 atau data terkumpul tiada). Isi sebab di Proses Gaji.": "PCB review not complete: % employees need a reason (RM0 PCB or missing year-to-date data). Enter the reasons in Process Payroll.",
+  "Sila nyatakan sama ada pasangan anda bekerja": "Please state whether your spouse is working",
+  "Sila nyatakan bilangan anak (0 jika tiada)": "Please state the number of children (0 if none)",
+  "Sila pilih sebab": "Please choose a reason",
+  "Nota terlalu panjang": "The note is too long",
+  "Pekerja tiada dalam gaji ini": "The employee is not in this payroll",
 };

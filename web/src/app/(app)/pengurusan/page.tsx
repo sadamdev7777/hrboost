@@ -9,6 +9,7 @@ import { getSupabase } from "@/lib/supabase";
 import { mesejRalat, must, useData } from "@/lib/useData";
 import { getDashboard, getDashboardTambahan, getTugasSaya, type Dashboard } from "@/lib/hr";
 import { BULAN_PENUH } from "@/lib/gaji";
+import { getDataCukaiTakLengkap } from "@/lib/gajiLengkap";
 import { addDays, hariTarikh, inisial, masa, ringgit, tarikh, todayISO, ucapan } from "@/lib/format";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
 import { HadPeranan } from "@/components/Senarai";
@@ -49,7 +50,7 @@ function Kandungan() {
   const hariIni = todayISO();
   const d = useData(async () => {
     const sb = getSupabase();
-    const [asas, tambahan, tugas, jadi, berkanun, tamat, semak, surat, soalan, fleksibel, todo] = await Promise.all([
+    const [asas, tambahan, tugas, jadi, berkanun, tamat, semak, surat, soalan, fleksibel, todo, cukai] = await Promise.all([
       getDashboard(emp.companyId),
       getDashboardTambahan(emp.companyId),
       getTugasSaya(emp.companyId),
@@ -61,11 +62,13 @@ function Kandungan() {
       hasRole(me, ["hr", "admin"]) ? getSoalan(emp.companyId).catch(() => []) : Promise.resolve([]),
       hasRole(me, ["hr", "admin"]) ? getFleksibel(emp.companyId).catch(() => []) : Promise.resolve([]),
       getTugasanHr(emp.companyId).catch(() => null),
+      hasRole(me, ["hr", "finance", "admin"]) ? getDataCukaiTakLengkap(emp.companyId).catch(() => []) : Promise.resolve([]),
     ]);
     return { asas, tambahan, tugas, jadi: must(jadi) ?? [], berkanun, tamat, semak: ringkasSemakHr(semak), surat: surat.filter((s) => s.status === "pending").length,
       soalan: soalan.filter((q) => q.status === "open").length,
       fleksibel: fleksibel.filter((f) => f.status === "pending"),
       todo,
+      cukai,
     };
   }, [emp.companyId]);
   const [sibuk, setSibuk] = useState<string | null>(null);
@@ -116,6 +119,18 @@ function Kandungan() {
         aksi: tr("Profil"),
         kumpulan: "tamat-" + m.kind,
         nama: m.name,
+      });
+    for (const c of x.cukai)
+      tambah({
+        key: "cukai" + c.employment_id,
+        jenis: tr("Data cukai"),
+        segera: 1,
+        teks: tr("{0}: data cukai tidak lengkap", c.name),
+        kecil: c.missing.map((m) => (m === "marital_status" ? tr("status perkahwinan") : tr("status pekerjaan pasangan"))).join(", "),
+        href: `/pengurusan/pekerja/${c.employment_id}`,
+        aksi: tr("Lengkapkan"),
+        kumpulan: "cukai",
+        nama: c.name,
       });
     for (const f of x.fleksibel)
       tambah({
@@ -377,6 +392,7 @@ const KUMPULAN_TEKS: Record<string, (n: number) => string> = {
   late: (n) => tr("{0} pekerja kerap lewat", n),
   fwa: (n) => tr("{0} permohonan kerja fleksibel", n),
   semak: (n) => tr("{0} pekerja baharu: senarai semak belum selesai", n),
+  cukai: (n) => tr("Data cukai tidak lengkap: {0} pekerja (PCB)", n),
 };
 const SEGERA = [
   { tajuk: tr("LEWAT"), titik: "bg-danger" },

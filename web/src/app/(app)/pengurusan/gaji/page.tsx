@@ -10,6 +10,7 @@ import { getSupabase } from "@/lib/supabase";
 import { must, useData } from "@/lib/useData";
 import {
   BULAN_PENUH,
+  BULAN_RINGKAS,
   getLarian,
   getPelarasan,
   getPerbezaan,
@@ -42,13 +43,18 @@ import {
   getKatalog,
   getKesediaan,
   getKitaran,
+  getSemakanPcb,
   getVarians,
   lepasSlip,
   muatTurunTeks,
   senaraiFail,
+  SEBAB_PCB,
   setResitPcb,
+  simpanSebabPcb,
   tambahKitaran,
   tarikBalikSlip,
+  type BenderaPcb,
+  type SebabPcb,
   type Varians,
 } from "@/lib/gajiLengkap";
 
@@ -546,6 +552,8 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
       ) ?? [],
     [data.run.id],
   );
+  const pcb = useData(() => getSemakanPcb(data.run.id), [data.run.id]);
+  const pcbBelum = (pcb.data ?? []).filter((x) => !x.reason).length;
   const [semua, setSemua] = useState(false);
   const [busy, setBusy] = useState<null | "kira" | "hantar">(null);
   const [ralat, setRalat] = useState<string | null>(null);
@@ -559,6 +567,7 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
     try {
       if (k === "kira") await kiraGaji(data.run.id);
       else await hantarKelulusan(data.run.id);
+      pcb.reload();
       reload();
     } catch (e) {
       setRalat(e instanceof Error ? e.message : tr("Ralat"));
@@ -590,6 +599,7 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
             </span>
           </div>
         </div>
+        <PanelSemakanPcb runId={data.run.id} senarai={pcb.data ?? []} reload={pcb.reload} />
         <PanelBendera runId={data.run.id} />
         <PanelLaporanPekerja runId={data.run.id} />
         <section aria-label={tr("Slip pekerja")} className="flex flex-col gap-2">
@@ -627,13 +637,135 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
           <button type="button" disabled={!!busy} onClick={() => buat("kira")} className="h-12 rounded-button border-2 border-primary px-4 text-sm font-extrabold text-primary disabled:opacity-60">
             {busy === "kira" ? tr("Mengira…") : tr("Kira semula")}
           </button>
-          <ButangUtama onClick={() => buat("hantar")} busy={busy === "hantar"}>
+          <ButangUtama onClick={() => buat("hantar")} busy={busy === "hantar"} disabled={pcbBelum > 0 || pcb.loading}>
             {tr("Hantar untuk kelulusan")}
           </ButangUtama>
         </div>
+        {pcbBelum > 0 && <span className="text-center text-xs font-bold text-danger">{tr("Isi sebab bagi {0} pekerja dalam Semakan PCB sebelum dihantar.", pcbBelum)}</span>}
         <span className="text-center text-xs text-muted">{tr("Pelulus: {0}. Mereka dimaklumkan bersama ringkasan ini.", data.aliran.join(" → ") || tr("CEO → Kewangan"))}</span>
       </div>
     </>
+  );
+}
+
+const bulanJulat = (m: number[]) => {
+  if (!m.length) return "";
+  const a = BULAN_RINGKAS[m[0] - 1];
+  const b = BULAN_RINGKAS[m[m.length - 1] - 1];
+  return m.length === 1 ? a : `${a}–${b}`;
+};
+
+/**
+ * Semakan PCB (wajib sebelum hantar): pekerja yang data terkumpul (YTD) tahun ini tidak lengkap, atau
+ * gaji tertakluk PCB tetapi PCB dikira RM0. Setiap pekerja perlu sebab; sebab disimpan sebagai log.
+ */
+function PanelSemakanPcb({ runId, senarai, reload }: { runId: string; senarai: BenderaPcb[]; reload: () => void }) {
+  if (!senarai.length) return null;
+  const belum = senarai.filter((x) => !x.reason).length;
+  const adaYtd = senarai.some((x) => x.kinds.includes("ytd"));
+  return (
+    <section aria-label={tr("Semakan PCB")} className="flex flex-col gap-2">
+      <Seksyen className="pt-1">{tr("SEMAKAN PCB ({0} belum diberi sebab)", belum)}</Seksyen>
+      <div className={`flex flex-col gap-1.5 rounded-card px-4 py-3 text-[13px] leading-snug ${belum ? "bg-danger-soft text-danger" : "bg-success-soft text-success"}`}>
+        <b>{belum ? tr("Gaji tidak boleh dihantar sehingga setiap pekerja di bawah diberi sebab.") : tr("Semua pekerja telah diberi sebab. Gaji boleh dihantar.")}</b>
+        {adaYtd && (
+          <span>
+            {tr("PCB dikira berdasarkan pendapatan setahun. Tanpa data terkumpul (gaji, KWSP dan PCB bulan terdahulu), PCB menjadi terlalu rendah atau RM0. Cara terbaik: isi data terkumpul, kemudian tekan Kira semula.")}{" "}
+            <Link href="/pengurusan/gaji/data-terkumpul" className="font-bold text-inherit! underline">
+              {tr("Isi data terkumpul")}
+            </Link>
+          </span>
+        )}
+      </div>
+      <div className="flex flex-col rounded-card bg-surface px-4 text-sm [&>*+*]:border-t [&>*+*]:border-[#EEF2F1]">
+        {senarai.map((x) => (
+          <BarisSemakanPcb key={x.employment_id} runId={runId} x={x} reload={reload} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function BarisSemakanPcb({ runId, x, reload }: { runId: string; x: BenderaPcb; reload: () => void }) {
+  const [ubah, setUbah] = useState(!x.reason);
+  const [sebab, setSebab] = useState<SebabPcb | "">(x.reason ?? "");
+  const [nota, setNota] = useState(x.note ?? "");
+  const [busy, setBusy] = useState(false);
+  const [ralat, setRalat] = useState<string | null>(null);
+  const label = SEBAB_PCB.find((s) => s.id === x.reason)?.label;
+  async function simpan() {
+    if (!sebab) return;
+    setBusy(true);
+    setRalat(null);
+    try {
+      await simpanSebabPcb(runId, x.employment_id, sebab, nota.trim() || null);
+      setUbah(false);
+      reload();
+    } catch (e) {
+      setRalat(e instanceof Error ? e.message : tr("Ralat"));
+    }
+    setBusy(false);
+  }
+  return (
+    <div className="flex flex-col gap-2 py-3" data-pcb={x.employee_no ?? ""}>
+      <div className="flex flex-wrap items-baseline gap-x-2">
+        <Link href={`/pengurusan/pekerja/${x.employment_id}`} className="font-bold text-ink!">
+          {x.name}
+        </Link>
+        <span className="text-xs text-muted">{x.employee_no}</span>
+        <span className="ml-auto text-[13px] text-muted">{tr("Kasar {0} · PCB {1}", rm(x.gross), rm(x.pcb))}</span>
+      </div>
+      <ul className="m-0 flex list-none flex-col gap-0.5 p-0 text-[13px] text-warning">
+        {x.kinds.includes("ytd") && <li>{tr("Data terkumpul tiada: {0}", bulanJulat(x.missing_months))}</li>}
+        {x.kinds.includes("pcb0") && <li>{tr("PCB RM0 walaupun gaji tertakluk PCB (anggaran {0} sebulan jika setahun)", rm(x.annual_pcb))}</li>}
+      </ul>
+      {!ubah && x.reason ? (
+        <div className="flex flex-wrap items-center gap-2 rounded-[12px] bg-success-soft px-3 py-2 text-[13px] text-success">
+          <span className="grow">
+            <b>{label}</b>
+            {x.note ? ` — ${x.note}` : ""}
+            <span className="block text-xs">{tr("Oleh {0}", x.reason_by ?? "-")}</span>
+          </span>
+          <button type="button" onClick={() => setUbah(true)} className="h-9 rounded-full border border-line bg-surface px-3 text-xs font-bold text-primary">
+            {tr("Tukar sebab")}
+          </button>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <select
+            aria-label={tr("Sebab untuk {0}", x.name)}
+            value={sebab}
+            onChange={(e) => setSebab(e.target.value as SebabPcb)}
+            className="h-11 rounded-xl border border-line bg-surface px-3 text-sm font-semibold text-ink sm:w-72"
+          >
+            <option value="">{tr("Pilih sebab…")}</option>
+            {SEBAB_PCB.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+          <input
+            type="text"
+            aria-label={tr("Nota untuk {0}", x.name)}
+            placeholder={sebab === "lain" ? tr("Nyatakan sebab (wajib)") : tr("Nota (pilihan)")}
+            value={nota}
+            maxLength={500}
+            onChange={(e) => setNota(e.target.value)}
+            className="h-11 min-w-0 grow rounded-xl border border-line bg-surface px-3 text-sm"
+          />
+          <button
+            type="button"
+            disabled={busy || !sebab || (sebab === "lain" && nota.trim().length < 5)}
+            onClick={simpan}
+            className="h-11 rounded-xl bg-primary px-4 text-sm font-extrabold text-white disabled:opacity-50"
+          >
+            {busy ? tr("Menyimpan…") : tr("Simpan sebab")}
+          </button>
+        </div>
+      )}
+      {ralat && <span className="text-xs text-danger">{ralat}</span>}
+    </div>
   );
 }
 

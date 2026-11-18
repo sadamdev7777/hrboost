@@ -52,7 +52,7 @@ function Borang({ emp, asal }: { emp: string; asal: Asal }) {
   const router = useRouter();
   const [alamat, setAlamat] = useState(asal.address ?? "");
   const [status, setStatus] = useState<string>(asal.marital_status ?? "");
-  const [pasanganTakKerja, setPasanganTakKerja] = useState(asal.spouse_working === false);
+  const [pasanganKerja, setPasanganKerja] = useState<boolean | null>(asal.spouse_working);
   const [anak, setAnak] = useState(asal.children_count ?? 0);
   const [kwsp, setKwsp] = useState(asal.epf_no ?? "");
   const [tin, setTin] = useState(asal.tax_no ?? "");
@@ -67,7 +67,7 @@ function Borang({ emp, asal }: { emp: string; asal: Asal }) {
       await simpanLangkah(emp, "personal", {
         address: alamat,
         marital_status: status,
-        spouse_working: !pasanganTakKerja,
+        spouse_working: status === "berkahwin" ? pasanganKerja : null,
         children_count: status === "bujang" ? 0 : anak,
         epf_no: kwsp,
         tax_no: tin,
@@ -89,7 +89,7 @@ function Borang({ emp, asal }: { emp: string; asal: Asal }) {
       title={tr("Peribadi, KWSP & cukai")}
       sub={tr("Supaya potongan gaji anda dikira dengan betul.")}
       error={error}
-      footer={<NextButton busy={busy} disabled={!status} onClick={simpan} />}
+      footer={<NextButton busy={busy} disabled={!status || (status === "berkahwin" && pasanganKerja === null)} onClick={simpan} />}
     >
       <label className="flex flex-col gap-1.5 text-[13px] font-bold">
         {tr("Alamat rumah semasa")}<input
@@ -121,14 +121,30 @@ function Borang({ emp, asal }: { emp: string; asal: Asal }) {
       {status && status !== "bujang" && (
         <div className="flex flex-col gap-2.5 rounded-[14px] bg-surface px-3.5 py-2.5">
           {status === "berkahwin" && (
-            <label className="flex items-center gap-2.5 text-[13px] font-semibold">
-              <input
-                type="checkbox"
-                checked={pasanganTakKerja}
-                onChange={(e) => setPasanganTakKerja(e.target.checked)}
-                className="size-5 accent-primary"
-              />
-              {tr("Pasangan tidak bekerja")}</label>
+            <div role="group" aria-label={tr("Adakah pasangan anda bekerja?")} className="flex flex-col gap-1.5">
+              <span className="text-[13px] font-bold">
+                {tr("Adakah pasangan anda bekerja?")}
+                <span className="block text-[11px] font-medium text-muted">{tr("Wajib untuk kiraan PCB. Pasangan tidak bekerja melayakkan pelepasan cukai pasangan.")}</span>
+              </span>
+              <div className="grid grid-cols-2 gap-1.5">
+                {([
+                  [true, tr("Ya, bekerja")],
+                  [false, tr("Tidak bekerja")],
+                ] as const).map(([v, l]) => (
+                  <button
+                    key={String(v)}
+                    type="button"
+                    aria-pressed={pasanganKerja === v}
+                    onClick={() => setPasanganKerja(v)}
+                    className={`h-11 rounded-xl text-[13px] font-bold ${
+                      pasanganKerja === v ? "border-[1.5px] border-primary bg-primary-soft text-primary" : "border border-line bg-white text-ink"
+                    }`}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
           <div className="flex items-center gap-2.5">
             <span className="grow text-[13px] font-bold">

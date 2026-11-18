@@ -40,6 +40,9 @@ do $$ begin
 end $$;
 
 \echo '=== X3: gaji dihantar oleh HR → tugasan untuk Nadia (Kewangan) DAN Sadam (CEO); seorang sudah memadai ==='
+-- Data terkumpul Jan–Sep (gaji pertama dalam HRBoost ialah Oktober; tanpanya semakan PCB menyekat penghantaran)
+insert into payroll_opening_balances(employment_id, year, up_to_month, gross, epf, pcb)
+select e, 2026, 9, 0, 0, 0 from (values ('00000000-0000-0000-0000-0000000000e1'::uuid), ('00000000-0000-0000-0000-0000000000e2'::uuid), ('00000000-0000-0000-0000-0000000000e5'::uuid)) v(e);
 set test.role='authenticated'; set test.uid='00000000-0000-0000-0000-00000000a002';
 create temp table _r as select (payroll_prepare('00000000-0000-0000-0000-0000000000c1', 2026, 10)->>'run_id')::uuid as id;
 grant select on _r to public;

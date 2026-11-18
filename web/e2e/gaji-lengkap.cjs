@@ -99,6 +99,11 @@ async function masuk(b, email) {
   expect(fs.readFileSync(await csv.path(), 'utf8').includes('Amin'), 'laporan varians dimuat turun (CSV)');
 
   log('5. Diluluskan → fail CP39, lepas slip, buka semula');
+  // Semakan PCB: lulus disekat selagi pekerja yang ditanda tiada sebab
+  let disekat = false;
+  try { execSync(`psql -h 127.0.0.1 -p 54322 -U postgres -Atc "update payroll_runs set status = 'approved' where id = '${run}'"`, { env: { ...process.env, PGPASSWORD: 'postgres' }, stdio: 'pipe' }); } catch (e) { disekat = /Semakan PCB belum selesai/.test(String(e.stderr)); }
+  expect(disekat, 'lulus disekat: Semakan PCB belum selesai');
+  sql(`insert into payroll_pcb_exceptions(payroll_run_id, employment_id, reason, note) select '${run}', employment_id, 'lain', 'Ujian' from _pcb_flags('${run}')`);
   sql(`update payroll_runs set status = 'approved' where id = '${run}'`);
   await p.reload();
   await p.waitForSelector(V('text=Hantar caruman berkanun'));

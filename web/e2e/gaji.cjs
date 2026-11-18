@@ -55,6 +55,25 @@ async function login(browser, phone) {
   expect(slipHr.includes('Komisen') && slipHr.includes('3,700.00'), 'pratonton slip Amin: komisen RM500, jumlah pendapatan RM3,700');
   await p.goBack();
   await p.waitForSelector('button:has-text("Hantar untuk kelulusan")');
+
+  log('1b. Semakan PCB: data terkumpul tiada → hantar dikunci sehingga setiap pekerja diberi sebab');
+  const pcb = p.locator('section[aria-label="Semakan PCB"]');
+  await pcb.waitFor({ timeout: 15000 });
+  expect((await pcb.innerText()).includes('Data terkumpul tiada: Jan'), 'pekerja ditanda: data terkumpul tiada');
+  expect(await p.locator('button:has-text("Hantar untuk kelulusan")').isDisabled(), 'butang Hantar dikunci');
+  await p.screenshot({ path: `${shots}/f-semakan-pcb.png`, fullPage: true });
+  let n = 0;
+  while ((await pcb.locator('select[aria-label^="Sebab untuk"]').count()) > 0) {
+    const baris = pcb.locator('div[data-pcb]').filter({ has: p.locator('select') }).first();
+    await baris.locator('select').selectOption('lain');
+    await baris.locator('input[aria-label^="Nota untuk"]').fill('Gaji pertama dalam HRBoost; data terkumpul akan diisi');
+    await baris.locator('button:has-text("Simpan sebab")').click();
+    await p.waitForFunction((k) => document.querySelectorAll('section[aria-label="Semakan PCB"] select').length < k,
+      await pcb.locator('select').count(), { timeout: 15000 });
+    if (++n > 30) throw new Error('terlalu banyak baris');
+  }
+  await p.waitForSelector('text=Semua pekerja telah diberi sebab. Gaji boleh dihantar.');
+  expect(!(await p.locator('button:has-text("Hantar untuk kelulusan")').isDisabled()), `${n} sebab disimpan; butang Hantar dibuka`);
   await p.click('button:has-text("Hantar untuk kelulusan")');
   await p.waitForSelector('text=Menunggu kelulusan');
   expect(true, 'dihantar untuk kelulusan');

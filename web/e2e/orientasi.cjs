@@ -119,6 +119,8 @@ async function loginUI(browser, phoneLocal) {
   await p.waitForSelector('text=STATUS PERKAHWINAN');
   await p.fill('input[autocomplete=street-address]', 'No. 1, Jalan Demo, Kuala Lumpur');
   await p.click('button:has-text("Berkahwin")');
+  expect(await p.locator('button:has-text("Simpan & seterusnya")').isDisabled(), 'berkahwin: status pekerjaan pasangan wajib dipilih (PCB)');
+  await p.click('button:has-text("Tidak bekerja")');
   await p.click('button[aria-label="Tambah anak"]');
   await p.fill('input[placeholder="Contoh: 12345678"]', '12345678');
   await p.screenshot({ path: `${shots}/o7-peribadi.png` });
@@ -145,9 +147,9 @@ async function loginUI(browser, phoneLocal) {
   expect((await p.locator('text=Lengkapkan akaun anda').count()) === 0, 'tab Utama tanpa peringatan orientasi');
 
   // Semak data tersimpan (sebagai HR)
-  const { data: rec } = await hr.from('persons').select('full_name, preferred_name, bank_name, marital_status, children_count, photo_path').eq('phone_whatsapp', '60100000008').single();
-  expect(rec && rec.full_name === 'NURIN SYAFIQAH BINTI DEMO' && rec.bank_name === 'Maybank' && rec.marital_status === 'berkahwin' && rec.children_count === 1 && rec.photo_path,
-    'data orientasi tersimpan (nama, bank, status, anak, swafoto)');
+  const { data: rec } = await hr.from('persons').select('full_name, preferred_name, bank_name, marital_status, spouse_working, children_count, photo_path').eq('phone_whatsapp', '60100000008').single();
+  expect(rec && rec.full_name === 'NURIN SYAFIQAH BINTI DEMO' && rec.bank_name === 'Maybank' && rec.marital_status === 'berkahwin' && rec.spouse_working === false && rec.children_count === 1 && rec.photo_path,
+    'data orientasi tersimpan (nama, bank, status, pasangan, anak, swafoto)');
   const { data: docs } = await hr.from('employee_documents').select('doc_type').eq('employment_id', eid);
   expect(docs.length === 2, 'dua gambar kad pengenalan direkod dalam dokumen pekerja');
   await ctx.close();
