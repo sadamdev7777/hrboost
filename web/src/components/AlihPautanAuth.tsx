@@ -14,7 +14,9 @@ export function AlihPautanAuth() {
     const p = new URLSearchParams(h.slice(1));
     const jenis = p.get("type");
     const ralat = p.get("error_code") ?? p.get("error");
-    const sasaran = jenis === "recovery" ? "/masuk/set-semula" : null;
+    // Set semula kata laluan → /masuk/set-semula. Pautan pengesahan pendaftaran yang gagal (cth. otp_expired)
+    // yang mendarat di laman utama → /daftar/sahkan supaya pengguna boleh minta pautan baharu.
+    const sasaran = jenis === "recovery" ? "/masuk/set-semula" : ralat && (jenis === "signup" || !jenis) && window.location.pathname === "/" ? "/daftar/sahkan" : null;
     if (sasaran && window.location.pathname !== sasaran && (p.get("access_token") || ralat)) {
       window.location.replace(sasaran + h);
     }

@@ -11,6 +11,23 @@ import { bacaPendaftaranMentah, padamPendaftaran, type Pendaftaran } from "@/lib
 import { IconBack } from "@/components/icons";
 
 const noSub = () => () => {};
+
+// Ralat pautan e-mel daripada Supabase (cth. #error_code=otp_expired apabila pautan sudah digunakan atau
+// digantikan oleh e-mel yang lebih baharu). Dibaca sekali, kemudian dibuang daripada URL.
+let ralatPautan: string | null = null;
+function bacaRalatPautan(): string {
+  if (ralatPautan === null) {
+    try {
+      const h = new URLSearchParams(window.location.hash.slice(1));
+      const q = new URLSearchParams(window.location.search);
+      ralatPautan = h.get("error_code") ?? h.get("error") ?? q.get("error_code") ?? q.get("error") ?? "";
+      if (ralatPautan) window.history.replaceState(null, "", window.location.pathname);
+    } catch {
+      ralatPautan = "";
+    }
+  }
+  return ralatPautan;
+}
 type Daftar = { company: string; size: string; name: string; phone: string; pelan?: "percubaan" | "tahunan" };
 
 /**
@@ -28,6 +45,12 @@ export default function SahkanSyarikatPage() {
   const [ralat, setRalat] = useState<string | null>(null);
   const [baki, setBaki] = useState(60);
   const [dihantar, setDihantar] = useState(false);
+  const pautanTamat = useSyncExternalStore(noSub, bacaRalatPautan, () => "") !== "";
+  const [emelBaru, setEmelBaru] = useState("");
+  const emel = (emelBaru || p?.email || "").trim().toLowerCase();
+  // Pautan tamat: boleh terus minta pautan baharu (tiada tunggu 60 saat sehingga dihantar sekali)
+  const [sudahCuba, setSudahCuba] = useState(false);
+  const tunggu = pautanTamat && !sudahCuba ? 0 : baki;
   const sedang = useRef(false);
 
   // Pautan pengesahan: Supabase memasang sesi daripada URL; cipta syarikat sekali sahaja
@@ -69,8 +92,11 @@ export default function SahkanSyarikatPage() {
   }, [baki]);
 
   async function hantarSemula() {
-    if (!p?.email || baki > 0) return;
-    const { error } = await getSupabase().auth.resend({ type: "signup", email: p.email, options: { emailRedirectTo: `${window.location.origin}/daftar/sahkan` } });
+    if (!emel || tunggu > 0) return;
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emel)) return setRalat(tr("Sila masukkan alamat e-mel yang sah."));
+    setRalat(null);
+    setSudahCuba(true);
+    const { error } = await getSupabase().auth.resend({ type: "signup", email: emel, options: { emailRedirectTo: `${window.location.origin}/daftar/sahkan` } });
     if (error) setRalat(error.status === 429 ? tr("Terlalu banyak cubaan. Sila tunggu sebentar.") : tr("E-mel tidak dapat dihantar. Sila cuba lagi."));
     else setDihantar(true);
     setBaki(60);
@@ -92,6 +118,13 @@ export default function SahkanSyarikatPage() {
               <h1 className="m-0 text-[22px] font-extrabold">{tr("E-mel disahkan")}</h1>
               <span className="text-sm text-subtle">{tr("Sedang mencipta syarikat anda…")}</span>
             </>
+          ) : pautanTamat ? (
+            <>
+              <h1 className="m-0 text-[22px] font-extrabold">{tr("Pautan pengesahan telah tamat atau digunakan")}</h1>
+              <span className="text-sm leading-normal text-subtle">
+                {tr("Setiap pautan hanya sah sekali dan digantikan apabila e-mel baharu dihantar. Gunakan e-mel pengesahan yang terbaharu, atau hantar pautan baharu di bawah.")}
+              </span>
+            </>
           ) : (
             <>
               <h1 className="m-0 text-[22px] font-extrabold">{tr("Semak e-mel anda")}</h1>
@@ -101,11 +134,31 @@ export default function SahkanSyarikatPage() {
             </>
           )}
         </div>
-        {keadaan === "semak" && (
+        {keadaan === "semak" && pautanTamat && (
+          <div className="flex flex-col gap-3 rounded-card bg-surface px-5 py-4">
+            <label className="flex flex-col gap-1.5 text-sm font-bold">
+              {tr("E-mel")}
+              <input
+                className="h-12 rounded-field border border-line bg-surface px-4 text-base font-semibold text-ink outline-none focus:border-primary"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                value={emelBaru || p?.email || ""}
+                onChange={(e) => setEmelBaru(e.target.value)}
+                placeholder={tr("nama@syarikat.com")}
+              />
+            </label>
+            <button type="button" onClick={hantarSemula} disabled={tunggu > 0 || !emel} className="h-12 rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
+              {tunggu > 0 ? tr("Hantar pautan baharu ({0})", tunggu) : tr("Hantar pautan baharu")}
+            </button>
+          </div>
+        )}
+        {keadaan === "semak" && !pautanTamat && (
           <ol className="m-0 flex flex-col gap-2 rounded-card bg-surface px-5 py-4 text-sm leading-normal">
             <li>{tr("Buka peti masuk e-mel (semak juga folder Spam / Promosi).")}</li>
             <li>{tr("Tekan butang \"Sahkan e-mel\" dalam e-mel daripada HRBoost.")}</li>
             <li>{p?.pelan === "tahunan" ? tr("Anda akan dibawa terus ke halaman bayaran langganan RM499 setahun.") : tr("Anda akan dibawa terus ke persediaan syarikat.")}</li>
+            <li>{tr("Jika anda menerima lebih daripada satu e-mel, gunakan yang terbaharu sahaja.")}</li>
           </ol>
         )}
         {ralat && (
@@ -114,7 +167,7 @@ export default function SahkanSyarikatPage() {
           </span>
         )}
         {dihantar && <span className="text-sm font-semibold text-success">{tr("Pautan baharu telah dihantar.")}</span>}
-        {keadaan !== "mencipta" && p?.email && (
+        {keadaan !== "mencipta" && !pautanTamat && p?.email && (
           <span className="text-sm text-muted">
             {tr("Tidak menerima e-mel?")}{" "}
             <button type="button" onClick={hantarSemula} disabled={baki > 0} className="min-h-11 font-bold text-primary disabled:text-muted">
