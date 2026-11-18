@@ -213,7 +213,7 @@ function SemakanGaji({ checks, companyId, statutoryReady }: { checks: string[]; 
   const lain = checks.filter((c) => !tiadaGaji.includes(c) && !terkumpul.includes(c));
   const nama = (xs: string[]) => xs.map((c) => c.split(":")[0]).join(", ");
   const tidakLengkap = k.data ?? [];
-  const namaPekerja = (id: string) => ppl.data?.find((p) => p.id === id)?.name ?? "…";
+  const namaPekerja = (id: string) => ppl.data?.find((p) => p.id === id)?.fullName ?? "…";
 
   type Baris = { id: string; merah: boolean; tajuk: string; nota?: string; href?: string; pautan?: string; butiran?: React.ReactNode };
   const baris: Baris[] = [];
@@ -402,7 +402,7 @@ function SenaraiPelarasan({
 }) {
   const ppl = useData(() => getSenaraiPekerja(companyId), [companyId]);
   const kat = useData(() => getKatalog(companyId), [companyId]);
-  const nama = (id: string) => ppl.data?.find((p) => p.id === id)?.name ?? "…";
+  const nama = (id: string) => ppl.data?.find((p) => p.id === id)?.fullName ?? "…";
   const item = (k: string) => kat.data?.find((c) => c.code === k);
   return (
     <section aria-label={tr("Item bulan ini")} className="flex flex-col gap-2">
@@ -477,7 +477,7 @@ function Pelarasan({ runId, companyId, onClose }: { runId: string; companyId: st
     setBusy(true);
     try {
       await setPelarasan(runId, pilih, kod, Number(amaun) || 0, nota.trim() || undefined);
-      setOk(tr("Disimpan untuk {0}.", ppl.data?.find((p) => p.id === pilih)?.name));
+      setOk(tr("Disimpan untuk {0}.", ppl.data?.find((p) => p.id === pilih)?.fullName));
       setAmaun("");
       setNota("");
     } catch (e) {
@@ -491,7 +491,7 @@ function Pelarasan({ runId, companyId, onClose }: { runId: string; companyId: st
         <select className={inputKecil} value={pilih} onChange={(e) => setEmp(e.target.value)}>
           {(ppl.data ?? []).map((p) => (
             <option key={p.id} value={p.id}>
-              {p.name} · {p.employeeNo}
+              {p.fullName} · {p.employeeNo}
             </option>
           ))}
         </select>
@@ -600,7 +600,7 @@ function Langkah2({ data, reload }: { data: Data; reload: () => void }) {
               return (
                 <Link key={x.id} href={`/pengurusan/gaji/slip/${x.id}`} className="flex min-h-12 items-center gap-3 py-2 text-ink!">
                   <span className="flex min-w-0 grow flex-col">
-                    <b>{x.employments?.persons?.preferred_name || x.employments?.persons?.full_name}</b>
+                    <b>{x.employments?.persons?.full_name || x.employments?.persons?.preferred_name}</b>
                     {c && <span className="text-xs text-muted">{c}</span>}
                   </span>
                   <span className="text-right text-[13px] text-muted">{rm(x.gross)}</span>

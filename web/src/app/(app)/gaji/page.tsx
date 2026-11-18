@@ -19,13 +19,12 @@ export default function GajiPage() {
   const emp = me.active!;
   const senarai = useData(() => getSenaraiSlip(emp.id), [emp.id]);
   const [pilih, setPilih] = useState<string | null>(null);
-  const [tunjuk, setTunjuk] = useState(false);
   const [ea, setEa] = useState(false);
   const list = senarai.data ?? [];
   const id = pilih ?? list[0]?.id ?? null;
   const slip = useData(() => (id ? getSlip(id) : Promise.resolve(null)), [id]);
   const s = slip.data;
-  const sorok = (n: number) => (tunjuk ? rm(n) : "••••");
+  const sorok = (n: number) => rm(n);
   const tahun = list[0]?.year;
   const semasa = list.find((x) => x.id === id);
 
@@ -123,13 +122,6 @@ export default function GajiPage() {
                     {tr("Dibayar {0}", tarikh(s.payDate))}</span>
                 )}
               </div>
-              <button type="button" onClick={() => setTunjuk(!tunjuk)} aria-label={tr("Papar atau sembunyikan jumlah")} className="flex size-11 items-center justify-center rounded-full bg-white/15">
-                <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
-                  <circle cx="12" cy="12" r="3" />
-                  {!tunjuk && <path d="M3 3l18 18" />}
-                </svg>
-              </button>
             </div>
             <Seksyen className="pt-1">{tr("PENDAPATAN")}</Seksyen>
             <Kotak baris={s.lines.filter((l) => l.kind === "earning").map((l) => [l.description, sorok(l.amount)])} />

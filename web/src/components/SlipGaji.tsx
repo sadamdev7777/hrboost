@@ -7,7 +7,7 @@ import { BULAN_PENUH, BULAN_RINGKAS } from "@/lib/gaji";
 import { tarikh } from "@/lib/format";
 
 const rm = (n: number) => n.toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const sorokIC = (ic: string | null) => (ic ? `••••••-••-${ic.replace(/\D/g, "").slice(-4)}` : "-");
+const icPenuh = (ic: string | null) => ic || "-";
 
 const LABEL_POTONGAN: Record<string, string> = {
   EPF: tr("KWSP (pekerja)"),
@@ -55,13 +55,13 @@ export function SlipGaji({ s }: { s: Slip }) {
       <section className="grid grid-cols-2 gap-x-6 gap-y-1">
         <Row k={tr("Nama")} v={s.employee.fullName} />
         <Row k={tr("No. pekerja")} v={s.employee.employeeNo} />
-        <Row k={tr("No. kad pengenalan")} v={sorokIC(s.employee.ic)} />
+        <Row k={tr("No. kad pengenalan")} v={icPenuh(s.employee.ic)} />
         <Row k={tr("Jabatan")} v={s.employee.department ?? "-"} />
         <Row k={tr("Jawatan")} v={s.employee.position ?? "-"} />
         <Row k={tr("No. KWSP")} v={s.employee.epfNo ?? "-"} />
         <Row k={tr("No. cukai")} v={s.employee.taxNo ?? "-"} />
         <Row k={tr("No. PERKESO")} v={s.employee.socsoNo ?? "-"} />
-        <Row k={tr("Bank")} v={s.employee.bank ? `${s.employee.bank} ••••${(s.employee.account ?? "").slice(-4)}` : "-"} />
+        <Row k={tr("Bank")} v={s.employee.bank ? `${s.employee.bank} ${s.employee.account ?? ""}`.trim() : "-"} />
         <Row k={tr("Cuti tanpa gaji")} v={tr("{0} hari", s.unpaidDays)} />
       </section>
 

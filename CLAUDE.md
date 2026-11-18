@@ -12,7 +12,7 @@ Pemilik produk: Sadam. Reka bentuk skrin: kanvas Design "HRBoost.io — Skrin" (
 3. **Superadmin tak nampak data peribadi.** Hanya agregat (bilangan, status, penggunaan). IC, gaji, MC, dokumen hanya untuk HR syarikat itu.
 4. **Semua kelulusan melalui satu enjin** (`approval_*`). Selesai hari yang sama (SLA), tiada lulus automatik.
 5. **Agent-ready.** Setiap kejadian penting → `hr_events` → `automation_rules` → `notifications` → WhatsApp. Setiap tindakan ada RPC yang boleh dipanggil oleh app ATAU agent (parameter `p_via`, `p_on_behalf`).
-6. **Nama panggilan** dipakai di semua tempat. Nama penuh (ikut IC) hanya untuk slip gaji, EA, KWSP, surat rasmi.
+6. **Nama panggilan** dipakai di semua tempat. Nama penuh (ikut IC) untuk slip gaji, EA, KWSP, surat rasmi dan skrin penggajian (Proses Gaji, Gaji Pekerja, varians).
 7. **Kadar berkanun = data**, bukan kod. Dikemas kini oleh platform untuk semua syarikat.
 8. **Langganan RM499 setahun** (`platform_settings.billing`: harga, hari percubaan 7, tangguh 14, butiran penjual). Dua pelan di laman utama (`#harga`): **Cuba percuma 7 hari** (`/daftar`, bayar kemudian) atau **Langgan terus** (`/daftar?pelan=tahunan` → selepas e-mel disahkan terus ke `/pengurusan/langganan?bayar=1` → CHIP → `/mula`; bayaran tidak diselesaikan = kekal percubaan 7 hari). Syarikat baharu = `trial`; syarikat sedia ada = `exempt`. Tamat → `grace` (14 hari) → `readonly` (data kekal, permohonan baharu disekat). Bayaran melalui CHIP; invois & resit atas nama HRBoost. Tiada SST.
 
@@ -131,7 +131,7 @@ Menu "Pengurusan" dalam `Saya` hanya dipaparkan jika `has_role(company, '{hr,fin
 - Tindakan superadmin & akses silang → `platform_audit_log` (tiada update/delete).
 - Gambar IC, selfie, MC, resit → bucket Storage peribadi, URL bertandatangan (≤ 5 minit).
 - Resit claim: dua butang. **Ambil gambar** = `<input type="file" accept="image/*" capture="environment">` (buka kamera belakang terus). **Muat naik** = `<input type="file" accept="image/*,application/pdf" multiple>` (galeri, screenshot e-resit, PDF). Mampatkan gambar di telefon (≤ 1600px, JPEG ~0.8) sebelum upload; had 10 MB/fail; boleh lebih dari satu resit setiap claim.
-- Jumlah gaji disorok secara default di skrin (`Gaji`).
+- Jumlah gaji dipaparkan terus di `Gaji`. IC & no. akaun bank dipaparkan penuh dalam profil pekerja (HR) dan slip gaji; Profil Saya pekerja kekal disorok. Akses HR kepada data sensitif direkod (`data_access_log`).
 - Notis privasi & terma dalam `Privasi` ialah **draf** — perlu semakan peguam sebelum pelancaran.
 
 ## 7. Fasa pembinaan & definisi siap

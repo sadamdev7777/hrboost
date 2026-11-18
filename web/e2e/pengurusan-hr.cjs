@@ -81,10 +81,9 @@ async function login(browser, phone) {
   await p.goto(BASE + '/pengurusan/pekerja');
   await p.click('a:has-text("Amin")');
   await p.waitForSelector('text=No. pekerja');
-  // IC bertopeng sehingga HR menekan "Tunjuk"
-  await p.waitForSelector('text=951109••••••34 >> visible=true');
-  await p.click('button:has-text("Tunjuk") >> visible=true');
+  // IC & akaun bank dipaparkan penuh kepada HR (tiada butang Tunjuk)
   await p.waitForSelector('text=951109-14-1234');
+  expect((await p.locator('button:has-text("Tunjuk")').count()) === 0, 'tiada butang Tunjuk/Sorok');
   expect(true, 'HR terus melihat kad pengenalan & bank (tanpa butang Papar)');
   await p.waitForSelector('text=Permohonan kemas kini profil menunggu');
   expect(true, 'profil HR menunjukkan permohonan kemas kini profil yang menunggu');
@@ -95,7 +94,6 @@ async function login(browser, phone) {
   await p.click('button:text-is("Lulus")');
   await p.waitForURL('**/kelulusan');
   await p.goto(profilUrl);
-  await p.click('button:has-text("Tunjuk") >> visible=true');
   await p.waitForSelector('text=CIMB Bank · 8000123456');
   expect(true, 'akaun bank Amin disahkan melalui Kelulusan');
   await p.click('button:has-text("Ubah gaji & jawatan")');

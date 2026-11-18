@@ -78,12 +78,12 @@ async function masuk(b, email) {
   await p.goto(BASE + '/pengurusan/gaji');
   await p.waitForSelector(V('text=DATA BULAN INI (AUTOMATIK)'));
   await p.click(V('button:has-text("+ Tambah item")'));
-  await p.selectOption('[role=dialog] label:has-text("Pekerja") select', { label: 'Amin · DEMO004' });
+  await p.selectOption('[role=dialog] label:has-text("Pekerja") select', { label: 'Amin bin Demo · DEMO004' });
   await p.selectOption('[role=dialog] label:has-text("Item") select', 'BONUS');
   await p.fill('[role=dialog] label:has-text("Jumlah (RM)") input', '1000');
   await p.fill('[role=dialog] label:has-text("Keterangan pada slip") input', 'Bonus prestasi');
   await p.click('[role=dialog] button:has-text("Simpan")');
-  await p.waitForSelector('text=Disimpan untuk Amin.');
+  await p.waitForSelector('text=Disimpan untuk Amin bin Demo.');
   await p.keyboard.press('Escape');
   await p.waitForSelector(V('section[aria-label="Item bulan ini"] >> text=Bonus prestasi'));
   expect(true, 'item sekali dengan keterangan dipaparkan');
@@ -125,11 +125,11 @@ async function masuk(b, email) {
   await p.click('[role=alertdialog] button:has-text("Cipta")');
   await p.waitForSelector(V('button[aria-pressed=true]:has-text("Bonus Tahunan")'));
   await p.click(V('button:has-text("+ Tambah item")'));
-  await p.selectOption('[role=dialog] label:has-text("Pekerja") select', { label: 'Amin · DEMO004' });
+  await p.selectOption('[role=dialog] label:has-text("Pekerja") select', { label: 'Amin bin Demo · DEMO004' });
   await p.selectOption('[role=dialog] label:has-text("Item") select', 'BONUS');
   await p.fill('[role=dialog] label:has-text("Jumlah (RM)") input', '2000');
   await p.click('[role=dialog] button:has-text("Simpan")');
-  await p.waitForSelector('text=Disimpan untuk Amin.');
+  await p.waitForSelector('text=Disimpan untuk Amin bin Demo.');
   await p.keyboard.press('Escape');
   await p.click(V('button:has-text("Kira Gaji")'));
   await p.waitForSelector(V('text=Jumlah kasar'));

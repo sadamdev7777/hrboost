@@ -48,6 +48,8 @@ export type PekerjaRingkas = {
   id: string;
   personId: string;
   name: string;
+  /** Nama penuh ikut kad pengenalan (skrin penggajian) */
+  fullName: string;
   employeeNo: string;
   status: EmpStatus;
   activated: boolean;
@@ -77,6 +79,8 @@ export async function getSenaraiPekerja(companyId: string, termasukTamat = false
     id: e.id,
     personId: e.person_id,
     name: e.persons?.preferred_name || e.persons?.full_name || "",
+    /** Nama penuh ikut kad pengenalan (skrin penggajian) */
+    fullName: e.persons?.full_name || e.persons?.preferred_name || "",
     employeeNo: e.employee_no,
     status: e.status,
     activated: !!e.persons?.auth_user_id,

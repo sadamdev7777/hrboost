@@ -10,7 +10,7 @@ import { urlLogo } from "@/lib/logo";
 // Susun atur mengikut components/SlipGaji.tsx (rujukan reka bentuk: design/SlipGaji.dc.html).
 
 const rm = (n: number) => n.toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const sorokIC = (ic: string | null) => (ic ? `******-**-${ic.replace(/\D/g, "").slice(-4)}` : "-");
+const icPenuh = (ic: string | null) => ic || "-";
 // Fon standard PDF hanya menyokong WinAnsi: aksara lain (cth. tulisan Cina) diganti "?"
 const selamat = (t: string) => t.replace(/[•]/g, "*").replace(/[^\x20-\x7E -ÿ–—‘’“”·]/g, "?");
 
@@ -119,13 +119,13 @@ export async function janaSlipPdf(s: Slip): Promise<Uint8Array> {
   const info: [string, string][] = [
     [tr("Nama"), s.employee.fullName],
     [tr("No. pekerja"), s.employee.employeeNo],
-    [tr("No. kad pengenalan"), sorokIC(s.employee.ic)],
+    [tr("No. kad pengenalan"), icPenuh(s.employee.ic)],
     [tr("Jabatan"), s.employee.department ?? "-"],
     [tr("Jawatan"), s.employee.position ?? "-"],
     [tr("No. KWSP"), s.employee.epfNo ?? "-"],
     [tr("No. cukai"), s.employee.taxNo ?? "-"],
     [tr("No. PERKESO"), s.employee.socsoNo ?? "-"],
-    [tr("Bank"), s.employee.bank ? `${s.employee.bank} ****${(s.employee.account ?? "").slice(-4)}` : "-"],
+    [tr("Bank"), s.employee.bank ? `${s.employee.bank} ${s.employee.account ?? ""}`.trim() : "-"],
     [tr("Cuti tanpa gaji"), tr("{0} hari", s.unpaidDays)],
   ];
   const lajurW = (W - 24) / 2;
