@@ -224,7 +224,7 @@ export default function Kandungan() {
         <Harga />
 
         {/* 11. Soalan lazim */}
-        <section id="soalan" className={`${BALUT} ${SEKSYEN_BESAR} scroll-mt-20`}>
+        <section id="soalan" className={`${BALUT} ${SEKSYEN_BESAR} scroll-mt-20 pb-16 min-[700px]:pb-28`}>
           <h2 className={`${H2} mb-4`}>{tr("Soalan lazim")}</h2>
           <div className="grid gap-x-12 min-[980px]:grid-cols-2">
             {SOALAN().map(([q, a]) => (
@@ -239,22 +239,6 @@ export default function Kandungan() {
               </details>
             ))}
           </div>
-        </section>
-
-        {/* 12. Seruan akhir */}
-        <section className={`${BALUT} flex flex-col items-center gap-5 pt-16 pb-10 text-center min-[700px]:py-32`}>
-          <h2 className={H2}>{tr("Sedia untuk mencuba?")}</h2>
-          <p className="m-0 text-base text-[#5B6B68]">{tr("Cuba percuma 7 hari, atau langgan terus RM499 setahun.")}</p>
-          <Link href="/daftar" className="flex h-[52px] items-center rounded-xl bg-primary px-7 text-base font-bold text-white!">
-            {tr("Daftar syarikat")}
-          </Link>
-          <span className="text-[13px] text-[#5B6B68]">
-            {tr("Pekerja? Gunakan pautan jemputan daripada HR, atau")}{" "}
-            <Link href="/masuk" className="inline-flex min-h-11 items-center font-bold">
-              {tr("log masuk")}
-            </Link>
-            .
-          </span>
         </section>
       </main>
       <KakiHalaman />

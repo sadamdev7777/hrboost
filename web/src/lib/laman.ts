@@ -17,4 +17,4 @@ export const KADAR_SISTEM_LAIN = { min: 8, maks: 17 };
 /** Kalkulator penjimatan: julat bilangan pekerja */
 export const KALKULATOR = { min: 5, maks: 50, langkah: 5, lalai: 20 };
 
-export const HUBUNGI = { whatsapp: "019-444 2424", waUrl: "https://wa.me/60194442424", emel: "hi@hrboost.io" };
+export const HUBUNGI = { whatsapp: "013-332 7800", waUrl: "https://wa.me/60133327800", emel: "hi@hrboost.io" };

@@ -1,6 +1,7 @@
 "use client";
 
 import { tr } from "@/lib/i18n";
+import { HUBUNGI } from "@/lib/laman";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -79,7 +80,7 @@ export default function Kandungan() {
         <P>
           {tr("E-mel")}: <a href="mailto:hi@hrboost.io">{tr("hi@hrboost.io")}</a>
           <br />
-          {tr("WhatsApp:")}{" "}<a href="https://wa.me/60194442424">019-444 2424</a>
+          {tr("WhatsApp:")}{" "}<a href={HUBUNGI.waUrl}>{HUBUNGI.whatsapp}</a>
           <br />
           {tr("Alamat: D-G-6 Putra Walk, Taman Pinggiran Putra, 43300 Seri Kembangan, Selangor")}</P>
 

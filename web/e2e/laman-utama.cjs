@@ -78,6 +78,8 @@ async function semakUmum(p, label) {
   expect(th.includes('RM0') && th.includes('7 days') && th.includes('RM499'), 'seksyen Harga: RM0 · 7 hari & RM499 setahun');
   expect((await harga.locator('a[href="/daftar"]').count()) === 1 && (await harga.locator('a[href="/daftar?pelan=tahunan"]').count()) === 1, 'Harga: pautan percubaan & langgan terus');
   expect((await p.locator('header a[href="#harga"]').count()) === 1, 'menu kepala: Harga');
+  expect(!(await p.innerText('body')).includes('Ready to try?'), 'tiada seksyen "Ready to try?"');
+  expect((await p.locator('a[href="https://wa.me/60133327800"]').count()) >= 1, 'WhatsApp 013-332 7800');
   for (let i = 0; i < 12; i++) await p.click('button[aria-label="More employees"]').catch(() => {});
   expect((await p.locator('output').innerText()).trim() === '50', 'had maksimum 50');
   await p.click('button[aria-label="More employees"]', { force: true }).catch(() => {});
