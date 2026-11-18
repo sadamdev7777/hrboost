@@ -11,13 +11,14 @@ import { bacaPendaftaranMentah, padamPendaftaran, type Pendaftaran } from "@/lib
 import { IconBack } from "@/components/icons";
 
 const noSub = () => () => {};
-type Daftar = { company: string; size: string; name: string; phone: string };
+type Daftar = { company: string; size: string; name: string; phone: string; pelan?: "percubaan" | "tahunan" };
 
 /**
  * Langkah 2 pendaftaran syarikat: semak e-mel.
  * - Sebelum pengesahan: arahan "buka pautan dalam e-mel" + hantar semula.
  * - Selepas pautan dibuka (sesi wujud, e-mel disahkan): cipta syarikat daripada maklumat
- *   pendaftaran dalam metadata pengguna, kemudian ke persediaan syarikat (/mula).
+ *   pendaftaran dalam metadata pengguna, kemudian ke persediaan syarikat (/mula), atau terus ke
+ *   halaman bayaran bagi pelan "Langgan terus" (/pengurusan/langganan?bayar=1).
  */
 export default function SahkanSyarikatPage() {
   const router = useRouter();
@@ -54,7 +55,7 @@ export default function SahkanSyarikatPage() {
       }
       await sb.auth.updateUser({ data: { daftar: null } });
       padamPendaftaran();
-      router.replace("/mula");
+      router.replace(d.pelan === "tahunan" ? "/pengurusan/langganan?bayar=1" : "/mula");
     }
     void cuba();
     const { data: sub } = sb.auth.onAuthStateChange(() => void cuba());
@@ -104,7 +105,7 @@ export default function SahkanSyarikatPage() {
           <ol className="m-0 flex flex-col gap-2 rounded-card bg-surface px-5 py-4 text-sm leading-normal">
             <li>{tr("Buka peti masuk e-mel (semak juga folder Spam / Promosi).")}</li>
             <li>{tr("Tekan butang \"Sahkan e-mel\" dalam e-mel daripada HRBoost.")}</li>
-            <li>{tr("Anda akan dibawa terus ke persediaan syarikat.")}</li>
+            <li>{p?.pelan === "tahunan" ? tr("Anda akan dibawa terus ke halaman bayaran langganan RM499 setahun.") : tr("Anda akan dibawa terus ke persediaan syarikat.")}</li>
           </ol>
         )}
         {ralat && (

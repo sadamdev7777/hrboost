@@ -13,7 +13,7 @@ const fs = require('fs');
 const { execSync } = require('child_process');
 const { chromium } = require('playwright');
 require('./_bahasa.cjs');
-const { emelDemo } = require('./_demo.cjs');
+const { emelDemo, pautanEmel } = require('./_demo.cjs');
 
 const BASE = process.env.E2E_BASE || 'http://localhost:3000';
 const FUNGSI = process.env.E2E_BILLING || 'http://127.0.0.1:8791/';
@@ -170,6 +170,47 @@ async function muatTurun(p, butang) {
   expect(true, 'pekerja melihat makluman langganan tamat');
   await ctx.close();
   sql(`update companies set billing_status = 'exempt' where id = '${CO}'`);
+
+  log('7. Laman utama → Langgan terus RM499 → daftar → sahkan e-mel → bayar → persediaan');
+  {
+    const ctx2 = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const q = await ctx2.newPage();
+    q.on('pageerror', (e) => log('   [ralat halaman]', e.message));
+    await q.route('**/functions/v1/billing**', async (r) => {
+      const resp = await r.fetch({ url: FUNGSI });
+      await r.fulfill({ response: resp });
+    });
+    await q.goto(BASE + '/');
+    await q.click('#harga a[href="/daftar?pelan=tahunan"]');
+    await q.waitForURL('**/daftar?pelan=tahunan');
+    await q.waitForSelector('text=Langgan terus: RM499 setahun');
+    await q.fill('input[placeholder^="Contoh: Syarikat ABC"]', 'Syarikat Langgan Terus Sdn Bhd');
+    await q.fill('input[placeholder="Nama anda"]', 'Hafiz bin Omar');
+    await q.fill('input[type=email]', 'hafiz@langgan.my');
+    await q.fill('input[autocomplete=new-password]', 'Rahsia123');
+    await q.check('input[type=checkbox]');
+    const mula = Date.now() - 2000;
+    await q.click('button:has-text("Daftar & teruskan ke bayaran")');
+    await q.waitForURL('**/daftar/sahkan');
+    await q.waitForSelector('text=Anda akan dibawa terus ke halaman bayaran langganan RM499 setahun.');
+    await q.goto(await pautanEmel('hafiz@langgan.my', { selepas: mula }));
+    await q.waitForURL('**/pengurusan/langganan?bayar=1', { timeout: 30000 });
+    await q.waitForSelector('text=Lengkapkan langganan anda');
+    expect(true, 'selepas e-mel disahkan: terus ke halaman bayaran (bukan persediaan)');
+    const co2 = sql(`select id from companies where name ilike 'Syarikat Langgan Terus Sdn Bhd'`);
+    expect(sql(`select billing_status || ' ' || (trial_ends_at::date - current_date) from companies where id = '${co2}'`) === 'trial 7', 'percubaan 7 hari sebagai sandaran jika bayaran tidak diselesaikan');
+    await q.screenshot({ path: `${shots}/langganan-terus.png`, fullPage: true });
+    await q.click('button:has-text("Bayar RM499.00")');
+    await q.waitForURL('http://127.0.0.1:8790/bayar/**', { timeout: 20000 });
+    await q.click('button:has-text("Bayar FPX")');
+    await q.waitForURL('**/langganan/selesai**', { timeout: 20000 });
+    await q.waitForSelector('text=Terima kasih!', { timeout: 30000 });
+    expect(sql(`select billing_status from companies where id = '${co2}'`) === 'active', 'langganan aktif setahun selepas bayar');
+    await q.click('a:has-text("Teruskan persediaan syarikat")');
+    await q.waitForURL('**/mula');
+    expect(true, 'teruskan ke persediaan syarikat');
+    await ctx2.close();
+  }
 
   await browser.close();
   chip.close();

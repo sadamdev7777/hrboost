@@ -39,7 +39,7 @@ export function KerangkaAwam({ children, tajuk, kecil, ciri }: { children: React
 
 /** Teks panel jenama bagi pendaftaran syarikat. */
 export const CIRI_DAFTAR = () => [
-  tr("Cuba percuma 5 hari"),
+  tr("Cuba percuma 7 hari"),
   tr("Cuti, tuntutan, kehadiran & gaji dalam satu sistem"),
   tr("Kelulusan terus dari WhatsApp"),
   tr("KWSP, PERKESO, SIP & PCB dikira automatik"),

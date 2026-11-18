@@ -8,6 +8,7 @@ import { tarikh } from "@/lib/format";
 import { getSatuInvois, rmSen, sahkanBayaran, type Invois } from "@/lib/langganan";
 import { simpanAtauKongsiBil } from "@/lib/bilPdf";
 import { ErrorBox, Loading, Screen } from "@/components/ui";
+import { getSupabase } from "@/lib/supabase";
 
 /** Kembali dari halaman bayaran CHIP: sahkan bayaran (cuba semula beberapa kali) dan papar resit. */
 export default function SelesaiPage() {
@@ -23,6 +24,8 @@ function Selesai() {
   const [inv, setInv] = useState<Invois | null>(null);
   const [keadaan, setKeadaan] = useState<"semak" | "dibayar" | "belum" | "ralat">("semak");
   const [ralat, setRalat] = useState<string | null>(null);
+  // Syarikat baharu (pelan Langgan terus): teruskan ke persediaan syarikat selepas bayar
+  const [persediaan, setPersediaan] = useState(false);
 
   useEffect(() => {
     let batal = false;
@@ -32,7 +35,9 @@ function Selesai() {
           const st = await sahkanBayaran(id);
           if (st === "paid") {
             const i = await getSatuInvois(id);
+            const c = await getSupabase().from("companies").select("onboarding_completed_at").eq("id", i.company_id).maybeSingle();
             if (!batal) {
+              setPersediaan(!!c.data && !c.data.onboarding_completed_at);
               setInv(i);
               setKeadaan("dibayar");
             }
@@ -69,9 +74,15 @@ function Selesai() {
             <button type="button" onClick={() => simpanAtauKongsiBil(inv, "resit", false)} className="h-12 rounded-button bg-primary text-base font-extrabold text-white">
               {tr("Muat turun resit {0}", inv.receipt_number ?? "")}
             </button>
-            <Link href="/pengurusan" className="flex h-12 items-center justify-center rounded-button border border-line text-base font-bold text-ink!">
-              {tr("Ke Papan Pemuka")}
-            </Link>
+            {persediaan ? (
+              <Link href="/mula" className="flex h-12 items-center justify-center rounded-button border-2 border-primary text-base font-extrabold text-primary!">
+                {tr("Teruskan persediaan syarikat")}
+              </Link>
+            ) : (
+              <Link href="/pengurusan" className="flex h-12 items-center justify-center rounded-button border border-line text-base font-bold text-ink!">
+                {tr("Ke Papan Pemuka")}
+              </Link>
+            )}
           </>
         )}
         {(keadaan === "belum" || keadaan === "ralat") && (

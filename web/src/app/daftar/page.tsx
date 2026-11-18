@@ -4,8 +4,8 @@ import { KerangkaAwam, CIRI_DAFTAR } from "@/components/KerangkaAwam";
 import { tr } from "@/lib/i18n";
 import { Langkah } from "@/components/LangkahDaftar";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { telefonPenuh } from "@/lib/format";
 import { simpanPendaftaran } from "@/lib/daftar";
@@ -16,8 +16,18 @@ const SAIZ = ["1–10", "11–50", "51–200", "200+"];
 const input = "h-12 rounded-field border border-line bg-surface px-4 text-base font-semibold text-ink outline-none focus:border-primary aria-[invalid=true]:border-danger aria-[invalid=true]:bg-danger-soft";
 
 // Rujukan reka bentuk: design/DaftarSyarikat.dc.html
+// Dua pelan: percubaan percuma 7 hari (lalai) atau ?pelan=tahunan — bayar RM499 sejurus selepas e-mel disahkan.
 export default function DaftarSyarikatPage() {
+  return (
+    <Suspense>
+      <Borang />
+    </Suspense>
+  );
+}
+
+function Borang() {
   const router = useRouter();
+  const tahunan = useSearchParams().get("pelan") === "tahunan";
   const [f, setF] = useState({ company: "", size: "11–50", name: "", phone: "", email: "" });
   const [kataLaluan, setKataLaluan] = useState("");
   const [setuju, setSetuju] = useState(false);
@@ -43,7 +53,7 @@ export default function DaftarSyarikatPage() {
     if (f.phone.trim() && !phone) return setRalat(tr("Sila masukkan nombor WhatsApp Malaysia yang sah, contohnya 012-345 6789."), "phone");
     if (!setuju) return setRalat(tr("Sila bersetuju dengan Terma dan Notis Privasi."), "setuju");
     setBusy(true);
-    const daftar = { company: f.company.trim(), size: f.size, name: f.name.trim(), phone: phone || "" };
+    const daftar = { company: f.company.trim(), size: f.size, name: f.name.trim(), phone: phone || "", pelan: tahunan ? "tahunan" : "percubaan" } as const;
     // Pautan pengesahan dalam e-mel membuka /daftar/sahkan; syarikat dicipta selepas e-mel disahkan
     const { data, error } = await getSupabase().auth.signUp({
       email,
@@ -74,7 +84,22 @@ export default function DaftarSyarikatPage() {
         <div className="flex flex-col gap-1.5">
           <Langkah n={1} />
           <h1 className="m-0 text-[22px] font-extrabold">{tr("Daftar syarikat")}</h1>
-          <span className="text-sm text-subtle">{tr("Cuba percuma 5 hari, hanya 2 minit. Anda akan menjadi Pentadbir syarikat ini.")}</span>
+          {tahunan ? (
+            <div className="flex flex-col gap-1.5 rounded-[14px] bg-[#E3F1EE] px-4 py-3 text-sm">
+              <b className="text-ink">{tr("Langgan terus: RM499 setahun")}</b>
+              <span className="text-subtle">{tr("Isi borang dan sahkan e-mel, kemudian anda dibawa terus ke halaman bayaran (FPX, kad atau e-dompet). Langganan aktif setahun sebaik bayaran diterima.")}</span>
+              <Link href="/daftar" className="inline-flex min-h-11 items-center self-start font-bold">
+                {tr("Cuba percuma 7 hari dahulu")}
+              </Link>
+            </div>
+          ) : (
+            <span className="text-sm text-subtle">
+              {tr("Cuba percuma 7 hari, hanya 2 minit. Anda akan menjadi Pentadbir syarikat ini.")}{" "}
+              <Link href="/daftar?pelan=tahunan" className="font-bold">
+                {tr("Atau langgan terus RM499 setahun")}
+              </Link>
+            </span>
+          )}
         </div>
         <span className="pt-1 text-xs font-bold tracking-[0.04em] text-[#4A5A57]">{tr("SYARIKAT")}</span>
         <label className="flex flex-col gap-1.5 text-sm font-bold">
@@ -126,7 +151,7 @@ export default function DaftarSyarikatPage() {
           </span>
         )}
         <button type="submit" disabled={busy} className="flex h-12 items-center justify-center rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
-          {busy ? tr("Menghantar…") : tr("Daftar & sahkan e-mel")}
+          {busy ? tr("Menghantar…") : tahunan ? tr("Daftar & teruskan ke bayaran") : tr("Daftar & sahkan e-mel")}
         </button>
         <span className="text-center text-sm text-muted">
           {tr("Sudah mempunyai akaun?")}{" "}<Link href="/masuk">{tr("Log masuk")}</Link>

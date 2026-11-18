@@ -63,7 +63,7 @@ const ALAT = () => [
 ];
 const SOALAN = () => [
   [tr("Saya tiada pegawai HR. Bolehkah saya menggunakan HRBoost?"), tr("Boleh. HRBoost dibina untuk syarikat 5–50 pekerja yang menguruskan HR sendiri. Tetapan cuti, kelulusan dan tuntutan disediakan mengikut Akta Kerja, dan kadar berkanun dikemas kini secara automatik.")],
-  [tr("Berapakah harga HRBoost?"), tr("Cuba percuma selama 5 hari tanpa kad kredit. Selepas itu RM499 setahun bagi seluruh syarikat — semua modul, pekerja tanpa had.")],
+  [tr("Berapakah harga HRBoost?"), tr("Dua pilihan: cuba percuma selama 7 hari tanpa kad kredit dan bayar kemudian, atau langgan terus RM499 setahun semasa mendaftar. Harga yang sama bagi seluruh syarikat — semua modul, pekerja tanpa had.")],
   [tr("Adakah data pekerja selamat?"), tr("Setiap syarikat diasingkan sepenuhnya. Hanya HR syarikat anda boleh melihat data peribadi, dan setiap akses direkodkan.")],
   [tr("Perlukah pekerja memasang aplikasi?"), tr("Tidak. Pekerja membuka pautan jemputan dan terus menggunakan pelayar telefon. Aplikasi juga boleh dipasang pada skrin utama telefon jika dikehendaki.")],
   [tr("Adakah kiraan KWSP, PERKESO dan PCB tepat?"), tr("Kadar berkanun dikemas kini oleh HRBoost. Semak slip gaji pertama dengan kalkulator rasmi sebelum membayar.")],
@@ -220,6 +220,9 @@ export default function Kandungan() {
           </div>
         </section>
 
+        {/* 10b. Harga: dua pilihan */}
+        <Harga />
+
         {/* 11. Soalan lazim */}
         <section id="soalan" className={`${BALUT} ${SEKSYEN_BESAR} scroll-mt-20`}>
           <h2 className={`${H2} mb-4`}>{tr("Soalan lazim")}</h2>
@@ -241,7 +244,7 @@ export default function Kandungan() {
         {/* 12. Seruan akhir */}
         <section className={`${BALUT} flex flex-col items-center gap-5 pt-16 pb-10 text-center min-[700px]:py-32`}>
           <h2 className={H2}>{tr("Sedia untuk mencuba?")}</h2>
-          <p className="m-0 text-base text-[#5B6B68]">{tr("Cuba percuma 5 hari, kemudian RM499 setahun. Tiada kad kredit.")}</p>
+          <p className="m-0 text-base text-[#5B6B68]">{tr("Cuba percuma 7 hari, atau langgan terus RM499 setahun.")}</p>
           <Link href="/daftar" className="flex h-[52px] items-center rounded-xl bg-primary px-7 text-base font-bold text-white!">
             {tr("Daftar syarikat")}
           </Link>
@@ -256,6 +259,75 @@ export default function Kandungan() {
       </main>
       <KakiHalaman />
     </div>
+  );
+}
+
+const TERMASUK = () => [tr("Semua modul: cuti, tuntutan, kehadiran, gaji, surat, prestasi"), tr("Pekerja tanpa had"), tr("KWSP, PERKESO, SIP & PCB automatik")];
+
+function Tanda() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="mt-0.5 shrink-0">
+      <path d="M5 12.5l4.5 4.5L19 7.5" />
+    </svg>
+  );
+}
+
+/** Seksyen harga: Cuba percuma 7 hari (daftar dulu, bayar kemudian) atau Langgan terus RM499 (bayar semasa mendaftar). */
+function Harga() {
+  const senarai = "m-0 flex list-none flex-col gap-2 p-0 text-[15px] leading-snug";
+  return (
+    <section id="harga" className={`${BALUT} ${SEKSYEN_BESAR} scroll-mt-20`}>
+      <div className="mb-6 flex flex-col gap-2 min-[700px]:mb-8">
+        <h2 className={H2}>{tr("Satu harga untuk seluruh syarikat.")}</h2>
+        <p className="m-0 text-base text-[#5B6B68]">{tr("Bukan setiap pekerja. Pilih cara yang sesuai dengan syarikat anda.")}</p>
+      </div>
+      <div className="grid gap-4 min-[700px]:grid-cols-2 min-[700px]:gap-5">
+        <div className="flex flex-col gap-4 rounded-[20px] border border-[#E2E8E6] bg-white px-5 py-6 min-[700px]:px-7 min-[700px]:py-8">
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-bold text-primary">{tr("Cuba percuma")}</span>
+            <b className="text-[40px] leading-none font-extrabold tracking-[-0.02em]">
+              RM0 <span className="text-base font-bold text-[#5B6B68]">{tr("· 7 hari")}</span>
+            </b>
+            <span className="text-[15px] text-[#5B6B68]">{tr("Daftar dulu, bayar kemudian. Tiada kad kredit.")}</span>
+          </div>
+          <ul className={senarai}>
+            {[...TERMASUK(), tr("Data kekal apabila anda melanggan")].map((t) => (
+              <li key={t} className="flex gap-2.5 text-[#33433F]">
+                <span className="text-primary"><Tanda /></span>
+                {t}
+              </li>
+            ))}
+          </ul>
+          <span className="grow" />
+          <Link href="/daftar" className="flex h-12 items-center justify-center rounded-xl border-[1.5px] border-primary px-6 text-[15px] font-bold text-primary!">
+            {tr("Mula percubaan percuma")}
+          </Link>
+        </div>
+        <div className="relative flex flex-col gap-4 rounded-[20px] bg-primary px-5 py-6 text-white min-[700px]:px-7 min-[700px]:py-8">
+          <span className="absolute top-5 right-5 rounded-full bg-white/15 px-3 py-1 text-xs font-bold">{tr("Terus aktif")}</span>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-bold text-[#D7ECE7]">{tr("Langgan terus")}</span>
+            <b className="text-[40px] leading-none font-extrabold tracking-[-0.02em]">
+              RM499 <span className="text-base font-bold text-[#D7ECE7]">{tr("/ setahun")}</span>
+            </b>
+            <span className="text-[15px] text-[#D7ECE7]">{tr("Bayar semasa mendaftar dan terus aktif setahun. Invois & resit rasmi.")}</span>
+          </div>
+          <ul className={senarai}>
+            {[...TERMASUK(), tr("FPX, kad atau e-dompet melalui CHIP · kod baucar diterima")].map((t) => (
+              <li key={t} className="flex gap-2.5">
+                <Tanda />
+                {t}
+              </li>
+            ))}
+          </ul>
+          <span className="grow" />
+          <Link href="/daftar?pelan=tahunan" className="flex h-12 items-center justify-center rounded-xl bg-white px-6 text-[15px] font-extrabold text-primary!">
+            {tr("Langgan sekarang")}
+          </Link>
+        </div>
+      </div>
+      <p className="m-0 mt-4 text-center text-[13px] text-[#5B6B68]">{tr("Tiada SST. Sistem lain mengenakan bayaran bagi setiap pekerja setiap bulan.")}</p>
+    </section>
   );
 }
 
@@ -280,6 +352,9 @@ function Pengepala() {
           <a href="#cara" className={pautan}>
             {tr("Cara bermula")}
           </a>
+          <a href="#harga" className={pautan}>
+            {tr("Harga")}
+          </a>
           <a href="#soalan" className={pautan}>
             {trKonteks("Soalan lazim", "FAQ")}
           </a>
@@ -303,11 +378,11 @@ function Hero() {
         <span className="text-sm font-bold text-primary">{tr("Untuk syarikat 5–50 pekerja tanpa pegawai HR")}</span>
         <h1 className="m-0 text-[31px] leading-[1.08] font-extrabold tracking-[-0.025em] min-[700px]:text-[38px] min-[980px]:text-[56px]">{tr("Urusan HR yang lengkap, tanpa pegawai HR.")}</h1>
         <p className="m-0 max-w-[500px] text-base leading-relaxed text-[#5B6B68] min-[700px]:text-lg">
-          {tr("Cuti, tuntutan, kehadiran dan gaji diuruskan dalam satu sistem. Pekerja memohon melalui telefon, ketua meluluskan dengan satu sentuhan, dan gaji dikira mengikut KWSP, PERKESO dan PCB. Cuba percuma 5 hari, kemudian RM499 setahun.")}
+          {tr("Cuti, tuntutan, kehadiran dan gaji diuruskan dalam satu sistem. Pekerja memohon melalui telefon, ketua meluluskan dengan satu sentuhan, dan gaji dikira mengikut KWSP, PERKESO dan PCB. Cuba percuma 7 hari, kemudian RM499 setahun.")}
         </p>
         <div className="mt-2 flex flex-col gap-3 min-[700px]:flex-row">
           <Link href="/daftar" className="flex h-12 items-center justify-center rounded-xl bg-primary px-[26px] text-[15px] font-bold text-white! min-[700px]:h-[52px] min-[700px]:text-base">
-            {tr("Daftar syarikat — cuba percuma 5 hari")}
+            {tr("Daftar syarikat — cuba percuma 7 hari")}
           </Link>
           {BENDERA.demo && (
             <a href="#demo" className="box-border flex h-12 items-center justify-center rounded-xl border-[1.5px] border-[#C9D3D1] px-6 text-[15px] font-bold text-ink! min-[700px]:h-[52px] min-[700px]:text-base">
@@ -426,6 +501,9 @@ function KakiHalaman() {
             )}
             <a href="#cara" className={pautan}>
               {tr("Cara bermula")}
+            </a>
+            <a href="#harga" className={pautan}>
+              {tr("Harga")}
             </a>
             <a href="#soalan" className={pautan}>
               {tr("Soalan lazim")}

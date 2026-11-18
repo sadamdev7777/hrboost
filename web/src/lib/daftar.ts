@@ -1,7 +1,7 @@
 "use client";
 
 /** Maklumat pendaftaran syarikat sementara (sessionStorage) antara /daftar dan /daftar/sahkan. */
-export type Pendaftaran = { company: string; size: string; name: string; phone: string; email: string };
+export type Pendaftaran = { company: string; size: string; name: string; phone: string; email: string; pelan?: "percubaan" | "tahunan" };
 const KEY = "hrb_daftar_syarikat";
 
 export function simpanPendaftaran(p: Pendaftaran) {

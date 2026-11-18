@@ -1,7 +1,7 @@
 \set ON_ERROR_STOP 1
 \pset pager off
 \pset footer off
--- Ujian langganan: percubaan 5 hari, sebut harga dengan kempen / baucar (tempoh & had), invois → bayar (idempotent),
+-- Ujian langganan: percubaan 7 hari, sebut harga dengan kempen / baucar (tempoh & had), invois → bayar (idempotent),
 -- pembaharuan menyambung tarikh, peralihan harian trial → grace → readonly, permohonan disekat semasa baca sahaja.
 -- Gunakan stub local_only (test.uid / test.role / service role). Jangan jalankan pada Supabase sebenar.
 
@@ -24,10 +24,10 @@ insert into user_roles(person_id,company_id,role) values
  ('00000000-0000-0000-0000-000000000003','00000000-0000-0000-0000-0000000000c2','admin');
 insert into platform_admins(person_id) values ('00000000-0000-0000-0000-000000000004');
 
-\echo '=== L1: syarikat baharu → percubaan 5 hari ==='
+\echo '=== L1: syarikat baharu → percubaan 7 hari ==='
 do $$ begin
   assert (select billing_status from companies where code = 'ABC') = 'trial', 'percubaan';
-  assert (select trial_ends_at between now() + interval '4 days 23 hours' and now() + interval '5 days 1 hour' from companies where code = 'ABC'), '5 hari';
+  assert (select trial_ends_at between now() + interval '6 days 23 hours' and now() + interval '7 days 1 hour' from companies where code = 'ABC'), '7 hari';
 end $$;
 
 \echo '=== L2: Pentadbir Platform cipta kempen & baucar; pekerja biasa tidak boleh sebut harga ==='

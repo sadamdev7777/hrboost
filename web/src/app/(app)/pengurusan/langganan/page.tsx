@@ -1,7 +1,9 @@
 "use client";
 
 import { tr, trRalat } from "@/lib/i18n";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useMe } from "@/lib/me";
 import { useData } from "@/lib/useData";
 import { tarikh, tarikhTempatan } from "@/lib/format";
@@ -15,7 +17,9 @@ import { HadPeranan, inputKecil, Seksyen, Tag } from "@/components/Senarai";
 export default function LanggananPage() {
   return (
     <HadPeranan roles={["admin", "hr", "ceo", "finance"]} back="/pengurusan/tetapan">
-      <Kandungan />
+      <Suspense fallback={<Loading />}>
+        <Kandungan />
+      </Suspense>
     </HadPeranan>
   );
 }
@@ -39,6 +43,8 @@ function Kandungan() {
   const [ralat, setRalat] = useState<string | null>(null);
   const s = st.data;
   const label = LABEL_STATUS();
+  // Pelan "Langgan terus" dari pendaftaran: halaman ini dibuka terus selepas e-mel disahkan
+  const baru = useSearchParams().get("bayar") === "1" && s?.status === "trial";
 
   async function bayar() {
     setSibuk(true);
@@ -66,7 +72,16 @@ function Kandungan() {
       <main className="flex grow flex-col gap-4 px-4 pt-1 pb-8 lg:px-0">
         {st.error && <ErrorBox message={st.error} />}
         {!s && !st.error && <Loading />}
-        {s && (
+        {baru && (
+          <section className="flex flex-col gap-1.5 rounded-card bg-[#E3F1EE] px-4 py-4 lg:px-5">
+            <b className="text-base font-extrabold">{tr("Lengkapkan langganan anda")}</b>
+            <span className="text-sm text-subtle">{tr("Syarikat anda telah didaftarkan. Bayar RM{0} untuk mengaktifkan langganan setahun, kemudian teruskan persediaan syarikat.", (s!.price_sen / 100).toFixed(0))}</span>
+            <Link href="/mula" className="inline-flex min-h-11 items-center self-start text-sm font-bold">
+              {tr("Bayar kemudian — guna percubaan 7 hari dahulu")}
+            </Link>
+          </section>
+        )}
+        {s && !baru && (
           <section className="flex flex-col gap-2 rounded-card bg-surface px-4 py-4 lg:px-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <b className="text-lg font-extrabold">{tr("HRBoost untuk {0}", me.active!.companyName)}</b>

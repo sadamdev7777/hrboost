@@ -88,7 +88,7 @@ export default function Kandungan() {
 
         <H3>{tr("Yuran langganan")}</H3>
         <P>
-          {tr("Syarikat baharu boleh mencuba HRBoost secara percuma selama 5 hari. Selepas itu yuran langganan RM499 setahun dikenakan bagi setiap syarikat dan dibayar melalui CHIP; invois dan resit dikeluarkan secara automatik. Jika langganan tidak diperbaharui, sistem menjadi baca sahaja selepas tempoh tangguh 14 hari dan data tidak dipadam. Had penggunaan berpatutan dikenakan untuk mesej WhatsApp dan ciri AI.")}</P>
+          {tr("Syarikat baharu boleh mencuba HRBoost secara percuma selama 7 hari, atau melanggan terus semasa mendaftar. Yuran langganan ialah RM499 setahun bagi setiap syarikat dan dibayar melalui CHIP; invois dan resit dikeluarkan secara automatik. Jika langganan tidak diperbaharui, sistem menjadi baca sahaja selepas tempoh tangguh 14 hari dan data tidak dipadam. Had penggunaan berpatutan dikenakan untuk mesej WhatsApp dan ciri AI.")}</P>
         <H3>{tr("Tanggungjawab syarikat")}</H3>
         <P>
           {tr("Syarikat bertanggungjawab ke atas ketepatan maklumat pekerja, polisi syarikat dan semakan akhir gaji serta caruman berkanun sebelum dibayar.")}</P>

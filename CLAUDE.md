@@ -1,6 +1,6 @@
 # HRBoost.io — brief pembinaan
 
-Sistem HR untuk syarikat di Malaysia: cuba percuma 5 hari, kemudian RM499 setahun bagi setiap syarikat (semua modul, pekerja tanpa had). Mobile-first (PWA), WhatsApp sebagai saluran utama, sedia untuk AI agent.
+Sistem HR untuk syarikat di Malaysia: cuba percuma 7 hari atau langgan terus RM499 setahun bagi setiap syarikat (semua modul, pekerja tanpa had). Mobile-first (PWA), WhatsApp sebagai saluran utama, sedia untuk AI agent.
 Pemilik produk: Sadam. Reka bentuk skrin: kanvas Design "HRBoost.io — Skrin" (nama skrin di bawah ikut nama fail kanvas).
 
 ---
@@ -14,7 +14,7 @@ Pemilik produk: Sadam. Reka bentuk skrin: kanvas Design "HRBoost.io — Skrin" (
 5. **Agent-ready.** Setiap kejadian penting → `hr_events` → `automation_rules` → `notifications` → WhatsApp. Setiap tindakan ada RPC yang boleh dipanggil oleh app ATAU agent (parameter `p_via`, `p_on_behalf`).
 6. **Nama panggilan** dipakai di semua tempat. Nama penuh (ikut IC) hanya untuk slip gaji, EA, KWSP, surat rasmi.
 7. **Kadar berkanun = data**, bukan kod. Dikemas kini oleh platform untuk semua syarikat.
-8. **Langganan RM499 setahun** (`platform_settings.billing`: harga, hari percubaan 5, tangguh 14, butiran penjual). Syarikat baharu = `trial`; syarikat sedia ada = `exempt`. Tamat → `grace` (14 hari) → `readonly` (data kekal, permohonan baharu disekat). Bayaran melalui CHIP; invois & resit atas nama HRBoost. Tiada SST.
+8. **Langganan RM499 setahun** (`platform_settings.billing`: harga, hari percubaan 7, tangguh 14, butiran penjual). Dua pelan di laman utama (`#harga`): **Cuba percuma 7 hari** (`/daftar`, bayar kemudian) atau **Langgan terus** (`/daftar?pelan=tahunan` → selepas e-mel disahkan terus ke `/pengurusan/langganan?bayar=1` → CHIP → `/mula`; bayaran tidak diselesaikan = kekal percubaan 7 hari). Syarikat baharu = `trial`; syarikat sedia ada = `exempt`. Tamat → `grace` (14 hari) → `readonly` (data kekal, permohonan baharu disekat). Bayaran melalui CHIP; invois & resit atas nama HRBoost. Tiada SST.
 
 ## 2. Stack
 

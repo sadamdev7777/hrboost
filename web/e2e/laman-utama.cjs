@@ -72,6 +72,12 @@ async function semakUmum(p, label) {
   expect((await p.locator('output').innerText()).trim() === '25', '+ menjadi 25');
   expect((await p.innerText('body')).includes('Save up to RM4,601 a year.'), 'jimat RM4,601 setahun (25 × 17 × 12 − RM499)');
   expect(!(await p.innerText('body')).includes('SAHKAN'), 'nota anggaran tanpa [SAHKAN SEBELUM DITERBITKAN]');
+  // Harga: dua pelan
+  const harga = p.locator('#harga');
+  const th = await harga.innerText();
+  expect(th.includes('RM0') && th.includes('7 days') && th.includes('RM499'), 'seksyen Harga: RM0 · 7 hari & RM499 setahun');
+  expect((await harga.locator('a[href="/daftar"]').count()) === 1 && (await harga.locator('a[href="/daftar?pelan=tahunan"]').count()) === 1, 'Harga: pautan percubaan & langgan terus');
+  expect((await p.locator('header a[href="#harga"]').count()) === 1, 'menu kepala: Harga');
   for (let i = 0; i < 12; i++) await p.click('button[aria-label="More employees"]').catch(() => {});
   expect((await p.locator('output').innerText()).trim() === '50', 'had maksimum 50');
   await p.click('button[aria-label="More employees"]', { force: true }).catch(() => {});
