@@ -166,6 +166,11 @@ export default function SahkanSyarikatPage() {
             {ralat}
           </span>
         )}
+        {keadaan === "ralat" && (
+          <button type="button" onClick={() => window.location.reload()} className="h-12 rounded-button bg-primary text-base font-extrabold text-white">
+            {tr("Cuba lagi")}
+          </button>
+        )}
         {dihantar && <span className="text-sm font-semibold text-success">{tr("Pautan baharu telah dihantar.")}</span>}
         {keadaan !== "mencipta" && !pautanTamat && p?.email && (
           <span className="text-sm text-muted">

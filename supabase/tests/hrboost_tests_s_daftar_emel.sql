@@ -67,4 +67,13 @@ select register_company_email('Kenari Sdn Bhd', '1–10', 'Faizal bin Hashim', n
 reset test.role; reset test.uid; reset test.email;
 select c.name, p.email, p.phone_whatsapp, (select string_agg(role::text, ',' order by role) from user_roles r where r.company_id = c.id) as peranan
   from companies c join persons p on p.id = c.created_by where c.id = :'cid';
+\echo '=== S4: nombor WhatsApp sudah digunakan oleh akaun lain → syarikat tetap dicipta tanpa nombor ==='
+insert into auth.users select '00000000-0000-0000-0000-0000000000f4'::uuid;
+set test.role='authenticated'; set test.uid='00000000-0000-0000-0000-0000000000f4'; set test.email='faizal2@lain.my';
+select register_company_email('Lain Sdn Bhd', '1–10', 'Faizal bin Hashim', '012-345 6789') as cid2 \gset
+reset test.role; reset test.uid; reset test.email;
+do $$ begin
+  assert (select phone_whatsapp is null and email = 'faizal2@lain.my' from persons p join companies c on c.created_by = p.id where c.name = 'LAIN SDN BHD'), 'nombor tidak disalin';
+  assert (select phone_whatsapp from persons where email = 'faizal@kenari.my') = '60123456789', 'pemilik asal kekal';
+end $$;
 \echo '>>> LULUS: hrboost_tests_s_daftar_emel'

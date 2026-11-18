@@ -707,6 +707,7 @@ export const EN: Record<string, string> = {
  "Cuba dahulu, tanpa perlu mendaftar.": "Try it first, no sign-up needed.",
  "Cuba demo": "Try the demo",
  "Cuba demo dahulu": "Try the demo first",
+ "Cuba lagi": "Try again",
  "Cuba percuma": "Try free",
  "Cuba percuma 5 hari, hanya 2 minit. Anda akan menjadi Pentadbir syarikat ini.": "Free 5-day trial, takes just 2 minutes. You will be this company's Administrator.",
  "Cuba percuma 7 hari": "Free 7-day trial",
