@@ -30,10 +30,11 @@ async function vapid(sb: SB): Promise<Vapid | null> {
 /** Hantar notifikasi telefon kepada peranti yang dilanggan. */
 async function hantarSemuaPush(sb: SB) {
   const kira = { push: 0, push_gagal: 0 };
-  const { data, error } = await sb.rpc("push_next", { p_limit: 100 });
-  if (error || !data?.length) return kira;
+  // Kunci dijana pada larian pertama: aplikasi memerlukan kunci awam sebelum peranti boleh melanggan
   const v = await vapid(sb);
   if (!v) return kira;
+  const { data, error } = await sb.rpc("push_next", { p_limit: 100 });
+  if (error || !data?.length) return kira;
   const app = (Deno.env.get("APP_URL") ?? "https://hrboost.io").replace(/\/$/, "");
   for (const n of data as { endpoint: string; p256dh: string; auth: string; message: string; language: string }[]) {
     const e = bentukEmel(n.message, n.language, app);
