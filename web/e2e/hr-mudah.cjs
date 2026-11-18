@@ -62,7 +62,9 @@ async function masuk(b, email, vp) {
   await p.waitForSelector(V('th:has-text("Purata lewat")'));
   await p.screenshot({ path: path.join(shots, 'hrmudah-laporan.png') });
 
-  log('3. Tarikh tamat permit — Amin');
+  log('3. Tarikh tamat permit — Amin (pekerja asing)');
+  // Warganegara Malaysia tetap: tiada tindakan tarikh tamat. Amin dijadikan pekerja asing untuk ujian permit.
+  require('child_process').execSync(`psql -h 127.0.0.1 -p 54322 -U postgres -Atc "update persons set nationality = 'ID' where id = (select person_id from employments where employee_no = 'DEMO004')"`, { env: { ...process.env, PGPASSWORD: 'postgres' } });
   await p.goto(BASE + '/pengurusan/pekerja');
   await p.click(V('a:has-text("Amin")'));
   await p.click(V('button:has-text("Tarikh tamat kontrak")'));

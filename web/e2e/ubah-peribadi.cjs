@@ -29,7 +29,8 @@ const AMIN = '00000000-0000-0000-0000-0000000000e4';
   await p.goto(BASE + '/pengurusan/pekerja/' + AMIN);
   await p.waitForSelector(V('section[aria-label="Tindakan"]'));
   const t = await p.locator(V('section[aria-label="Tindakan"]')).innerText();
-  for (const x of ['Ubah gaji & jawatan', 'Dokumen', 'Jana surat', 'Draf surat lain (AI)', 'Tarikh tamat kontrak', 'Tamatkan pekerjaan']) expect(t.includes(x), `tindakan kelihatan: ${x}`);
+  for (const x of ['Ubah gaji & jawatan', 'Dokumen', 'Jana surat', 'Draf surat lain (AI)', 'Tamatkan pekerjaan']) expect(t.includes(x), `tindakan kelihatan: ${x}`);
+  expect(!t.includes('Tarikh tamat kontrak'), 'warganegara Malaysia (tetap): tiada tindakan tarikh tamat kontrak/permit/pasport');
   expect((await p.locator('summary:has-text("Lagi")').count()) === 0, 'tiada menu "⋯ Lagi"');
 
   log('2. HR ubah maklumat peribadi');

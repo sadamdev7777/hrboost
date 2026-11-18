@@ -137,6 +137,9 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
   // HR terus melihat maklumat peribadi; setiap paparan direkodkan dalam data_access_log (hr_view_sensitive).
   const sd = useData(() => (bolehUbah ? bukaMaklumatSensitif(p.id) : Promise.resolve(null as MaklumatSensitif | null)), [p.id, bolehUbah]);
   const sensitif = sd.data;
+  // Warganegara Malaysia: tiada permit kerja / pasport untuk dipantau. Pekerja tetap tempatan tidak memerlukan
+  // tarikh tamat langsung; pekerja kontrak / pelatih / sambilan tempatan hanya tarikh tamat kontrak.
+  const tempatan = !sensitif?.nationality || sensitif.nationality === "MY";
   // Permohonan kemas kini profil oleh pekerja (bank, perkahwinan, KWSP …) yang menunggu HR
   const kemasKini = useData(
     async () =>
@@ -286,7 +289,11 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
             <Tindakan onClick={keDokumen} tajuk={tr("Dokumen")} keterangan={tr("Kontrak, surat tawaran, sijil")} />
             <Tindakan onClick={() => bukaSurat()} tajuk={tr("Jana surat")} keterangan={tr("Tawaran, pengesahan, kenaikan gaji, amaran, berhenti")} />
             <Tindakan href={`/pembantu-ai?pekerja=${p.id}&surat=1`} ai tajuk={tr("Draf surat lain (AI)")} keterangan={tr("Surat yang tiada templat")} />
-            <Tindakan onClick={() => setLembaran("tarikh")} tajuk={tr("Tarikh tamat kontrak, permit & pasport")} keterangan={tr("Peringatan sebelum tamat")} />
+            {!tempatan ? (
+              <Tindakan onClick={() => setLembaran("tarikh")} tajuk={tr("Tarikh tamat kontrak, permit & pasport")} keterangan={tr("Peringatan sebelum tamat")} />
+            ) : (p.type !== "permanent" || p.contractEnd) && (
+              <Tindakan onClick={() => setLembaran("tarikh")} tajuk={tr("Tarikh tamat kontrak")} keterangan={tr("Peringatan sebelum kontrak tamat")} />
+            )}
             {!p.activated && <Tindakan onClick={jemputSemula} tajuk={p.inviteSentAt ? tr("Hantar semula jemputan") : tr("Hantar jemputan")} keterangan={tr("Melalui e-mel atau WhatsApp")} />}
             {jemput && <JemputPekerja employmentId={p.id} companyId={syarikatAktif} onClose={() => setJemput(false)} onSelesai={reload} />}
           </div>
@@ -402,6 +409,7 @@ function Maklumat({ p, reload, bolehUbah, baru, keDokumen }: { p: ButiranPekerja
       {lembaran === "tarikh" && (
         <UbahTarikhTamat
           p={p}
+          tempatan={tempatan}
           onClose={() => setLembaran(null)}
           onDone={() => {
             setLembaran(null);
@@ -620,7 +628,7 @@ function TarikhAmaran({ iso }: { iso: string }) {
   );
 }
 
-function UbahTarikhTamat({ p, onClose, onDone }: { p: ButiranPekerja; onClose: () => void; onDone: () => void }) {
+function UbahTarikhTamat({ p, tempatan, onClose, onDone }: { p: ButiranPekerja; tempatan: boolean; onClose: () => void; onDone: () => void }) {
   const [f, setF] = useState({ kontrak: p.contractEnd ?? "", permit: p.permitExpiry ?? "", pasport: p.passportExpiry ?? "" });
   const [ralat, setRalat] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -636,19 +644,21 @@ function UbahTarikhTamat({ p, onClose, onDone }: { p: ButiranPekerja; onClose: (
     }
   }
   return (
-    <Lembaran title={tr("Tarikh tamat")} onClose={onClose}>
-      <span className="text-[13px] leading-snug text-subtle">{tr("Anda akan diingatkan dalam Papan Pemuka sebelum tarikh ini (kontrak 30 hari, permit & pasport 60 hari).")}</span>
+    <Lembaran title={tempatan ? tr("Tarikh tamat kontrak") : tr("Tarikh tamat")} onClose={onClose}>
+      <span className="text-[13px] leading-snug text-subtle">
+        {tempatan ? tr("Anda akan diingatkan dalam Papan Pemuka 30 hari sebelum kontrak tamat.") : tr("Anda akan diingatkan dalam Papan Pemuka sebelum tarikh ini (kontrak 30 hari, permit & pasport 60 hari).")}
+      </span>
       <MedanBorang label={tr("Kontrak tamat")} nota={tr("Untuk pekerja kontrak atau pelatih")}>
         <input className={inputKecil} type="date" value={f.kontrak} onChange={(e) => setF({ ...f, kontrak: e.target.value })} />
       </MedanBorang>
-      <div className="grid grid-cols-2 gap-2.5">
+      {!tempatan && <div className="grid grid-cols-2 gap-2.5">
         <MedanBorang label={tr("Permit kerja tamat")}>
           <input className={inputKecil} type="date" value={f.permit} onChange={(e) => setF({ ...f, permit: e.target.value })} />
         </MedanBorang>
         <MedanBorang label={tr("Pasport tamat")}>
           <input className={inputKecil} type="date" value={f.pasport} onChange={(e) => setF({ ...f, pasport: e.target.value })} />
         </MedanBorang>
-      </div>
+      </div>}
       {ralat && <ErrorBox message={ralat} />}
       <button type="button" onClick={simpan} disabled={busy} className="h-12 rounded-button bg-primary text-base font-extrabold text-white disabled:opacity-60">
         {busy ? tr("Menyimpan…") : tr("Simpan")}
