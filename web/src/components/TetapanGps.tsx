@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useData } from "@/lib/useData";
 import { ErrorBox } from "@/components/ui";
 import { ButangUtama, Lembaran, MedanBorang, Seksyen, Suis, inputKecil } from "@/components/Senarai";
-import { dapatkanLokasi, getTetapanGps, padamLokasi, petaUrl, setGps, simpanLokasi, type LokasiPejabat } from "@/lib/kehadiranGps";
+import { dapatkanLokasi, getTetapanGps, koordinatDaripadaTeks, padamLokasi, petaUrl, setGps, simpanLokasi, type LokasiPejabat } from "@/lib/kehadiranGps";
 import { sahkan } from "@/components/Dialog";
 
 /** Tetapan → Kehadiran: daftar masuk melalui telefon (GPS + swafoto) dan lokasi pejabat. */
@@ -100,6 +100,25 @@ function BorangLokasi({ companyId, asal, onClose, onDone }: { companyId: string;
   const [lng, setLng] = useState(asal ? String(asal.lng) : "");
   const [radius, setRadius] = useState(String(asal?.radius_m ?? 150));
   const [busy, setBusy] = useState<null | "lokasi" | "simpan">(null);
+  const [pautan, setPautan] = useState("");
+  const [ralatPautan, setRalatPautan] = useState<string | null>(null);
+
+  function tampal(t: string) {
+    setPautan(t);
+    if (!t.trim()) return setRalatPautan(null);
+    const k = koordinatDaripadaTeks(t);
+    if (k) {
+      setLat(k.lat.toFixed(6));
+      setLng(k.lng.toFixed(6));
+      setRalatPautan(null);
+    } else {
+      setRalatPautan(
+        /goo\.gl|maps\.app/.test(t)
+          ? tr("Pautan pendek tidak mengandungi koordinat. Buka pautan itu di pelayar, kemudian salin alamat penuh daripada bar alamat.")
+          : tr("Koordinat tidak dijumpai dalam teks ini."),
+      );
+    }
+  }
   const [ralat, setRalat] = useState<string | null>(null);
 
   async function lokasiSaya() {
@@ -133,6 +152,13 @@ function BorangLokasi({ companyId, asal, onClose, onDone }: { companyId: string;
       <button type="button" disabled={!!busy} onClick={lokasiSaya} className="h-11 rounded-xl border border-line text-sm font-bold text-primary disabled:opacity-60">
         {busy === "lokasi" ? tr("Mengesan lokasi…") : tr("Guna lokasi saya sekarang")}
       </button>
+      <MedanBorang
+        label={tr("Atau tampal pautan Google Maps / koordinat")}
+        nota={tr("Di Google Maps, klik kanan pada lokasi pejabat dan pilih koordinat untuk menyalinnya (cth. 3.073800, 101.518300).")}
+      >
+        <input className={inputKecil} value={pautan} placeholder="https://www.google.com/maps/@3.0738,101.5183,17z" onChange={(e) => tampal(e.target.value)} />
+      </MedanBorang>
+      {ralatPautan && <span className="text-xs text-danger">{ralatPautan}</span>}
       <div className="grid grid-cols-2 gap-2">
         <MedanBorang label={tr("Latitud")}>
           <input className={inputKecil} inputMode="decimal" value={lat} placeholder="3.139003" onChange={(e) => setLat(e.target.value)} />

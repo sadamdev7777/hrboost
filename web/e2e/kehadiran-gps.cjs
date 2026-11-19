@@ -53,6 +53,16 @@ async function login(browser, phone, viewport, geolocation) {
   await p.fill('[role=dialog] label:has-text("Radius") input', '200');
   await p.click('[role=dialog] button:has-text("Simpan")');
   await p.waitForSelector('[data-lokasi="Pejabat HQ"]');
+  // Komputer tanpa lokasi: tampal pautan Google Maps
+  await p.click('button:has-text("+ Tambah lokasi")');
+  await p.fill('[role=dialog] input[placeholder="Contoh: Pejabat HQ"]', 'Cawangan');
+  await p.fill('[role=dialog] label:has-text("tampal pautan") input', 'https://www.google.com/maps/place/X/@3.1,101.6,17z/data=!3m1!4b1!3d3.139003!4d101.686855');
+  expect((await p.inputValue('[role=dialog] input[placeholder="3.139003"]')) === '3.139003', 'pautan Google Maps → koordinat diisi');
+  await p.click('[role=dialog] button:has-text("Simpan")');
+  await p.waitForSelector('[data-lokasi="Cawangan"]');
+  await p.locator('[data-lokasi="Cawangan"] button:has-text("Padam")').click();
+  await p.click('[role=dialog] button:has-text("Padam"), [role=alertdialog] button:has-text("Padam")');
+  await p.waitForSelector('[data-lokasi="Cawangan"]', { state: 'detached' });
   expect(sql(`select gps_attendance from companies where code = 'DEMO'`) === 't', 'GPS dihidupkan');
   expect(sql(`select lat || ',' || lng || ',' || radius_m from company_locations where name = 'Pejabat HQ'`) === '3.073800,101.518300,200', 'lokasi disimpan daripada GPS komputer');
   await p.screenshot({ path: `${shots}/gps-tetapan.png`, fullPage: true });
