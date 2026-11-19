@@ -13,7 +13,7 @@ export type PunchHariIni = {
   distance_m: number | null;
   outside: boolean | null;
 };
-export type KehadiranHariIni = { enabled: boolean; date: string; punches: PunchHariIni[] };
+export type KehadiranHariIni = { enabled: boolean; machine: boolean; date: string; punches: PunchHariIni[] };
 
 /** Status daftar masuk hari ini (butang Utama). */
 export async function getKehadiranHariIni(employmentId: string): Promise<KehadiranHariIni> {
@@ -112,14 +112,17 @@ export const jarakTeks = (m: number | null | undefined) =>
 
 // ---------------------------------------------------------------- HR
 export type LokasiPejabat = { id: string; name: string; lat: number; lng: number; radius_m: number };
-export type TetapanGps = { enabled: boolean; locations: LokasiPejabat[] };
+export type TetapanGps = { enabled: boolean; reminders: boolean; locations: LokasiPejabat[] };
 
 export async function getTetapanGps(companyId: string): Promise<TetapanGps> {
   const d = must(await getSupabase().rpc("hr_gps_settings", { p_company: companyId })) as unknown as TetapanGps;
-  return { enabled: !!d.enabled, locations: (d.locations ?? []).map((l) => ({ ...l, lat: Number(l.lat), lng: Number(l.lng) })) };
+  return { enabled: !!d.enabled, reminders: !!d.reminders, locations: (d.locations ?? []).map((l) => ({ ...l, lat: Number(l.lat), lng: Number(l.lng) })) };
 }
 export async function setGps(companyId: string, on: boolean) {
   must(await getSupabase().rpc("set_gps_attendance", { p_company: companyId, p_on: on }));
+}
+export async function setPeringatanKehadiran(companyId: string, on: boolean) {
+  must(await getSupabase().rpc("set_attendance_reminders", { p_company: companyId, p_on: on }));
 }
 export async function simpanLokasi(companyId: string, data: { name: string; lat: number; lng: number; radius_m: number }, id?: string) {
   must(await getSupabase().rpc("hr_location_save", { p_company: companyId, p_data: data, p_id: id }));

@@ -42,6 +42,8 @@ const PERATURAN: Peraturan[] = [
   { corak: /lewat masuk kali ke-|was late for the/i, ms: "Pekerja lewat masuk", en: "Employee late check-in", laluan: "/pengurusan/kehadiran" },
 
   // Gaji
+  { corak: /waktu kerja bermula pada|work starts at/i, ms: "Peringatan daftar masuk", en: "Check-in reminder", laluan: "/utama" },
+  { corak: /waktu kerja tamat pada|work ends at/i, ms: "Peringatan daftar keluar", en: "Check-out reminder", laluan: "/utama" },
   { corak: /hari gaji|payday is/i, ms: "Peringatan hari gaji", en: "Payday reminder", laluan: "/pengurusan/gaji" },
   { corak: /perlu dihantar sebelum|must be submitted by/i, ms: "Peringatan tarikh akhir caruman berkanun", en: "Statutory submission deadline reminder", laluan: "/pengurusan/gaji" },
   { corak: /melaporkan kesilapan pada slip gaji|reported an error on the/i, ms: "Laporan kesilapan slip gaji", en: "Payslip error reported", laluan: "/pengurusan/gaji" },

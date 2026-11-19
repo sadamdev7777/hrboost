@@ -34,7 +34,7 @@ async function login(browser, phone, viewport, geolocation) {
 (async () => {
   const AMIN = sql(`select id from employments where employee_no = 'DEMO004'`);
   // Keadaan awal (ujian boleh diulang)
-  sql(`delete from attendance_punches where source = 'gps'; delete from attendance_records where source in ('gps','campuran'); delete from company_locations; delete from data_access_log where resource = 'attendance_selfie'; update companies set gps_attendance = false where code = 'DEMO'`);
+  sql(`delete from attendance_punches where source = 'gps'; delete from attendance_records where source in ('gps','campuran'); delete from company_locations; delete from data_access_log where resource = 'attendance_selfie'; update companies set gps_attendance = false, attendance_reminders = false where code = 'DEMO'`);
   const browser = await chromium.launch();
 
   log('1. Lily: hidupkan daftar masuk telefon & tambah lokasi');
@@ -65,6 +65,10 @@ async function login(browser, phone, viewport, geolocation) {
   await p.waitForSelector('[data-lokasi="Cawangan"]', { state: 'detached' });
   expect(sql(`select gps_attendance from companies where code = 'DEMO'`) === 't', 'GPS dihidupkan');
   expect(sql(`select lat || ',' || lng || ',' || radius_m from company_locations where name = 'Pejabat HQ'`) === '3.073800,101.518300,200', 'lokasi disimpan daripada GPS komputer');
+  const peringatan = p.locator('button[role=switch][aria-label="Peringatan daftar masuk & keluar"]');
+  await peringatan.click();
+  await p.waitForSelector('button[role=switch][aria-label="Peringatan daftar masuk & keluar"][aria-checked=true]');
+  expect(sql(`select attendance_reminders from companies where code = 'DEMO'`) === 't', 'peringatan daftar masuk & keluar dihidupkan');
   await p.screenshot({ path: `${shots}/gps-tetapan.png`, fullPage: true });
 
   log('2. Amin: daftar masuk dalam lokasi');
@@ -74,6 +78,7 @@ async function login(browser, phone, viewport, geolocation) {
   const kad = q.locator('section[aria-label="Kehadiran hari ini"]');
   await kad.waitFor({ timeout: 20000 });
   expect((await kad.innerText()).includes('Belum daftar masuk'), 'kad Utama: belum daftar masuk');
+  expect((await kad.innerText()).includes('hanya jika anda bekerja di luar pejabat') === (sql(`select count(*) from attendance_integrations i join companies c on c.id = i.company_id where c.code = 'DEMO'`) !== '0'), 'panduan mesin kehadiran ikut integrasi');
   await kad.locator('a:has-text("Daftar masuk")').click();
   await q.waitForURL('**/kehadiran/daftar');
   await q.waitForSelector('text=Lokasi dikesan');

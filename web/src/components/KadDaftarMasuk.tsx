@@ -23,6 +23,9 @@ export function KadDaftarMasuk({ employmentId }: { employmentId: string }) {
         <span className="text-[13px] text-subtle">
           {!masuk ? tr("Belum daftar masuk") : akhir ? tr("Masuk {0} · Keluar {1}", jam(masuk.punched_at), jam(akhir.punched_at)) : tr("Masuk {0}", jam(masuk.punched_at))}
         </span>
+        {!masuk && x.machine && (
+          <span className="text-xs leading-snug text-muted">{tr("Daftar masuk di sini hanya jika anda bekerja di luar pejabat. Di pejabat, sila imbas di mesin kehadiran.")}</span>
+        )}
         {luar && (
           <span>
             <Tag tone="warning">{tr("Luar lokasi")}</Tag>

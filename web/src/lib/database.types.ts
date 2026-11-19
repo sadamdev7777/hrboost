@@ -625,6 +625,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"attendance_reminders_sent": {
+                  Row: {
+                    "employment_id": string,"kind": string,"sent_at": string,"work_date": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "employment_id": string,"kind": string,"sent_at"?: string,"work_date": string
+                  }
+                  Update: {
+                    "employment_id"?: string,"kind"?: string,"sent_at"?: string,"work_date"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "attendance_reminders_sent_employment_id_fkey"
+      columns: ["employment_id"]
+isOneToOne: false
+      referencedRelation: "employments"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"automation_rules": {
                   Row: {
                     "active": boolean,"channel": string,"company_id": string,"condition": NonNullable<Json>,"created_at": string,"event_type": string,"id": string,"message_template": string,"name": string,"target": Database["public"]['Enums']["notify_target"],"target_person_id": string | null,"use_ai_rewrite": boolean
@@ -873,14 +893,14 @@ isOneToOne: false
                   ]
                 },"companies": {
                   Row: {
-                    "accounting_config": NonNullable<Json>,"accounting_system": Database["public"]['Enums']["accounting_system"],"address": string | null,"ai_monthly_limit": number | null,"bank_batch_id": string | null,"bank_corporate_id": string | null,"bank_file_format": Json | null,"billing_notified": NonNullable<Json>,"billing_status": string,"ceo_monthly_report": boolean,"claim_submit_days": number | null,"code": string,"company_bank_account": string | null,"company_bank_name": string | null,"created_at": string,"created_by": string | null,"epf_employer_no": string | null,"epf_employer_rate": number | null,"fixed_days": number,"gl_accounts": NonNullable<Json>,"gps_attendance": boolean,"hours_per_day": number,"hr_daily_digest": boolean,"hrdf_registered": boolean,"id": string,"late_grace_minutes": number,"lhdn_c_no": string | null,"lhdn_employer_no": string | null,"logo_path": string | null,"name": string,"notify_email": boolean,"notify_whatsapp": boolean,"onboarding_completed_at": string | null,"ot_basis": string,"ot_items": (string)[],"overtime_enabled": boolean,"paid_until": string | null,"payday": number,"payday_reminder": boolean,"payslip_options": NonNullable<Json>,"payslip_preview": boolean,"prorate_basis": string,"reg_no": string | null,"signatory_email": string | null,"signatory_ic": string | null,"signatory_name": string | null,"signatory_phone": string | null,"signatory_position": string | null,"size_band": string | null,"skbbk_default": boolean,"socso_employer_no": string | null,"state": string,"status": string,"suspended_at": string | null,"suspended_reason": string | null,"timezone": string,"trial_ends_at": string | null,"unpaid_basis": string,"unpaid_items": (string)[],"wa_monthly_limit": number | null,"weekend_days": (number)[],"work_end": string,"work_schedule": Json | null,"work_start": string,"zakat_no": string | null
+                    "accounting_config": NonNullable<Json>,"accounting_system": Database["public"]['Enums']["accounting_system"],"address": string | null,"ai_monthly_limit": number | null,"attendance_reminders": boolean,"bank_batch_id": string | null,"bank_corporate_id": string | null,"bank_file_format": Json | null,"billing_notified": NonNullable<Json>,"billing_status": string,"ceo_monthly_report": boolean,"claim_submit_days": number | null,"code": string,"company_bank_account": string | null,"company_bank_name": string | null,"created_at": string,"created_by": string | null,"epf_employer_no": string | null,"epf_employer_rate": number | null,"fixed_days": number,"gl_accounts": NonNullable<Json>,"gps_attendance": boolean,"hours_per_day": number,"hr_daily_digest": boolean,"hrdf_registered": boolean,"id": string,"late_grace_minutes": number,"lhdn_c_no": string | null,"lhdn_employer_no": string | null,"logo_path": string | null,"name": string,"notify_email": boolean,"notify_whatsapp": boolean,"onboarding_completed_at": string | null,"ot_basis": string,"ot_items": (string)[],"overtime_enabled": boolean,"paid_until": string | null,"payday": number,"payday_reminder": boolean,"payslip_options": NonNullable<Json>,"payslip_preview": boolean,"prorate_basis": string,"reg_no": string | null,"signatory_email": string | null,"signatory_ic": string | null,"signatory_name": string | null,"signatory_phone": string | null,"signatory_position": string | null,"size_band": string | null,"skbbk_default": boolean,"socso_employer_no": string | null,"state": string,"status": string,"suspended_at": string | null,"suspended_reason": string | null,"timezone": string,"trial_ends_at": string | null,"unpaid_basis": string,"unpaid_items": (string)[],"wa_monthly_limit": number | null,"weekend_days": (number)[],"work_end": string,"work_schedule": Json | null,"work_start": string,"zakat_no": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"bank_batch_id"?: string | null,"bank_corporate_id"?: string | null,"bank_file_format"?: Json | null,"billing_notified"?: NonNullable<Json>,"billing_status"?: string,"ceo_monthly_report"?: boolean,"claim_submit_days"?: number | null,"code": string,"company_bank_account"?: string | null,"company_bank_name"?: string | null,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"fixed_days"?: number,"gl_accounts"?: NonNullable<Json>,"gps_attendance"?: boolean,"hours_per_day"?: number,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_c_no"?: string | null,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name": string,"notify_email"?: boolean,"notify_whatsapp"?: boolean,"onboarding_completed_at"?: string | null,"ot_basis"?: string,"ot_items"?: (string)[],"overtime_enabled"?: boolean,"paid_until"?: string | null,"payday"?: number,"payday_reminder"?: boolean,"payslip_options"?: NonNullable<Json>,"payslip_preview"?: boolean,"prorate_basis"?: string,"reg_no"?: string | null,"signatory_email"?: string | null,"signatory_ic"?: string | null,"signatory_name"?: string | null,"signatory_phone"?: string | null,"signatory_position"?: string | null,"size_band"?: string | null,"skbbk_default"?: boolean,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"trial_ends_at"?: string | null,"unpaid_basis"?: string,"unpaid_items"?: (string)[],"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_schedule"?: Json | null,"work_start"?: string,"zakat_no"?: string | null
+                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"attendance_reminders"?: boolean,"bank_batch_id"?: string | null,"bank_corporate_id"?: string | null,"bank_file_format"?: Json | null,"billing_notified"?: NonNullable<Json>,"billing_status"?: string,"ceo_monthly_report"?: boolean,"claim_submit_days"?: number | null,"code": string,"company_bank_account"?: string | null,"company_bank_name"?: string | null,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"fixed_days"?: number,"gl_accounts"?: NonNullable<Json>,"gps_attendance"?: boolean,"hours_per_day"?: number,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_c_no"?: string | null,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name": string,"notify_email"?: boolean,"notify_whatsapp"?: boolean,"onboarding_completed_at"?: string | null,"ot_basis"?: string,"ot_items"?: (string)[],"overtime_enabled"?: boolean,"paid_until"?: string | null,"payday"?: number,"payday_reminder"?: boolean,"payslip_options"?: NonNullable<Json>,"payslip_preview"?: boolean,"prorate_basis"?: string,"reg_no"?: string | null,"signatory_email"?: string | null,"signatory_ic"?: string | null,"signatory_name"?: string | null,"signatory_phone"?: string | null,"signatory_position"?: string | null,"size_band"?: string | null,"skbbk_default"?: boolean,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"trial_ends_at"?: string | null,"unpaid_basis"?: string,"unpaid_items"?: (string)[],"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_schedule"?: Json | null,"work_start"?: string,"zakat_no"?: string | null
                   }
                   Update: {
-                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"bank_batch_id"?: string | null,"bank_corporate_id"?: string | null,"bank_file_format"?: Json | null,"billing_notified"?: NonNullable<Json>,"billing_status"?: string,"ceo_monthly_report"?: boolean,"claim_submit_days"?: number | null,"code"?: string,"company_bank_account"?: string | null,"company_bank_name"?: string | null,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"fixed_days"?: number,"gl_accounts"?: NonNullable<Json>,"gps_attendance"?: boolean,"hours_per_day"?: number,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_c_no"?: string | null,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name"?: string,"notify_email"?: boolean,"notify_whatsapp"?: boolean,"onboarding_completed_at"?: string | null,"ot_basis"?: string,"ot_items"?: (string)[],"overtime_enabled"?: boolean,"paid_until"?: string | null,"payday"?: number,"payday_reminder"?: boolean,"payslip_options"?: NonNullable<Json>,"payslip_preview"?: boolean,"prorate_basis"?: string,"reg_no"?: string | null,"signatory_email"?: string | null,"signatory_ic"?: string | null,"signatory_name"?: string | null,"signatory_phone"?: string | null,"signatory_position"?: string | null,"size_band"?: string | null,"skbbk_default"?: boolean,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"trial_ends_at"?: string | null,"unpaid_basis"?: string,"unpaid_items"?: (string)[],"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_schedule"?: Json | null,"work_start"?: string,"zakat_no"?: string | null
+                    "accounting_config"?: NonNullable<Json>,"accounting_system"?: Database["public"]['Enums']["accounting_system"],"address"?: string | null,"ai_monthly_limit"?: number | null,"attendance_reminders"?: boolean,"bank_batch_id"?: string | null,"bank_corporate_id"?: string | null,"bank_file_format"?: Json | null,"billing_notified"?: NonNullable<Json>,"billing_status"?: string,"ceo_monthly_report"?: boolean,"claim_submit_days"?: number | null,"code"?: string,"company_bank_account"?: string | null,"company_bank_name"?: string | null,"created_at"?: string,"created_by"?: string | null,"epf_employer_no"?: string | null,"epf_employer_rate"?: number | null,"fixed_days"?: number,"gl_accounts"?: NonNullable<Json>,"gps_attendance"?: boolean,"hours_per_day"?: number,"hr_daily_digest"?: boolean,"hrdf_registered"?: boolean,"id"?: string,"late_grace_minutes"?: number,"lhdn_c_no"?: string | null,"lhdn_employer_no"?: string | null,"logo_path"?: string | null,"name"?: string,"notify_email"?: boolean,"notify_whatsapp"?: boolean,"onboarding_completed_at"?: string | null,"ot_basis"?: string,"ot_items"?: (string)[],"overtime_enabled"?: boolean,"paid_until"?: string | null,"payday"?: number,"payday_reminder"?: boolean,"payslip_options"?: NonNullable<Json>,"payslip_preview"?: boolean,"prorate_basis"?: string,"reg_no"?: string | null,"signatory_email"?: string | null,"signatory_ic"?: string | null,"signatory_name"?: string | null,"signatory_phone"?: string | null,"signatory_position"?: string | null,"size_band"?: string | null,"skbbk_default"?: boolean,"socso_employer_no"?: string | null,"state"?: string,"status"?: string,"suspended_at"?: string | null,"suspended_reason"?: string | null,"timezone"?: string,"trial_ends_at"?: string | null,"unpaid_basis"?: string,"unpaid_items"?: (string)[],"wa_monthly_limit"?: number | null,"weekend_days"?: (number)[],"work_end"?: string,"work_schedule"?: Json | null,"work_start"?: string,"zakat_no"?: string | null
                   }
                   Relationships: [
                     {
@@ -2705,6 +2725,11 @@ isOneToOne: false
 "_rd_syarikat":
 { Args: { "p_row": Json }; Returns: string
                            },
+"_waktu_kerja":
+{ Args: { "p_date": string,"p_employment": string }; Returns: {
+              "end_time": string,"start_time": string
+            }[]
+                           },
 "accept_invite":
 { Args: { "p_ic_last4": string,"p_token": string }; Returns: Json
                            },
@@ -2848,6 +2873,9 @@ isOneToOne: false
 { Args: { "p_employment": string,"p_from": string,"p_to": string }; Returns: {
               "clock_in": string,"clock_out": string,"correction_request": string,"correction_status": Database["public"]['Enums']["request_status"],"holiday": string,"late_minutes": number,"leave_code": string,"source": string,"work_date": string,"working_day": boolean
             }[]
+                           },
+"attendance_reminder_tick":
+{ Args: Record<PropertyKey, never>; Returns: number
                            },
 "billing_create_invoice":
 { Args: { "p_code"?: string,"p_company": string }; Returns: Json
@@ -3994,6 +4022,9 @@ isOneToOne: false
                            },
 "set_attendance_integration":
 { Args: { "p_active"?: boolean,"p_api_url": string,"p_company": string,"p_key": string,"p_minutes"?: number,"p_secret": string }; Returns: undefined
+                           },
+"set_attendance_reminders":
+{ Args: { "p_company": string,"p_on": boolean }; Returns: undefined
                            },
 "set_bank_file_format":
 { Args: { "p_company": string,"p_format": Json }; Returns: undefined

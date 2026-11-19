@@ -112,6 +112,11 @@ export default function DaftarKehadiranPage() {
         )}
         {hariIni.data?.enabled && (
           <>
+            {hariIni.data.machine && punches.length === 0 && (
+              <div className="rounded-card bg-warning-soft px-4 py-3 text-[13px] leading-snug text-warning">
+                {tr("Daftar masuk di sini hanya jika anda bekerja di luar pejabat. Di pejabat, sila imbas di mesin kehadiran.")}
+              </div>
+            )}
             {punches.length > 0 && (
               <div className="rounded-card bg-surface px-4 py-3 text-[13px] text-subtle">
                 {tr("Daftar masuk hari ini: {0}", jam(punches[0].punched_at))}

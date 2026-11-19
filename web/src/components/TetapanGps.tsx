@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useData } from "@/lib/useData";
 import { ErrorBox } from "@/components/ui";
 import { ButangUtama, Lembaran, MedanBorang, Seksyen, Suis, inputKecil } from "@/components/Senarai";
-import { dapatkanLokasi, getTetapanGps, koordinatDaripadaTeks, padamLokasi, petaUrl, setGps, simpanLokasi, type LokasiPejabat } from "@/lib/kehadiranGps";
+import { dapatkanLokasi, getTetapanGps, koordinatDaripadaTeks, setPeringatanKehadiran, padamLokasi, petaUrl, setGps, simpanLokasi, type LokasiPejabat } from "@/lib/kehadiranGps";
 import { sahkan } from "@/components/Dialog";
 
 /** Tetapan → Kehadiran: daftar masuk melalui telefon (GPS + swafoto) dan lokasi pejabat. */
@@ -19,6 +19,15 @@ export function TetapanGps({ companyId }: { companyId: string }) {
     setRalat(null);
     try {
       await setGps(companyId, on);
+      d.reload();
+    } catch (e) {
+      setRalat((e as Error).message);
+    }
+  }
+  async function suisPeringatan(on: boolean) {
+    setRalat(null);
+    try {
+      await setPeringatanKehadiran(companyId, on);
       d.reload();
     } catch (e) {
       setRalat((e as Error).message);
@@ -46,6 +55,13 @@ export function TetapanGps({ companyId }: { companyId: string }) {
               <span className="text-xs text-muted">{tr("Pekerja daftar masuk dan keluar dengan lokasi GPS dan swafoto. Mesin kehadiran tetap berfungsi; masa masuk ialah yang terawal dan masa keluar yang terakhir.")}</span>
             </span>
             <Suis on={t.enabled} onChange={suis} label={tr("Benarkan daftar masuk melalui telefon")} />
+          </div>
+          <div className="flex min-h-14 items-center gap-3 py-2">
+            <span className="flex grow flex-col gap-0.5">
+              <b>{tr("Peringatan daftar masuk & keluar")}</b>
+              <span className="text-xs text-muted">{tr("Notifikasi kepada pekerja 5 minit sebelum waktu kerja bermula (jika belum daftar masuk) dan 5 minit sebelum waktu kerja tamat (jika belum daftar keluar). Tidak dihantar pada hari cuti atau hari rehat.")}</span>
+            </span>
+            <Suis on={t.reminders} onChange={suisPeringatan} label={tr("Peringatan daftar masuk & keluar")} />
           </div>
           {t.locations.map((l) => (
             <div key={l.id} className="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-1 py-2" data-lokasi={l.name}>
